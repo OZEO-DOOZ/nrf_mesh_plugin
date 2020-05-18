@@ -16,13 +16,16 @@ public class DoozMeshManagerApi: MeshManagerCallbacks, StreamHandler {
     private  var mMeshManagerApi: MeshManagerApi
     private var methodChannel: MethodChannel
     private var eventSink :EventSink? = null
+    private var currentMeshNetwork : DoozMeshNetwork? = null
+    private var binaryMessenger: BinaryMessenger
 
     constructor(context: Context, methodChannel: MethodChannel, binaryMessenger: BinaryMessenger) {
         mMeshManagerApi = MeshManagerApi(context.applicationContext)
         mMeshManagerApi.setMeshManagerCallbacks(this)
         this.methodChannel = methodChannel
+        this.binaryMessenger = binaryMessenger
 
-        EventChannel(binaryMessenger,"$namespace/meshnetwork/events").setStreamHandler(this)
+        EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
     }
 
     fun loadMeshNetwork() {
@@ -31,17 +34,15 @@ public class DoozMeshManagerApi: MeshManagerCallbacks, StreamHandler {
 
     override fun onNetworkImported(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkImported")
-
+        currentMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
     }
 
     override fun onNetworkLoadFailed(error: String?) {
         Log.d(this.javaClass.name, "onNetworkLoadFailed")
-
     }
 
     override fun onMeshPduCreated(pdu: ByteArray?) {
         Log.d(this.javaClass.name, "onMeshPduCreated")
-
     }
 
     override fun getMtu(): Int {
@@ -55,14 +56,17 @@ public class DoozMeshManagerApi: MeshManagerCallbacks, StreamHandler {
 
     override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkLoaded ${meshNetwork?.meshName}")
-        Log.d(this.javaClass.name, "onNetworkLoaded ${meshNetwork?.id}")
-        Log.d(this.javaClass.name, "onNetworkLoaded eventSink $eventSink")
-
-        eventSink?.success(mapOf("eventName" to "onNetworkLoaded", "meshName" to meshNetwork?.meshName))
+        eventSink?.success(mapOf("eventName" to "onNetworkLoaded",
+                "meshName" to meshNetwork?.meshName,
+                "id" to meshNetwork?.id,
+                "isLastSelected" to meshNetwork?.isLastSelected
+        ))
+        currentMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
     }
 
     override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkUpdated")
+        currentMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
     }
 
     override fun sendProvisioningPdu(meshNode: UnprovisionedMeshNode?, pdu: ByteArray?) {
