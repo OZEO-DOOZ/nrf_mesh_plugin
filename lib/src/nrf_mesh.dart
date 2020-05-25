@@ -13,8 +13,8 @@ class NordicNrfMesh {
     return version;
   }
 
-  Future<MeshManagerApi> loadMeshNetwork() async {
-    await _methodChannel.invokeMethod('loadMeshNetwork');
+  Future<MeshManagerApi> createMeshManagerApi() async {
+    await _methodChannel.invokeMethod('createMeshManagerApi');
     return MeshManagerApi();
   }
 }

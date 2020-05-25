@@ -27,8 +27,10 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     try {
       platformVersion = await nordicNrfMesh.platformVersion;
-      final meshNetwork = await nordicNrfMesh.loadMeshNetwork();
-      meshNetwork.onNetworkLoaded.listen(print);
+      final meshManagerApi = await nordicNrfMesh.createMeshManagerApi();
+      final meshNetwork = await meshManagerApi.loadMeshNetwork();
+      print(meshNetwork);
+      meshManagerApi.onNetworkLoaded.listen(print);
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
