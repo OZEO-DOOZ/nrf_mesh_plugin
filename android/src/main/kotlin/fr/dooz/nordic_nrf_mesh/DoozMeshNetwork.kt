@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshNetwork
 
-class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, private val meshNetwork: MeshNetwork?) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
+class DoozMeshNetwork(binaryMessenger: BinaryMessenger, private val meshNetwork: MeshNetwork?) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
 
     private  var eventSink : EventChannel.EventSink? = null
 

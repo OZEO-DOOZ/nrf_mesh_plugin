@@ -13,13 +13,15 @@ import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import no.nordicsemi.android.mesh.MeshManagerApi
-import no.nordicsemi.android.mesh.MeshManagerCallbacks
-import no.nordicsemi.android.mesh.MeshNetwork
+import no.nordicsemi.android.mesh.*
+import no.nordicsemi.android.mesh.provisionerstates.ProvisioningState
 import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
+import no.nordicsemi.android.mesh.transport.ControlMessage
+import no.nordicsemi.android.mesh.transport.MeshMessage
+import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 
 
-public class DoozMeshManagerApi(context: Context, private var binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
+public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private var onNetworkLoadedChannel: Channel<MeshNetwork?>;
