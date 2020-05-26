@@ -1,40 +1,57 @@
 package fr.dooz.nordic_nrf_mesh
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.EventChannel.StreamHandler
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import no.nordicsemi.android.mesh.MeshManagerApi
-import no.nordicsemi.android.mesh.MeshManagerCallbacks
-import no.nordicsemi.android.mesh.MeshNetwork
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import no.nordicsemi.android.mesh.*
+import no.nordicsemi.android.mesh.provisionerstates.ProvisioningState
 import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
+import no.nordicsemi.android.mesh.transport.ControlMessage
+import no.nordicsemi.android.mesh.transport.MeshMessage
+import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 
-public class DoozMeshManagerApi: MeshManagerCallbacks, StreamHandler {
-    private  var mMeshManagerApi: MeshManagerApi
-    private var methodChannel: MethodChannel
+
+public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
+    private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
-    private var currentMeshNetwork : DoozMeshNetwork? = null
-    private var binaryMessenger: BinaryMessenger
+    private var onNetworkLoadedChannel: Channel<MeshNetwork?>;
+    private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
 
-    constructor(context: Context, methodChannel: MethodChannel, binaryMessenger: BinaryMessenger) {
-        mMeshManagerApi = MeshManagerApi(context.applicationContext)
+    init {
         mMeshManagerApi.setMeshManagerCallbacks(this)
-        this.methodChannel = methodChannel
-        this.binaryMessenger = binaryMessenger
-
         EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
+        MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
+
+        onNetworkLoadedChannel = Channel();
     }
 
-    fun loadMeshNetwork() {
+    private  fun loadMeshNetwork(result: MethodChannel.Result)  {
         mMeshManagerApi.loadMeshNetwork()
+        GlobalScope.launch {
+            val meshNetwork = onNetworkLoadedChannel.receive()
+            uiThreadHandler.post {
+                result.success(mapOf(
+                    "meshName" to meshNetwork?.meshName,
+                    "id" to meshNetwork?.id,
+                    "isLastSelected" to meshNetwork?.isLastSelected
+                ))
+
+            }
+        }
     }
 
     override fun onNetworkImported(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkImported")
-        currentMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
     }
 
     override fun onNetworkLoadFailed(error: String?) {
@@ -55,18 +72,20 @@ public class DoozMeshManagerApi: MeshManagerCallbacks, StreamHandler {
     }
 
     override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
-        Log.d(this.javaClass.name, "onNetworkLoaded ${meshNetwork?.meshName}")
-        eventSink?.success(mapOf("eventName" to "onNetworkLoaded",
+        Log.d(this.javaClass.name, "onNetworkLoaded")
+        eventSink?.success(mapOf(
+                "eventName" to "onNetworkLoaded",
                 "meshName" to meshNetwork?.meshName,
                 "id" to meshNetwork?.id,
                 "isLastSelected" to meshNetwork?.isLastSelected
         ))
-        currentMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
+        GlobalScope.launch {
+            onNetworkLoadedChannel.send(meshNetwork)
+        }
     }
 
     override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkUpdated")
-        currentMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
     }
 
     override fun sendProvisioningPdu(meshNode: UnprovisionedMeshNode?, pdu: ByteArray?) {
@@ -79,5 +98,14 @@ public class DoozMeshManagerApi: MeshManagerCallbacks, StreamHandler {
     }
 
     override fun onCancel(arguments: Any?) {
+        eventSink = null
+    }
+
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "loadMeshNetwork" -> {
+                loadMeshNetwork(result)
+            }
+        }
     }
 }

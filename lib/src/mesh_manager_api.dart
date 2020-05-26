@@ -23,4 +23,14 @@ class MeshManagerApi {
   }
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoaded.stream;
+
+  Future<MeshNetwork> loadMeshNetwork() async {
+    final data = await _methodChannel.invokeMethod('loadMeshNetwork');
+    if (data == null) {
+      //  TODO: do something
+      print('DATA == null');
+      return null;
+    }
+    return MeshNetwork(data['meshName']);
+  }
 }
