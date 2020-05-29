@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - nordic_nrf_mesh (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - nordic_nrf_mesh (from `.symlinks/plugins/nordic_nrf_mesh/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  nordic_nrf_mesh:
+    :path: ".symlinks/plugins/nordic_nrf_mesh/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  nordic_nrf_mesh: ba245d246145df99714a12170990bcf79d54b2bd
+
+PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
+
+COCOAPODS: 1.9.2
