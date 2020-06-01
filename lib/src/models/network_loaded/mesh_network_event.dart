@@ -13,7 +13,7 @@ abstract class MeshNetworkEventData with _$MeshNetworkEventData {
 
 @freezed
 abstract class MeshNetworkEventError with _$MeshNetworkEventError {
-  const factory MeshNetworkEventError(String id) = _MeshNetworkEventError;
+  const factory MeshNetworkEventError(String error) = _MeshNetworkEventError;
 
   factory MeshNetworkEventError.fromJson(Map<String, dynamic> json) =>
       _$MeshNetworkEventErrorFromJson(json);

@@ -22,12 +22,12 @@ Map<String, dynamic> _$_$_MeshNetworkEventDataToJson(
 _$_MeshNetworkEventError _$_$_MeshNetworkEventErrorFromJson(
     Map<String, dynamic> json) {
   return _$_MeshNetworkEventError(
-    json['id'] as String,
+    json['error'] as String,
   );
 }
 
 Map<String, dynamic> _$_$_MeshNetworkEventErrorToJson(
         _$_MeshNetworkEventError instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'error': instance.error,
     };

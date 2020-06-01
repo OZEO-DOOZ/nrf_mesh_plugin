@@ -144,9 +144,9 @@ MeshNetworkEventError _$MeshNetworkEventErrorFromJson(
 class _$MeshNetworkEventErrorTearOff {
   const _$MeshNetworkEventErrorTearOff();
 
-  _MeshNetworkEventError call(String id) {
+  _MeshNetworkEventError call(String error) {
     return _MeshNetworkEventError(
-      id,
+      error,
     );
   }
 }
@@ -155,7 +155,7 @@ class _$MeshNetworkEventErrorTearOff {
 const $MeshNetworkEventError = _$MeshNetworkEventErrorTearOff();
 
 mixin _$MeshNetworkEventError {
-  String get id;
+  String get error;
 
   Map<String, dynamic> toJson();
   $MeshNetworkEventErrorCopyWith<MeshNetworkEventError> get copyWith;
@@ -165,7 +165,7 @@ abstract class $MeshNetworkEventErrorCopyWith<$Res> {
   factory $MeshNetworkEventErrorCopyWith(MeshNetworkEventError value,
           $Res Function(MeshNetworkEventError) then) =
       _$MeshNetworkEventErrorCopyWithImpl<$Res>;
-  $Res call({String id});
+  $Res call({String error});
 }
 
 class _$MeshNetworkEventErrorCopyWithImpl<$Res>
@@ -178,10 +178,10 @@ class _$MeshNetworkEventErrorCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object id = freezed,
+    Object error = freezed,
   }) {
     return _then(_value.copyWith(
-      id: id == freezed ? _value.id : id as String,
+      error: error == freezed ? _value.error : error as String,
     ));
   }
 }
@@ -192,7 +192,7 @@ abstract class _$MeshNetworkEventErrorCopyWith<$Res>
           $Res Function(_MeshNetworkEventError) then) =
       __$MeshNetworkEventErrorCopyWithImpl<$Res>;
   @override
-  $Res call({String id});
+  $Res call({String error});
 }
 
 class __$MeshNetworkEventErrorCopyWithImpl<$Res>
@@ -207,40 +207,40 @@ class __$MeshNetworkEventErrorCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object id = freezed,
+    Object error = freezed,
   }) {
     return _then(_MeshNetworkEventError(
-      id == freezed ? _value.id : id as String,
+      error == freezed ? _value.error : error as String,
     ));
   }
 }
 
 @JsonSerializable()
 class _$_MeshNetworkEventError implements _MeshNetworkEventError {
-  const _$_MeshNetworkEventError(this.id) : assert(id != null);
+  const _$_MeshNetworkEventError(this.error) : assert(error != null);
 
   factory _$_MeshNetworkEventError.fromJson(Map<String, dynamic> json) =>
       _$_$_MeshNetworkEventErrorFromJson(json);
 
   @override
-  final String id;
+  final String error;
 
   @override
   String toString() {
-    return 'MeshNetworkEventError(id: $id)';
+    return 'MeshNetworkEventError(error: $error)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _MeshNetworkEventError &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)));
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(id);
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(error);
 
   @override
   _$MeshNetworkEventErrorCopyWith<_MeshNetworkEventError> get copyWith =>
@@ -254,13 +254,13 @@ class _$_MeshNetworkEventError implements _MeshNetworkEventError {
 }
 
 abstract class _MeshNetworkEventError implements MeshNetworkEventError {
-  const factory _MeshNetworkEventError(String id) = _$_MeshNetworkEventError;
+  const factory _MeshNetworkEventError(String error) = _$_MeshNetworkEventError;
 
   factory _MeshNetworkEventError.fromJson(Map<String, dynamic> json) =
       _$_MeshNetworkEventError.fromJson;
 
   @override
-  String get id;
+  String get error;
   @override
   _$MeshNetworkEventErrorCopyWith<_MeshNetworkEventError> get copyWith;
 }
