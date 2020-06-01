@@ -65,9 +65,9 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         if (doozMeshNetwork == null || doozMeshNetwork?.meshNetwork?.id != meshNetwork.id) {
             doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
         } else {
-            doozMeshNetwork?.meshNetwork = meshNetwork
+            doozMeshNetwork!!.meshNetwork = meshNetwork
         }
-        eventSink?.success(mapOf(
+        eventSink!!.success(mapOf(
                 "eventName" to "onNetworkLoaded",
                 "id" to meshNetwork.id
         ))

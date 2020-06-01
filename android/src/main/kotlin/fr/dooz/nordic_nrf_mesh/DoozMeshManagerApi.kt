@@ -19,6 +19,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks;
 
     init {
+        Log.d(this.javaClass.name, "init DoozMeshManagerApi")
         EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
 
@@ -49,7 +50,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     }
 
     override fun onListen(arguments: Any?, events: EventSink?) {
-        Log.d(this.javaClass.name, "onListen")
+        Log.d(this.javaClass.name, "onListen $arguments $events")
         this.eventSink = events
         doozMeshManagerCallbacks.eventSink = eventSink
         doozMeshProvisioningStatusCallbacks.eventSink = eventSink
