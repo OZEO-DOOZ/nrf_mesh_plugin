@@ -8,129 +8,147 @@
 import Foundation
 import nRFMeshProvision
 
-class DoozMeshManager{
+enum DoozManagerApiChannel: String{
+    case loadMeshNetwork
+    case importMeshNetworkJson
+    case deleteMeshNetworkFromDb
+    case exportMeshNetwork
+}
+
+class DoozMeshManagerApi: NSObject{
     
-    let meshNetworkManager: MeshNetworkManager?
-
-    init() {
-        meshNetworkManager = MeshNetworkManager()
-        guard let _meshNetworkManager = self.meshNetworkManager else{
-            return
-        }
-        _meshNetworkManager.acknowledgmentTimerInterval = 0.150
-        _meshNetworkManager.transmissionTimerInteral = 0.600
-        _meshNetworkManager.incompleteMessageTimeout = 10.0
-        _meshNetworkManager.retransmissionLimit = 2
-        _meshNetworkManager.acknowledgmentMessageInterval = 4.2
-        // As the interval has been increased, the timeout can be adjusted.
-        // The acknowledged message will be repeated after 4.2 seconds,
-        // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
-        // Then, leave 10 seconds for until the incomplete message times out.
-        _meshNetworkManager.acknowledgmentMessageTimeout = 40.0
-
-    }
-
-    func loadMeshNetwork(_ result: FlutterResult){
-        guard let _meshNetworkManager = self.meshNetworkManager else{
-            print("meshNetworkManager has not been initialized")
-            return
-        }
-
-        do{
-            let loaded = try _meshNetworkManager.load()
-        }catch{
-            print(error)
-        }
-
+    let meshNetworkManager = MeshNetworkManager()
+    
+    init(messenger: FlutterBinaryMessenger) {
+        super.init()
+        _initMeshNetworkManager()
+        _initChannels(messenger: messenger)
     }
     
 }
 
-//public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
-//    private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
-//    private var eventSink :EventSink? = null
-//    private var onNetworkLoadedChannel: Channel<MeshNetwork?>;
-//    private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
-//
-//    init {
-//        mMeshManagerApi.setMeshManagerCallbacks(this)
-//        EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
-//        MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
-//
-//        onNetworkLoadedChannel = Channel();
-//    }
-//
-//    private  fun loadMeshNetwork(result: MethodChannel.Result)  {
-//        mMeshManagerApi.loadMeshNetwork()
-//        GlobalScope.launch {
-//            val meshNetwork = onNetworkLoadedChannel.receive()
-//            uiThreadHandler.post {
-//                result.success(mapOf(
-//                    "meshName" to meshNetwork?.meshName,
-//                    "id" to meshNetwork?.id,
-//                    "isLastSelected" to meshNetwork?.isLastSelected
-//                ))
-//
-//            }
-//        }
-//    }
-//
-//    override fun onNetworkImported(meshNetwork: MeshNetwork?) {
-//        Log.d(this.javaClass.name, "onNetworkImported")
-//    }
-//
-//    override fun onNetworkLoadFailed(error: String?) {
-//        Log.d(this.javaClass.name, "onNetworkLoadFailed")
-//    }
-//
-//    override fun onMeshPduCreated(pdu: ByteArray?) {
-//        Log.d(this.javaClass.name, "onMeshPduCreated")
-//    }
-//
-//    override fun getMtu(): Int {
-//        Log.d(this.javaClass.name, "getMtu")
-//        return -1
-//    }
-//
-//    override fun onNetworkImportFailed(error: String?) {
-//        Log.d(this.javaClass.name, "onNetworkImportFailed")
-//    }
-//
-//    override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
-//        Log.d(this.javaClass.name, "onNetworkLoaded")
-//        eventSink?.success(mapOf(
-//                "eventName" to "onNetworkLoaded",
-//                "meshName" to meshNetwork?.meshName,
-//                "id" to meshNetwork?.id,
-//                "isLastSelected" to meshNetwork?.isLastSelected
-//        ))
-//        GlobalScope.launch {
-//            onNetworkLoadedChannel.send(meshNetwork)
-//        }
-//    }
-//
-//    override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
-//        Log.d(this.javaClass.name, "onNetworkUpdated")
-//    }
-//
-//    override fun sendProvisioningPdu(meshNode: UnprovisionedMeshNode?, pdu: ByteArray?) {
-//        Log.d(this.javaClass.name, "sendProvisioningPdu")
-//    }
-//
-//    override fun onListen(arguments: Any?, events: EventSink?) {
-//        Log.d(this.javaClass.name, "onListen")
-//        this.eventSink = events
-//    }
-//
-//    override fun onCancel(arguments: Any?) {
-//        eventSink = null
-//    }
-//
-//    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+
+private extension DoozMeshManagerApi{
+    
+    func _initMeshNetworkManager(){
+        meshNetworkManager.delegate = self
+        
+        meshNetworkManager.acknowledgmentTimerInterval = 0.150
+        meshNetworkManager.transmissionTimerInteral = 0.600
+        meshNetworkManager.incompleteMessageTimeout = 10.0
+        meshNetworkManager.retransmissionLimit = 2
+        meshNetworkManager.acknowledgmentMessageInterval = 4.2
+        
+        // As the interval has been increased, the timeout can be adjusted.
+        // The acknowledged message will be repeated after 4.2 seconds,
+        // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
+        // Then, leave 10 seconds for until the incomplete message times out.
+        meshNetworkManager.acknowledgmentMessageTimeout = 40.0
+        
+    }
+    
+    func _initChannels(messenger: FlutterBinaryMessenger){
+        FlutterEventChannel(name: namespace + "/mesh_manager_api/events", binaryMessenger: messenger)
+            .setStreamHandler(self)
+        
+        FlutterMethodChannel(name: namespace + "/mesh_manager_api/methods", binaryMessenger: messenger).setMethodCallHandler({ (call, result) in
+            self._handleMethodCall(call, result: result)
+        })
+        
+    }
+    
+    func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        print("🥂 [DoozMeshManagerApi] Received flutter call : \(call.method)")
+        guard let _method = DoozManagerApiChannel(rawValue: call.method) else{
+            print("❌ Plugin method - \(call.method) - isn't implemented")
+            return
+        }
+        
+        switch _method {
+            
+        case .loadMeshNetwork:
+            _loadMeshNetwork()
+            result(nil)
+            break
+        case .importMeshNetworkJson:
+            if let _args = call.arguments as? [String:Any], let _json = _args["json"] as? String{
+                _importMeshNetworkJson(_json)
+            }
+            break
+        case .deleteMeshNetworkFromDb:
+            if let _args = call.arguments as? [String:Any], let _id = _args["id"] as? String{
+                _deleteMeshNetworkFromDb(_id)
+            }
+            break
+        case .exportMeshNetwork:
+            if let json = _exportMeshNetwork(){
+                result(json)
+            }
+            break
+        }
+        
 //        when (call.method) {
 //            "loadMeshNetwork" -> {
-//                loadMeshNetwork(result)
+//                loadMeshNetwork()
+//                result.success(null)
+//            }
+//            "importMeshNetworkJson" -> {
+//                importMeshNetworkJson(call.argument<String>("json")!!)
+//                result.success(null)
+//            }
+//            "deleteMeshNetworkFromDb" -> {
+//                deleteMeshNetworkFromDb(call.argument<String>("id")!!)
+//                result.success(null)
+//            }
+//            "exportMeshNetwork" -> {
+//                val json = exportMeshNetwork()
+//                result.success(json)
 //            }
 //        }
-//    }
-//}
+    }
+    
+    func _loadMeshNetwork(){
+        
+        do{
+            _ = try meshNetworkManager.load()
+        }catch{
+            print(error)
+        }
+        
+    }
+    
+    func _importMeshNetworkJson(_ json: String){
+        #warning("To implement")
+    }
+    
+    func _deleteMeshNetworkFromDb(_ id: String){
+        #warning("To implement")
+    }
+    
+    func _exportMeshNetwork() -> String?{
+        #warning("To implement")
+        return ""
+    }
+    
+}
+
+
+extension DoozMeshManagerApi: MeshNetworkDelegate{
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
+        
+    }
+    
+}
+
+
+extension DoozMeshManagerApi: FlutterStreamHandler{
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        return nil
+    }
+    
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        return nil
+    }
+    
+}

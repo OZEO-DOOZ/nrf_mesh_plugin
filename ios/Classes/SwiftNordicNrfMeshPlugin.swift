@@ -1,70 +1,48 @@
 import Flutter
 import UIKit
 
-enum PluginMethod: String{
+enum PluginMethodChannel: String{
     case getPlatformVersion
     case createMeshManagerApi
-    case loadMeshNetwork
 }
 
 public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
     
-    var meshManager: DoozMeshManager?
+    var meshManagerApi: DoozMeshManagerApi?
+    var messenger: FlutterBinaryMessenger?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "fr.dooz.nordic_nrf_mesh/methods", binaryMessenger: registrar.messenger())
+        let pluginMethodChannel = FlutterMethodChannel(name: namespace + "/methods", binaryMessenger: registrar.messenger())
         let instance = SwiftNordicNrfMeshPlugin()
-        registrar.addMethodCallDelegate(instance, channel: channel)
+        instance.messenger = registrar.messenger()
+        registrar.addMethodCallDelegate(instance, channel: pluginMethodChannel)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
-        guard let _method = PluginMethod(rawValue: call.method) else{
-            print("Method - \(call.method) - isn't handled in enum")
+        print("🥂 [SwiftNordicNrfMeshPlugin] Received flutter call : \(call.method)")
+        guard let _method = PluginMethodChannel(rawValue: call.method) else{
+            print("❌ Plugin method - \(call.method) - isn't implemented")
             return
         }
 
         switch _method {
         case .getPlatformVersion:
-            #warning("why not working ?")
+            #warning("The string isn't showing")
             result("iOS " + UIDevice.current.systemVersion)
+            
             break
         case .createMeshManagerApi:
+            guard let _messenger = self.messenger else{
+                print("no messenger")
+                return
+            }
             
-         //   self.meshManager = DoozMeshManager()
+            self.meshManagerApi = DoozMeshManagerApi(messenger: _messenger)
             result(nil)
             
             break
             
-        case .loadMeshNetwork:
-            _loadMeshNetwork(result)
-            print("loadMeshNetwork")
-            
         }
                 
-    }
-}
-
-private extension SwiftNordicNrfMeshPlugin{
-    func _loadMeshNetwork(_ result: FlutterResult){
-        guard let _meshManager = self.meshManager else{
-            print("meshManager has not been initialized")
-            return
-        }
-        
-        _meshManager.loadMeshNetwork(result)
-        
-        #warning("Working here, we need to see with kevin how it works")
-//        GlobalScope.launch {
-//            val meshNetwork = onNetworkLoadedChannel.receive()
-//            uiThreadHandler.post {
-//                result.success(mapOf(
-//                    "meshName" to meshNetwork?.meshName,
-//                    "id" to meshNetwork?.id,
-//                    "isLastSelected" to meshNetwork?.isLastSelected
-//                ))
-//
-//            }
-//        }
     }
 }
