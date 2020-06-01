@@ -60,4 +60,7 @@ class MeshManagerApi {
     await _methodChannel.invokeMethod('importMeshNetworkJson');
     return future;
   }
+
+  Future<String> exportMeshNetwork() =>
+      _methodChannel.invokeMethod('exportMeshNetwork');
 }

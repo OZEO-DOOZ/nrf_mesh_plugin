@@ -34,6 +34,10 @@ class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMe
         mMeshManagerApi.importMeshNetworkJson(json)
     }
 
+    private fun exportMeshNetwork(): String? {
+       return  mMeshManagerApi.exportMeshNetwork()
+    }
+
     private fun deleteMeshNetworkFromDb(meshNetworkId: String?) {
         if (doozMeshNetwork != null && doozMeshNetwork?.getId() == meshNetworkId) {
             val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
@@ -142,6 +146,10 @@ class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMe
             "deleteMeshNetworkFromDb" -> {
                 deleteMeshNetworkFromDb(call.argument<String>("id"))
                 result.success(null)
+            }
+            "exportMeshNetwork" -> {
+                val json = exportMeshNetwork()
+                result.success(json)
             }
         }
     }
