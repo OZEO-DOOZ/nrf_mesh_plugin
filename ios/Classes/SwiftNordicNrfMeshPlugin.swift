@@ -30,9 +30,7 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
 
         switch _method {
         case .getPlatformVersion:
-            #warning("The string isn't showing")
             result("iOS " + UIDevice.current.systemVersion)
-            
             break
         case .createMeshManagerApi:
             guard let _messenger = self.messenger else{

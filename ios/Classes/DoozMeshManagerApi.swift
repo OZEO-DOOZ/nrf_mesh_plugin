@@ -22,7 +22,6 @@ class DoozMeshManagerApi: NSObject{
     
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
-
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
