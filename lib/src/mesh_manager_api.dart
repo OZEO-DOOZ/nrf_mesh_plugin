@@ -108,7 +108,6 @@ class MeshManagerApi {
   Stream<MeshNetwork> _streamOfMeshNetworkSuccessEvent(
           MeshNetworkApiEvent eventType) =>
       _filterEventChannelBy(eventType)
-          .where((event) => event['eventName'] == eventType.value)
           .map((event) => MeshNetworkEventData.fromJson(event))
           .map((event) {
         if (eventType == MeshNetworkApiEvent.updated) {
