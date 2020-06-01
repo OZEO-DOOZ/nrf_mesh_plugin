@@ -10,14 +10,11 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 
-
-/** NordicNrfMeshPlugin */
-public class NordicNrfMeshPlugin: FlutterPlugin, MethodCallHandler {
+class NordicNrfMeshPlugin: FlutterPlugin, MethodCallHandler {
   private lateinit var methodChannel : MethodChannel
   private lateinit var flutterBinding: FlutterPlugin.FlutterPluginBinding
   private lateinit var meshManagerApi : DoozMeshManagerApi
   private lateinit var binaryMessenger: BinaryMessenger
-
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     binaryMessenger = flutterPluginBinding.binaryMessenger
