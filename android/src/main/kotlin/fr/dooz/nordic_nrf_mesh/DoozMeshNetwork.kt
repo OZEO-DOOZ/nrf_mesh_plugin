@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshNetwork
 
-class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork?) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
+class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
 
     private  var eventSink : EventChannel.EventSink? = null
 
@@ -15,8 +15,8 @@ class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNet
         MethodChannel(binaryMessenger,"$namespace/mesh_network/events").setMethodCallHandler(this)
     }
 
-    private fun getId(): String? {
-        return meshNetwork?.id;
+    fun getId(): String? {
+        return meshNetwork.id;
     }
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {

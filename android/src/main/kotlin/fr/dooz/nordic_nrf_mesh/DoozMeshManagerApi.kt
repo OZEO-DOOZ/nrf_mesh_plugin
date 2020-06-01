@@ -1,8 +1,6 @@
 package fr.dooz.nordic_nrf_mesh
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
@@ -10,21 +8,13 @@ import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import no.nordicsemi.android.mesh.*
-import no.nordicsemi.android.mesh.provisionerstates.ProvisioningState
 import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
-import no.nordicsemi.android.mesh.transport.ControlMessage
-import no.nordicsemi.android.mesh.transport.MeshMessage
-import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 
 
-public class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
+class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
-    private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
     private var doozMeshNetwork: DoozMeshNetwork? = null
 
     init {
@@ -41,13 +31,20 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
         if (json == null) {
             return
         }
-        mMeshManagerApi.importMeshNetworkJson(json);
+        mMeshManagerApi.importMeshNetworkJson(json)
+    }
+
+    private fun deleteMeshNetworkFromDb(meshNetworkId: String?) {
+        if (doozMeshNetwork != null && doozMeshNetwork?.getId() == meshNetworkId) {
+            val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
+            mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
+        }
     }
 
     override fun onNetworkImported(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkImported")
         if (meshNetwork == null) {
-            return;
+            return
         }
         if (doozMeshNetwork == null) {
             doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
@@ -90,7 +87,7 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
     override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkLoaded")
         if (meshNetwork == null) {
-            return;
+            return
         }
         if (doozMeshNetwork == null) {
             doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
@@ -108,7 +105,7 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
     override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkUpdated")
         if (meshNetwork == null) {
-            return;
+            return
         }
         doozMeshNetwork?.meshNetwork = meshNetwork
         eventSink?.success(mapOf(
@@ -139,8 +136,12 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
                 result.success(null)
             }
             "importMeshNetworkJson" -> {
-                importMeshNetworkJson(call.argument<String>("json"));
-                result.success(null);
+                importMeshNetworkJson(call.argument<String>("json"))
+                result.success(null)
+            }
+            "deleteMeshNetworkFromDb" -> {
+                deleteMeshNetworkFromDb(call.argument<String>("id"))
+                result.success(null)
             }
         }
     }
