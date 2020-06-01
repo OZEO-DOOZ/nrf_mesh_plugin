@@ -61,8 +61,8 @@ public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMesseng
         Log.d(this.javaClass.name, "onNetworkLoaded")
         eventSink?.success(mapOf(
                 "eventName" to "onNetworkLoaded",
-                "meshName" to meshNetwork?.meshName,
                 "id" to meshNetwork?.id,
+                "meshName" to meshNetwork?.meshName,
                 "isLastSelected" to meshNetwork?.isLastSelected
         ))
     }
