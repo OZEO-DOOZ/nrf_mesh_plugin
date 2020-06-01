@@ -25,7 +25,7 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
-    private val meshNetworks: MutableList<DoozMeshNetwork> = ArrayList()
+    private var doozMeshNetwork: DoozMeshNetwork? = null
 
     init {
         mMeshManagerApi.setMeshManagerCallbacks(this)
@@ -44,13 +44,30 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
         mMeshManagerApi.importMeshNetworkJson(json);
     }
 
-
     override fun onNetworkImported(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkImported")
+        if (meshNetwork == null) {
+            return;
+        }
+        if (doozMeshNetwork == null) {
+            doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
+        } else {
+            doozMeshNetwork?.meshNetwork = meshNetwork
+        }
+        eventSink?.success(mapOf(
+                "eventName" to "onNetworkImported",
+                "id" to meshNetwork.id,
+                "meshName" to meshNetwork.meshName,
+                "isLastSelected" to meshNetwork.isLastSelected
+        ))
     }
 
     override fun onNetworkLoadFailed(error: String?) {
         Log.d(this.javaClass.name, "onNetworkLoadFailed")
+        eventSink?.success(mapOf(
+                "eventName" to "onNetworkLoadFailed",
+                "error" to error
+        ))
     }
 
     override fun onMeshPduCreated(pdu: ByteArray?) {
@@ -64,6 +81,10 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
 
     override fun onNetworkImportFailed(error: String?) {
         Log.d(this.javaClass.name, "onNetworkImportFailed")
+        eventSink?.success(mapOf(
+                "eventName" to "onNetworkImportFailed",
+                "error" to error
+        ))
     }
 
     override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
@@ -71,11 +92,10 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
         if (meshNetwork == null) {
             return;
         }
-        val existingMeshNetwork = meshNetworks.find { it.getId() == meshNetwork.id }
-        if (existingMeshNetwork == null) {
-            meshNetworks.add(DoozMeshNetwork(binaryMessenger, meshNetwork))
+        if (doozMeshNetwork == null) {
+            doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
         } else {
-            existingMeshNetwork.meshNetwork = meshNetwork
+            doozMeshNetwork?.meshNetwork = meshNetwork
         }
         eventSink?.success(mapOf(
                 "eventName" to "onNetworkLoaded",
@@ -87,6 +107,16 @@ public class DoozMeshManagerApi(context: Context, private val binaryMessenger: B
 
     override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkUpdated")
+        if (meshNetwork == null) {
+            return;
+        }
+        doozMeshNetwork?.meshNetwork = meshNetwork
+        eventSink?.success(mapOf(
+                "eventName" to "onNetworkUpdated",
+                "id" to meshNetwork.id,
+                "meshName" to meshNetwork.meshName,
+                "isLastSelected" to meshNetwork.isLastSelected
+        ))
     }
 
     override fun sendProvisioningPdu(meshNode: UnprovisionedMeshNode?, pdu: ByteArray?) {
