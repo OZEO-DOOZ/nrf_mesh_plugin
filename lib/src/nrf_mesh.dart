@@ -8,8 +8,7 @@ class NordicNrfMesh {
   NordicNrfMesh();
 
   Future<String> get platformVersion async {
-    final String version =
-        await _methodChannel.invokeMethod('getPlatformVersion');
+    final version = await _methodChannel.invokeMethod('getPlatformVersion');
     return version;
   }
 

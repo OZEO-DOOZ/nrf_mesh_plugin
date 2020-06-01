@@ -11,10 +11,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  json_annotation: ^3.0.1
+  freezed_annotation: ^0.7.1
+  rxdart: ^0.24.1
+  pedantic: ^1.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.10.0
+  json_serializable: ^3.3.0
+  freezed: ^0.10.9
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -32,7 +39,6 @@ flutter:
         pluginClass: NordicNrfMeshPlugin
       ios:
         pluginClass: NordicNrfMeshPlugin
-
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -43,7 +49,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # To add custom fonts to your plugin package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

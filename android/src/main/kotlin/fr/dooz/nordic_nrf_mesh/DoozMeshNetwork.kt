@@ -16,8 +16,12 @@ class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNet
         methodChannel.setMethodCallHandler(this)
     }
 
-    fun getId(): String? {
+    private fun getId(): String? {
         return meshNetwork.id;
+    }
+
+    private fun getMeshNetworkName() : String {
+        return meshNetwork.meshName;
     }
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
@@ -32,6 +36,9 @@ class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNet
         when (call.method) {
             "getId" -> {
                 result.success(getId())
+            }
+            "getMeshNetworkName" -> {
+                result.success(getMeshNetworkName())
             }
         }
     }
