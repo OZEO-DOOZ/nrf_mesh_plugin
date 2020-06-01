@@ -122,6 +122,5 @@ class MeshManagerApi {
   Stream<MeshNetworkEventError> _streamOfMeshNetworkErrorEvent(
           MeshNetworkApiEvent eventType) =>
       _filterEventChannelBy(eventType)
-          .where((event) => event['eventName'] == eventType.value)
           .map((event) => MeshNetworkEventError.fromJson(event));
 }
