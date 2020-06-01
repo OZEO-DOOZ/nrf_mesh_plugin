@@ -41,6 +41,14 @@ class MeshManagerApi {
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoaded.stream;
 
+  Stream<MeshNetwork> get onNetworkImported => _onNetworkImported.stream;
+
+  Stream<MeshNetwork> get onNetworkUpdated => _onNetworkUpdated.stream;
+
+  Stream<String> get onNetworkLoadFailed => _onNetworkLoadFailed.stream;
+
+  Stream<String> get onNetworkImportFailed => _onNetworkImportFailed.stream;
+
   Future<void> dispose() => Future.wait([
         _onNetworkLoaded.close(),
         _onNetworkImported.close(),
@@ -56,7 +64,7 @@ class MeshManagerApi {
   }
 
   Future<MeshNetwork> importMeshNetworkJson(String json) async {
-    final future = _onNetworkLoaded.stream.first;
+    final future = _onNetworkImported.stream.first;
     await _methodChannel.invokeMethod('importMeshNetworkJson');
     return future;
   }
