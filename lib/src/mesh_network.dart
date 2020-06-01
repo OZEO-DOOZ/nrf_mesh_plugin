@@ -2,12 +2,14 @@ import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 
 class MeshNetwork {
-  final _methodChannel = MethodChannel('$namespace/mesh_network/methods');
+  MethodChannel _methodChannel;
 
   final String _meshName;
   final String _id;
 
-  MeshNetwork(this._id, this._meshName);
+  MeshNetwork(this._id, this._meshName) {
+    _methodChannel = MethodChannel('$namespace/mesh_network/$id/methods');
+  }
 
   String get id => _id;
 

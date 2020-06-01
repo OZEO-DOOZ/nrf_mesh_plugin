@@ -9,120 +9,41 @@ import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.*
-import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
 
-
-class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
+class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
+    private val doozMeshManagerCallbacks: DoozMeshManagerCallbacks;
 
     init {
-        mMeshManagerApi.setMeshManagerCallbacks(this)
         EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
+
+        doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
+
+        mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
     }
 
     private fun loadMeshNetwork()  {
         mMeshManagerApi.loadMeshNetwork()
     }
 
-    private fun importMeshNetworkJson(json: String?) {
-        if (json == null) {
-            return
-        }
+    private fun importMeshNetworkJson(json: String) {
         mMeshManagerApi.importMeshNetworkJson(json)
     }
 
     private fun exportMeshNetwork(): String? {
-       return  mMeshManagerApi.exportMeshNetwork()
+        return mMeshManagerApi.exportMeshNetwork()
     }
 
-    private fun deleteMeshNetworkFromDb(meshNetworkId: String?) {
-        if (doozMeshNetwork != null && doozMeshNetwork?.getId() == meshNetworkId) {
+    private fun deleteMeshNetworkFromDb(meshNetworkId: String) {
+        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
             val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
             mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
         }
     }
 
-    override fun onNetworkImported(meshNetwork: MeshNetwork?) {
-        Log.d(this.javaClass.name, "onNetworkImported")
-        if (meshNetwork == null) {
-            return
-        }
-        if (doozMeshNetwork == null) {
-            doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
-        } else {
-            doozMeshNetwork?.meshNetwork = meshNetwork
-        }
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkImported",
-                "id" to meshNetwork.id,
-                "meshName" to meshNetwork.meshName,
-                "isLastSelected" to meshNetwork.isLastSelected
-        ))
-    }
-
-    override fun onNetworkLoadFailed(error: String?) {
-        Log.d(this.javaClass.name, "onNetworkLoadFailed")
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkLoadFailed",
-                "error" to error
-        ))
-    }
-
-    override fun onMeshPduCreated(pdu: ByteArray?) {
-        Log.d(this.javaClass.name, "onMeshPduCreated")
-    }
-
-    override fun getMtu(): Int {
-        Log.d(this.javaClass.name, "getMtu")
-        return -1
-    }
-
-    override fun onNetworkImportFailed(error: String?) {
-        Log.d(this.javaClass.name, "onNetworkImportFailed")
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkImportFailed",
-                "error" to error
-        ))
-    }
-
-    override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
-        Log.d(this.javaClass.name, "onNetworkLoaded")
-        if (meshNetwork == null) {
-            return
-        }
-        if (doozMeshNetwork == null) {
-            doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
-        } else {
-            doozMeshNetwork?.meshNetwork = meshNetwork
-        }
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkLoaded",
-                "id" to meshNetwork.id,
-                "meshName" to meshNetwork.meshName,
-                "isLastSelected" to meshNetwork.isLastSelected
-        ))
-    }
-
-    override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
-        Log.d(this.javaClass.name, "onNetworkUpdated")
-        if (meshNetwork == null) {
-            return
-        }
-        doozMeshNetwork?.meshNetwork = meshNetwork
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkUpdated",
-                "id" to meshNetwork.id,
-                "meshName" to meshNetwork.meshName,
-                "isLastSelected" to meshNetwork.isLastSelected
-        ))
-    }
-
-    override fun sendProvisioningPdu(meshNode: UnprovisionedMeshNode?, pdu: ByteArray?) {
-        Log.d(this.javaClass.name, "sendProvisioningPdu")
-    }
 
     override fun onListen(arguments: Any?, events: EventSink?) {
         Log.d(this.javaClass.name, "onListen")
@@ -131,6 +52,7 @@ class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMe
 
     override fun onCancel(arguments: Any?) {
         eventSink = null
+        doozMeshManagerCallbacks.eventSink = null;
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -140,11 +62,11 @@ class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMe
                 result.success(null)
             }
             "importMeshNetworkJson" -> {
-                importMeshNetworkJson(call.argument<String>("json"))
+                importMeshNetworkJson(call.argument<String>("json")!!)
                 result.success(null)
             }
             "deleteMeshNetworkFromDb" -> {
-                deleteMeshNetworkFromDb(call.argument<String>("id"))
+                deleteMeshNetworkFromDb(call.argument<String>("id")!!)
                 result.success(null)
             }
             "exportMeshNetwork" -> {
