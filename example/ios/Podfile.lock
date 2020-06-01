@@ -2,10 +2,21 @@ PODS:
   - Flutter (1.0.0)
   - nordic_nrf_mesh (0.0.1):
     - Flutter
+    - nRFMeshProvision
+  - nRFMeshProvision (2.2.3):
+    - OpenSSL-Universal (= 1.0.2.19)
+  - OpenSSL-Universal (1.0.2.19):
+    - OpenSSL-Universal/Static (= 1.0.2.19)
+  - OpenSSL-Universal/Static (1.0.2.19)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - nordic_nrf_mesh (from `.symlinks/plugins/nordic_nrf_mesh/ios`)
+
+SPEC REPOS:
+  trunk:
+    - nRFMeshProvision
+    - OpenSSL-Universal
 
 EXTERNAL SOURCES:
   Flutter:
@@ -15,8 +26,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  nordic_nrf_mesh: ba245d246145df99714a12170990bcf79d54b2bd
+  nordic_nrf_mesh: 262d3bfe256f10d988ba5621cb56aab6c8b30477
+  nRFMeshProvision: ecb20ce595bb421f2350e539f05d7391dd507724
+  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
 
-PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
+PODFILE CHECKSUM: 4f7d650cd20ecd9077a5a4f12b4fd3b727a57400
 
-COCOAPODS: 1.9.2
+COCOAPODS: 1.9.3
