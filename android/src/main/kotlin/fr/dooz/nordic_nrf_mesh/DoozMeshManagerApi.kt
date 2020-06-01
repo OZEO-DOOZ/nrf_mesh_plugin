@@ -21,10 +21,11 @@ import no.nordicsemi.android.mesh.transport.MeshMessage
 import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 
 
-public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
+public class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
+    private val meshNetworks: MutableList<DoozMeshNetwork> = ArrayList()
 
     init {
         mMeshManagerApi.setMeshManagerCallbacks(this)
@@ -35,6 +36,14 @@ public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMesseng
     private fun loadMeshNetwork()  {
         mMeshManagerApi.loadMeshNetwork()
     }
+
+    private fun importMeshNetworkJson(json: String?) {
+        if (json == null) {
+            return
+        }
+        mMeshManagerApi.importMeshNetworkJson(json);
+    }
+
 
     override fun onNetworkImported(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkImported")
@@ -59,11 +68,20 @@ public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMesseng
 
     override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
         Log.d(this.javaClass.name, "onNetworkLoaded")
+        if (meshNetwork == null) {
+            return;
+        }
+        val existingMeshNetwork = meshNetworks.find { it.getId() == meshNetwork.id }
+        if (existingMeshNetwork == null) {
+            meshNetworks.add(DoozMeshNetwork(binaryMessenger, meshNetwork))
+        } else {
+            existingMeshNetwork.meshNetwork = meshNetwork
+        }
         eventSink?.success(mapOf(
                 "eventName" to "onNetworkLoaded",
-                "id" to meshNetwork?.id,
-                "meshName" to meshNetwork?.meshName,
-                "isLastSelected" to meshNetwork?.isLastSelected
+                "id" to meshNetwork.id,
+                "meshName" to meshNetwork.meshName,
+                "isLastSelected" to meshNetwork.isLastSelected
         ))
     }
 
@@ -89,7 +107,10 @@ public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMesseng
             "loadMeshNetwork" -> {
                 loadMeshNetwork()
                 result.success(null)
-
+            }
+            "importMeshNetworkJson" -> {
+                importMeshNetworkJson(call.argument<String>("json"));
+                result.success(null);
             }
         }
     }

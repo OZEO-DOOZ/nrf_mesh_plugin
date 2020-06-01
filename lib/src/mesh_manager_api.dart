@@ -29,4 +29,10 @@ class MeshManagerApi {
     await _methodChannel.invokeMethod('loadMeshNetwork');
     return future;
   }
+
+  Future<MeshNetwork> importMeshNetworkJson(String json) async {
+    final future = _onNetworkLoaded.stream.first;
+    await _methodChannel.invokeMethod('importMeshNetworkJson');
+    return future;
+  }
 }

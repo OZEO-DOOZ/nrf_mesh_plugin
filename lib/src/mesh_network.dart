@@ -10,6 +10,8 @@ class MeshNetwork {
 
   String get meshName => _meshName;
 
+  Future<String> getId() => _methodChannel.invokeMethod('getId');
+
   @override
   String toString() => 'MeshNetwork{ $_meshName }';
 }
