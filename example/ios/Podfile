@@ -33,7 +33,7 @@ def parse_KV_file(file, separator='=')
 end
 
 target 'Runner' do
-  use_frameworks!
+  #use_frameworks!
   use_modular_headers!
 
   # Flutter Pod
@@ -76,11 +76,6 @@ target 'Runner' do
     File.symlink(path, symlink)
     pod name, :path => File.join(symlink, 'ios')
   end
-end
-
-pre_install do |installer|
-  # workaround for https://github.com/CocoaPods/CocoaPods/issues/3289
-  Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
 end
 
 post_install do |installer|
