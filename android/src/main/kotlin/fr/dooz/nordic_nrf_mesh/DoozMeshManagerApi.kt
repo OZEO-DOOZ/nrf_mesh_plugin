@@ -10,7 +10,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.*
 
-class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
+class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
@@ -43,7 +43,6 @@ class DoozMeshManagerApi(context: Context, private val binaryMessenger: BinaryMe
             mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
         }
     }
-
 
     override fun onListen(arguments: Any?, events: EventSink?) {
         Log.d(this.javaClass.name, "onListen")

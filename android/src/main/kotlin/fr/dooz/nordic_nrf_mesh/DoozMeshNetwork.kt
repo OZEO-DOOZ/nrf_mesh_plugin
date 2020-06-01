@@ -7,11 +7,13 @@ import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshNetwork
 
 class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
-    private  var eventSink : EventChannel.EventSink? = null
+    private var eventSink : EventChannel.EventSink? = null
+    private var eventChannel: EventChannel = EventChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/events")
+    private var methodChannel: MethodChannel = MethodChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/events")
 
     init {
-        EventChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/events").setStreamHandler(this)
-        MethodChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/events").setMethodCallHandler(this)
+        eventChannel.setStreamHandler(this)
+        methodChannel.setMethodCallHandler(this)
     }
 
     fun getId(): String? {
@@ -23,6 +25,7 @@ class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNet
     }
 
     override fun onCancel(arguments: Any?) {
+        eventSink = null
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {

@@ -17,17 +17,22 @@ class MeshManagerApi {
   final _onNetworkLoadFailed = StreamController<String>.broadcast();
   final _onNetworkImportFailed = StreamController<String>.broadcast();
 
+  MeshNetwork _lastMeshNetwork;
+
   MeshManagerApi() {
     _eventChannel.receiveBroadcastStream().cast<Map>().listen((event) {
       switch (event['eventName']) {
         case 'onNetworkLoaded':
-          _onNetworkLoaded.add(MeshNetwork(event['id'], event['meshName']));
+          _lastMeshNetwork = MeshNetwork(event['id'], event['meshName']);
+          _onNetworkLoaded.add(_lastMeshNetwork);
           break;
         case 'onNetworkImported':
-          _onNetworkImported.add(MeshNetwork(event['id'], event['meshName']));
+          _lastMeshNetwork = MeshNetwork(event['id'], event['meshName']);
+          _onNetworkImported.add(_lastMeshNetwork);
           break;
         case 'onNetworkUpdated':
-          _onNetworkUpdated.add(MeshNetwork(event['id'], event['meshName']));
+          _lastMeshNetwork = MeshNetwork(event['id'], event['meshName']);
+          _onNetworkUpdated.add(_lastMeshNetwork);
           break;
         case 'onNetworkLoadFailed':
           _onNetworkLoadFailed.add(event['error']);
@@ -48,6 +53,8 @@ class MeshManagerApi {
   Stream<String> get onNetworkLoadFailed => _onNetworkLoadFailed.stream;
 
   Stream<String> get onNetworkImportFailed => _onNetworkImportFailed.stream;
+
+  MeshNetwork get meshNetwork => _lastMeshNetwork;
 
   Future<void> dispose() => Future.wait([
         _onNetworkLoaded.close(),
