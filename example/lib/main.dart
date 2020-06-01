@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
     if (_meshNetwork == null) {
       return [Text('No mesh network')];
     } else {
-      [Text('Name: ${_meshNetwork.name}')];
+      return [Text('Name: ${_meshNetwork.id}')];
     }
   }
 
