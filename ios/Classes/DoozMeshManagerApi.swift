@@ -17,7 +17,12 @@ enum DoozManagerApiChannel: String{
 
 class DoozMeshManagerApi: NSObject{
     
+    //MARK: Public properties
     let meshNetworkManager = MeshNetworkManager()
+    
+    //MARK: Private properties
+    private var doozMeshNetwork: DoozMeshNetwork?
+
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -48,10 +53,10 @@ private extension DoozMeshManagerApi{
     }
     
     func _initChannels(messenger: FlutterBinaryMessenger){
-        FlutterEventChannel(name: namespace + "/mesh_manager_api/events", binaryMessenger: messenger)
+        FlutterEventChannel(name: "\(namespace)/mesh_manager_api/events", binaryMessenger: messenger)
             .setStreamHandler(self)
         
-        FlutterMethodChannel(name: namespace + "/mesh_manager_api/methods", binaryMessenger: messenger).setMethodCallHandler({ (call, result) in
+        FlutterMethodChannel(name: "\(namespace)/mesh_manager_api/methods", binaryMessenger: messenger).setMethodCallHandler({ (call, result) in
             self._handleMethodCall(call, result: result)
         })
         
@@ -86,25 +91,7 @@ private extension DoozMeshManagerApi{
             }
             break
         }
-        
-//        when (call.method) {
-//            "loadMeshNetwork" -> {
-//                loadMeshNetwork()
-//                result.success(null)
-//            }
-//            "importMeshNetworkJson" -> {
-//                importMeshNetworkJson(call.argument<String>("json")!!)
-//                result.success(null)
-//            }
-//            "deleteMeshNetworkFromDb" -> {
-//                deleteMeshNetworkFromDb(call.argument<String>("id")!!)
-//                result.success(null)
-//            }
-//            "exportMeshNetwork" -> {
-//                val json = exportMeshNetwork()
-//                result.success(json)
-//            }
-//        }
+
     }
     
     func _loadMeshNetwork(){
@@ -118,16 +105,39 @@ private extension DoozMeshManagerApi{
     }
     
     func _importMeshNetworkJson(_ json: String){
-        #warning("To implement")
+        do{
+            if let data = json.data(using: .utf8){
+                try meshNetworkManager.import(from: data)
+            }
+        }catch{
+            print(error)
+        }
     }
     
     func _deleteMeshNetworkFromDb(_ id: String){
-        #warning("To implement")
+        #warning("Not fully implemented")
+        if meshNetworkManager.meshNetwork?.id == id{
+            let network = doozMeshNetwork
+            #warning("no delete method on ios ?")
+        }
+        
+//        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
+//            val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
+//            mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
+//        }
     }
     
     func _exportMeshNetwork() -> String?{
-        #warning("To implement")
-        return ""
+        
+        let data = meshNetworkManager.export()
+        let str = String(decoding: data, as: UTF8.self)
+
+        if str != ""{
+            return str
+        }
+        
+        return nil
+        
     }
     
 }

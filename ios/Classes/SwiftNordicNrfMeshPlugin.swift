@@ -8,8 +8,11 @@ enum PluginMethodChannel: String{
 
 public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
     
+    //MARK: Public properties
     var meshManagerApi: DoozMeshManagerApi?
     var messenger: FlutterBinaryMessenger?
+    
+    //MARK: Private properties
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let pluginMethodChannel = FlutterMethodChannel(name: namespace + "/methods", binaryMessenger: registrar.messenger())
