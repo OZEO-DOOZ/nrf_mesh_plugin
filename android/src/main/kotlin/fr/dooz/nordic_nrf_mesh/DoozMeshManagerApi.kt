@@ -24,30 +24,16 @@ import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : MeshManagerCallbacks, StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
-    private var onNetworkLoadedChannel: Channel<MeshNetwork?>;
     private val uiThreadHandler: Handler = Handler(Looper.getMainLooper())
 
     init {
         mMeshManagerApi.setMeshManagerCallbacks(this)
         EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
-
-        onNetworkLoadedChannel = Channel();
     }
 
-    private  fun loadMeshNetwork(result: MethodChannel.Result)  {
+    private fun loadMeshNetwork()  {
         mMeshManagerApi.loadMeshNetwork()
-        GlobalScope.launch {
-            val meshNetwork = onNetworkLoadedChannel.receive()
-            uiThreadHandler.post {
-                result.success(mapOf(
-                    "meshName" to meshNetwork?.meshName,
-                    "id" to meshNetwork?.id,
-                    "isLastSelected" to meshNetwork?.isLastSelected
-                ))
-
-            }
-        }
     }
 
     override fun onNetworkImported(meshNetwork: MeshNetwork?) {
@@ -79,9 +65,6 @@ public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMesseng
                 "id" to meshNetwork?.id,
                 "isLastSelected" to meshNetwork?.isLastSelected
         ))
-        GlobalScope.launch {
-            onNetworkLoadedChannel.send(meshNetwork)
-        }
     }
 
     override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
@@ -104,7 +87,9 @@ public class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMesseng
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             "loadMeshNetwork" -> {
-                loadMeshNetwork(result)
+                loadMeshNetwork()
+                result.success(null)
+
             }
         }
     }

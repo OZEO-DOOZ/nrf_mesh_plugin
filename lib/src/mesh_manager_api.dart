@@ -10,7 +10,7 @@ class MeshManagerApi {
   final _eventChannel =
       const EventChannel('$namespace/mesh_manager_api/events');
 
-  final _onNetworkLoaded = StreamController<MeshNetwork>();
+  final _onNetworkLoaded = StreamController<MeshNetwork>.broadcast();
 
   MeshManagerApi() {
     _eventChannel.receiveBroadcastStream().cast<Map>().listen((event) {
@@ -25,12 +25,8 @@ class MeshManagerApi {
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoaded.stream;
 
   Future<MeshNetwork> loadMeshNetwork() async {
-    final data = await _methodChannel.invokeMethod('loadMeshNetwork');
-    if (data == null) {
-      //  TODO: do something
-      print('DATA == null');
-      return null;
-    }
-    return MeshNetwork(data['meshName']);
+    await _methodChannel.invokeMethod('loadMeshNetwork');
+    print('ici');
+    return _onNetworkLoaded.stream.first;
   }
 }
