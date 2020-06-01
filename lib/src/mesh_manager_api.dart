@@ -26,7 +26,6 @@ class MeshManagerApi {
 
   Future<MeshNetwork> loadMeshNetwork() async {
     await _methodChannel.invokeMethod('loadMeshNetwork');
-    print('ici');
     return _onNetworkLoaded.stream.first;
   }
 }
