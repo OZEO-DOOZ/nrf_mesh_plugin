@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:nordic_nrf_mesh/src/events/mesh_manager_api_events.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/mesh_network.dart';
@@ -35,20 +36,20 @@ class MeshManagerApi {
 
   MeshManagerApi() {
     _onMeshNetworkLoadedSubscription =
-        _streamOfMeshNetworkForSuccessEvent(MeshNetworkEventType.loaded)
+        _streamOfMeshNetworkSuccessEvent(MeshNetworkApiEvent.loaded)
             .listen(_onNetworkLoadedStreamController.add);
     _onMeshNetworkImportedSubscription =
-        _streamOfMeshNetworkForSuccessEvent(MeshNetworkEventType.imported)
+        _streamOfMeshNetworkSuccessEvent(MeshNetworkApiEvent.imported)
             .listen(_onNetworkImported.add);
     _onMeshNetworkUpdatedSubscription =
-        _streamOfMeshNetworkForSuccessEvent(MeshNetworkEventType.updated)
+        _streamOfMeshNetworkSuccessEvent(MeshNetworkApiEvent.updated)
             .listen(_onNetworkUpdated.add);
 
     _onMeshNetworkLoadFailedSubscription =
-        _streamOfMeshNetworkForErrorEvent(MeshNetworkEventType.loadFailed)
+        _streamOfMeshNetworkErrorEvent(MeshNetworkApiEvent.loadFailed)
             .listen(_onNetworkLoadFailed.add);
     _onMeshNetworkImportFaildSubscription =
-        _streamOfMeshNetworkForErrorEvent(MeshNetworkEventType.importFailed)
+        _streamOfMeshNetworkErrorEvent(MeshNetworkApiEvent.importFailed)
             .listen(_onNetworkImportFailed.add);
   }
 
@@ -95,15 +96,19 @@ class MeshManagerApi {
   Future<String> exportMeshNetwork() =>
       _methodChannel.invokeMethod('exportMeshNetwork');
 
-  Stream<MeshNetwork> _streamOfMeshNetworkForSuccessEvent(
-          MeshNetworkEventType eventType) =>
+  Stream<Map> _filterEventChannelBy(MeshNetworkApiEvent eventType) =>
       _eventChannel
           .receiveBroadcastStream()
           .cast<Map>()
+          .where((event) => event['eventName'] == eventType.value);
+
+  Stream<MeshNetwork> _streamOfMeshNetworkSuccessEvent(
+          MeshNetworkApiEvent eventType) =>
+      _filterEventChannelBy(eventType)
           .where((event) => event['eventName'] == eventType.value)
           .map((event) => MeshNetworkEventData.fromJson(event))
           .map((event) {
-        if (eventType == MeshNetworkEventType.updated) {
+        if (eventType == MeshNetworkApiEvent.updated) {
           if (_lastMeshNetwork.id == event.id) {
             return _lastMeshNetwork;
           }
@@ -111,11 +116,9 @@ class MeshManagerApi {
         return MeshNetwork(event.id);
       }).doOnData((event) => _lastMeshNetwork = event);
 
-  Stream<MeshNetworkEventError> _streamOfMeshNetworkForErrorEvent(
-          MeshNetworkEventType eventType) =>
-      _eventChannel
-          .receiveBroadcastStream()
-          .cast<Map>()
+  Stream<MeshNetworkEventError> _streamOfMeshNetworkErrorEvent(
+          MeshNetworkApiEvent eventType) =>
+      _filterEventChannelBy(eventType)
           .where((event) => event['eventName'] == eventType.value)
           .map((event) => MeshNetworkEventError.fromJson(event));
 }
