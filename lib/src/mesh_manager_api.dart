@@ -26,24 +26,33 @@ class MeshManagerApi {
 
   Stream _eventChannelStream;
 
-  StreamSubscription _eventChannelSubscription;
+  StreamSubscription _onNetworkLoadedSubscripiton;
+  StreamSubscription _onNetworkImportedSubscripiton;
+  StreamSubscription _onNetworkUpdatedSubscripiton;
+  StreamSubscription _onNetworkLoadFailedSubscripiton;
+  StreamSubscription _onNetworkImportFailedSubscripiton;
 
   MeshNetwork _lastMeshNetwork;
 
   MeshManagerApi() {
     _eventChannelStream = _eventChannel.receiveBroadcastStream();
 
-    _onMeshNetworkEventSucceed(MeshNetworkApiEvent.loaded)
-        .listen(_onNetworkLoadedStreamController.add);
-    _onMeshNetworkEventSucceed(MeshNetworkApiEvent.imported)
-        .listen(_onNetworkImportedController.add);
-    _onMeshNetworkEventSucceed(MeshNetworkApiEvent.updated)
-        .listen(_onNetworkUpdatedController.add);
+    _onNetworkLoadedSubscripiton =
+        _onMeshNetworkEventSucceed(MeshNetworkApiEvent.loaded)
+            .listen(_onNetworkLoadedStreamController.add);
+    _onNetworkImportedSubscripiton =
+        _onMeshNetworkEventSucceed(MeshNetworkApiEvent.imported)
+            .listen(_onNetworkImportedController.add);
+    _onNetworkUpdatedSubscripiton =
+        _onMeshNetworkEventSucceed(MeshNetworkApiEvent.updated)
+            .listen(_onNetworkUpdatedController.add);
 
-    _onMeshNetworkEventFailed(MeshNetworkApiEvent.loadFailed)
-        .listen(_onNetworkLoadFailedController.add);
-    _onMeshNetworkEventFailed(MeshNetworkApiEvent.importFailed)
-        .listen(_onNetworkImportFailedController.add);
+    _onNetworkLoadFailedSubscripiton =
+        _onMeshNetworkEventFailed(MeshNetworkApiEvent.loadFailed)
+            .listen(_onNetworkLoadFailedController.add);
+    _onNetworkImportFailedSubscripiton =
+        _onMeshNetworkEventFailed(MeshNetworkApiEvent.importFailed)
+            .listen(_onNetworkImportFailedController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded =>
@@ -63,8 +72,12 @@ class MeshManagerApi {
 
   MeshNetwork get meshNetwork => _lastMeshNetwork;
 
-  Future<void> dispose() => Future.wait([
-        _eventChannelSubscription.cancel(),
+  void dispose() => Future.wait([
+        _onNetworkLoadedSubscripiton.cancel(),
+        _onNetworkImportedSubscripiton.cancel(),
+        _onNetworkUpdatedSubscripiton.cancel(),
+        _onNetworkLoadFailedSubscripiton.cancel(),
+        _onNetworkImportFailedSubscripiton.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
