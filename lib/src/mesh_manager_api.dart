@@ -93,7 +93,7 @@ class MeshManagerApi {
 
   Future<MeshNetwork> importMeshNetworkJson(final String json) async {
     final future = _onNetworkImportedController.stream.first;
-    await _methodChannel.invokeMethod('importMeshNetworkJson');
+    await _methodChannel.invokeMethod('importMeshNetworkJson', {'json': json});
     return future;
   }
 

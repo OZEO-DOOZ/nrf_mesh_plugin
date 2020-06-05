@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'dart:io';
 
-import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 void main() {
@@ -14,32 +14,82 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _platformVersion;
+  MeshManagerApi _meshManagerApi;
+  NordicNrfMesh _nordicNrfMesh;
+  MeshNetwork _meshNetwork;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    _nordicNrfMesh = NordicNrfMesh();
   }
 
-  Future<void> initPlatformState() async {
-    final nordicNrfMesh = NordicNrfMesh();
-    String platformVersion;
-    try {
-      platformVersion = await nordicNrfMesh.platformVersion;
-      final meshManagerApi = await nordicNrfMesh.createMeshManagerApi();
-      meshManagerApi.onNetworkLoaded.listen(print);
-      final meshNetwork = await meshManagerApi.loadMeshNetwork();
-      print('loadMeshNetwork $meshNetwork');
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+  Widget getPlatfromVersion() {
+    if (_platformVersion != null) {
+      return Text('Run on $_platformVersion');
+    } else {
+      return RaisedButton(
+        child: Text('Get Platform Version'),
+        onPressed: () async {
+          var version = await _nordicNrfMesh.platformVersion;
+          setState(() {
+            _platformVersion = version;
+          });
+        },
+      );
     }
+  }
 
-    if (!mounted) return;
+  List<Widget> getMeshManagerApiButtons() {
+    if (_meshManagerApi == null) {
+      return [
+        RaisedButton(
+          child: Text('Create MeshManagerApi'),
+          onPressed: () async {
+            var meshManagerApi = await _nordicNrfMesh.createMeshManagerApi();
+            setState(() {
+              _meshManagerApi = meshManagerApi;
+            });
+          },
+        )
+      ];
+    } else {
+      return [
+        RaisedButton(
+          child: Text('import MeshNetwork Json'),
+          onPressed: () async {
+            final filePath = await FilePicker.getFilePath(type: FileType.any);
+            if (filePath == null) return;
+            final file = await File(filePath);
+            if (file == null) return;
+            final json = await file.readAsString();
+            if (json == null) return;
+            var meshNetwork = await _meshManagerApi.importMeshNetworkJson(json);
+            setState(() {
+              _meshNetwork = meshNetwork;
+            });
+          },
+        ),
+        RaisedButton(
+          child: Text('Load MeshNetwork'),
+          onPressed: () async {
+            var meshNetwork = await _meshManagerApi.loadMeshNetwork();
+            setState(() {
+              _meshNetwork = meshNetwork;
+            });
+          },
+        )
+      ];
+    }
+  }
 
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+  List<Widget> getMeshNetworkButtons() {
+    if (_meshNetwork == null) {
+      return [Text('No mesh network')];
+    } else {
+      return [Text('Name: ${_meshNetwork.id}')];
+    }
   }
 
   @override
@@ -50,8 +100,16 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            getPlatfromVersion(),
+            Divider(),
+            ...getMeshManagerApiButtons(),
+            Divider(),
+            ...getMeshNetworkButtons()
+          ],
+        )),
       ),
     );
   }
