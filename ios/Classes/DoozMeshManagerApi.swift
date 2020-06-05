@@ -48,7 +48,7 @@ private extension DoozMeshManagerApi{
         // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
         // Then, leave 10 seconds for until the incomplete message times out.
         meshNetworkManager.acknowledgmentMessageTimeout = 40.0
-        
+
     }
     
     func _initChannels(messenger: FlutterBinaryMessenger){
@@ -97,7 +97,40 @@ private extension DoozMeshManagerApi{
         
         do{
             _ = try meshNetworkManager.load()
+            
+            #warning("remove this import test")
+            do {
+                let bundle = Bundle(for: type(of: self))
+                let mainBundle = Bundle.main
+                
+                if let bundlePath = bundle.path(forResource: "MeshNetwork", ofType: "json"){
+                    let jsonString = try String(contentsOfFile: bundlePath)
+                    _importMeshNetworkJson(jsonString)
+                
+                }else{
+                    print("no such file")
+                }
+                
+                
+            } catch {
+                print(error)
+            }
+            #warning("remove this import test")
+            
         }catch{
+
+            #warning("should we create a meshNetwork on load if meshNetworkManager.load() fails ?")
+            //            let provisioner = Provisioner(name: UIDevice.current.name,
+            //                                          allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
+            //                                          allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
+            //                                          allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
+            //            _ = meshNetworkManager.createNewMeshNetwork(withName: "DOOZ Mesh Network", by: provisioner)
+            //            _ = meshNetworkManager.save()
+                        
+            
+            
+            
+            
             print(error)
         }
         
@@ -106,9 +139,10 @@ private extension DoozMeshManagerApi{
     func _importMeshNetworkJson(_ json: String){
         do{
             if let data = json.data(using: .utf8){
-                try meshNetworkManager.import(from: data)
+                _ = try meshNetworkManager.import(from: data)
             }
         }catch{
+            
             print(error)
         }
     }
@@ -118,6 +152,7 @@ private extension DoozMeshManagerApi{
         if meshNetworkManager.meshNetwork?.id == id{
             let network = doozMeshNetwork
             #warning("no delete method on ios ?")
+            // See https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues/279
         }
         
 //        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
