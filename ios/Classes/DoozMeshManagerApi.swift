@@ -98,25 +98,6 @@ private extension DoozMeshManagerApi{
         do{
             _ = try meshNetworkManager.load()
             
-            #warning("remove this import test")
-            do {
-                let bundle = Bundle(for: type(of: self))
-                let mainBundle = Bundle.main
-                
-                if let bundlePath = bundle.path(forResource: "MeshNetwork", ofType: "json"){
-                    let jsonString = try String(contentsOfFile: bundlePath)
-                    _importMeshNetworkJson(jsonString)
-                
-                }else{
-                    print("no such file")
-                }
-                
-                
-            } catch {
-                print(error)
-            }
-            #warning("remove this import test")
-            
         }catch{
 
             #warning("should we create a meshNetwork on load if meshNetworkManager.load() fails ?")
@@ -126,10 +107,6 @@ private extension DoozMeshManagerApi{
             //                                          allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
             //            _ = meshNetworkManager.createNewMeshNetwork(withName: "DOOZ Mesh Network", by: provisioner)
             //            _ = meshNetworkManager.save()
-                        
-            
-            
-            
             
             print(error)
         }
