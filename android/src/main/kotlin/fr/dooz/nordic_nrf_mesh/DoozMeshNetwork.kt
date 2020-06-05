@@ -40,6 +40,9 @@ class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNet
             "getMeshNetworkName" -> {
                 result.success(getMeshNetworkName())
             }
+            else -> {
+                result.notImplemented()
+            }
         }
     }
 }
