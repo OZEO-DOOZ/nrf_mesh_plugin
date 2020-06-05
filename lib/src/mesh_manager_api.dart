@@ -24,15 +24,35 @@ class MeshManagerApi {
   final _onNetworkImportFailedController =
       StreamController<MeshNetworkEventError>.broadcast();
 
-  StreamSubscription _eventChannelSubscription;
+  Stream _eventChannelStream;
+
+  StreamSubscription _onNetworkLoadedSubscripiton;
+  StreamSubscription _onNetworkImportedSubscripiton;
+  StreamSubscription _onNetworkUpdatedSubscripiton;
+  StreamSubscription _onNetworkLoadFailedSubscripiton;
+  StreamSubscription _onNetworkImportFailedSubscripiton;
 
   MeshNetwork _lastMeshNetwork;
 
   MeshManagerApi() {
-    _eventChannelSubscription = _eventChannel
-        .receiveBroadcastStream()
-        .cast<Map>()
-        .listen(_onEventChannelReceiveData);
+    _eventChannelStream = _eventChannel.receiveBroadcastStream();
+
+    _onNetworkLoadedSubscripiton =
+        _onMeshNetworkEventSucceed(MeshNetworkApiEvent.loaded)
+            .listen(_onNetworkLoadedStreamController.add);
+    _onNetworkImportedSubscripiton =
+        _onMeshNetworkEventSucceed(MeshNetworkApiEvent.imported)
+            .listen(_onNetworkImportedController.add);
+    _onNetworkUpdatedSubscripiton =
+        _onMeshNetworkEventSucceed(MeshNetworkApiEvent.updated)
+            .listen(_onNetworkUpdatedController.add);
+
+    _onNetworkLoadFailedSubscripiton =
+        _onMeshNetworkEventFailed(MeshNetworkApiEvent.loadFailed)
+            .listen(_onNetworkLoadFailedController.add);
+    _onNetworkImportFailedSubscripiton =
+        _onMeshNetworkEventFailed(MeshNetworkApiEvent.importFailed)
+            .listen(_onNetworkImportFailedController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded =>
@@ -52,8 +72,12 @@ class MeshManagerApi {
 
   MeshNetwork get meshNetwork => _lastMeshNetwork;
 
-  Future<void> dispose() => Future.wait([
-        _eventChannelSubscription.cancel(),
+  void dispose() => Future.wait([
+        _onNetworkLoadedSubscripiton.cancel(),
+        _onNetworkImportedSubscripiton.cancel(),
+        _onNetworkUpdatedSubscripiton.cancel(),
+        _onNetworkLoadFailedSubscripiton.cancel(),
+        _onNetworkImportFailedSubscripiton.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -79,41 +103,26 @@ class MeshManagerApi {
   Future<String> exportMeshNetwork() =>
       _methodChannel.invokeMethod('exportMeshNetwork');
 
-  void _onEventChannelReceiveData(final Map data) {
-    final _data = data.cast<String, Object>();
-    if (_data['eventName'] == MeshNetworkApiEvent.loaded.value) {
-      _onMeshNetworkLoaded(MeshNetworkEventData.fromJson(_data));
-    } else if (_data['eventName'] == MeshNetworkApiEvent.imported.value) {
-      _onMeshNetworkImported(MeshNetworkEventData.fromJson(_data));
-    } else if (_data['eventName'] == MeshNetworkApiEvent.updated.value) {
-      _onMeshUpdated(MeshNetworkEventData.fromJson(_data));
-    } else if (_data['eventName'] == MeshNetworkApiEvent.loadFailed.value) {
-      _onNetworkLoadFailedController.add(MeshNetworkEventError.fromJson(_data));
-    } else if (_data['eventName'] == MeshNetworkApiEvent.importFailed.value) {
-      _onNetworkImportFailedController
-          .add(MeshNetworkEventError.fromJson(_data));
-    }
-  }
+  Stream<Map<String, Object>> _filterEventChannel(
+          final MeshNetworkApiEvent eventType) =>
+      _eventChannelStream
+          .cast<Map>()
+          .map((event) => event.cast<String, Object>())
+          .where((event) => event['eventName'] == eventType.value);
 
-  void _onMeshNetworkLoaded(final MeshNetworkEventData data) {
-    final meshNetwork = MeshNetwork(data.id);
-    _lastMeshNetwork = meshNetwork;
-    _onNetworkLoadedStreamController.add(meshNetwork);
-  }
+  Stream<MeshNetwork> _onMeshNetworkEventSucceed(
+          final MeshNetworkApiEvent eventType) =>
+      _filterEventChannel(eventType)
+          .map((event) => MeshNetworkEventData.fromJson(event))
+          .map((event) {
+        if (eventType == MeshNetworkApiEvent.updated) {
+          return _lastMeshNetwork;
+        }
+        return MeshNetwork(event.id);
+      }).doOnData((event) => _lastMeshNetwork = event);
 
-  void _onMeshNetworkImported(final MeshNetworkEventData data) {
-    final meshNetwork = MeshNetwork(data.id);
-    _lastMeshNetwork = meshNetwork;
-    _onNetworkImportedController.add(meshNetwork);
-  }
-
-  void _onMeshUpdated(final MeshNetworkEventData data) {
-    if (data.id == _lastMeshNetwork.id) {
-      _onNetworkUpdatedController.add(_lastMeshNetwork);
-      return;
-    }
-    final meshNetwork = MeshNetwork(data.id);
-    _lastMeshNetwork = meshNetwork;
-    _onNetworkUpdatedController.add(_lastMeshNetwork);
-  }
+  Stream<MeshNetworkEventError> _onMeshNetworkEventFailed(
+          final MeshNetworkApiEvent eventType) =>
+      _filterEventChannel(eventType)
+          .map((event) => MeshNetworkEventError.fromJson(event));
 }
