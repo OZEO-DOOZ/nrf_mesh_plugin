@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
@@ -54,11 +57,24 @@ class _MyAppState extends State<MyApp> {
     } else {
       return [
         RaisedButton(
+          child: Text('import MeshNetwork Json'),
+          onPressed: () async {
+            final filePath = await FilePicker.getFilePath(type: FileType.any);
+            if (filePath == null) return;
+            final file = await File(filePath);
+            if (file == null) return;
+            final json = await file.readAsString();
+            if (json == null) return;
+            var meshNetwork = await _meshManagerApi.importMeshNetworkJson(json);
+            setState(() {
+              _meshNetwork = meshNetwork;
+            });
+          },
+        ),
+        RaisedButton(
           child: Text('Load MeshNetwork'),
           onPressed: () async {
-            print('waht');
             var meshNetwork = await _meshManagerApi.loadMeshNetwork();
-            print('the fuxk)');
             setState(() {
               _meshNetwork = meshNetwork;
             });
