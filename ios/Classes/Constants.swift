@@ -13,6 +13,10 @@ func print(_ items: Any..., separator: String = " ", terminator: String = "\n") 
     #endif
 }
 
+struct DoozStorage{
+    static let fileName = "DoozMeshNetwork.json"
+}
+
 struct FlutterChannels{
     private static let prodNamespace = "fr.dooz.nordic_nrf_mesh"
     

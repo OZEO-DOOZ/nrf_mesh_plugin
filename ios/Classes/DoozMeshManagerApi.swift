@@ -8,6 +8,21 @@
 import Foundation
 import nRFMeshProvision
 
+enum DoozMeshManagerApiError: Error{
+    case meshManagerApiNotInitialized
+    case doozStorageNotFound
+    
+    
+    public var errorDescription: String? {
+        switch self {
+        case .meshManagerApiNotInitialized:
+            return "MeshManagerApi has not been initialized"
+        case .doozStorageNotFound:
+            return "DoozStorage file not found"
+        }
+    }
+}
+
 enum DoozManagerApiChannel: String{
     case loadMeshNetwork
     case importMeshNetworkJson
@@ -18,13 +33,13 @@ enum DoozManagerApiChannel: String{
 class DoozMeshManagerApi: NSObject{
     
     //MARK: Public properties
-    let meshNetworkManager = MeshNetworkManager()
+    var meshNetworkManager: MeshNetworkManager?
     
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
-    
     private var messenger: FlutterBinaryMessenger?
+    private var doozStorage: LocalStorage?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -41,24 +56,35 @@ class DoozMeshManagerApi: NSObject{
 private extension DoozMeshManagerApi{
     
     func _initMeshNetworkManager(){
-        meshNetworkManager.delegate = self
         
-        meshNetworkManager.acknowledgmentTimerInterval = 0.150
-        meshNetworkManager.transmissionTimerInteral = 0.600
-        meshNetworkManager.incompleteMessageTimeout = 10.0
-        meshNetworkManager.retransmissionLimit = 2
-        meshNetworkManager.acknowledgmentMessageInterval = 4.2
+        self.doozStorage = LocalStorage(fileName: DoozStorage.fileName)
+        guard let _doozStorage = self.doozStorage else{
+            return
+        }
+        
+        meshNetworkManager = MeshNetworkManager(using: _doozStorage)
+        
+        guard let _meshNetworkManager = self.meshNetworkManager else{
+            return
+        }
+        
+        _meshNetworkManager.delegate = self
+        
+        _meshNetworkManager.acknowledgmentTimerInterval = 0.150
+        _meshNetworkManager.transmissionTimerInteral = 0.600
+        _meshNetworkManager.incompleteMessageTimeout = 10.0
+        _meshNetworkManager.retransmissionLimit = 2
+        _meshNetworkManager.acknowledgmentMessageInterval = 4.2
         
         // As the interval has been increased, the timeout can be adjusted.
         // The acknowledged message will be repeated after 4.2 seconds,
         // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
         // Then, leave 10 seconds for until the incomplete message times out.
-        meshNetworkManager.acknowledgmentMessageTimeout = 40.0
+        _meshNetworkManager.acknowledgmentMessageTimeout = 40.0
         
     }
     
     func _initChannels(messenger: FlutterBinaryMessenger){
-        
         
         FlutterEventChannel(
             name: FlutterChannels.MeshManagerApi.getEventChannelName(),
@@ -72,7 +98,7 @@ private extension DoozMeshManagerApi{
         )
             .setMethodCallHandler({ (call, result) in
                 self._handleMethodCall(call, result: result)
-        })
+            })
         
     }
     
@@ -97,7 +123,13 @@ private extension DoozMeshManagerApi{
             break
         case .deleteMeshNetworkFromDb:
             if let _args = call.arguments as? [String:Any], let _id = _args["id"] as? String{
-                _deleteMeshNetworkFromDb(_id)
+                
+                do{
+                    try _deleteMeshNetworkFromDb(_id)
+                }catch{
+                    #warning("TODO: Manage errors on delete")
+                }
+                
             }
             break
         case .exportMeshNetwork:
@@ -110,24 +142,22 @@ private extension DoozMeshManagerApi{
     }
     
     func _loadMeshNetwork(){
+        guard let _meshNetworkManager = self.meshNetworkManager else{
+            return
+        }
         
         do{
-            if try meshNetworkManager.load(){
+            if try _meshNetworkManager.load(){
                 // Mesh Network loaded from database
                 print("✅ Mesh Network loaded from database")
             }else{
                 // No mesh network in database, we have to create one
-                print("✅ No Mesh Network in database, loading...")
-                let meshUUID = UUID().uuidString
-                let provisioner = Provisioner(name: UIDevice.current.name,
-                                              allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
-                                              allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
-                                              allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
+                print("✅ No Mesh Network in database, creating a new one...")
                 
-                _ = meshNetworkManager.createNewMeshNetwork(withName: meshUUID, by: provisioner)
-                _ = meshNetworkManager.save()
+                let meshNetwork = try _generateMeshNetwork()
                 
-                print("✅ Mesh Network created with name : \(meshUUID)")
+                print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
+                
             }
             
         }catch{
@@ -136,14 +166,16 @@ private extension DoozMeshManagerApi{
         
     }
     
+    
     func _importMeshNetworkJson(_ json: String){
-        guard let _messenger = self.messenger else{
+        
+        guard let _messenger = self.messenger, let _meshNetworkManager = self.meshNetworkManager else{
             return
         }
         
         do{
             if let data = json.data(using: .utf8){
-                let _network = try meshNetworkManager.import(from: data)
+                let _network = try _meshNetworkManager.import(from: data)
                 
                 print("✅ Json imported")
                 
@@ -156,12 +188,12 @@ private extension DoozMeshManagerApi{
                 if let _eventSink = self.eventSink{
                     // Inform Flutter that a network was imported
                     _eventSink(
-                    [
-                        EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                        EventSinkKeys.id : _network.id
+                        [
+                            EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                            EventSinkKeys.id : _network.id
                     ])
                 }
-                 
+                
             }
             
         }catch{
@@ -169,24 +201,30 @@ private extension DoozMeshManagerApi{
         }
     }
     
-    func _deleteMeshNetworkFromDb(_ id: String){
-        #warning("Not fully implemented")
-        if meshNetworkManager.meshNetwork?.id == id{
-            let network = doozMeshNetwork
-            
-            // See https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues/279
-            // Either we implement the delete and reset methods in our module, or we make a PR on Nordic SDK
+    func _deleteMeshNetworkFromDb(_ id: String) throws{
+        
+        // We have to implement the reset / delete logic on plugin side.
+        // See https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues/279
+        
+        guard let _doozStorage = self.doozStorage else{
+            throw DoozMeshManagerApiError.doozStorageNotFound
         }
         
-        //        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
-        //            val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
-        //            mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
-        //        }
+        do{
+            try _doozStorage.delete()
+        }catch{
+            throw error
+        }
+        
     }
     
     func _exportMeshNetwork() -> String?{
         
-        let data = meshNetworkManager.export()
+        guard let _meshNetworkManager = self.meshNetworkManager else{
+            return nil
+        }
+        
+        let data = _meshNetworkManager.export()
         let str = String(decoding: data, as: UTF8.self)
         
         if str != ""{
@@ -194,6 +232,39 @@ private extension DoozMeshManagerApi{
         }
         
         return nil
+        
+    }
+    
+    func _generateMeshNetwork() throws -> MeshNetwork{
+        
+        guard let _meshNetworkManager = self.meshNetworkManager else{
+            throw DoozMeshManagerApiError.meshManagerApiNotInitialized
+        }
+        
+        let meshUUID = UUID().uuidString
+        let provisioner = Provisioner(name: UIDevice.current.name,
+                                      allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
+                                      allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
+                                      allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
+        
+        let meshNetwork = _meshNetworkManager.createNewMeshNetwork(withName: meshUUID, by: provisioner)
+        _ = _meshNetworkManager.save()
+        
+        return meshNetwork
+    }
+    
+    func _resetMeshNetwork(){
+        // Delete the existing network in local database and recreate a new / empty Mesh Network
+        //        if let _storage =
+        //        delete()
+        do{
+            let meshNetwork = try _generateMeshNetwork()
+            
+            print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
+            
+        }catch{
+            print("❌ Error creating Mesh Network : \(error.localizedDescription)")
+        }
         
     }
     
@@ -221,3 +292,26 @@ extension DoozMeshManagerApi: FlutterStreamHandler{
     }
     
 }
+
+enum DoozLocalStorageError: Error{
+    case storageFileDoesNotExists
+    case unknown
+}
+
+extension LocalStorage{
+    
+    // Use this to delete the local database
+    func delete() throws {
+        
+        if let _url = self.getStorageFile(){
+            do{
+                try FileManager.default.removeItem(at: _url)
+            }catch{
+                throw error
+            }
+        }else{
+            throw DoozLocalStorageError.storageFileDoesNotExists
+        }
+    }
+}
+
