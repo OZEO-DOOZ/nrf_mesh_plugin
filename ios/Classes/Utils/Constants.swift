@@ -70,4 +70,5 @@ enum MeshNetworkApiEvent: String{
 struct EventSinkKeys{
     static let eventName = "eventName"
     static let id = "id"
+    static let error = "error"
 }

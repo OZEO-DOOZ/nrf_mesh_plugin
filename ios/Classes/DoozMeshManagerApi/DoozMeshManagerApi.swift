@@ -12,6 +12,7 @@ class DoozMeshManagerApi: NSObject{
     
     //MARK: Public properties
     var meshNetworkManager: MeshNetworkManager?
+    var delegate: DoozMeshManagerApiDelegate?
     
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
@@ -23,6 +24,7 @@ class DoozMeshManagerApi: NSObject{
         super.init()
         
         self.messenger = messenger
+        self.delegate = self
         
         _initMeshNetworkManager()
         _initChannels(messenger: messenger)
@@ -129,9 +131,9 @@ private extension DoozMeshManagerApi{
         }
         
         do{
+            
             if try _meshNetworkManager.load(){
                 // Mesh Network loaded from database
-                print("✅ Mesh Network loaded from database")
             }else{
                 // No mesh network in database, we have to create one
                 print("✅ No Mesh Network in database, creating a new one...")
@@ -142,8 +144,10 @@ private extension DoozMeshManagerApi{
                 
             }
             
+            delegate?.onNetworkLoaded(_meshNetworkManager.meshNetwork)
+            
         }catch{
-            print("❌ Error loading Mesh Network : \(error.localizedDescription)")
+            delegate?.onNetworkLoadFailed(error)
         }
         
     }
@@ -175,11 +179,13 @@ private extension DoozMeshManagerApi{
                             EventSinkKeys.id : _network.id
                     ])
                 }
-                
+                #warning("save in db after import successful")
+                //    delegate.onNetworkImported()
             }
             
         }catch{
             print("❌ Error importing json : \(error.localizedDescription)")
+            // delegate.onNetworkImportFailed()
         }
     }
     
@@ -277,5 +283,115 @@ extension DoozMeshManagerApi: FlutterStreamHandler{
         self.eventSink = nil
         return nil
     }
+    
+}
+
+extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
+    
+    func onNetworkLoaded(_ network: MeshNetwork?) {
+        print("✅ Mesh Network loaded from database")
+        
+        guard
+            let _network = network,
+            let _messenger = self.messenger,
+            let _eventSink = self.eventSink
+            else{
+                return
+        }
+        
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+        } else {
+            doozMeshNetwork?.meshNetwork = _network
+        }
+        
+        _eventSink(
+            [
+                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
+                EventSinkKeys.id : _network.id
+            ]
+        )
+        
+    }
+    
+    func onNetworkLoadFailed(_ error: Error) {
+        print("❌ Error loading Mesh Network : \(error.localizedDescription)")
+        
+        guard let _eventSink = self.eventSink else{
+            return
+        }
+        
+        _eventSink(
+            [
+                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
+                EventSinkKeys.error : error
+            ]
+        )
+        
+    }
+    
+    func onNetworkUpdated(_ network: MeshNetwork?) {
+        
+        print("✅ Mesh Network updated")
+        
+        guard
+            let _network = network,
+            let _eventSink = self.eventSink
+            else{
+                return
+        }
+        
+        doozMeshNetwork?.meshNetwork = _network
+        
+        _eventSink(
+            [
+                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
+                EventSinkKeys.id : _network.id
+            ]
+        )
+    }
+    
+    func onNetworkImported(_ network: MeshNetwork?) {
+        
+        print("✅ Mesh Network imported")
+        
+        guard
+            let _network = network,
+            let _messenger = self.messenger,
+            let _eventSink = self.eventSink
+            else{
+                return
+        }
+        
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+        } else {
+            doozMeshNetwork?.meshNetwork = _network
+        }
+        
+        _eventSink(
+            [
+                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                EventSinkKeys.id : _network.id
+            ]
+        )
+        
+    }
+    
+    func onNetworkImportFailed(_ error: Error) {
+        print("❌ Error importing Mesh Network : \(error.localizedDescription)")
+        
+        guard let _eventSink = self.eventSink else{
+            return
+        }
+        
+        _eventSink(
+            [
+                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
+                EventSinkKeys.error : error
+            ]
+        )
+    }
+    
     
 }
