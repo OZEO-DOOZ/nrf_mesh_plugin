@@ -19,7 +19,8 @@ class DoozMeshNetwork: NSObject{
     var meshNetwork: MeshNetwork?
     
     //MARK: Private properties
-    
+    private var eventSink: FlutterEventSink?
+
     init(messenger: FlutterBinaryMessenger, network: MeshNetwork) {
         super.init()
         self.meshNetwork = network
@@ -33,18 +34,27 @@ private extension DoozMeshNetwork {
     
     func _initChannels(messenger: FlutterBinaryMessenger, network: MeshNetwork){
         
-        FlutterEventChannel(name: "\(namespace)/mesh_network/\(network.id)/events", binaryMessenger: messenger)
-            .setStreamHandler(self)
+        FlutterEventChannel(
+            name: FlutterChannels.DoozMeshNetwork.getEventChannelName(networkId: network.id),
+            binaryMessenger: messenger
+        )
+        .setStreamHandler(self)
         
-        FlutterMethodChannel(name: "\(namespace)/mesh_network/\(network.id)/methods", binaryMessenger: messenger).setMethodCallHandler({ (call, result) in
-            self._handleMethodCall(call, result: result)
-        })
+        FlutterMethodChannel(
+            name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: network.id),
+            binaryMessenger: messenger
+        )
+            .setMethodCallHandler { (call, result) in
+                self._handleMethodCall(call, result: result)
+        }
         
     }
     
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
+        
         guard let _method = DoozMeshNetworkChannel(rawValue: call.method) else{
             print("❌ Plugin method - \(call.method) - isn't implemented")
             return
@@ -73,10 +83,12 @@ private extension DoozMeshNetwork {
 
 extension DoozMeshNetwork: FlutterStreamHandler{
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.eventSink = events
         return nil
     }
     
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.eventSink = nil
         return nil
     }
     

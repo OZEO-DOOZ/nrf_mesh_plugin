@@ -22,9 +22,15 @@ class DoozMeshManagerApi: NSObject{
     
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
+    private var eventSink: FlutterEventSink?
+    
+    private var messenger: FlutterBinaryMessenger?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
+        
+        self.messenger = messenger
+        
         _initMeshNetworkManager()
         _initChannels(messenger: messenger)
     }
@@ -48,15 +54,24 @@ private extension DoozMeshManagerApi{
         // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
         // Then, leave 10 seconds for until the incomplete message times out.
         meshNetworkManager.acknowledgmentMessageTimeout = 40.0
-
+        
     }
     
     func _initChannels(messenger: FlutterBinaryMessenger){
-        FlutterEventChannel(name: "\(namespace)/mesh_manager_api/events", binaryMessenger: messenger)
+        
+        
+        FlutterEventChannel(
+            name: FlutterChannels.MeshManagerApi.getEventChannelName(),
+            binaryMessenger: messenger
+        )
             .setStreamHandler(self)
         
-        FlutterMethodChannel(name: "\(namespace)/mesh_manager_api/methods", binaryMessenger: messenger).setMethodCallHandler({ (call, result) in
-            self._handleMethodCall(call, result: result)
+        FlutterMethodChannel(
+            name: FlutterChannels.MeshManagerApi.getMethodChannelName(),
+            binaryMessenger: messenger
+        )
+            .setMethodCallHandler({ (call, result) in
+                self._handleMethodCall(call, result: result)
         })
         
     }
@@ -78,6 +93,7 @@ private extension DoozMeshManagerApi{
             if let _args = call.arguments as? [String:Any], let _json = _args["json"] as? String{
                 _importMeshNetworkJson(_json)
             }
+            result(nil)
             break
         case .deleteMeshNetworkFromDb:
             if let _args = call.arguments as? [String:Any], let _id = _args["id"] as? String{
@@ -90,37 +106,66 @@ private extension DoozMeshManagerApi{
             }
             break
         }
-
+        
     }
     
     func _loadMeshNetwork(){
         
         do{
-            _ = try meshNetworkManager.load()
+            if try meshNetworkManager.load(){
+                // Mesh Network loaded from database
+                print("✅ Mesh Network loaded from database")
+            }else{
+                // No mesh network in database, we have to create one
+                print("✅ No Mesh Network in database, loading...")
+                let meshUUID = UUID().uuidString
+                let provisioner = Provisioner(name: UIDevice.current.name,
+                                              allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
+                                              allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
+                                              allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
+                
+                _ = meshNetworkManager.createNewMeshNetwork(withName: meshUUID, by: provisioner)
+                _ = meshNetworkManager.save()
+                
+                print("✅ Mesh Network created with name : \(meshUUID)")
+            }
             
         }catch{
-
-            #warning("should we create a meshNetwork on load if meshNetworkManager.load() fails ?")
-            //            let provisioner = Provisioner(name: UIDevice.current.name,
-            //                                          allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
-            //                                          allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
-            //                                          allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
-            //            _ = meshNetworkManager.createNewMeshNetwork(withName: "DOOZ Mesh Network", by: provisioner)
-            //            _ = meshNetworkManager.save()
-            
-            print(error)
+            print("❌ Error loading Mesh Network : \(error.localizedDescription)")
         }
         
     }
     
     func _importMeshNetworkJson(_ json: String){
+        guard let _messenger = self.messenger else{
+            return
+        }
+        
         do{
             if let data = json.data(using: .utf8){
-                _ = try meshNetworkManager.import(from: data)
+                let _network = try meshNetworkManager.import(from: data)
+                
+                print("✅ Json imported")
+                
+                if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
+                    doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+                } else {
+                    doozMeshNetwork?.meshNetwork = _network
+                }
+                
+                if let _eventSink = self.eventSink{
+                    // Inform Flutter that a network was imported
+                    _eventSink(
+                    [
+                        EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                        EventSinkKeys.id : _network.id
+                    ])
+                }
+                 
             }
-        }catch{
             
-            print(error)
+        }catch{
+            print("❌ Error importing json : \(error.localizedDescription)")
         }
     }
     
@@ -128,21 +173,22 @@ private extension DoozMeshManagerApi{
         #warning("Not fully implemented")
         if meshNetworkManager.meshNetwork?.id == id{
             let network = doozMeshNetwork
-            #warning("no delete method on ios ?")
+            
             // See https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues/279
+            // Either we implement the delete and reset methods in our module, or we make a PR on Nordic SDK
         }
         
-//        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
-//            val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
-//            mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
-//        }
+        //        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
+        //            val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
+        //            mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
+        //        }
     }
     
     func _exportMeshNetwork() -> String?{
         
         let data = meshNetworkManager.export()
         let str = String(decoding: data, as: UTF8.self)
-
+        
         if str != ""{
             return str
         }
@@ -165,10 +211,12 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
 
 extension DoozMeshManagerApi: FlutterStreamHandler{
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.eventSink = events
         return nil
     }
     
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.eventSink = nil
         return nil
     }
     

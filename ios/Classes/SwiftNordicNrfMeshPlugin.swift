@@ -15,7 +15,12 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
     //MARK: Private properties
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let pluginMethodChannel = FlutterMethodChannel(name: namespace + "/methods", binaryMessenger: registrar.messenger())
+        
+        let pluginMethodChannel = FlutterMethodChannel(
+            name: FlutterChannels.Plugin.getMethodChannelName(),
+            binaryMessenger: registrar.messenger()
+        )
+        
         let instance = SwiftNordicNrfMeshPlugin()
         instance.messenger = registrar.messenger()
         registrar.addMethodCallDelegate(instance, channel: pluginMethodChannel)
@@ -30,15 +35,17 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
 
         switch _method {
         case .getPlatformVersion:
-            result("iOS " + UIDevice.current.systemVersion)
+            let systemVersion = "iOS " + UIDevice.current.systemVersion
+            result(systemVersion)
+            print("✅ Get Platform version returned \(systemVersion)")
             break
         case .createMeshManagerApi:
             guard let _messenger = self.messenger else{
-                print("no messenger")
                 return
             }
             
             self.meshManagerApi = DoozMeshManagerApi(messenger: _messenger)
+            print("✅ Mesh Manager Api object created")
             result(nil)
             
             break
