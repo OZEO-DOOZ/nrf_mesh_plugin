@@ -8,28 +8,6 @@
 import Foundation
 import nRFMeshProvision
 
-enum DoozMeshManagerApiError: Error{
-    case meshManagerApiNotInitialized
-    case doozStorageNotFound
-    
-    
-    public var errorDescription: String? {
-        switch self {
-        case .meshManagerApiNotInitialized:
-            return "MeshManagerApi has not been initialized"
-        case .doozStorageNotFound:
-            return "DoozStorage file not found"
-        }
-    }
-}
-
-enum DoozManagerApiChannel: String{
-    case loadMeshNetwork
-    case importMeshNetworkJson
-    case deleteMeshNetworkFromDb
-    case exportMeshNetwork
-}
-
 class DoozMeshManagerApi: NSObject{
     
     //MARK: Public properties
@@ -104,7 +82,7 @@ private extension DoozMeshManagerApi{
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         print("🥂 [DoozMeshManagerApi] Received flutter call : \(call.method)")
-        guard let _method = DoozManagerApiChannel(rawValue: call.method) else{
+        guard let _method = DoozMeshManagerApiChannel(rawValue: call.method) else{
             print("❌ Plugin method - \(call.method) - isn't implemented")
             return
         }
@@ -140,6 +118,10 @@ private extension DoozMeshManagerApi{
         }
         
     }
+}
+
+private extension DoozMeshManagerApi{
+    // Events native implementations
     
     func _loadMeshNetwork(){
         guard let _meshNetworkManager = self.meshNetworkManager else{
@@ -254,10 +236,15 @@ private extension DoozMeshManagerApi{
     }
     
     func _resetMeshNetwork(){
+        guard let _meshNetwork = self.meshNetworkManager?.meshNetwork else{
+            return
+        }
+        
         // Delete the existing network in local database and recreate a new / empty Mesh Network
         //        if let _storage =
         //        delete()
         do{
+            try _deleteMeshNetworkFromDb(_meshNetwork.id)
             let meshNetwork = try _generateMeshNetwork()
             
             print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
@@ -292,26 +279,3 @@ extension DoozMeshManagerApi: FlutterStreamHandler{
     }
     
 }
-
-enum DoozLocalStorageError: Error{
-    case storageFileDoesNotExists
-    case unknown
-}
-
-extension LocalStorage{
-    
-    // Use this to delete the local database
-    func delete() throws {
-        
-        if let _url = self.getStorageFile(){
-            do{
-                try FileManager.default.removeItem(at: _url)
-            }catch{
-                throw error
-            }
-        }else{
-            throw DoozLocalStorageError.storageFileDoesNotExists
-        }
-    }
-}
-

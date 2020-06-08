@@ -8,11 +8,6 @@
 import Foundation
 import nRFMeshProvision
 
-enum DoozMeshNetworkChannel: String{
-    case getId
-    case getMeshNetworkName
-}
-
 class DoozMeshNetwork: NSObject{
     
     //MARK: Public properties
@@ -70,6 +65,12 @@ private extension DoozMeshNetwork {
         }
 
     }
+    
+}
+
+private extension DoozMeshNetwork{
+    // Events native implemenations
+    
     func _getMeshNetworkName() -> String?{
         return meshNetwork?.meshName
     }
@@ -77,9 +78,8 @@ private extension DoozMeshNetwork {
     func _getId() -> String?{
         return meshNetwork?.id
     }
-    
-}
 
+}
 
 extension DoozMeshNetwork: FlutterStreamHandler{
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
