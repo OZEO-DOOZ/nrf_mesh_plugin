@@ -40,7 +40,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         Log.d(this.javaClass.name, "onMeshPduCreated")
         eventSink?.success(mapOf(
                 "eventName" to "onMeshPduCreated",
-                "error" to pdu
+                "pdu" to pdu
         ))
     }
 
@@ -89,7 +89,8 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         Log.d(this.javaClass.name, "sendProvisioningPdu")
         eventSink?.success(mapOf(
                 "eventName" to "sendProvisioningPdu",
-                "error" to pdu
+                "pdu" to pdu,
+                "meshNodeUuid" to meshNode?.deviceUuid?.toString()
         ))
     }
 }
