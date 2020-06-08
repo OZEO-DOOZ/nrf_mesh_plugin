@@ -1,11 +1,6 @@
 import Flutter
 import UIKit
 
-enum PluginMethodChannel: String{
-    case getPlatformVersion
-    case createMeshManagerApi
-}
-
 public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
     
     //MARK: Public properties
