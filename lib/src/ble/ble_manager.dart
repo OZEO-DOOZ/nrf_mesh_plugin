@@ -31,6 +31,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   E get callbacks => _callbacks;
 
+  BluetoothDevice get device => _device;
+
   Future<void> connect(final BluetoothDevice device) async {
     if (_callbacks == null) {
       throw Exception('You have to set callbacks using callbacks(E callbacks) before connecting');

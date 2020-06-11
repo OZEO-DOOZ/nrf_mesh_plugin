@@ -122,18 +122,21 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     }
   }
 
-  void sendPdu(final List<int> pdu) {
+  Future<void> sendPdu(final List<int> pdu) async {
+    print('sendPdu: $pdu');
+    print('pdu.length ${pdu.length}');
     final chunks = (pdu.length + (mtuSize - 1)) ~/ mtuSize;
     var srcOffset = 0;
     if (chunks > 1) {
       for (var i = 0; i < chunks; i++) {
         final length = math.min(pdu.length - srcOffset, mtuSize);
-        final segmentedBuffer = [...pdu.sublist(srcOffset, length)];
+        print('$srcOffset $length');
+        final segmentedBuffer = [...pdu.sublist(srcOffset, srcOffset + length)];
         srcOffset += length;
-        send(segmentedBuffer);
+        await send(segmentedBuffer);
       }
     } else {
-      send(pdu);
+      return send(pdu);
     }
   }
 
@@ -143,14 +146,16 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         return;
       }
       if (_meshProxyDataInCharacteristic.properties.writeWithoutResponse) {
-        await _meshProxyDataInCharacteristic.write(data);
+        await _meshProxyDataInCharacteristic.write(data, withoutResponse: true);
+        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
       }
     } else {
       if (_meshProvisioningDataInCharacteristic == null) {
         return;
       }
       if (_meshProvisioningDataInCharacteristic.properties.writeWithoutResponse) {
-        await _meshProvisioningDataInCharacteristic.write(data);
+        await _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true);
+        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
       }
     }
   }
