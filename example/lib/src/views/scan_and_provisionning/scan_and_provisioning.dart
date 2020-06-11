@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -54,17 +55,20 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     });
     _meshManagerApi.onProvisioningStateChanged.listen((event) {
       print('onProvisioningStateChanged ${event.meshNodeUuid} ${event.data} ${event.state}');
+      if (event.state == 'PROVISIONING_CAPABILITIES') {
+        _meshManagerApi.provisioning(event.meshNodeUuid);
+      }
     });
     _meshManagerApi.onProvisioningFailed.listen((event) {
       print('onProvisioningFailed ${event.meshNodeUuid} ${event.data} ${event.state}');
     });
-    _meshManagerApi.sendProvisioningPdu.listen((event) {
+    _meshManagerApi.sendProvisioningPdu.listen((event) async {
       print('sendProvisioningPdu $event');
-      bleMeshManager.sendPdu(event.pdu);
+      await bleMeshManager.sendPdu(event.pdu);
     });
-    _meshManagerApi.onMeshPduCreated.listen((event) {
+    _meshManagerApi.onMeshPduCreated.listen((event) async {
       print('onMeshPduCreated $event');
-      bleMeshManager.sendPdu(event);
+      await bleMeshManager.sendPdu(event);
     });
     _meshNetwork = await _meshManagerApi.loadMeshNetwork();
     setState(() {
@@ -76,12 +80,11 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     _serviceData.clear();
     _scanSubscription = flutterBlue.scan(
       withServices: [
-        meshProxyUuid,
         meshProvisioningUuid,
       ],
     ).listen((scanResult) async {
-      _serviceData[scanResult.device.id.id] = Guid(await _meshManagerApi
-          .getDeviceUuid(scanResult.advertisementData.serviceData[meshProvisioningUuid.toString()]));
+      _serviceData[scanResult.device.id.id] = Guid(
+          _meshManagerApi.getDeviceUuid(scanResult.advertisementData.serviceData[meshProvisioningUuid.toString()]));
       setState(() {
         _devices.add(scanResult.device);
       });
@@ -105,12 +108,18 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   }
 
   Future<void> provisionDevice(BluetoothDevice device) async {
+    if (Platform.isIOS) {
+      await _meshManagerApi.provisioning(_serviceData[device.id.id].toString());
+      return;
+    }
+
     if (isScanning) {
       await _stopScan();
     }
     if (_connectedDevice != null) {
       await bleMeshManager.disconnect();
     }
+
     await bleMeshManager.callbacks?.dispose();
     bleMeshManager.callbacks = DoozBleMeshManagerCallbacks(_meshManagerApi);
     bleMeshManager.callbacks.onDeviceConnecting.listen(print);
@@ -127,19 +136,17 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
     bleMeshManager.callbacks.onDataReceived.listen((event) async {
       print('onDataReceived ${event.device.id.id} ${event.mtu} ${event.pdu}');
-      final meshManagerApi = await widget.nordicNrfMesh.meshManagerApi;
-      await meshManagerApi.handleNotifications(event.mtu, event.pdu);
+      await _meshManagerApi.handleNotifications(event.mtu, event.pdu);
     });
     bleMeshManager.callbacks.onDataSent.listen((event) async {
       print('onDataSent ${event.device.id.id} ${event.mtu} ${event.pdu}');
-      final meshManagerApi = await widget.nordicNrfMesh.meshManagerApi;
-      await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
+      await _meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
     });
 
-    bleMeshManager.callbacks.onDeviceDisconnected.listen(print);
     bleMeshManager.callbacks.onDeviceDisconnecting.listen(print);
+    bleMeshManager.callbacks.onDeviceDisconnected.listen(print);
 
-    await flutterBlue.state.listen(print);
+    flutterBlue.state.listen((event) => print('bluetooth state changed to $event'));
 
     print('connect');
     await bleMeshManager.connect(device);

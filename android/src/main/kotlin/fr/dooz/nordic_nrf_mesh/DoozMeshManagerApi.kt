@@ -18,8 +18,9 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
-    val doozMeshManagerCallbacks: DoozMeshManagerCallbacks;
-    val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks;
+    val doozMeshManagerCallbacks: DoozMeshManagerCallbacks
+    val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
+    var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
 
     init {
         Log.d(this.javaClass.name, "init DoozMeshManagerApi")
@@ -28,9 +29,11 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
         doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(eventSink)
+        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink)
 
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
         mMeshManagerApi.setProvisioningStatusCallbacks(doozMeshProvisioningStatusCallbacks)
+        mMeshManagerApi.setMeshStatusCallbacks(doozMeshStatusCallbacks)
     }
 
     private fun loadMeshNetwork()  {
@@ -105,8 +108,14 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "handleWriteCallbacks" -> {
-                val pdu = call.argument<ByteArray>("pdu")!!;
-                handleWriteCallbacks(call.argument<Int>("mtu")!!, pdu);
+                Log.d("DoozMeshManagerApi", "handleWriteCallbacks")
+                val pdu = call.argument<ArrayList<Int>>("pdu")!!
+                handleWriteCallbacks(call.argument<Int>("mtu")!!, _arrayListToByteArray(pdu))
+                result.success(null)
+            }
+            "provisioning" -> {
+                val node = UnprovisionedMeshNode(UUID.fromString(call.argument("uuid")!!))
+                mMeshManagerApi.startProvisioning(node)
                 result.success(null)
             }
             "setMtuSize" -> {
@@ -117,5 +126,13 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.notImplemented()
             }
         }
+    }
+
+    fun _arrayListToByteArray(pdu: ArrayList<Int>): ByteArray {
+        val bytes = ByteArray(pdu.size)
+        for ((index, value) in pdu.withIndex()) {
+            bytes[index] = value.toByte()
+        }
+        return bytes
     }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
@@ -154,8 +155,24 @@ class MeshManagerApi {
   Future<void> identifyNode(String serviceUuid) =>
       _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
 
-  Future<String> getDeviceUuid(List<int> serviceData) =>
-      _methodChannel.invokeMethod('getDeviceUuid', {'serviceData': serviceData});
+  String getDeviceUuid(List<int> serviceData) {
+    var msb = 0;
+    var lsb = 0;
+    for (var i = 0; i < 8; i++) {
+      msb = (msb << 8) | (serviceData[i] & 0xff);
+    }
+    for (var i = 8; i < 16; i++) {
+      lsb = (lsb << 8) | (serviceData[i] & 0xff);
+    }
+    return '${_digits(msb >> 32, 8)}-${_digits(msb >> 16, 4)}-${_digits(msb, 4)}-${_digits(lsb >> 48, 4)}-${_digits(lsb, 12)}';
+  }
+
+  Future<void> provisioning(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
+
+  String _digits(int val, int digits) {
+    var hi = 1 << (digits * 4);
+    return (hi | (val & (hi - 1))).toRadixString(16).substring(1);
+  }
 
   Stream<Map<String, Object>> _filterEventChannel(final MeshManagerApiEvent eventType) =>
       _eventChannelStream.where((event) => event['eventName'] == eventType.value);
