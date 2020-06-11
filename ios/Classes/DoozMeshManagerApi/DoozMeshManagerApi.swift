@@ -13,7 +13,8 @@ class DoozMeshManagerApi: NSObject{
     //MARK: Public properties
     var meshNetworkManager: MeshNetworkManager?
     var delegate: DoozMeshManagerApiDelegate?
-    
+    var mtuSize: Int = -1
+
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
@@ -117,10 +118,68 @@ private extension DoozMeshManagerApi{
                 result(json)
             }
             break
+        case .identifyNode:
+            if
+                let _args = call.arguments as? [String:Any],
+                let _strServiceUUID = _args["serviceUuid"] as? String,
+                let _serviceUUID = UUID(uuidString: _strServiceUUID)
+            {
+                #warning("to implement")
+//                let bearer = ProvisioningBearer()
+//                meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: <#T##ProvisioningBearer#>)
+//                let provisioningManager = ProvisioningManager(for: <#UnprovisionedDevice#>, over: <#ProvisioningBearer#>, in: <#MeshNetwork#>)
+//                provisioningManager
+//
+//                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
+                result(nil)
+            }
+            break
+            
+            
+            
+        case .getDeviceUuid:
+            
+            if let _args = call.arguments as? [String:Any], let _serviceData = _args["serviceData"] as? String{
+                #warning("to implement")
+                //result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());
+                
+            }
+            break
+            
+        case .handleNotifications:
+            print(call.arguments)
+            if let _args = call.arguments as? [String:Any], let _pdu = _args["pdu"] as? String{
+                #warning("to implement")
+                
+                //handleNotifications(call.argument<Int>("mtu")!!, pdu)
+                result(nil)
+            }
+            break
+            
+        case .handleWriteCallbacks:
+            
+            if let _args = call.arguments as? [String:Any], let _pdu = _args["pdu"] as? String{
+                #warning("to implement")
+                
+                //handleWriteCallbacks(call.argument<Int>("mtu")!!, pdu);
+                result(nil)
+            }
+            break
+            
+        case .setMtuSize:
+            
+            if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
+                #warning("to test")
+                delegate?.mtuSize = _mtuSize
+                result(nil)
+            }
+            break
         }
         
     }
+    
 }
+
 
 private extension DoozMeshManagerApi{
     // Events native implementations
@@ -287,6 +346,7 @@ extension DoozMeshManagerApi: FlutterStreamHandler{
 }
 
 extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
+    
     
     func onNetworkLoaded(_ network: MeshNetwork?) {
         print("✅ Mesh Network loaded from database")

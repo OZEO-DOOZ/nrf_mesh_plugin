@@ -10,5 +10,12 @@ enum DoozMeshManagerApiChannel: String{
     case importMeshNetworkJson
     case deleteMeshNetworkFromDb
     case exportMeshNetwork
+    
+    case identifyNode
+    case getDeviceUuid
+    case handleNotifications
+    case handleWriteCallbacks
+    case setMtuSize
+    
 }
 

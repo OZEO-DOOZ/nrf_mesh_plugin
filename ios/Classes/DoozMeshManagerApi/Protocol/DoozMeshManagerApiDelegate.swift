@@ -10,6 +10,8 @@ import nRFMeshProvision
 
 protocol DoozMeshManagerApiDelegate{
     
+    var mtuSize: Int { get set }
+
     func onNetworkLoaded(_ network: MeshNetwork?)
     func onNetworkLoadFailed(_ error: Error)
     
