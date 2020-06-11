@@ -17,6 +17,7 @@ dependencies:
   mobx: ^1.2.1
   flutter_mobx: ^1.1.0
   freezed_annotation: ^0.7.1
+  meta: ^1.1.8
   rxdart: ^0.24.1
   pedantic: ^1.9.0
 

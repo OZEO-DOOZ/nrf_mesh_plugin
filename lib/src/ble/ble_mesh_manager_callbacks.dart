@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 
@@ -18,7 +20,16 @@ class BleMeshManagerCallbacksDataSent extends _BleMeshManagerCallbacksEvent {
 }
 
 abstract class BleMeshManagerCallbacks extends BleManagerCallbacks {
-  Stream<BleMeshManagerCallbacksDataReceived> onDataReceived;
+  final onDataReceivedController = StreamController<BleMeshManagerCallbacksDataReceived>();
+  Stream<BleMeshManagerCallbacksDataReceived> get onDataReceived => onDataReceivedController.stream;
 
-  Stream<BleMeshManagerCallbacksDataReceived> onDataSent;
+  final onDataSentController = StreamController<BleMeshManagerCallbacksDataSent>();
+  Stream<BleMeshManagerCallbacksDataSent> get onDataSent => onDataSentController.stream;
+
+  @override
+  Future<void> dispose() => Future.wait([
+        super.dispose(),
+        onDataReceivedController.close(),
+        onDataSentController.close(),
+      ]);
 }
