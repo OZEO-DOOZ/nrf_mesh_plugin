@@ -17,5 +17,7 @@ enum DoozMeshManagerApiChannel: String{
     case handleWriteCallbacks
     case setMtuSize
     
+    case provisioning
+    
 }
 

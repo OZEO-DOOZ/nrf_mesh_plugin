@@ -34,7 +34,7 @@ class DoozMeshManagerApi: NSObject{
 }
 
 
-private extension DoozMeshManagerApi{
+private extension DoozMeshManagerApi {
     
     func _initMeshNetworkManager(){
         
@@ -131,6 +131,26 @@ private extension DoozMeshManagerApi{
 //                provisioningManager
 //
 //                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
+                result(nil)
+            }
+            break
+            
+        case .provisioning:
+            if
+                let _args = call.arguments as? [String:Any],
+                let _strServiceUUID = _args["uuid"] as? String,
+                let _serviceUUID = UUID(uuidString: _strServiceUUID)
+            {
+                #warning("to implement")
+                
+                do{
+                    let provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: DoozBearer())
+                    print(provisioningManager)
+                }catch{
+                    print(error)
+                }
+                
+                //mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
                 result(nil)
             }
             break
@@ -451,6 +471,30 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
                 EventSinkKeys.error : error
             ]
         )
+    }
+    
+    
+}
+
+class DoozBearer: ProvisioningBearer{
+    var delegate: BearerDelegate? = nil
+    
+    var dataDelegate: BearerDataDelegate? = nil
+    
+    var supportedPduTypes: PduTypes = []
+    
+    var isOpen: Bool = false
+    
+    func open() {
+        
+    }
+    
+    func close() {
+        
+    }
+    
+    func send(_ data: Data, ofType type: PduType) throws {
+        
     }
     
     

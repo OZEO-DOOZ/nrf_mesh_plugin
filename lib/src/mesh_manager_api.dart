@@ -156,6 +156,7 @@ class MeshManagerApi {
       _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
 
   String getDeviceUuid(List<int> serviceData) {
+    print(serviceData);
     var msb = 0;
     var lsb = 0;
     for (var i = 0; i < 8; i++) {
