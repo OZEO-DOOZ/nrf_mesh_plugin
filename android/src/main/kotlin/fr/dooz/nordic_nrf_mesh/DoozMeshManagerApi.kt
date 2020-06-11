@@ -11,6 +11,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.*
 import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
@@ -33,6 +35,14 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
 
     private fun loadMeshNetwork()  {
         mMeshManagerApi.loadMeshNetwork()
+    }
+
+    private fun handleNotifications(mtu: Int, pdu: ByteArray) {
+        mMeshManagerApi.handleNotifications(mtu, pdu)
+    }
+
+    private fun handleWriteCallbacks(mtu: Int, pdu: ByteArray) {
+        mMeshManagerApi.handleWriteCallbacks(mtu, pdu)
     }
 
     private fun importMeshNetworkJson(json: String) {
@@ -81,8 +91,27 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val json = exportMeshNetwork()
                 result.success(json)
             }
+            "identifyNode" -> {
+                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
+                result.success(null);
+            }
+            "getDeviceUuid" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!;
+                result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());
+            }
+            "handleNotifications" -> {
+                val pdu = call.argument<ByteArray>("pdu")!!;
+                handleNotifications(call.argument<Int>("mtu")!!, pdu)
+                result.success(null)
+            }
+            "handleWriteCallbacks" -> {
+                val pdu = call.argument<ByteArray>("pdu")!!;
+                handleWriteCallbacks(call.argument<Int>("mtu")!!, pdu);
+                result.success(null)
+            }
             "setMtuSize" -> {
                 doozMeshManagerCallbacks.mtuSize = call.argument<Int>("mtuSize")!!
+                result.success(null)
             }
             else -> {
                 result.notImplemented()

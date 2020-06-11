@@ -7,8 +7,10 @@ class MeshManagerApiEvent {
   int get hashCode => value.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      (other is String && other == value) || (other is MeshManagerApiEvent && other.value == value);
+  bool operator ==(Object other) => other is MeshManagerApiEvent && other.value == value;
+
+  @override
+  String toString() => value;
 
   static const loaded = MeshManagerApiEvent._('onNetworkLoaded');
   static const imported = MeshManagerApiEvent._('onNetworkImported');

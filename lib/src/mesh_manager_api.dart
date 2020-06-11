@@ -38,11 +38,12 @@ class MeshManagerApi {
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningFailedSubscription;
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningCompletedSubscription;
 
-  Stream _eventChannelStream;
+  Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
 
   MeshManagerApi() {
-    _eventChannelStream = _eventChannel.receiveBroadcastStream();
+    _eventChannelStream =
+        _eventChannel.receiveBroadcastStream().cast<Map>().map((event) => event.cast<String, dynamic>());
 
     _onNetworkLoadedSubscripiton =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded).listen(_onNetworkLoadedStreamController.add);
@@ -57,28 +58,28 @@ class MeshManagerApi {
         _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportFailedController.add);
 
     _onMeshPduCreatedSubscripiton = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.meshPduCreated)
+        .where((event) => event['eventName'] == MeshManagerApiEvent.meshPduCreated.value)
         .map((event) => event['pdu'] as List)
         .map((event) => event.cast<int>())
         .listen(_onMeshPduCreatedController.add);
 
     _sendProvisioningPduSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.sendProvisioningPdu)
+        .where((event) => event['eventName'] == MeshManagerApiEvent.sendProvisioningPdu.value)
         .map((event) => SendProvisioningPduData.fromJson(event))
         .listen(_sendProvisioningPduController.add);
 
     _onProvisioningStateChangedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningStateChanged)
+        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningStateChanged.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningStateChangedController.add);
 
     _onProvisioningStateChangedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningCompleted)
+        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningCompleted.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningCompletedController.add);
 
     _onProvisioningStateChangedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningFailed)
+        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningFailed.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningFailedController.add);
   }
@@ -144,10 +145,20 @@ class MeshManagerApi {
 
   Future<String> exportMeshNetwork() => _methodChannel.invokeMethod('exportMeshNetwork');
 
-  Stream<Map<String, Object>> _filterEventChannel(final MeshManagerApiEvent eventType) => _eventChannelStream
-      .cast<Map>()
-      .map((event) => event.cast<String, Object>())
-      .where((event) => event['eventName'] == eventType.value);
+  Future<void> handleNotifications(int mtu, List<int> pdu) =>
+      _methodChannel.invokeMethod('handleNotifications', {'mtu': mtu, 'pdu': pdu});
+
+  Future<void> handleWriteCallbacks(int mtu, List<int> pdu) =>
+      _methodChannel.invokeMethod('handleWriteCallbacks', {'mtu': mtu, 'pdu': pdu});
+
+  Future<void> identifyNode(String serviceUuid) =>
+      _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
+
+  Future<String> getDeviceUuid(List<int> serviceData) =>
+      _methodChannel.invokeMethod('getDeviceUuid', {'serviceData': serviceData});
+
+  Stream<Map<String, Object>> _filterEventChannel(final MeshManagerApiEvent eventType) =>
+      _eventChannelStream.where((event) => event['eventName'] == eventType.value);
 
   Stream<MeshNetwork> _onMeshNetworkEventSucceed(final MeshManagerApiEvent eventType) =>
       _filterEventChannel(eventType).map((event) => MeshNetworkEventData.fromJson(event)).map((event) {
