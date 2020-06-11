@@ -2,17 +2,16 @@ package fr.dooz.nordic_nrf_mesh
 
 import android.content.Context
 import android.util.Log
-import fr.dooz.nordic_nrf_mesh.ble.BleMeshManager
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import no.nordicsemi.android.mesh.*
+import no.nordicsemi.android.mesh.MeshManagerApi
+import no.nordicsemi.android.mesh.MeshNetwork
 import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
 import java.util.*
-import kotlin.collections.ArrayList
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
@@ -34,6 +33,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
         mMeshManagerApi.setProvisioningStatusCallbacks(doozMeshProvisioningStatusCallbacks)
         mMeshManagerApi.setMeshStatusCallbacks(doozMeshStatusCallbacks)
+
     }
 
     private fun loadMeshNetwork()  {
@@ -108,7 +108,6 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "handleWriteCallbacks" -> {
-                Log.d("DoozMeshManagerApi", "handleWriteCallbacks")
                 val pdu = call.argument<ArrayList<Int>>("pdu")!!
                 handleWriteCallbacks(call.argument<Int>("mtu")!!, _arrayListToByteArray(pdu))
                 result.success(null)

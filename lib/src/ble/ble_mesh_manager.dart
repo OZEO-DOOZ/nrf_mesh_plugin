@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
+import 'package:retry/retry.dart';
 
 class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   bool _isProvisioningComplete = false;
@@ -123,20 +125,18 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   Future<void> sendPdu(final List<int> pdu) async {
-    print('sendPdu: $pdu');
-    print('pdu.length ${pdu.length}');
-    final chunks = (pdu.length + (mtuSize - 1)) ~/ mtuSize;
+    final chunks = ((pdu.length / (mtuSize - 1)) + 1).floor();
     var srcOffset = 0;
     if (chunks > 1) {
       for (var i = 0; i < chunks; i++) {
         final length = math.min(pdu.length - srcOffset, mtuSize);
-        print('$srcOffset $length');
-        final segmentedBuffer = [...pdu.sublist(srcOffset, srcOffset + length)];
-        srcOffset += length;
+        final sublist = pdu.sublist(srcOffset, srcOffset + length);
+        final segmentedBuffer = sublist;
         await send(segmentedBuffer);
+        srcOffset += length;
       }
     } else {
-      return send(pdu);
+      await send(pdu);
     }
   }
 
@@ -146,7 +146,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         return;
       }
       if (_meshProxyDataInCharacteristic.properties.writeWithoutResponse) {
-        await _meshProxyDataInCharacteristic.write(data, withoutResponse: true);
+        await retry(
+          () => _meshProxyDataInCharacteristic.write(data, withoutResponse: true),
+          retryIf: (e) => e is PlatformException,
+        );
         callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
       }
     } else {
@@ -154,7 +157,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         return;
       }
       if (_meshProvisioningDataInCharacteristic.properties.writeWithoutResponse) {
-        await _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true);
+        await retry(
+          () => _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true),
+          retryIf: (e) => e is PlatformException,
+        );
         callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
       }
     }

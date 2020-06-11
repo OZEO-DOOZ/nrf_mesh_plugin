@@ -59,6 +59,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     //  init gatt
     await initGatt(device);
     _callbacks.onDeviceReadyController.add(device);
+
+    device.state.listen((event) {
+      print('device state changed to $event');
+    });
   }
 
   @visibleForOverriding

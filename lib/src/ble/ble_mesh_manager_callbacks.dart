@@ -9,14 +9,23 @@ abstract class _BleMeshManagerCallbacksEvent {
   final List<int> pdu;
 
   const _BleMeshManagerCallbacksEvent(this.device, this.mtu, this.pdu);
+
+  @override
+  String toString() => '$device, $mtu, $pdu';
 }
 
 class BleMeshManagerCallbacksDataReceived extends _BleMeshManagerCallbacksEvent {
   const BleMeshManagerCallbacksDataReceived(BluetoothDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
+
+  @override
+  String toString() => 'BleMeshManagerCallbacksDataReceived{ ${super.toString()} }';
 }
 
 class BleMeshManagerCallbacksDataSent extends _BleMeshManagerCallbacksEvent {
   const BleMeshManagerCallbacksDataSent(BluetoothDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
+
+  @override
+  String toString() => 'BleMeshManagerCallbacksDataSent{ ${super.toString()} }';
 }
 
 abstract class BleMeshManagerCallbacks extends BleManagerCallbacks {

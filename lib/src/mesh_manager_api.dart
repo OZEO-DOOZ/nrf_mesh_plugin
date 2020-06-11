@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_provisioning_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
@@ -106,6 +108,15 @@ class MeshManagerApi {
   Stream<MeshProvisioningStatusData> get onProvisioningFailed => _onProvisioningFailedController.stream;
 
   MeshNetwork get meshNetwork => _lastMeshNetwork;
+
+  String get meshProvisioningUuidServiceKey {
+    if (Platform.isAndroid) {
+      return meshProvisioningUuid.toString();
+    } else if (Platform.isIOS) {
+      return '1827';
+    }
+    return null;
+  }
 
   void dispose() => Future.wait([
         _onNetworkLoadedSubscripiton.cancel(),
