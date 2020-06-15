@@ -94,6 +94,10 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val json = exportMeshNetwork()
                 result.success(json)
             }
+            "resetMeshNetwork" -> {
+                mMeshManagerApi.resetMeshNetwork()
+                result.success(null)
+            }
             "identifyNode" -> {
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
                 result.success(null);

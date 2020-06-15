@@ -157,6 +157,8 @@ class MeshManagerApi {
 
   Future<String> exportMeshNetwork() => _methodChannel.invokeMethod('exportMeshNetwork');
 
+  Future<void> resetMeshNetwork() => _methodChannel.invokeMethod('resetMeshNetwork');
+
   Future<void> handleNotifications(int mtu, List<int> pdu) =>
       _methodChannel.invokeMethod('handleNotifications', {'mtu': mtu, 'pdu': pdu});
 

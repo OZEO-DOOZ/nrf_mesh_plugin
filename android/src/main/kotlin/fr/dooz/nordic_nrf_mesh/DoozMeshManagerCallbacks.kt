@@ -45,7 +45,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
     }
 
     override fun getMtu(): Int {
-        Log.d(this.javaClass.name, "getMtu")
+        Log.d(this.javaClass.name, "getMtu $mtuSize")
         return mtuSize
     }
 

@@ -85,6 +85,7 @@ class MeshManagerApiWidget extends StatefulWidget {
 
 class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   MeshManagerApi _meshManagerApi;
+  MeshNetwork _meshNetwork;
 
   @override
   void initState() {
@@ -109,37 +110,53 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
             if (file == null) return;
             final json = await file.readAsString();
             if (json == null) return;
-            final meshNetwork = await _meshManagerApi.importMeshNetworkJson(json);
-            widget.onNewMeshNetwork(meshNetwork);
+            _meshNetwork = await _meshManagerApi.importMeshNetworkJson(json);
+            widget.onNewMeshNetwork(_meshNetwork);
           },
         ),
         RaisedButton(
           child: Text('Load MeshNetwork'),
           onPressed: () async {
-            final meshNetwork = await _meshManagerApi.loadMeshNetwork();
-            widget.onNewMeshNetwork(meshNetwork);
+            _meshNetwork = await _meshManagerApi.loadMeshNetwork();
+            widget.onNewMeshNetwork(_meshNetwork);
           },
+        ),
+        RaisedButton(
+          child: Text('Export MeshNetwork'),
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
+                  debugPrint(meshNetworkJson);
+                }
+              : null,
+        ),
+        RaisedButton(
+          child: Text('Reset MeshNetwork'),
+          onPressed: _meshNetwork != null
+              ? () async {
+                  await _meshManagerApi.resetMeshNetwork();
+                  setState(() {
+                    _meshNetwork = null;
+                  });
+                  widget.onNewMeshNetwork(_meshNetwork);
+                }
+              : null,
         )
       ],
     );
   }
 }
 
-class MeshNetworkWidget extends StatefulWidget {
+class MeshNetworkWidget extends StatelessWidget {
   final MeshNetwork meshNetwork;
 
   const MeshNetworkWidget({Key key, @required this.meshNetwork}) : super(key: key);
 
   @override
-  _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
-}
-
-class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
-  @override
   Widget build(BuildContext context) {
-    if (widget.meshNetwork == null) {
+    if (meshNetwork == null) {
       return Text('No mesh network');
     }
-    return Text('MeshNetwork ID: ${widget.meshNetwork.id}');
+    return Text('MeshNetwork ID: ${meshNetwork.id}');
   }
 }

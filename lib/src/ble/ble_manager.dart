@@ -45,10 +45,11 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _device = device;
     _connected = true;
     await _mtuSizeSubscription?.cancel();
-    _mtuSizeSubscription = device.mtu.listen((event) {
-      mtuSize = event - 3;
+    _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
+      mtuSize = event;
+      await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     });
-    await _callbacks.sendMtuToMeshManagerApi(await device.mtu.first);
+    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     _callbacks.onDeviceConnectedController.add(device);
     final service = await isRequiredServiceSupported(device);
     if (service == null) {
@@ -59,10 +60,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     //  init gatt
     await initGatt(device);
     _callbacks.onDeviceReadyController.add(device);
-
-    device.state.listen((event) {
-      print('device state changed to $event');
-    });
   }
 
   @visibleForOverriding
