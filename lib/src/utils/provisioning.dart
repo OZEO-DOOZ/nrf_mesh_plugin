@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
@@ -41,17 +42,17 @@ Future<void> provisioning(MeshManagerApi meshManagerApi, BluetoothDevice device,
     print('onServicesDiscovered');
   });
 
-  bleMeshManager.callbacks.onDeviceReady.listen((event) {
+  bleMeshManager.callbacks.onDeviceReady.listen((event) async {
     print('onDeviceReady $event');
-    meshManagerApi.identifyNode(serviceDataUuid);
+    await meshManagerApi.identifyNode(serviceDataUuid);
   });
 
   bleMeshManager.callbacks.onDataReceived.listen((event) async {
-    print('onDataReceived ${event.device.id} ${event.pdu}');
+    print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
   bleMeshManager.callbacks.onDataSent.listen((event) async {
-    print('onDataSent ${event.device.id} ${event.pdu}');
+    print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
   });
 

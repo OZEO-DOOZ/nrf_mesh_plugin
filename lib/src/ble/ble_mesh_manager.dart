@@ -85,9 +85,9 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
       if (dataOut.notify) {
         await _meshProxyDataOutSubscription?.cancel();
-        _meshProxyDataOutSubscription = _meshProxyDataOutCharacteristic.value.listen((event) async {
-          callbacks.onDataReceivedController
-              .add(BleMeshManagerCallbacksDataReceived(device, await device.mtu.first, event));
+        _meshProxyDataOutSubscription =
+            _meshProxyDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) async {
+          callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
         await _meshProxyDataOutCharacteristic.setNotifyValue(true);
         final descriptor = _meshProxyDataOutCharacteristic.descriptors
@@ -109,10 +109,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
       if (dataOut.notify) {
         await _meshProvisioningDataOutSubscription?.cancel();
-        _meshProvisioningDataOutSubscription =
-            _meshProvisioningDataOutCharacteristic.value.where((event) => event.isNotEmpty).listen((event) async {
-          callbacks.onDataReceivedController
-              .add(BleMeshManagerCallbacksDataReceived(device, await device.mtu.first, event));
+        _meshProvisioningDataOutSubscription = _meshProvisioningDataOutCharacteristic.value
+            .where((event) => event?.isNotEmpty == true)
+            .listen((event) async {
+          callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
         await _meshProvisioningDataOutCharacteristic.setNotifyValue(true);
         final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
@@ -141,6 +141,9 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   Future<void> send(final List<int> data) async {
+    if (data.isEmpty) {
+      return;
+    }
     if (_isProvisioningComplete) {
       if (_meshProxyDataInCharacteristic == null) {
         return;

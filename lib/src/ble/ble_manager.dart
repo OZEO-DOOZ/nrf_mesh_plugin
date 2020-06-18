@@ -24,7 +24,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   StreamSubscription<int> _mtuSizeSubscription;
 
-  @protected
   int mtuSize = maxPacketSize;
 
   set callbacks(final E callbacks) => _callbacks = callbacks;
@@ -32,6 +31,11 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   E get callbacks => _callbacks;
 
   BluetoothDevice get device => _device;
+
+  Future<void> dispose() async {
+    await callbacks?.dispose();
+    await _mtuSizeSubscription?.cancel();
+  }
 
   Future<void> connect(final BluetoothDevice device) async {
     if (_callbacks == null) {
@@ -44,9 +48,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     await device.connect(autoConnect: false);
     _device = device;
     _connected = true;
-    await _mtuSizeSubscription?.cancel();
     _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
-      mtuSize = event;
+      print('mtu changed $event');
+      mtuSize = event - 3;
       await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     });
     await _callbacks.sendMtuToMeshManagerApi(mtuSize);
@@ -59,6 +63,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     //  init gatt
     await initGatt(device);
+    final fMtuChanged = device.mtu.skip(1).first;
+    await device.requestMtu(517);
+    await fMtuChanged;
     _callbacks.onDeviceReadyController.add(device);
   }
 
