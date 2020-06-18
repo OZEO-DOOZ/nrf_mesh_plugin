@@ -65,6 +65,7 @@ Future<void> provisioning(MeshManagerApi meshManagerApi, BluetoothDevice device,
   try {
     await completer.future;
   } catch (e) {
+    await device.disconnect();
     rethrow;
   } finally {
     await Future.wait([
