@@ -3,11 +3,14 @@ import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:retry/retry.dart';
 
 class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
+  static BleMeshManager _instance;
+
   BluetoothCharacteristic _meshProxyDataInCharacteristic;
   BluetoothCharacteristic _meshProxyDataOutCharacteristic;
   BluetoothCharacteristic _meshProvisioningDataInCharacteristic;
@@ -15,6 +18,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   StreamSubscription<List<int>> _meshProxyDataOutSubscription;
   StreamSubscription<List<int>> _meshProvisioningDataOutSubscription;
+
+  BleMeshManager._();
+
+  factory BleMeshManager() => _instance ??= BleMeshManager._();
 
   void onDeviceDisconnected(final BluetoothDevice device) async {
     isProvisioningCompleted = false;

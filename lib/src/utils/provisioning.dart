@@ -42,16 +42,16 @@ Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, Bluetoot
   if (Platform.isIOS) {
     await meshManagerApi.provisioningIos(serviceDataUuid);
   } else if (Platform.isAndroid) {
-    return _provisioningAndroid(meshManagerApi, device, serviceDataUuid, events);
+    final bleMeshManager = BleMeshManager();
+    return _provisioningAndroid(meshManagerApi, device, bleMeshManager, serviceDataUuid, events);
   }
   return null;
 }
 
-Future<ProvisionedMeshNode> _provisioningAndroid(
-    MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
+Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice device,
+    BleMeshManager bleMeshManager, String serviceDataUuid, ProvisioningEvent events) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
-  final bleMeshManager = BleMeshManager();
   ProvisionedMeshNode provisionedMeshNode;
 
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
@@ -66,6 +66,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
     }
     if (scanResult == null) {
       completer.completeError(Exception('Didn\'t find module'));
+      return;
     }
 
     await bleMeshManager.connect(scanResult.device);
@@ -168,6 +169,10 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
     events?._onConfigAppKeyStatusController?.add(null);
     completer.complete(provisionedMeshNode);
   });
+
+  if (bleMeshManager.connected) {
+    await bleMeshManager.disconnect();
+  }
 
   print('connect');
   await bleMeshManager.connect(device);

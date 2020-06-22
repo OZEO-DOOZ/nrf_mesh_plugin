@@ -32,6 +32,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   BluetoothDevice get device => _device;
 
+  bool get connected => _connected;
+
   Future<void> dispose() async {
     await callbacks?.dispose();
     await _mtuSizeSubscription?.cancel();
@@ -43,6 +45,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     }
     _callbacks.onDeviceConnectingController.add(device);
     await device.connect(autoConnect: false);
+    _connected = true;
     _callbacks.onDeviceConnectedController.add(device);
     _device = device;
     _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
@@ -73,6 +76,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   Future<void> disconnect() async {
     _callbacks.onDeviceDisconnectingController.add(_device);
     await _device.disconnect();
+    _connected = false;
     _callbacks.onDeviceDisconnectedController.add(_device);
     await _mtuSizeSubscription.cancel();
   }
