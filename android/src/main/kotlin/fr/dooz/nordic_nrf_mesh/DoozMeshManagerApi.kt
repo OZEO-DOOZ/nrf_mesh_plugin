@@ -10,24 +10,28 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshNetwork
+import no.nordicsemi.android.mesh.provisionerstates.ProvisioningCapabilities
 import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
+import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.experimental.and
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
-    private  var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
+    var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
     val doozMeshManagerCallbacks: DoozMeshManagerCallbacks
     val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
     var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
+    val unprovisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
 
     init {
-        Log.d(this.javaClass.name, "init DoozMeshManagerApi")
         EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
-        doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(eventSink)
+        doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(binaryMessenger, eventSink, unprovisionedMeshNodes, this)
         doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink)
 
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
@@ -99,7 +103,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "identifyNode" -> {
-                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
+                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
                 result.success(null);
             }
             "getDeviceUuid" -> {
@@ -113,12 +117,21 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
             "handleWriteCallbacks" -> {
                 val pdu = call.argument<ArrayList<Int>>("pdu")!!
-                handleWriteCallbacks(call.argument<Int>("mtu")!!, _arrayListToByteArray(pdu))
+                handleWriteCallbacks(call.argument<Int>("mtu")!!, arrayListToByteArray(pdu))
+                result.success(null)
+            }
+            "cleanProvisioningData" -> {
+                unprovisionedMeshNodes.clear()
                 result.success(null)
             }
             "provisioning" -> {
-                val node = UnprovisionedMeshNode(UUID.fromString(call.argument("uuid")!!))
-                mMeshManagerApi.startProvisioning(node)
+                val uuid = UUID.fromString(call.argument("uuid")!!);
+                val unprovisionedMeshNode = unprovisionedMeshNodes.firstOrNull() { it.meshNode.deviceUuid == uuid }
+                if (unprovisionedMeshNode == null) {
+                    result.error("NOT_FOUND", "MeshNode with uuid ${uuid.toString()} doesn't exist", null)
+                    return
+                }
+                mMeshManagerApi.startProvisioning(unprovisionedMeshNode.meshNode)
                 result.success(null)
             }
             "setMtuSize" -> {
@@ -130,12 +143,5 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
         }
     }
-
-    fun _arrayListToByteArray(pdu: ArrayList<Int>): ByteArray {
-        val bytes = ByteArray(pdu.size)
-        for ((index, value) in pdu.withIndex()) {
-            bytes[index] = value.toByte()
-        }
-        return bytes
-    }
 }
+

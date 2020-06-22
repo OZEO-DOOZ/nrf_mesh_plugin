@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -55,7 +54,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
   Future<void> _scanUnprovisionned() {
     _serviceData.clear();
-    _devices.clear();
+    setState(() {
+      _devices.clear();
+    });
 
     _scanSubscription = flutterBlue.scan(
       withServices: [
@@ -90,13 +91,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     if (isScanning) {
       await _stopScan();
     }
-
-    if (Platform.isIOS) {
-      await _meshManagerApi.provisioning(_serviceData[device.id.id].toString());
-      return;
-    }
     try {
       await provisioning(_meshManagerApi, device, _serviceData[device.id.id].toString());
+      print('provisioning succeeded');
     } catch (e) {
       print(e);
     }

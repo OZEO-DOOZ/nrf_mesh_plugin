@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_provisioning_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
 import 'package:nordic_nrf_mesh/src/events/mesh_manager_api_events.dart';
+import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/mesh_network.dart';
@@ -168,8 +168,9 @@ class MeshManagerApi {
   Future<void> identifyNode(String serviceUuid) =>
       _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
 
+  Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
+
   String getDeviceUuid(List<int> serviceData) {
-    print(serviceData);
     var msb = 0;
     var lsb = 0;
     for (var i = 0; i < 8; i++) {
@@ -181,7 +182,10 @@ class MeshManagerApi {
     return '${_digits(msb >> 32, 8)}-${_digits(msb >> 16, 4)}-${_digits(msb, 4)}-${_digits(lsb >> 48, 4)}-${_digits(lsb, 12)}';
   }
 
-  Future<void> provisioning(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
+  Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
+
+  Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
+      _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
   String _digits(int val, int digits) {
     var hi = 1 << (digits * 4);

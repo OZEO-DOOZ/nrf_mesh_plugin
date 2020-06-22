@@ -14,6 +14,14 @@ class MeshNetwork {
 
   Future<String> get name => _methodChannel.invokeMethod('getMeshNetworkName');
 
+  Future<int> nextAvailableUnicastAddress(int elementSize) =>
+      _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
+
+  Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
+
+  Future<void> assignUnicastAddress(int unicastAddress) =>
+      _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
+
   @override
   String toString() => 'MeshNetwork{ $_id }';
 }

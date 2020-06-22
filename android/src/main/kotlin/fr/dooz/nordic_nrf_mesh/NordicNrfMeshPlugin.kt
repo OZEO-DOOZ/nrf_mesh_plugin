@@ -1,7 +1,6 @@
 package fr.dooz.nordic_nrf_mesh
 
 import androidx.annotation.NonNull;
-import fr.dooz.nordic_nrf_mesh.ble.BleMeshManager
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
@@ -10,14 +9,11 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import no.nordicsemi.android.ble.BleManager
-import no.nordicsemi.android.ble.BleManagerCallbacks
 
 class NordicNrfMeshPlugin: FlutterPlugin, MethodCallHandler {
     private lateinit var methodChannel : MethodChannel
     private lateinit var flutterBinding: FlutterPlugin.FlutterPluginBinding
     private lateinit var binaryMessenger: BinaryMessenger
-    private var bleMeshManager: BleMeshManager? = null
     private var meshManagerApi : DoozMeshManagerApi? = null
 
 
