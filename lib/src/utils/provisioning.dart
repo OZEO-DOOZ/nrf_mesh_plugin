@@ -9,19 +9,37 @@ import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
 
-Future<ProvisionedMeshNode> provisioning(
-    MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid) async {
+class _ProvisioningEvent {
+  final _provisioningController = StreamController<void>();
+  final _provisioningCapabilitiesController = StreamController<void>();
+  final _provisioningInvitationController = StreamController<void>();
+  final _provisioningReconnectController = StreamController<void>();
+  final _onConfigCompositionDataStatusController = StreamController<void>();
+  final _onConfigAppKeyStatusController = StreamController<void>();
+}
+
+class ProvisioningEvent extends _ProvisioningEvent {
+  Stream<void> get onProvisioning => _provisioningController.stream;
+  Stream<void> get onProvisioningCapabilities => _provisioningCapabilitiesController.stream;
+  Stream<void> get onProvisioningInvitation => _provisioningInvitationController.stream;
+  Stream<void> get onProvisioningReconnect => _provisioningReconnectController.stream;
+  Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+  Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+}
+
+Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid,
+    {ProvisioningEvent events}) async {
   print('serviceDataUuid $serviceDataUuid');
   if (Platform.isIOS) {
     await meshManagerApi.provisioningIos(serviceDataUuid);
   } else if (Platform.isAndroid) {
-    return _provisioningAndroid(meshManagerApi, device, serviceDataUuid);
+    return _provisioningAndroid(meshManagerApi, device, serviceDataUuid, events);
   }
   return null;
 }
 
 Future<ProvisionedMeshNode> _provisioningAndroid(
-    MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid) async {
+    MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
   final bleMeshManager = BleMeshManager();
@@ -35,7 +53,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
     while (scanResult == null) {
       final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid]) as List<ScanResult>);
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
-      print(scanResult);
       await Future.delayed(Duration(milliseconds: 500));
     }
     if (scanResult == null) {
@@ -49,6 +66,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     print('onProvisioningStateChanged $event');
     if (event.state == 'PROVISIONING_CAPABILITIES') {
+      events?._provisioningCapabilitiesController?.add(null);
       var assigned = false;
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
       final elementSize = await unprovisionedMeshNode.getNumberOfElements();
@@ -71,9 +89,13 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
         }
       }
       await unprovisionedMeshNode.setUnicastAddress(unicast);
+      events?._provisioningController?.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
     } else if (event.state == 'PROVISIONING_INVITE') {
-      if (bleMeshManager.isProvisioningCompleted) {
+      if (!bleMeshManager.isProvisioningCompleted) {
+        events?._provisioningInvitationController?.add(null);
+      } else if (bleMeshManager.isProvisioningCompleted) {
+        events?._provisioningReconnectController?.add(null);
         final unicast = await provisionedMeshNode.unicastAddress;
         await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
       }
@@ -129,10 +151,12 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
 
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     print('onConfigCompositionDataStatus $event');
+    events?._onConfigCompositionDataStatusController?.add(null);
     await meshManagerApi.createMeshPduForConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
   final onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
     print('onConfigAppKeyStatus $event');
+    events?._onConfigAppKeyStatusController?.add(null);
     completer.complete(provisionedMeshNode);
   });
 
@@ -164,7 +188,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(
       bleMeshManager?.callbacks?.dispose(),
     ]);
   }
-  return null;
 }
 
 class _DoozBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
