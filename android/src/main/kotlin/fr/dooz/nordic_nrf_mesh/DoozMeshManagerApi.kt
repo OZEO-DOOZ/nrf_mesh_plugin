@@ -10,12 +10,10 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshNetwork
-import no.nordicsemi.android.mesh.provisionerstates.ProvisioningCapabilities
-import no.nordicsemi.android.mesh.provisionerstates.UnprovisionedMeshNode
-import java.nio.charset.StandardCharsets
+import no.nordicsemi.android.mesh.transport.ConfigAppKeyAdd
+import no.nordicsemi.android.mesh.transport.ConfigCompositionDataGet
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.experimental.and
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
@@ -25,6 +23,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
     var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
     val unprovisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
+    var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
 
     init {
         EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
@@ -37,7 +36,6 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
         mMeshManagerApi.setProvisioningStatusCallbacks(doozMeshProvisioningStatusCallbacks)
         mMeshManagerApi.setMeshStatusCallbacks(doozMeshStatusCallbacks)
-
     }
 
     private fun loadMeshNetwork()  {
@@ -72,12 +70,14 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
         this.eventSink = events
         doozMeshManagerCallbacks.eventSink = eventSink
         doozMeshProvisioningStatusCallbacks.eventSink = eventSink
+        doozMeshStatusCallbacks.eventSink = eventSink
     }
 
     override fun onCancel(arguments: Any?) {
         eventSink = null
         doozMeshManagerCallbacks.eventSink = null
         doozMeshProvisioningStatusCallbacks.eventSink = null
+        doozMeshStatusCallbacks.eventSink = null
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -122,6 +122,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
             "cleanProvisioningData" -> {
                 unprovisionedMeshNodes.clear()
+                currentProvisionedMeshNode = null
                 result.success(null)
             }
             "provisioning" -> {
@@ -132,6 +133,16 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                     return
                 }
                 mMeshManagerApi.startProvisioning(unprovisionedMeshNode.meshNode)
+                result.success(null)
+            }
+            "createMeshPduForConfigCompositionDataGet" -> {
+                mMeshManagerApi.createMeshPdu(call.argument("dest")!!, ConfigCompositionDataGet())
+                result.success(null)
+            }
+            "createMeshPduForConfigAppKeyAdd" -> {
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val configAppKeyAdd = ConfigAppKeyAdd(currentMeshNetwork.netKeys[0], currentMeshNetwork.appKeys[0])
+                mMeshManagerApi.createMeshPdu(call.argument("dest")!!, configAppKeyAdd)
                 result.success(null)
             }
             "setMtuSize" -> {

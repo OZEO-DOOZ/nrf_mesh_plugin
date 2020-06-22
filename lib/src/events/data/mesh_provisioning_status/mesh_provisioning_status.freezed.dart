@@ -168,6 +168,138 @@ abstract class _UnprovisionedMeshNodeData implements UnprovisionedMeshNodeData {
   _$UnprovisionedMeshNodeDataCopyWith<_UnprovisionedMeshNodeData> get copyWith;
 }
 
+ProvisionedMeshNodeData _$ProvisionedMeshNodeDataFromJson(
+    Map<String, dynamic> json) {
+  return _ProvisionedMeshNodeData.fromJson(json);
+}
+
+class _$ProvisionedMeshNodeDataTearOff {
+  const _$ProvisionedMeshNodeDataTearOff();
+
+  _ProvisionedMeshNodeData call({@required String uuid}) {
+    return _ProvisionedMeshNodeData(
+      uuid: uuid,
+    );
+  }
+}
+
+// ignore: unused_element
+const $ProvisionedMeshNodeData = _$ProvisionedMeshNodeDataTearOff();
+
+mixin _$ProvisionedMeshNodeData {
+  String get uuid;
+
+  Map<String, dynamic> toJson();
+  $ProvisionedMeshNodeDataCopyWith<ProvisionedMeshNodeData> get copyWith;
+}
+
+abstract class $ProvisionedMeshNodeDataCopyWith<$Res> {
+  factory $ProvisionedMeshNodeDataCopyWith(ProvisionedMeshNodeData value,
+          $Res Function(ProvisionedMeshNodeData) then) =
+      _$ProvisionedMeshNodeDataCopyWithImpl<$Res>;
+  $Res call({String uuid});
+}
+
+class _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
+    implements $ProvisionedMeshNodeDataCopyWith<$Res> {
+  _$ProvisionedMeshNodeDataCopyWithImpl(this._value, this._then);
+
+  final ProvisionedMeshNodeData _value;
+  // ignore: unused_field
+  final $Res Function(ProvisionedMeshNodeData) _then;
+
+  @override
+  $Res call({
+    Object uuid = freezed,
+  }) {
+    return _then(_value.copyWith(
+      uuid: uuid == freezed ? _value.uuid : uuid as String,
+    ));
+  }
+}
+
+abstract class _$ProvisionedMeshNodeDataCopyWith<$Res>
+    implements $ProvisionedMeshNodeDataCopyWith<$Res> {
+  factory _$ProvisionedMeshNodeDataCopyWith(_ProvisionedMeshNodeData value,
+          $Res Function(_ProvisionedMeshNodeData) then) =
+      __$ProvisionedMeshNodeDataCopyWithImpl<$Res>;
+  @override
+  $Res call({String uuid});
+}
+
+class __$ProvisionedMeshNodeDataCopyWithImpl<$Res>
+    extends _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
+    implements _$ProvisionedMeshNodeDataCopyWith<$Res> {
+  __$ProvisionedMeshNodeDataCopyWithImpl(_ProvisionedMeshNodeData _value,
+      $Res Function(_ProvisionedMeshNodeData) _then)
+      : super(_value, (v) => _then(v as _ProvisionedMeshNodeData));
+
+  @override
+  _ProvisionedMeshNodeData get _value =>
+      super._value as _ProvisionedMeshNodeData;
+
+  @override
+  $Res call({
+    Object uuid = freezed,
+  }) {
+    return _then(_ProvisionedMeshNodeData(
+      uuid: uuid == freezed ? _value.uuid : uuid as String,
+    ));
+  }
+}
+
+@JsonSerializable()
+class _$_ProvisionedMeshNodeData implements _ProvisionedMeshNodeData {
+  const _$_ProvisionedMeshNodeData({@required this.uuid})
+      : assert(uuid != null);
+
+  factory _$_ProvisionedMeshNodeData.fromJson(Map<String, dynamic> json) =>
+      _$_$_ProvisionedMeshNodeDataFromJson(json);
+
+  @override
+  final String uuid;
+
+  @override
+  String toString() {
+    return 'ProvisionedMeshNodeData(uuid: $uuid)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _ProvisionedMeshNodeData &&
+            (identical(other.uuid, uuid) ||
+                const DeepCollectionEquality().equals(other.uuid, uuid)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(uuid);
+
+  @override
+  _$ProvisionedMeshNodeDataCopyWith<_ProvisionedMeshNodeData> get copyWith =>
+      __$ProvisionedMeshNodeDataCopyWithImpl<_ProvisionedMeshNodeData>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$_$_ProvisionedMeshNodeDataToJson(this);
+  }
+}
+
+abstract class _ProvisionedMeshNodeData implements ProvisionedMeshNodeData {
+  const factory _ProvisionedMeshNodeData({@required String uuid}) =
+      _$_ProvisionedMeshNodeData;
+
+  factory _ProvisionedMeshNodeData.fromJson(Map<String, dynamic> json) =
+      _$_ProvisionedMeshNodeData.fromJson;
+
+  @override
+  String get uuid;
+  @override
+  _$ProvisionedMeshNodeDataCopyWith<_ProvisionedMeshNodeData> get copyWith;
+}
+
 MeshProvisioningStatusData _$MeshProvisioningStatusDataFromJson(
     Map<String, dynamic> json) {
   return _MeshProvisioningStatusData.fromJson(json);
@@ -360,5 +492,205 @@ abstract class _MeshProvisioningStatusData
   UnprovisionedMeshNodeData get meshNode;
   @override
   _$MeshProvisioningStatusDataCopyWith<_MeshProvisioningStatusData>
+      get copyWith;
+}
+
+MeshProvisioningCompletedData _$MeshProvisioningCompletedDataFromJson(
+    Map<String, dynamic> json) {
+  return _MeshProvisioningCompletedData.fromJson(json);
+}
+
+class _$MeshProvisioningCompletedDataTearOff {
+  const _$MeshProvisioningCompletedDataTearOff();
+
+  _MeshProvisioningCompletedData call(String state, List<int> data,
+      @nullable ProvisionedMeshNodeData meshNode) {
+    return _MeshProvisioningCompletedData(
+      state,
+      data,
+      meshNode,
+    );
+  }
+}
+
+// ignore: unused_element
+const $MeshProvisioningCompletedData = _$MeshProvisioningCompletedDataTearOff();
+
+mixin _$MeshProvisioningCompletedData {
+  String get state;
+  List<int> get data;
+  @nullable
+  ProvisionedMeshNodeData get meshNode;
+
+  Map<String, dynamic> toJson();
+  $MeshProvisioningCompletedDataCopyWith<MeshProvisioningCompletedData>
+      get copyWith;
+}
+
+abstract class $MeshProvisioningCompletedDataCopyWith<$Res> {
+  factory $MeshProvisioningCompletedDataCopyWith(
+          MeshProvisioningCompletedData value,
+          $Res Function(MeshProvisioningCompletedData) then) =
+      _$MeshProvisioningCompletedDataCopyWithImpl<$Res>;
+  $Res call(
+      {String state,
+      List<int> data,
+      @nullable ProvisionedMeshNodeData meshNode});
+
+  $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode;
+}
+
+class _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
+    implements $MeshProvisioningCompletedDataCopyWith<$Res> {
+  _$MeshProvisioningCompletedDataCopyWithImpl(this._value, this._then);
+
+  final MeshProvisioningCompletedData _value;
+  // ignore: unused_field
+  final $Res Function(MeshProvisioningCompletedData) _then;
+
+  @override
+  $Res call({
+    Object state = freezed,
+    Object data = freezed,
+    Object meshNode = freezed,
+  }) {
+    return _then(_value.copyWith(
+      state: state == freezed ? _value.state : state as String,
+      data: data == freezed ? _value.data : data as List<int>,
+      meshNode: meshNode == freezed
+          ? _value.meshNode
+          : meshNode as ProvisionedMeshNodeData,
+    ));
+  }
+
+  @override
+  $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode {
+    if (_value.meshNode == null) {
+      return null;
+    }
+    return $ProvisionedMeshNodeDataCopyWith<$Res>(_value.meshNode, (value) {
+      return _then(_value.copyWith(meshNode: value));
+    });
+  }
+}
+
+abstract class _$MeshProvisioningCompletedDataCopyWith<$Res>
+    implements $MeshProvisioningCompletedDataCopyWith<$Res> {
+  factory _$MeshProvisioningCompletedDataCopyWith(
+          _MeshProvisioningCompletedData value,
+          $Res Function(_MeshProvisioningCompletedData) then) =
+      __$MeshProvisioningCompletedDataCopyWithImpl<$Res>;
+  @override
+  $Res call(
+      {String state,
+      List<int> data,
+      @nullable ProvisionedMeshNodeData meshNode});
+
+  @override
+  $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode;
+}
+
+class __$MeshProvisioningCompletedDataCopyWithImpl<$Res>
+    extends _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
+    implements _$MeshProvisioningCompletedDataCopyWith<$Res> {
+  __$MeshProvisioningCompletedDataCopyWithImpl(
+      _MeshProvisioningCompletedData _value,
+      $Res Function(_MeshProvisioningCompletedData) _then)
+      : super(_value, (v) => _then(v as _MeshProvisioningCompletedData));
+
+  @override
+  _MeshProvisioningCompletedData get _value =>
+      super._value as _MeshProvisioningCompletedData;
+
+  @override
+  $Res call({
+    Object state = freezed,
+    Object data = freezed,
+    Object meshNode = freezed,
+  }) {
+    return _then(_MeshProvisioningCompletedData(
+      state == freezed ? _value.state : state as String,
+      data == freezed ? _value.data : data as List<int>,
+      meshNode == freezed
+          ? _value.meshNode
+          : meshNode as ProvisionedMeshNodeData,
+    ));
+  }
+}
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
+class _$_MeshProvisioningCompletedData
+    implements _MeshProvisioningCompletedData {
+  const _$_MeshProvisioningCompletedData(
+      this.state, this.data, @nullable this.meshNode)
+      : assert(state != null),
+        assert(data != null);
+
+  factory _$_MeshProvisioningCompletedData.fromJson(
+          Map<String, dynamic> json) =>
+      _$_$_MeshProvisioningCompletedDataFromJson(json);
+
+  @override
+  final String state;
+  @override
+  final List<int> data;
+  @override
+  @nullable
+  final ProvisionedMeshNodeData meshNode;
+
+  @override
+  String toString() {
+    return 'MeshProvisioningCompletedData(state: $state, data: $data, meshNode: $meshNode)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _MeshProvisioningCompletedData &&
+            (identical(other.state, state) ||
+                const DeepCollectionEquality().equals(other.state, state)) &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.meshNode, meshNode) ||
+                const DeepCollectionEquality()
+                    .equals(other.meshNode, meshNode)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(state) ^
+      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(meshNode);
+
+  @override
+  _$MeshProvisioningCompletedDataCopyWith<_MeshProvisioningCompletedData>
+      get copyWith => __$MeshProvisioningCompletedDataCopyWithImpl<
+          _MeshProvisioningCompletedData>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$_$_MeshProvisioningCompletedDataToJson(this);
+  }
+}
+
+abstract class _MeshProvisioningCompletedData
+    implements MeshProvisioningCompletedData {
+  const factory _MeshProvisioningCompletedData(String state, List<int> data,
+          @nullable ProvisionedMeshNodeData meshNode) =
+      _$_MeshProvisioningCompletedData;
+
+  factory _MeshProvisioningCompletedData.fromJson(Map<String, dynamic> json) =
+      _$_MeshProvisioningCompletedData.fromJson;
+
+  @override
+  String get state;
+  @override
+  List<int> get data;
+  @override
+  @nullable
+  ProvisionedMeshNodeData get meshNode;
+  @override
+  _$MeshProvisioningCompletedDataCopyWith<_MeshProvisioningCompletedData>
       get copyWith;
 }

@@ -25,4 +25,7 @@ class MeshManagerApiEvent {
   static const provisioningStateChanged = MeshManagerApiEvent._('onProvisioningStateChanged');
   static const provisioningFailed = MeshManagerApiEvent._('onProvisioningFailed');
   static const provisioningCompleted = MeshManagerApiEvent._('onProvisioningCompleted');
+
+  static const configCompositionDataStatus = MeshManagerApiEvent._('onConfigCompositionDataStatus');
+  static const configAppKeyStatus = MeshManagerApiEvent._('onConfigAppKeyStatus');
 }

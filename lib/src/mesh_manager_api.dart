@@ -28,39 +28,50 @@ class MeshManagerApi {
 
   final _onProvisioningStateChangedController = StreamController<MeshProvisioningStatusData>.broadcast();
   final _onProvisioningFailedController = StreamController<MeshProvisioningStatusData>.broadcast();
-  final _onProvisioningCompletedController = StreamController<MeshProvisioningStatusData>.broadcast();
+  final _onProvisioningCompletedController = StreamController<MeshProvisioningCompletedData>.broadcast();
 
-  StreamSubscription<MeshNetwork> _onNetworkLoadedSubscripiton;
-  StreamSubscription<MeshNetwork> _onNetworkImportedSubscripiton;
-  StreamSubscription<MeshNetwork> _onNetworkUpdatedSubscripiton;
-  StreamSubscription<MeshNetworkEventError> _onNetworkLoadFailedSubscripiton;
+  final _onConfigCompositionDataStatusController = StreamController<Map<String, dynamic>>.broadcast();
+  final _onConfigAppKeyStatusController = StreamController<Map<String, dynamic>>.broadcast();
+
+  StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
+  StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
+  StreamSubscription<MeshNetwork> _onNetworkUpdatedSubscription;
+  StreamSubscription<MeshNetworkEventError> _onNetworkLoadFailedSubscription;
   StreamSubscription<MeshNetworkEventError> _onNetworkImportFailedSubscripiton;
-  StreamSubscription<List<int>> _onMeshPduCreatedSubscripiton;
+  StreamSubscription<List<int>> _onMeshPduCreatedSubscription;
   StreamSubscription<SendProvisioningPduData> _sendProvisioningPduSubscription;
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningStateChangedSubscription;
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningFailedSubscription;
-  StreamSubscription<MeshProvisioningStatusData> _onProvisioningCompletedSubscription;
+  StreamSubscription<MeshProvisioningCompletedData> _onProvisioningCompletedSubscription;
+
+  StreamSubscription<Map> _onConfigCompositionDataStatusSubscription;
+  StreamSubscription<Map> _onConfigAppKeyStatusControllerSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
 
   MeshManagerApi() {
-    _eventChannelStream =
-        _eventChannel.receiveBroadcastStream().cast<Map>().map((event) => event.cast<String, dynamic>());
+    _eventChannelStream = _eventChannel
+        .receiveBroadcastStream()
+        .cast<Map>()
+        .map((event) => event.cast<String, dynamic>())
+        .doOnData((event) {
+      print(event);
+    });
 
-    _onNetworkLoadedSubscripiton =
+    _onNetworkLoadedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded).listen(_onNetworkLoadedStreamController.add);
-    _onNetworkImportedSubscripiton =
+    _onNetworkImportedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.imported).listen(_onNetworkImportedController.add);
-    _onNetworkUpdatedSubscripiton =
+    _onNetworkUpdatedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.updated).listen(_onNetworkUpdatedController.add);
 
-    _onNetworkLoadFailedSubscripiton =
+    _onNetworkLoadFailedSubscription =
         _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed).listen(_onNetworkLoadFailedController.add);
     _onNetworkImportFailedSubscripiton =
         _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportFailedController.add);
 
-    _onMeshPduCreatedSubscripiton = _eventChannelStream
+    _onMeshPduCreatedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.meshPduCreated.value)
         .map((event) => event['pdu'] as List)
         .map((event) => event.cast<int>())
@@ -76,15 +87,22 @@ class MeshManagerApi {
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningStateChangedController.add);
 
-    _onProvisioningStateChangedSubscription = _eventChannelStream
+    _onProvisioningCompletedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningCompleted.value)
-        .map((event) => MeshProvisioningStatusData.fromJson(event))
+        .map((event) => MeshProvisioningCompletedData.fromJson(event))
         .listen(_onProvisioningCompletedController.add);
 
-    _onProvisioningStateChangedSubscription = _eventChannelStream
+    _onProvisioningFailedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningFailed.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningFailedController.add);
+
+    _onConfigCompositionDataStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configCompositionDataStatus.value)
+        .listen(_onConfigCompositionDataStatusController.add);
+    _onConfigAppKeyStatusControllerSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configAppKeyStatus.value)
+        .listen(_onConfigAppKeyStatusController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
@@ -103,9 +121,13 @@ class MeshManagerApi {
 
   Stream<MeshProvisioningStatusData> get onProvisioningStateChanged => _onProvisioningStateChangedController.stream;
 
-  Stream<MeshProvisioningStatusData> get onProvisioningCompleted => _onProvisioningCompletedController.stream;
+  Stream<MeshProvisioningCompletedData> get onProvisioningCompleted => _onProvisioningCompletedController.stream;
 
   Stream<MeshProvisioningStatusData> get onProvisioningFailed => _onProvisioningFailedController.stream;
+
+  Stream<Map<String, dynamic>> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+
+  Stream<Map<String, dynamic>> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
   MeshNetwork get meshNetwork => _lastMeshNetwork;
 
@@ -119,16 +141,17 @@ class MeshManagerApi {
   }
 
   void dispose() => Future.wait([
-        _onNetworkLoadedSubscripiton.cancel(),
-        _onNetworkImportedSubscripiton.cancel(),
-        _onNetworkUpdatedSubscripiton.cancel(),
-        _onNetworkLoadFailedSubscripiton.cancel(),
+        _onNetworkLoadedSubscription.cancel(),
+        _onNetworkImportedSubscription.cancel(),
+        _onNetworkUpdatedSubscription.cancel(),
+        _onNetworkLoadFailedSubscription.cancel(),
         _onNetworkImportFailedSubscripiton.cancel(),
-        _onMeshPduCreatedSubscripiton.cancel(),
+        _onMeshPduCreatedSubscription.cancel(),
         _sendProvisioningPduSubscription.cancel(),
         _onProvisioningStateChangedSubscription.cancel(),
         _onProvisioningFailedSubscription.cancel(),
         _onProvisioningCompletedSubscription.cancel(),
+        _onConfigCompositionDataStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -139,6 +162,7 @@ class MeshManagerApi {
         _onProvisioningStateChangedController.close(),
         _onProvisioningFailedController.close(),
         _onProvisioningCompletedController.close(),
+        _onConfigCompositionDataStatusController.close(),
       ]);
 
   Future<MeshNetwork> loadMeshNetwork() async {
@@ -169,6 +193,12 @@ class MeshManagerApi {
       _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
 
   Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
+
+  Future<void> createMeshPduForConfigCompositionDataGet(int dest) =>
+      _methodChannel.invokeMethod('createMeshPduForConfigCompositionDataGet', {'dest': dest});
+
+  Future<void> createMeshPduForConfigAppKeyAdd(int dest) =>
+      _methodChannel.invokeMethod('createMeshPduForConfigAppKeyAdd', {'dest': dest});
 
   String getDeviceUuid(List<int> serviceData) {
     var msb = 0;

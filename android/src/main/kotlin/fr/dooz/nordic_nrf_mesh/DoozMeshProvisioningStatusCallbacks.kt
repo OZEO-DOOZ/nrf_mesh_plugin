@@ -38,7 +38,10 @@ class DoozMeshProvisioningStatusCallbacks(var binaryMessenger: BinaryMessenger, 
                 "eventName" to "onProvisioningFailed",
                 "state" to state?.name,
                 "data" to data,
-                "meshNodeUuid" to meshNode?.deviceUuid?.toString()
+                "meshNode" to mapOf(
+                        "uuid" to meshNode?.deviceUuid?.toString(),
+                        "provisionerPublicKeyXY" to meshNode?.provisionerPublicKeyXY
+                )
             )
         )
     }
@@ -49,9 +52,12 @@ class DoozMeshProvisioningStatusCallbacks(var binaryMessenger: BinaryMessenger, 
                 "eventName" to "onProvisioningCompleted",
                 "state" to state?.name,
                 "data" to data,
-                "meshNodeUuid" to meshNode?.uuid
+                "meshNode" to mapOf(
+                        "uuid" to meshNode?.uuid
+                )
             )
         )
+        doozMeshManagerApi.currentProvisionedMeshNode = DoozProvisionedMeshNode(binaryMessenger, meshNode!!)
     }
 
     @SuppressLint("RestrictedApi")

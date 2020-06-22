@@ -6,26 +6,45 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
+import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
 
-Future<void> provisioning(MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid) async {
+Future<ProvisionedMeshNode> provisioning(
+    MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid) async {
   print('serviceDataUuid $serviceDataUuid');
   if (Platform.isIOS) {
     await meshManagerApi.provisioningIos(serviceDataUuid);
   } else if (Platform.isAndroid) {
-    await _provisioningAndroid(meshManagerApi, device, serviceDataUuid);
+    return _provisioningAndroid(meshManagerApi, device, serviceDataUuid);
   }
+  return null;
 }
 
-Future<void> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid) async {
+Future<ProvisionedMeshNode> _provisioningAndroid(
+    MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
   final bleMeshManager = BleMeshManager();
+  ProvisionedMeshNode provisionedMeshNode;
 
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     print('onProvisioningCompleted $event');
-    await meshManagerApi.cleanProvisioningData();
-    completer.complete();
+    await bleMeshManager.disconnect();
+
+    ScanResult scanResult;
+    while (scanResult == null) {
+      final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid]) as List<ScanResult>);
+      scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
+      print(scanResult);
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+    if (scanResult == null) {
+      completer.completeError(Exception('Didn\'t find module'));
+    }
+
+    await bleMeshManager.connect(scanResult.device);
+
+    provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     print('onProvisioningStateChanged $event');
@@ -53,6 +72,11 @@ Future<void> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice
       }
       await unprovisionedMeshNode.setUnicastAddress(unicast);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
+    } else if (event.state == 'PROVISIONING_INVITE') {
+      if (bleMeshManager.isProvisioningCompleted) {
+        final unicast = await provisionedMeshNode.unicastAddress;
+        await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
+      }
     }
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
@@ -71,35 +95,52 @@ Future<void> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice
   });
 
   bleMeshManager.callbacks = _DoozBleMeshManagerCallbacks(meshManagerApi);
-  bleMeshManager.callbacks.onDeviceConnecting.listen(print);
-  bleMeshManager.callbacks.onDeviceConnected.listen(print);
+  final onDeviceConnectingSubscription = bleMeshManager.callbacks.onDeviceConnecting.listen((event) {
+    print('onDeviceConnecting $event');
+  });
+  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) {
+    print('onDeviceConnected $event');
+  });
 
-  bleMeshManager.callbacks.onServicesDiscovered.listen((event) {
+  final onServicesDiscoveredSubscription = bleMeshManager.callbacks.onServicesDiscovered.listen((event) {
     print('onServicesDiscovered');
   });
 
-  bleMeshManager.callbacks.onDeviceReady.listen((event) async {
+  final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
     print('onDeviceReady ${event.id.id} ${serviceDataUuid}');
     await meshManagerApi.identifyNode(serviceDataUuid);
   });
 
-  bleMeshManager.callbacks.onDataReceived.listen((event) async {
+  final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
     print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
-  bleMeshManager.callbacks.onDataSent.listen((event) async {
+  final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
     print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
   });
 
-  bleMeshManager.callbacks.onDeviceDisconnecting.listen(print);
-  bleMeshManager.callbacks.onDeviceDisconnected.listen(print);
+  final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
+    print('onDeviceDisconnecting $event');
+  });
+  final onDeviceDisconnectedSubscription = bleMeshManager.callbacks.onDeviceDisconnected.listen((event) {
+    print('onDeviceDisconnected $event');
+  });
+
+  final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
+    print('onConfigCompositionDataStatus $event');
+    await meshManagerApi.createMeshPduForConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
+  });
+  final onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
+    print('onConfigAppKeyStatus $event');
+    completer.complete(provisionedMeshNode);
+  });
 
   print('connect');
   await bleMeshManager.connect(device);
 
   try {
-    await completer.future;
+    return await completer.future;
   } catch (e) {
     await device.disconnect();
     rethrow;
@@ -110,9 +151,20 @@ Future<void> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice
       onProvisioningFailedSubscription.cancel(),
       sendProvisioningPduSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
+      onDeviceConnectingSubscription.cancel(),
+      onDeviceConnectedSubscription.cancel(),
+      onServicesDiscoveredSubscription.cancel(),
+      onDeviceReadySubscription.cancel(),
+      onDataReceivedSubscription.cancel(),
+      onDataSentSubscription.cancel(),
+      onDeviceDisconnectingSubscription.cancel(),
+      onDeviceDisconnectedSubscription.cancel(),
+      onConfigCompositionDataStatusSubscription.cancel(),
+      onConfigAppKeyStatusSubscription.cancel(),
       bleMeshManager?.callbacks?.dispose(),
     ]);
   }
+  return null;
 }
 
 class _DoozBleMeshManagerCallbacks extends BleMeshManagerCallbacks {

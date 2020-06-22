@@ -8,8 +8,6 @@ import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:retry/retry.dart';
 
 class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
-  bool _isProvisioningComplete = false;
-
   BluetoothCharacteristic _meshProxyDataInCharacteristic;
   BluetoothCharacteristic _meshProxyDataOutCharacteristic;
   BluetoothCharacteristic _meshProvisioningDataInCharacteristic;
@@ -19,7 +17,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   StreamSubscription<List<int>> _meshProvisioningDataOutSubscription;
 
   void onDeviceDisconnected(final BluetoothDevice device) async {
-    _isProvisioningComplete = false;
+    isProvisioningCompleted = false;
     _meshProvisioningDataInCharacteristic = null;
     _meshProvisioningDataOutCharacteristic = null;
     _meshProxyDataInCharacteristic = null;
@@ -36,7 +34,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     final services = await device.discoverServices();
     var service = services.firstWhere((element) => element.uuid == meshProxyUuid, orElse: () => null);
     if (service != null) {
-      _isProvisioningComplete = true;
+      isProvisioningCompleted = true;
       _meshProxyDataInCharacteristic =
           service.characteristics.firstWhere((element) => element.uuid == meshProxyDataIn, orElse: () => null);
       _meshProxyDataOutCharacteristic =
@@ -51,7 +49,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     } else {
       service = services.firstWhere((element) => element.uuid == meshProvisioningUuid, orElse: () => null);
       if (service != null) {
-        _isProvisioningComplete = false;
+        isProvisioningCompleted = false;
         _meshProvisioningDataInCharacteristic =
             service.characteristics.firstWhere((element) => element.uuid == meshProvisioningDataIn, orElse: () => null);
         _meshProvisioningDataOutCharacteristic = service.characteristics
@@ -72,7 +70,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<void> initGatt(final BluetoothDevice device) async {
-    if (_isProvisioningComplete) {
+    if (isProvisioningCompleted) {
       final dataOut = _meshProxyDataOutCharacteristic.properties;
       if (dataOut.read) {
         await _meshProxyDataOutCharacteristic.read();
@@ -144,7 +142,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     if (data.isEmpty) {
       return;
     }
-    if (_isProvisioningComplete) {
+    if (isProvisioningCompleted) {
       if (_meshProxyDataInCharacteristic == null) {
         return;
       }

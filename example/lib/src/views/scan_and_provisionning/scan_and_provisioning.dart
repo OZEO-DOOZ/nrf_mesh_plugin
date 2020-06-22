@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/device.dart';
+import 'package:pedantic/pedantic.dart';
 
 class ScanningAndProvisioning extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -19,6 +20,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
   bool loading = true;
   bool isScanning = true;
+  bool isProvisioning = false;
   StreamSubscription _scanSubscription;
   MeshManagerApi _meshManagerApi;
 
@@ -91,11 +93,44 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     if (isScanning) {
       await _stopScan();
     }
+    if (isProvisioning) {
+      return;
+    }
+    isProvisioning = true;
     try {
-      await provisioning(_meshManagerApi, device, _serviceData[device.id.id].toString());
-      print('provisioning succeeded');
+      final provisionedMeshNodeF = provisioning(_meshManagerApi, device, _serviceData[device.id.id].toString());
+      unawaited(provisionedMeshNodeF.then((_) async {
+        Navigator.of(context).pop();
+      }));
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        child: Center(
+          child: Card(
+            margin: EdgeInsets.all(8),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Provisioning in progress, please wait'),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      final provisionedMeshNode = await provisionedMeshNodeF;
+      print('mesh node unicast address = ${await provisionedMeshNode.unicastAddress}');
+      unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);
+    } finally {
+      isProvisioning = false;
     }
   }
 
@@ -116,18 +151,25 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       child: Column(
         children: [
           if (isScanning) LinearProgressIndicator(),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(8),
-              children: [
-                for (final device in _devices)
-                  Device(
-                    device: device,
-                    onTap: () => provisionDevice(device),
-                  ),
-              ],
+          if (!isScanning && _devices.isEmpty)
+            Expanded(
+              child: Center(
+                child: Text('No module found'),
+              ),
             ),
-          ),
+          if (_devices.isNotEmpty)
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.all(8),
+                children: [
+                  for (final device in _devices)
+                    Device(
+                      device: device,
+                      onTap: () => provisionDevice(device),
+                    ),
+                ],
+              ),
+            ),
         ],
       ),
     );

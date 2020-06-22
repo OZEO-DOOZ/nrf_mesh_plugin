@@ -19,6 +19,9 @@ class DoozUnprovisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: 
                 meshNode.unicastAddress = call.argument<Int>("unicastAddress")!!
                 result.success(null)
             }
+            else -> {
+                result.notImplemented()
+            }
         }
     }
 }
