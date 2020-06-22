@@ -25,6 +25,15 @@ class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onProvisioningReconnect => _provisioningReconnectController.stream;
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+
+  Future<void> dispose() => Future.wait([
+        _provisioningController.close(),
+        _provisioningCapabilitiesController.close(),
+        _provisioningInvitationController.close(),
+        _provisioningReconnectController.close(),
+        _onConfigCompositionDataStatusController.close(),
+        _onConfigAppKeyStatusController.close(),
+      ]);
 }
 
 Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid,
