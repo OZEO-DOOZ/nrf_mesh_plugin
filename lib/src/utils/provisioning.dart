@@ -25,8 +25,6 @@ Future<void> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     print('onProvisioningCompleted $event');
     await meshManagerApi.cleanProvisioningData();
-    await device.disconnect();
-    await device.connect();
     completer.complete();
   });
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
