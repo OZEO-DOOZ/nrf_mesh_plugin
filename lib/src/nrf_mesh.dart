@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
+
+  Future<MeshManagerApi> _meshManagerApi;
 
   NordicNrfMesh();
 
@@ -12,7 +16,9 @@ class NordicNrfMesh {
     return version;
   }
 
-  Future<MeshManagerApi> createMeshManagerApi() async {
+  Future<MeshManagerApi> get meshManagerApi => _meshManagerApi ??= _createMeshManagerApi();
+
+  Future<MeshManagerApi> _createMeshManagerApi() async {
     await _methodChannel.invokeMethod('createMeshManagerApi');
     return MeshManagerApi();
   }
