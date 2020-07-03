@@ -21,6 +21,8 @@ class DoozMeshManagerApi: NSObject{
     private var messenger: FlutterBinaryMessenger?
     private var doozStorage: LocalStorage?
     
+    private var provisioningManager: ProvisioningManager?
+    
     init(messenger: FlutterBinaryMessenger) {
         super.init()
         
@@ -124,54 +126,41 @@ private extension DoozMeshManagerApi {
                 let _strServiceUUID = _args["serviceUuid"] as? String,
                 let _serviceUUID = UUID(uuidString: _strServiceUUID)
             {
-                #warning("no identify method on ios ?")
-//                let bearer = ProvisioningBearer()
-//                meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: <#T##ProvisioningBearer#>)
-//                let provisioningManager = ProvisioningManager(for: <#UnprovisionedDevice#>, over: <#ProvisioningBearer#>, in: <#MeshNetwork#>)
-//                provisioningManager
-//
-//                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
-                result(nil)
-            }
-            break
-            
-        case .provisioning:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _strServiceUUID = _args["uuid"] as? String,
-                let _serviceUUID = UUID(uuidString: _strServiceUUID)
-            {
-                #warning("to implement")
-                
                 do{
                     let bearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
                     bearer.open()
+                    bearer.delegate = self
                     let unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
-                    if let provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: unprovisionedDevice, over: bearer){
-                        
-                        provisioningManager.delegate = self
-                        
-                        let attentionTimer: UInt8 = 5
-                        
-                        try provisioningManager.identify(andAttractFor: attentionTimer)
-                        try provisioningManager.provision(
-                            usingAlgorithm: .fipsP256EllipticCurve,
-                            publicKey: .noOobPublicKey,
-                            authenticationMethod: .noOob)
-                        
-                        
-                    }
+                    
+                    self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
+                    
+                    
                     
                 }catch{
                     print(error)
                 }
                 
-                //mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
                 result(nil)
             }
             break
             
+        case .provisioning:
             
+            if let _provisioningManager = self.provisioningManager{
+                do{
+                    try _provisioningManager.provision(
+                        usingAlgorithm: .fipsP256EllipticCurve,
+                        publicKey: .noOobPublicKey,
+                        authenticationMethod: .noOob)
+                    
+                }catch{
+                    print(error)
+                }
+                
+            }
+            result(nil)
+
+            break
             
         case .getDeviceUuid:
             
@@ -554,11 +543,75 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
             print("requestingCapabilities")
         case .capabilitiesReceived(_):
             print("capabilitiesReceived")
+            
+            #warning("hard coded, must refactor this and implement it for all cases, and move the keys to another than MeshNetworkApiEvent")
+            if let _eventSink = self.eventSink{
+                // Inform Flutter that a network was imported
+                _eventSink(
+                    [
+                        EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningStateChanged.rawValue,
+                        EventSinkKeys.state : "PROVISIONING_CAPABILITIES",
+                        "data":[1,0],
+                        "meshNode":[
+                            "uuid":"uuid",
+                            "provisionerPublicKeyXY":[1,0]
+                        ]
+                ])
+                
+            }
         case .provisioning:
             print("provisioning")
         case .fail(_):
             print("fail")
         }
+        
+        print("onProvisioningStateChanged : \(state)")
+        
+//        val meshNodeAlreadySaved = unprovisionedMeshNodes.any { it ->
+//            it.meshNode.deviceUuid == meshNode?.deviceUuid
+//        }
+//        Log.d(this.javaClass.name, "meshNodeAlreadySaved ${meshNodeAlreadySaved}")
+//        if (meshNode != null && !meshNodeAlreadySaved) {
+//            unprovisionedMeshNodes.add(DoozUnprovisionedMeshNode(binaryMessenger, meshNode))
+//        }
+        
+        
+        
+//        val map = mapOf(
+//                "eventName" to "onProvisioningStateChanged",
+//                "state" to state?.name,
+//                "data" to data,
+//                "meshNode" to mapOf(
+//                        "uuid" to meshNode?.deviceUuid?.toString(),
+//                        "provisionerPublicKeyXY" to meshNode?.provisionerPublicKeyXY
+//                )
+//        )
+//        eventSink?.success(map)
+    }
+    
+    
+}
+
+extension DoozMeshManagerApi: BearerDelegate{
+    func bearerDidOpen(_ bearer: Bearer) {
+        print("bearerDidOpen")
+        
+        if let _provisioningManager = self.provisioningManager{
+            _provisioningManager.delegate = self
+            let attentionTimer: UInt8 = 5
+            
+            do{
+                try _provisioningManager.identify(andAttractFor: attentionTimer)
+            }
+            catch{
+                print(error)
+            }
+            
+        }
+    }
+    
+    func bearer(_ bearer: Bearer, didClose error: Error?) {
+        print("bearerDidClose")
     }
     
     

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -98,7 +99,10 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
     try {
-      final provisionedMeshNodeF = provisioning(_meshManagerApi, device, _serviceData[device.id.id].toString());
+      // Pourquoi sur android on doit renvoyer le GUID mais pas sur iOS ?
+      var deviceUUID = Platform.isAndroid ? _serviceData[device.id.id].toString() : device.id.id.toString();
+
+      final provisionedMeshNodeF = provisioning(_meshManagerApi, device, deviceUUID);
       unawaited(provisionedMeshNodeF.then((_) async {
         Navigator.of(context).pop();
       }));

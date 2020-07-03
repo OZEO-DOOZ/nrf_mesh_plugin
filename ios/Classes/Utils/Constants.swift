@@ -65,10 +65,14 @@ enum MeshNetworkApiEvent: String{
     
     case onNetworkLoadFailed
     case onNetworkImportFailed
+    
+    case onProvisioningStateChanged
 }
 
 struct EventSinkKeys{
     static let eventName = "eventName"
     static let id = "id"
     static let error = "error"
+    
+    static let state = "state"
 }
