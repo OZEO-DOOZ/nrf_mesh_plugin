@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -123,7 +124,9 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
             .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
         if (descriptor != null) {
-          await descriptor.write(enableNotificationValue);
+          if (Platform.isAndroid) {
+            await descriptor.write(enableNotificationValue);
+          }
         }
       }
     }

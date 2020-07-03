@@ -124,7 +124,7 @@ private extension DoozMeshManagerApi {
                 let _strServiceUUID = _args["serviceUuid"] as? String,
                 let _serviceUUID = UUID(uuidString: _strServiceUUID)
             {
-                #warning("to implement")
+                #warning("no identify method on ios ?")
 //                let bearer = ProvisioningBearer()
 //                meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: <#T##ProvisioningBearer#>)
 //                let provisioningManager = ProvisioningManager(for: <#UnprovisionedDevice#>, over: <#ProvisioningBearer#>, in: <#MeshNetwork#>)
@@ -144,8 +144,24 @@ private extension DoozMeshManagerApi {
                 #warning("to implement")
                 
                 do{
-                    let provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: DoozBearer())
-                    print(provisioningManager)
+                    let bearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
+                    bearer.open()
+                    let unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
+                    if let provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: unprovisionedDevice, over: bearer){
+                        
+                        provisioningManager.delegate = self
+                        
+                        let attentionTimer: UInt8 = 5
+                        
+                        try provisioningManager.identify(andAttractFor: attentionTimer)
+                        try provisioningManager.provision(
+                            usingAlgorithm: .fipsP256EllipticCurve,
+                            publicKey: .noOobPublicKey,
+                            authenticationMethod: .noOob)
+                        
+                        
+                    }
+                    
                 }catch{
                     print(error)
                 }
@@ -476,25 +492,73 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
 }
 
-class DoozBearer: ProvisioningBearer{
-    var delegate: BearerDelegate? = nil
-    
-    var dataDelegate: BearerDataDelegate? = nil
-    
-    var supportedPduTypes: PduTypes = []
-    
-    var isOpen: Bool = false
-    
-    func open() {
-        
+extension DoozMeshManagerApi: ProvisioningDelegate{
+    func authenticationActionRequired(_ action: AuthAction) {
+        switch action {
+        case let .provideStaticKey(callback: callback):
+            break
+//            self.dismissStatusDialog() {
+//                let message = "Enter 16-character hexadecimal string."
+//                self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
+//                    callback(Data(hex: hex)!)
+//                }
+//            }
+        case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
+            break
+//            self.dismissStatusDialog() {
+//                var message: String
+//                switch action {
+//                case .blink:
+//                    message = "Enter number of blinks."
+//                case .beep:
+//                    message = "Enter number of beeps."
+//                case .vibrate:
+//                    message = "Enter number of vibrations."
+//                case .outputNumeric:
+//                    message = "Enter the number displayed on the device."
+//                default:
+//                    message = "Action \(action) is not supported."
+//                }
+//                self.presentTextAlert(title: "Authentication", message: message, type: .unsignedNumberRequired) { text in
+//                    callback(UInt(text)!)
+//                }
+//            }
+        case let .provideAlphanumeric(maximumNumberOfCharacters: _, callback: callback):
+            break
+//            self.dismissStatusDialog() {
+//                let message = "Enter the text displayed on the device."
+//                self.presentTextAlert(title: "Authentication", message: message, type: .nameRequired) { text in
+//                    callback(text)
+//                }
+//            }
+        case let .displayAlphanumeric(text):
+            break
+            //self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
+        case let .displayNumber(value, inputAction: action):
+            break
+            //self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
+        }
     }
     
-    func close() {
-        
+    func inputComplete() {
+        print("inputComplete")
     }
     
-    func send(_ data: Data, ofType type: PduType) throws {
-        
+    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
+        switch state {
+        case .complete:
+            print("complete")
+        case .ready:
+            print("ready")
+        case .requestingCapabilities:
+            print("requestingCapabilities")
+        case .capabilitiesReceived(_):
+            print("capabilitiesReceived")
+        case .provisioning:
+            print("provisioning")
+        case .fail(_):
+            print("fail")
+        }
     }
     
     
