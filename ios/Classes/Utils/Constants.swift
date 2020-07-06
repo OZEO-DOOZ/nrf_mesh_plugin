@@ -31,6 +31,7 @@ struct FlutterChannels{
         }
     }
     
+    #warning("missing slash ?")
     struct DoozMeshNetwork{
         static let url = "/mesh_network"
         
@@ -55,6 +56,14 @@ struct FlutterChannels{
             return "\(namespace)\(url)\(methodsUrl)"
         }
     }
+    
+    struct DoozUnprovisionedMeshNode{
+        static let url = "/unprovisioned_mesh_node"
+        
+        static func getMethodChannelName(deviceUUID: String) -> String{
+            return "\(namespace)\(url)\(deviceUUID)\(methodsUrl)"
+        }
+    }
         
 }
 
@@ -67,6 +76,7 @@ enum MeshNetworkApiEvent: String{
     case onNetworkImportFailed
     
     case onProvisioningStateChanged
+    case onProvisioningCompleted
 }
 
 struct EventSinkKeys{

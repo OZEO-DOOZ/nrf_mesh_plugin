@@ -46,6 +46,7 @@ private extension DoozMeshManagerApi {
         }
         
         meshNetworkManager = MeshNetworkManager(using: _doozStorage)
+        meshNetworkManager?.logger = self
         
         guard let _meshNetworkManager = self.meshNetworkManager else{
             return
@@ -133,6 +134,7 @@ private extension DoozMeshManagerApi {
                     let unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
                     
                     self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
+                    self.provisioningManager?.logger = self
                     
                     
                     
@@ -536,6 +538,28 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
         switch state {
         case .complete:
+            if let _eventSink = self.eventSink{
+
+//                eventSink?.success(mapOf(
+//                    "eventName" to "onProvisioningCompleted",
+//                    "state" to state?.name,
+//                    "data" to data,
+//                    "meshNode" to mapOf(
+//                            "uuid" to meshNode?.uuid
+//                    )
+//                )
+                    
+                _eventSink(
+                    [
+                        EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningCompleted.rawValue,
+                        EventSinkKeys.state : "completed",
+                        "data":[1,0],
+                        "meshNode":[
+                            "uuid":"uuid"
+                        ]
+                ])
+                
+            }
             print("complete")
         case .ready:
             print("ready")
@@ -546,7 +570,7 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
             
             #warning("hard coded, must refactor this and implement it for all cases, and move the keys to another than MeshNetworkApiEvent")
             if let _eventSink = self.eventSink{
-                // Inform Flutter that a network was imported
+
                 _eventSink(
                     [
                         EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningStateChanged.rawValue,
@@ -612,6 +636,14 @@ extension DoozMeshManagerApi: BearerDelegate{
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         print("bearerDidClose")
+    }
+    
+    
+}
+
+extension DoozMeshManagerApi: LoggerDelegate{
+    func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
+        print("[LOGGER] \(message)")
     }
     
     
