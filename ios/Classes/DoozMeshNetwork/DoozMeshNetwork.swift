@@ -62,6 +62,51 @@ private extension DoozMeshNetwork {
         case .getMeshNetworkName:
             result(_getMeshNetworkName())
             break
+        case .highestAllocatableAddress:
+            
+            var maxAddress = 0
+            
+            if let _allocatedUnicastRanges = meshNetwork?.localProvisioner?.allocatedUnicastRange{
+                for addressRange in _allocatedUnicastRanges {
+                    if (maxAddress < addressRange.highAddress) {
+                        maxAddress = Int(addressRange.highAddress)
+                    }
+                }
+            }
+            
+            result(maxAddress)
+            
+            break
+        case .nextAvailableUnicastAddress:
+            
+            if
+                let _args = call.arguments as? [String:Any],
+                let _elementSize = _args["elementSize"] as? UInt8,
+                let _provisioner = meshNetwork?.localProvisioner{
+                
+                #warning("the returned address is failing when we provision (address already in use)")
+                let nextAvailableUnicastAddress = meshNetwork?.nextAvailableUnicastAddress(for: _elementSize, elementsUsing: _provisioner)
+                result(nextAvailableUnicastAddress)
+            }
+            
+            break
+            
+        case .assignUnicastAddress:
+            do{
+                if
+                    let _args = call.arguments as? [String:Any],
+                    let _unicastAddress = _args["unicastAddress"] as? UInt16,
+                    let _provisioner = meshNetwork?.localProvisioner{
+                    
+                    //try meshNetwork?.assign(unicastAddress: _unicastAddress, for: _provisioner)
+                    
+                    result(nil)
+                }
+
+            }catch{
+                print("Failed to assign unicast address : \(error)")
+            }
+            
         }
 
     }

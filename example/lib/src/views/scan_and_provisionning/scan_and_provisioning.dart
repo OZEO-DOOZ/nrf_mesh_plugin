@@ -99,7 +99,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
     try {
-      // Pourquoi sur android on doit renvoyer le GUID mais pas sur iOS ?
+      // Android is sending the mac Adress of the device, but Apple generates
+      // an UUID specific by smartphone.
+
       var deviceUUID = Platform.isAndroid ? _serviceData[device.id.id].toString() : device.id.id.toString();
 
       final provisionedMeshNodeF = provisioning(_meshManagerApi, device, deviceUUID);

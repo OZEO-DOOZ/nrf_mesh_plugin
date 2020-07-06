@@ -22,6 +22,7 @@ class DoozMeshManagerApi: NSObject{
     private var doozStorage: LocalStorage?
     
     private var provisioningManager: ProvisioningManager?
+    private var unprovisionedDevices = [DoozUnprovisionedDevice]()
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -129,15 +130,15 @@ private extension DoozMeshManagerApi {
             {
                 do{
                     let bearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
-                    bearer.open()
-                    bearer.delegate = self
+
+                    
                     let unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
                     
                     self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
+
                     self.provisioningManager?.logger = self
-                    
-                    
-                    
+                    bearer.delegate = self
+                    bearer.open()
                 }catch{
                     print(error)
                 }
@@ -536,6 +537,13 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
     }
     
     func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
+        
+        if let _messenger = self.messenger{
+            if !(unprovisionedDevices.contains(where: { $0.unprovisionedDevice?.uuid == unprovisionedDevice.uuid })) {
+                unprovisionedDevices.append(DoozUnprovisionedDevice(messenger: _messenger, unprovisionedMeshNode: unprovisionedDevice))
+            }
+        }
+        
         switch state {
         case .complete:
             if let _eventSink = self.eventSink{
@@ -552,10 +560,10 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
                 _eventSink(
                     [
                         EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningCompleted.rawValue,
-                        EventSinkKeys.state : "completed",
+                        EventSinkKeys.state : "PROVISIONING_COMPLETE",
                         "data":[1,0],
                         "meshNode":[
-                            "uuid":"uuid"
+                            "uuid":unprovisionedDevice.uuid.uuidString
                         ]
                 ])
                 
@@ -571,13 +579,16 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
             #warning("hard coded, must refactor this and implement it for all cases, and move the keys to another than MeshNetworkApiEvent")
             if let _eventSink = self.eventSink{
 
+                //provisioningManager?.provisioningCapabilities
+                
+                
                 _eventSink(
                     [
                         EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningStateChanged.rawValue,
                         EventSinkKeys.state : "PROVISIONING_CAPABILITIES",
-                        "data":[1,0],
+                        "data":[3, 1, 3, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
                         "meshNode":[
-                            "uuid":"uuid",
+                            "uuid":unprovisionedDevice.uuid.uuidString,
                             "provisionerPublicKeyXY":[1,0]
                         ]
                 ])
@@ -628,6 +639,7 @@ extension DoozMeshManagerApi: BearerDelegate{
                 try _provisioningManager.identify(andAttractFor: attentionTimer)
             }
             catch{
+                bearer.close()
                 print(error)
             }
             
@@ -638,6 +650,10 @@ extension DoozMeshManagerApi: BearerDelegate{
         print("bearerDidClose")
     }
     
+    
+}
+
+extension DoozMeshManagerApi: DoozMeshProvisioningStatusDelegate{
     
 }
 

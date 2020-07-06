@@ -8,24 +8,24 @@
 import Foundation
 import nRFMeshProvision
 
-class DoozUnprovisionedMeshNode: NSObject{
+class DoozUnprovisionedDevice: NSObject{
     
     //MARK: Public properties
-    var unprovisionedMeshNode: UnprovisionedDevice?
+    var unprovisionedDevice: UnprovisionedDevice?
     
     //MARK: Private properties
     private var eventSink: FlutterEventSink?
 
     init(messenger: FlutterBinaryMessenger, unprovisionedMeshNode: UnprovisionedDevice) {
         super.init()
-        self.unprovisionedMeshNode = unprovisionedMeshNode
+        self.unprovisionedDevice = unprovisionedMeshNode
         _initChannels(messenger: messenger, unprovisionedMeshNode: unprovisionedMeshNode)
     }
     
     
 }
 
-private extension DoozUnprovisionedMeshNode {
+private extension DoozUnprovisionedDevice {
     
     func _initChannels(messenger: FlutterBinaryMessenger, unprovisionedMeshNode: UnprovisionedDevice){
 
@@ -52,11 +52,14 @@ private extension DoozUnprovisionedMeshNode {
         switch _method {
         
         case .getNumberOfElements:
-            
+            #warning("wrong implementation")
+            result(1)
             break
             
         case .setUnicastAddress:
             #warning("to implement or remove if useless in ios")
+            result(nil)
+            
             break
         }
 

@@ -81,27 +81,27 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
       events?._provisioningCapabilitiesController?.add(null);
       var assigned = false;
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
-      // final elementSize = await unprovisionedMeshNode.getNumberOfElements();
-      // final maxAddress = await meshManagerApi.meshNetwork.highestAllocatableAddress;
+      final elementSize = await unprovisionedMeshNode.getNumberOfElements();
+      final maxAddress = await meshManagerApi.meshNetwork.highestAllocatableAddress;
 
-      // if (elementSize == 0) {
-      //   await meshManagerApi.cleanProvisioningData();
-      //   completer.completeError(Exception('Provisioning is failed. Module does not have any elements.'));
-      //   return;
-      // }
+      if (elementSize == 0) {
+        await meshManagerApi.cleanProvisioningData();
+        completer.completeError(Exception('Provisioning is failed. Module does not have any elements.'));
+        return;
+      }
 
-      // var unicast = await meshManagerApi.meshNetwork.nextAvailableUnicastAddress(elementSize);
-      // while (!assigned && unicast < maxAddress && unicast > 0) {
-      //   try {
-      //     await meshManagerApi.meshNetwork.assignUnicastAddress(unicast);
-      //     assigned = true;
-      //   } catch (e) {
-      //     print('Failed to assign $unicast to meshNetwork retry with ${unicast + 1}');
-      //     unicast += 1;
-      //   }
-      // }
-      // await unprovisionedMeshNode.setUnicastAddress(unicast);
-      // events?._provisioningController?.add(null);
+      var unicast = await meshManagerApi.meshNetwork.nextAvailableUnicastAddress(elementSize);
+      while (!assigned && unicast < maxAddress && unicast > 0) {
+        try {
+          await meshManagerApi.meshNetwork.assignUnicastAddress(unicast);
+          assigned = true;
+        } catch (e) {
+          print('Failed to assign $unicast to meshNetwork retry with ${unicast + 1}');
+          unicast += 1;
+        }
+      }
+      await unprovisionedMeshNode.setUnicastAddress(unicast);
+      events?._provisioningController?.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
     } else if (event.state == 'PROVISIONING_INVITE') {
       if (!bleMeshManager.isProvisioningCompleted) {
