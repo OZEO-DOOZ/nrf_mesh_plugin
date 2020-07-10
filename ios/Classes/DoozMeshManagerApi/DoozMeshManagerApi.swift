@@ -14,7 +14,7 @@ class DoozMeshManagerApi: NSObject{
     var meshNetworkManager: MeshNetworkManager?
     var delegate: DoozMeshManagerApiDelegate?
     var mtuSize: Int = -1
-
+    
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
@@ -23,6 +23,14 @@ class DoozMeshManagerApi: NSObject{
     
     private var provisioningManager: ProvisioningManager?
     private var unprovisionedDevices = [DoozUnprovisionedDevice]()
+    
+    private var unprovisionedDevice: UnprovisionedDevice?
+    
+    #warning("refacto proper")
+    private var compositionDataGetNeeded = false
+    
+    private var testGattBearer: GattBearer?
+    private var connection: NetworkConnection?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -130,15 +138,17 @@ private extension DoozMeshManagerApi {
             {
                 do{
                     let bearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
-
                     
-                    let unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
+                    self.unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
                     
-                    self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: unprovisionedDevice, over: bearer)
-
-                    self.provisioningManager?.logger = self
-                    bearer.delegate = self
-                    bearer.open()
+                    if let _unprovisionedDevice = self.unprovisionedDevice{
+                        self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: bearer)
+                        
+                        self.provisioningManager?.logger = self
+                        bearer.delegate = self
+                        bearer.open()
+                    }
+                    
                 }catch{
                     print(error)
                 }
@@ -162,7 +172,7 @@ private extension DoozMeshManagerApi {
                 
             }
             result(nil)
-
+            
             break
             
         case .getDeviceUuid:
@@ -202,7 +212,11 @@ private extension DoozMeshManagerApi {
                 result(nil)
             }
             break
+            
+            
         }
+        
+        
         
     }
     
@@ -354,7 +368,15 @@ private extension DoozMeshManagerApi{
 extension DoozMeshManagerApi: MeshNetworkDelegate{
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
-        
+        print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
+        print("📣 didSendMessage : \(message) from \(localElement) to \(destination)")
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage, from localElement: Element, to destination: Address, error: Error) {
+        print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
     }
     
 }
@@ -489,43 +511,43 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
         switch action {
         case let .provideStaticKey(callback: callback):
             break
-//            self.dismissStatusDialog() {
-//                let message = "Enter 16-character hexadecimal string."
-//                self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
-//                    callback(Data(hex: hex)!)
-//                }
-//            }
+            //            self.dismissStatusDialog() {
+            //                let message = "Enter 16-character hexadecimal string."
+            //                self.presentTextAlert(title: "Static OOB Key", message: message, type: .keyRequired) { hex in
+            //                    callback(Data(hex: hex)!)
+            //                }
+        //            }
         case let .provideNumeric(maximumNumberOfDigits: _, outputAction: action, callback: callback):
             break
-//            self.dismissStatusDialog() {
-//                var message: String
-//                switch action {
-//                case .blink:
-//                    message = "Enter number of blinks."
-//                case .beep:
-//                    message = "Enter number of beeps."
-//                case .vibrate:
-//                    message = "Enter number of vibrations."
-//                case .outputNumeric:
-//                    message = "Enter the number displayed on the device."
-//                default:
-//                    message = "Action \(action) is not supported."
-//                }
-//                self.presentTextAlert(title: "Authentication", message: message, type: .unsignedNumberRequired) { text in
-//                    callback(UInt(text)!)
-//                }
-//            }
+            //            self.dismissStatusDialog() {
+            //                var message: String
+            //                switch action {
+            //                case .blink:
+            //                    message = "Enter number of blinks."
+            //                case .beep:
+            //                    message = "Enter number of beeps."
+            //                case .vibrate:
+            //                    message = "Enter number of vibrations."
+            //                case .outputNumeric:
+            //                    message = "Enter the number displayed on the device."
+            //                default:
+            //                    message = "Action \(action) is not supported."
+            //                }
+            //                self.presentTextAlert(title: "Authentication", message: message, type: .unsignedNumberRequired) { text in
+            //                    callback(UInt(text)!)
+            //                }
+        //            }
         case let .provideAlphanumeric(maximumNumberOfCharacters: _, callback: callback):
             break
-//            self.dismissStatusDialog() {
-//                let message = "Enter the text displayed on the device."
-//                self.presentTextAlert(title: "Authentication", message: message, type: .nameRequired) { text in
-//                    callback(text)
-//                }
-//            }
+            //            self.dismissStatusDialog() {
+            //                let message = "Enter the text displayed on the device."
+            //                self.presentTextAlert(title: "Authentication", message: message, type: .nameRequired) { text in
+            //                    callback(text)
+            //                }
+        //            }
         case let .displayAlphanumeric(text):
             break
-            //self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
+        //self.presentStatusDialog(message: "Enter the following text on your device:\n\n\(text)")
         case let .displayNumber(value, inputAction: action):
             break
             //self.presentStatusDialog(message: "Perform \(action) \(value) times on your device.")
@@ -547,16 +569,16 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
         switch state {
         case .complete:
             if let _eventSink = self.eventSink{
-
-//                eventSink?.success(mapOf(
-//                    "eventName" to "onProvisioningCompleted",
-//                    "state" to state?.name,
-//                    "data" to data,
-//                    "meshNode" to mapOf(
-//                            "uuid" to meshNode?.uuid
-//                    )
-//                )
-                    
+                
+                //                eventSink?.success(mapOf(
+                //                    "eventName" to "onProvisioningCompleted",
+                //                    "state" to state?.name,
+                //                    "data" to data,
+                //                    "meshNode" to mapOf(
+                //                            "uuid" to meshNode?.uuid
+                //                    )
+                //                )
+                
                 _eventSink(
                     [
                         EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningCompleted.rawValue,
@@ -578,7 +600,7 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
             
             #warning("hard coded, must refactor this and implement it for all cases, and move the keys to another than MeshNetworkApiEvent")
             if let _eventSink = self.eventSink{
-
+                
                 //provisioningManager?.provisioningCapabilities
                 
                 
@@ -602,26 +624,26 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
         
         print("onProvisioningStateChanged : \(state)")
         
-//        val meshNodeAlreadySaved = unprovisionedMeshNodes.any { it ->
-//            it.meshNode.deviceUuid == meshNode?.deviceUuid
-//        }
-//        Log.d(this.javaClass.name, "meshNodeAlreadySaved ${meshNodeAlreadySaved}")
-//        if (meshNode != null && !meshNodeAlreadySaved) {
-//            unprovisionedMeshNodes.add(DoozUnprovisionedMeshNode(binaryMessenger, meshNode))
-//        }
+        //        val meshNodeAlreadySaved = unprovisionedMeshNodes.any { it ->
+        //            it.meshNode.deviceUuid == meshNode?.deviceUuid
+        //        }
+        //        Log.d(this.javaClass.name, "meshNodeAlreadySaved ${meshNodeAlreadySaved}")
+        //        if (meshNode != null && !meshNodeAlreadySaved) {
+        //            unprovisionedMeshNodes.add(DoozUnprovisionedMeshNode(binaryMessenger, meshNode))
+        //        }
         
         
         
-//        val map = mapOf(
-//                "eventName" to "onProvisioningStateChanged",
-//                "state" to state?.name,
-//                "data" to data,
-//                "meshNode" to mapOf(
-//                        "uuid" to meshNode?.deviceUuid?.toString(),
-//                        "provisionerPublicKeyXY" to meshNode?.provisionerPublicKeyXY
-//                )
-//        )
-//        eventSink?.success(map)
+        //        val map = mapOf(
+        //                "eventName" to "onProvisioningStateChanged",
+        //                "state" to state?.name,
+        //                "data" to data,
+        //                "meshNode" to mapOf(
+        //                        "uuid" to meshNode?.deviceUuid?.toString(),
+        //                        "provisionerPublicKeyXY" to meshNode?.provisionerPublicKeyXY
+        //                )
+        //        )
+        //        eventSink?.success(map)
     }
     
     
@@ -630,6 +652,8 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
 extension DoozMeshManagerApi: BearerDelegate{
     func bearerDidOpen(_ bearer: Bearer) {
         print("bearerDidOpen")
+        
+        
         
         if let _provisioningManager = self.provisioningManager{
             _provisioningManager.delegate = self
@@ -647,11 +671,127 @@ extension DoozMeshManagerApi: BearerDelegate{
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
-        print("bearerDidClose")
+        guard let _provisioningManager = self.provisioningManager, case .complete = _provisioningManager.state else {
+            print("Device disconnected")
+            return
+        }
+        print("Provisioning complete")
+        
+        
+        
+        
+//        if let _meshNetworkManager = self.meshNetworkManager{
+//            if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
+//                if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
+//                    // Set up local Elements on the phone.
+//                    let element0 = Element(name: "Primary Element", location: .first, models: [
+//                        // 4 generic models defined by Bluetooth SIG :
+//                        Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
+//                        Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
+//                        Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
+//                        Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
+//                        // A simple vendor model:
+//                        Model(vendorModelId: 0x0001, companyId: 0x0059, delegate: SimpleOnOffClientDelegate(manager: _meshNetworkManager))
+//                    ])
+//                    let element1 = Element(name: "Secondary Element", location: .second, models: [
+//                        Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
+//                        Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
+//                        Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
+//                        Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+//                    ])
+//                    _meshNetworkManager.localElements = [element0, element1]
+//
+//                    connection = NetworkConnection(to: _meshNetwork)
+//                    connection!.dataDelegate = meshNetworkManager
+//                    connection!.logger = self
+//                    _meshNetworkManager.transmitter = connection
+//                    connection?.isConnectionModeAutomatic = false
+//                    self.testGattBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
+//
+//                    if let _gattBearer = testGattBearer{
+//                        _gattBearer.delegate = self
+//                        _gattBearer.logger = self
+//                        _gattBearer.open()
+//                        connection?.use(proxy: _gattBearer)
+//                    }
+//
+//
+//
+//                    connection!.open()
+//
+//                    let message = ConfigCompositionDataGet()
+//                    do{
+//                        let messageHandle = try _meshNetworkManager.send(message, to: _node)
+//                    }
+//                    catch{
+//                        print(error)
+//                    }
+//
+//
+//                }
+//
+//            }
+//
+//        }
+        
+                
+        
+        
+        
+        
+        
+        // Reopen bearer
+        #warning("WIP, rename and find better way to do it")
+        
+        //        guard !compositionDataGetNeeded else{
+        
+        if let _meshNetworkManager = self.meshNetworkManager{
+            if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
+                if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
+                    
+                    do{
+                        
+                        let message = ConfigCompositionDataGet()
+                        
+                        
+                        //                            let connection = NetworkConnection(to: _meshNetwork)
+                        //                            connection!.dataDelegate = meshNetworkManager
+                        //                            connection!.logger = self
+                        //                            meshNetworkManager.transmitter = connection
+                        //                            connection!.open()
+                        
+                        //bearer.supportedPduTypes.insert([PduType.networkPdu])
+                        self.testGattBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
+                        
+                        if let _gattBearer = testGattBearer{
+                            _gattBearer.delegate = self
+                            _gattBearer.logger = self
+                            _gattBearer.open()
+                            
+                            _meshNetworkManager.transmitter = _gattBearer
+                            
+                            let messageHandle = try _meshNetworkManager.send(message, to: _node)
+                        }
+                        
+                        
+                        compositionDataGetNeeded = false
+                    }catch{
+                        print("Error getting composition data")
+                    }
+                    
+                }
+            }else {
+                print("Mesh configuration could not be saved.")
+            }
+            
+            
+        }
+        return
     }
-    
+    //}
     
 }
+
 
 extension DoozMeshManagerApi: DoozMeshProvisioningStatusDelegate{
     
@@ -663,4 +803,10 @@ extension DoozMeshManagerApi: LoggerDelegate{
     }
     
     
+}
+
+extension DoozMeshManagerApi: GattBearerDelegate{
+    func bearerDidConnect(_ bearer: Bearer) {
+        
+    }
 }

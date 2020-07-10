@@ -18,6 +18,5 @@ enum DoozMeshManagerApiChannel: String{
     case setMtuSize
     
     case provisioning
-    
+        
 }
-
