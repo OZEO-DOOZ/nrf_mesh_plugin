@@ -593,6 +593,17 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
             print("complete")
         case .ready:
             print("ready")
+            if let _eventSink = self.eventSink{
+//                _eventSink(
+//                    [
+//                        EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningCompleted.rawValue,
+//                        EventSinkKeys.state : "PROVISIONING_INVITE",
+//                        "data":[1,0],
+//                        "meshNode":[
+//                            "uuid":unprovisionedDevice.uuid.uuidString
+//                        ]
+//                ])
+            }
         case .requestingCapabilities:
             print("requestingCapabilities")
         case .capabilitiesReceived(_):
@@ -748,36 +759,10 @@ extension DoozMeshManagerApi: BearerDelegate{
         if let _meshNetworkManager = self.meshNetworkManager{
             if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
                 if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
+                    _meshNetworkManager.localElements = []
+                    provisionerDidProvisionNewDevice(_node)
+
                     
-                    do{
-                        
-                        let message = ConfigCompositionDataGet()
-                        
-                        
-                        //                            let connection = NetworkConnection(to: _meshNetwork)
-                        //                            connection!.dataDelegate = meshNetworkManager
-                        //                            connection!.logger = self
-                        //                            meshNetworkManager.transmitter = connection
-                        //                            connection!.open()
-                        
-                        //bearer.supportedPduTypes.insert([PduType.networkPdu])
-                        self.testGattBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
-                        
-                        if let _gattBearer = testGattBearer{
-                            _gattBearer.delegate = self
-                            _gattBearer.logger = self
-                            _gattBearer.open()
-                            
-                            _meshNetworkManager.transmitter = _gattBearer
-                            
-                            let messageHandle = try _meshNetworkManager.send(message, to: _node)
-                        }
-                        
-                        
-                        compositionDataGetNeeded = false
-                    }catch{
-                        print("Error getting composition data")
-                    }
                     
                 }
             }else {
@@ -790,6 +775,50 @@ extension DoozMeshManagerApi: BearerDelegate{
     }
     //}
     
+    func provisionerDidProvisionNewDevice(_ node: Node){
+        if let _meshNetworkManager = self.meshNetworkManager{
+            let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
+            guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+                // The Provisioner cannot sent or receive messages.
+                
+                return
+            }
+            
+            do{
+                
+                let message = ConfigCompositionDataGet()
+                
+                
+                //                            let connection = NetworkConnection(to: _meshNetwork)
+                //                            connection!.dataDelegate = meshNetworkManager
+                //                            connection!.logger = self
+                //                            meshNetworkManager.transmitter = connection
+                //                            connection!.open()
+                
+                //bearer.supportedPduTypes.insert([PduType.networkPdu])
+                self.testGattBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
+                
+                if let _gattBearer = testGattBearer{
+                    _gattBearer.delegate = self
+                    _gattBearer.logger = self
+                    _gattBearer.open()
+                    
+                    _meshNetworkManager.transmitter = _gattBearer
+                    node.name = "toto"
+                    let messageHandle = try _meshNetworkManager.send(message, to: node)
+                }
+                
+                
+                compositionDataGetNeeded = false
+            }catch{
+                print("Error getting composition data")
+            }
+        }
+        
+        
+        
+        
+    }
 }
 
 
