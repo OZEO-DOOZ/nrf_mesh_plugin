@@ -71,9 +71,9 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
       return;
     }
 
-    await bleMeshManager.connect(scanResult.device);
+    // await bleMeshManager.connect(scanResult.device);
 
-    provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
+    // provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     print('onProvisioningStateChanged $event');

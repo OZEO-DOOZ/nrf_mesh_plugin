@@ -26,8 +26,11 @@ class DoozMeshManagerApi: NSObject{
     
     private var unprovisionedDevice: UnprovisionedDevice?
     
+    private var provisioningBearer: PBGattBearer?
+    
     #warning("refacto proper")
     private var compositionDataGetNeeded = false
+    private var node: Node?
     
     private var testGattBearer: GattBearer?
     private var connection: NetworkConnection?
@@ -137,17 +140,20 @@ private extension DoozMeshManagerApi {
                 let _serviceUUID = UUID(uuidString: _strServiceUUID)
             {
                 do{
-                    let bearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
-                    
-                    self.unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
-                    
-                    if let _unprovisionedDevice = self.unprovisionedDevice{
-                        self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: bearer)
+                    self.provisioningBearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
+                    if let _bearer = self.provisioningBearer{
+                        self.unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
                         
-                        self.provisioningManager?.logger = self
-                        bearer.delegate = self
-                        bearer.open()
+                        if let _unprovisionedDevice = self.unprovisionedDevice{
+                            self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: _bearer)
+                            
+                            self.provisioningManager?.logger = self
+                            _bearer.delegate = self
+                            _bearer.open()
+                        }
                     }
+                    
+                    
                     
                 }catch{
                     print(error)
@@ -369,6 +375,19 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
         print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
+        
+        switch message {
+            
+        case is ConfigCompositionDataStatus:
+            self.getTtl()
+            
+        case is ConfigDefaultTtlStatus:
+            self.sendAppKey()
+                
+        default:
+            break
+        }
+        
     }
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
@@ -568,6 +587,9 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
         
         switch state {
         case .complete:
+            if let _bearer = self.provisioningBearer{
+                _bearer.close()
+            }
             if let _eventSink = self.eventSink{
                 
                 //                eventSink?.success(mapOf(
@@ -590,13 +612,16 @@ extension DoozMeshManagerApi: ProvisioningDelegate{
                 ])
                 
             }
+            
+
+            
             print("complete")
         case .ready:
             print("ready")
             if let _eventSink = self.eventSink{
 //                _eventSink(
 //                    [
-//                        EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningCompleted.rawValue,
+//                        EventSinkKeys.eventName : MeshNetworkApiEvent.onProvisioningStateChanged.rawValue,
 //                        EventSinkKeys.state : "PROVISIONING_INVITE",
 //                        "data":[1,0],
 //                        "meshNode":[
@@ -664,7 +689,10 @@ extension DoozMeshManagerApi: BearerDelegate{
     func bearerDidOpen(_ bearer: Bearer) {
         print("bearerDidOpen")
         
-        
+        guard !compositionDataGetNeeded else{
+            compositionDataGet()
+            return
+        }
         
         if let _provisioningManager = self.provisioningManager{
             _provisioningManager.delegate = self
@@ -688,89 +716,25 @@ extension DoozMeshManagerApi: BearerDelegate{
         }
         print("Provisioning complete")
         
-        
-        
-        
-//        if let _meshNetworkManager = self.meshNetworkManager{
-//            if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
-//                if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
-//                    // Set up local Elements on the phone.
-//                    let element0 = Element(name: "Primary Element", location: .first, models: [
-//                        // 4 generic models defined by Bluetooth SIG :
-//                        Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-//                        Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-//                        Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-//                        Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
-//                        // A simple vendor model:
-//                        Model(vendorModelId: 0x0001, companyId: 0x0059, delegate: SimpleOnOffClientDelegate(manager: _meshNetworkManager))
-//                    ])
-//                    let element1 = Element(name: "Secondary Element", location: .second, models: [
-//                        Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-//                        Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-//                        Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-//                        Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
-//                    ])
-//                    _meshNetworkManager.localElements = [element0, element1]
-//
-//                    connection = NetworkConnection(to: _meshNetwork)
-//                    connection!.dataDelegate = meshNetworkManager
-//                    connection!.logger = self
-//                    _meshNetworkManager.transmitter = connection
-//                    connection?.isConnectionModeAutomatic = false
-//                    self.testGattBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
-//
-//                    if let _gattBearer = testGattBearer{
-//                        _gattBearer.delegate = self
-//                        _gattBearer.logger = self
-//                        _gattBearer.open()
-//                        connection?.use(proxy: _gattBearer)
-//                    }
-//
-//
-//
-//                    connection!.open()
-//
-//                    let message = ConfigCompositionDataGet()
-//                    do{
-//                        let messageHandle = try _meshNetworkManager.send(message, to: _node)
-//                    }
-//                    catch{
-//                        print(error)
-//                    }
-//
-//
-//                }
-//
-//            }
-//
-//        }
-        
-                
-        
-        
-        
-        
-        
-        // Reopen bearer
         #warning("WIP, rename and find better way to do it")
-        
-        //        guard !compositionDataGetNeeded else{
+        compositionDataGetNeeded = true
         
         if let _meshNetworkManager = self.meshNetworkManager{
             if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
                 if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
                     _meshNetworkManager.localElements = []
                     provisionerDidProvisionNewDevice(_node)
-
-                    
                     
                 }
             }else {
                 print("Mesh configuration could not be saved.")
             }
-            
-            
+
         }
+        
+        //        guard !compositionDataGetNeeded else{
+        
+        
         return
     }
     //}
@@ -784,9 +748,10 @@ extension DoozMeshManagerApi: BearerDelegate{
                 return
             }
             
+            self.node = node
+            
             do{
                 
-                let message = ConfigCompositionDataGet()
                 
                 
                 //                            let connection = NetworkConnection(to: _meshNetwork)
@@ -802,14 +767,16 @@ extension DoozMeshManagerApi: BearerDelegate{
                     _gattBearer.delegate = self
                     _gattBearer.logger = self
                     _gattBearer.open()
+                    _gattBearer.dataDelegate = _meshNetworkManager
                     
                     _meshNetworkManager.transmitter = _gattBearer
-                    node.name = "toto"
-                    let messageHandle = try _meshNetworkManager.send(message, to: node)
+                    _meshNetworkManager.delegate = self
+//                    node.name = "toto"
+//                    let messageHandle = try _meshNetworkManager.send(message, to: node)
+                    
                 }
                 
                 
-                compositionDataGetNeeded = false
             }catch{
                 print("Error getting composition data")
             }
@@ -817,6 +784,69 @@ extension DoozMeshManagerApi: BearerDelegate{
         
         
         
+        
+    }
+    
+    func getTtl(){
+        let message = ConfigDefaultTtlGet()
+
+        
+        if let _node = self.node,
+            let _meshNetworkManager = self.meshNetworkManager{
+            
+            _node.name = "toto"
+            
+            do{
+                print("📩 Sending message : ConfigCompositionDataGet")
+                let messageHandle = try _meshNetworkManager.send(message, to: _node)
+                compositionDataGetNeeded = false
+
+            }catch{
+                print(error)
+            }
+            
+        }
+    }
+    
+    func sendAppKey(){
+        if let _meshNetworkManager = self.meshNetworkManager, let _node = self.node{
+            do{
+                try _meshNetworkManager.meshNetwork?.add(applicationKey: Data.random128BitKey(), name: "appKeyTest")
+                
+                if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+                    try _meshNetworkManager.send(ConfigAppKeyAdd(applicationKey: _appKey), to: _node)
+                    print("💪 SEND APP KEY")
+                }
+            }catch{
+                print(error)
+            }
+        
+            
+            
+        }
+        
+        
+    }
+    
+    func compositionDataGet(){
+        let message = ConfigCompositionDataGet()
+
+        
+        if let _node = self.node,
+            let _meshNetworkManager = self.meshNetworkManager{
+            
+            _node.name = "toto"
+            
+            do{
+                print("📩 Sending message : ConfigCompositionDataGet")
+                let messageHandle = try _meshNetworkManager.send(message, to: _node)
+                compositionDataGetNeeded = false
+
+            }catch{
+                print(error)
+            }
+            
+        }
         
     }
 }
@@ -836,6 +866,6 @@ extension DoozMeshManagerApi: LoggerDelegate{
 
 extension DoozMeshManagerApi: GattBearerDelegate{
     func bearerDidConnect(_ bearer: Bearer) {
-        
+        print("✅ CONNECTED TO BEARER")
     }
 }
