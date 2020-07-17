@@ -75,14 +75,14 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
 
     // provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
+
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     print('onProvisioningStateChanged $event');
+
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController?.add(null);
-      var assigned = false;
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
       final elementSize = await unprovisionedMeshNode.getNumberOfElements();
-      final maxAddress = await meshManagerApi.meshNetwork.highestAllocatableAddress;
 
       if (elementSize == 0) {
         await meshManagerApi.cleanProvisioningData();
@@ -90,28 +90,10 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
         return;
       }
 
-      var unicast = await meshManagerApi.meshNetwork.nextAvailableUnicastAddress(elementSize);
-      while (!assigned && unicast < maxAddress && unicast > 0) {
-        try {
-          await meshManagerApi.meshNetwork.assignUnicastAddress(unicast);
-          assigned = true;
-        } catch (e) {
-          print('Failed to assign $unicast to meshNetwork retry with ${unicast + 1}');
-          unicast += 1;
-        }
-      }
-      await unprovisionedMeshNode.setUnicastAddress(unicast);
-      events?._provisioningController?.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
-    } else if (event.state == 'PROVISIONING_INVITE') {
-      if (!bleMeshManager.isProvisioningCompleted) {
-        events?._provisioningInvitationController?.add(null);
-      } else if (bleMeshManager.isProvisioningCompleted) {
-        events?._provisioningReconnectController?.add(null);
-        final unicast = await provisionedMeshNode.unicastAddress;
-        await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
-      }
-    }
+    } else if (event.state == 'PROVISIONER_READY') {
+    } else if (event.state == 'REQUESTING_CAPABILITIES') {
+    } else if (event.state == 'PROVISIONING') {}
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
     print('onProvisioningFailed $event');

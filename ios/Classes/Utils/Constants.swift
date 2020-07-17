@@ -73,9 +73,12 @@ enum MeshNetworkApiEvent: String{
     
     case onNetworkLoadFailed
     case onNetworkImportFailed
-    
-    case onProvisioningStateChanged
+}
+
+enum ProvisioningEvent: String{
     case onProvisioningCompleted
+    case onProvisioningFailed
+    case onProvisioningStateChanged
 }
 
 struct EventSinkKeys{
