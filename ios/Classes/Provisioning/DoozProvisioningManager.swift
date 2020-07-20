@@ -23,7 +23,6 @@ class DoozProvisioningManager: NSObject {
     private var provisioningManager: ProvisioningManager?
     private var messenger: FlutterBinaryMessenger?
     
-    #warning("vider ce tableau une fois le provisioning terminé")
     private var unprovisionedDevices = [DoozUnprovisionedDevice]()
     
     private var unprovisionedDevice: UnprovisionedDevice?
@@ -33,8 +32,6 @@ class DoozProvisioningManager: NSObject {
     
     private var compositionDataGetNeeded = false
     private var node: Node?
-    
-    
     
     init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger, delegate: DoozProvisioningManagerDelegate) {
         super.init()
@@ -151,7 +148,6 @@ private extension DoozProvisioningManager{
     func sendAppKey(){
         if let _meshNetworkManager = self.meshNetworkManager, let _node = self.node{
             do{
-                try _ = _meshNetworkManager.meshNetwork?.add(applicationKey: Data.random128BitKey(), name: "appKeyTest")
                 
                 if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
                     _ = try _meshNetworkManager.send(ConfigAppKeyAdd(applicationKey: _appKey), to: _node)

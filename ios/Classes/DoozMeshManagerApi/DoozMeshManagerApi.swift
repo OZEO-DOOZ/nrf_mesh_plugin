@@ -216,6 +216,8 @@ private extension DoozMeshManagerApi{
                 print("✅ No Mesh Network in database, creating a new one...")
                 
                 let meshNetwork = try _generateMeshNetwork()
+                try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
+
                 
                 print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
                 
@@ -489,7 +491,7 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         if let _eventSink = self.eventSink{
             _eventSink(
                 [
-                    EventSinkKeys.eventName : ProvisioningEvent.onConfigAppKeyStatus
+                    EventSinkKeys.eventName : ProvisioningEvent.onConfigAppKeyStatus.rawValue
             ])
         }
     }
