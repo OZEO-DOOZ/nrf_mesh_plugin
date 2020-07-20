@@ -21,18 +21,7 @@ class DoozMeshManagerApi: NSObject{
     private var messenger: FlutterBinaryMessenger?
     private var doozStorage: LocalStorage?
     
-    private var provisioningManager: ProvisioningManager?
-    private var unprovisionedDevices = [DoozUnprovisionedDevice]()
-    
-    private var unprovisionedDevice: UnprovisionedDevice?
-    
-    private var provisioningBearer: PBGattBearer?
-    
-    #warning("refacto proper")
-    private var compositionDataGetNeeded = false
-    private var node: Node?
-    
-    private var testGattBearer: GattBearer?
+    private var doozProvisioningManager: DoozProvisioningManager?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -42,6 +31,7 @@ class DoozMeshManagerApi: NSObject{
         
         _initMeshNetworkManager()
         _initChannels(messenger: messenger)
+        _initDoozProvisioningManager()
     }
     
 }
@@ -62,8 +52,6 @@ private extension DoozMeshManagerApi {
         guard let _meshNetworkManager = self.meshNetworkManager else{
             return
         }
-        
-        _meshNetworkManager.delegate = self
         
         _meshNetworkManager.acknowledgmentTimerInterval = 0.150
         _meshNetworkManager.transmissionTimerInteral = 0.600
@@ -95,6 +83,14 @@ private extension DoozMeshManagerApi {
                 self._handleMethodCall(call, result: result)
             })
         
+    }
+    
+    func _initDoozProvisioningManager(){
+        guard let _meshNetworkManager = self.meshNetworkManager, let _messenger = self.messenger else{
+            return
+        }
+        
+        doozProvisioningManager = DoozProvisioningManager(meshNetworkManager: _meshNetworkManager, messenger: _messenger, delegate: self)
     }
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -133,49 +129,26 @@ private extension DoozMeshManagerApi {
             }
             break
         case .identifyNode:
+            
             if
+                let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
                 let _strServiceUUID = _args["serviceUuid"] as? String,
                 let _serviceUUID = UUID(uuidString: _strServiceUUID)
             {
-                do{
-                    self.provisioningBearer = PBGattBearer(targetWithIdentifier: _serviceUUID)
-                    if let _bearer = self.provisioningBearer{
-                        self.unprovisionedDevice = UnprovisionedDevice(uuid: _serviceUUID)
-                        
-                        if let _unprovisionedDevice = self.unprovisionedDevice{
-                            self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: _bearer)
-                            
-                            self.provisioningManager?.logger = self
-                            _bearer.delegate = self
-                            _bearer.open()
-                        }
-                    }
-                    
-                    
-                    
-                }catch{
-                    print(error)
-                }
-                
-                result(nil)
+                _doozProvisioningManager.identifyNode(_serviceUUID)
             }
+            
+            result(nil)
+            
             break
             
         case .provisioning:
-            
-            if let _provisioningManager = self.provisioningManager{
-                do{
-                    try _provisioningManager.provision(
-                        usingAlgorithm: .fipsP256EllipticCurve,
-                        publicKey: .noOobPublicKey,
-                        authenticationMethod: .noOob)
-                    
-                }catch{
-                    print(error)
-                }
-                
+            if let _doozProvisioningManager = self.doozProvisioningManager{
+                _doozProvisioningManager.provision()
             }
+            
+            
             result(nil)
             
             break
@@ -220,8 +193,6 @@ private extension DoozMeshManagerApi {
             
             
         }
-        
-        
         
     }
     
@@ -353,8 +324,6 @@ private extension DoozMeshManagerApi{
         }
         
         // Delete the existing network in local database and recreate a new / empty Mesh Network
-        //        if let _storage =
-        //        delete()
         do{
             try _deleteMeshNetworkFromDb(_meshNetwork.id)
             let meshNetwork = try _generateMeshNetwork()
@@ -368,37 +337,6 @@ private extension DoozMeshManagerApi{
     }
     
 }
-
-
-extension DoozMeshManagerApi: MeshNetworkDelegate{
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
-        print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
-        
-        switch message {
-            
-        case is ConfigCompositionDataStatus:
-            self.getTtl()
-            
-        case is ConfigDefaultTtlStatus:
-            self.sendAppKey()
-                
-        default:
-            break
-        }
-        
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
-        print("📣 didSendMessage : \(message) from \(localElement) to \(destination)")
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage, from localElement: Element, to destination: Address, error: Error) {
-        print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
-    }
-    
-}
-
 
 extension DoozMeshManagerApi: FlutterStreamHandler{
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -524,230 +462,7 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
 }
 
-private extension ProvisionigState{
-    
-    func eventName() -> String{
-        switch self {
-            
-        case .complete:
-            return ProvisioningEvent.onProvisioningCompleted.rawValue
-        case .fail(_):
-            return ProvisioningEvent.onProvisioningFailed.rawValue
-        default:
-            return ProvisioningEvent.onProvisioningStateChanged.rawValue
-            
-        }
-    }
-    func flutterState() -> String {
-        switch self {
-            
-        case .capabilitiesReceived(_):
-            return "PROVISIONING_CAPABILITIES"
-        case .ready:
-            return "PROVISIONER_READY"
-        case .requestingCapabilities:
-            return "REQUESTING_CAPABILITIES"
-        case .provisioning:
-            return "PROVISIONING"
-        default:
-            return ""
-            
-        }
-    }
-    
-}
 
-extension DoozMeshManagerApi: ProvisioningDelegate{
-    
-    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
-                
-        if let _messenger = self.messenger{
-            if !(unprovisionedDevices.contains(where: { $0.unprovisionedDevice?.uuid == unprovisionedDevice.uuid })) {
-                unprovisionedDevices.append(DoozUnprovisionedDevice(messenger: _messenger, unprovisionedMeshNode: unprovisionedDevice))
-            }
-        }
-        
-        switch state {
-        case .complete:
-            if let _bearer = self.provisioningBearer{
-                _bearer.close()
-            }
-        default:
-            break
-        }
-        if let _eventSink = self.eventSink{
-            
-            _eventSink(
-                [
-                    EventSinkKeys.eventName : state.eventName(),
-                    EventSinkKeys.state : state.flutterState(),
-                    "data":[],
-                    "meshNode":[
-                        "uuid":unprovisionedDevice.uuid.uuidString
-                    ]
-            ])
-            
-        }
-        
-    }
-    
-    func authenticationActionRequired(_ action: AuthAction) { }
-    
-    func inputComplete() { }
-}
-
-extension DoozMeshManagerApi: BearerDelegate{
-    func bearerDidOpen(_ bearer: Bearer) {
-        print("bearerDidOpen")
-        
-        guard !compositionDataGetNeeded else{
-            compositionDataGet()
-            return
-        }
-        
-        if let _provisioningManager = self.provisioningManager{
-            _provisioningManager.delegate = self
-            let attentionTimer: UInt8 = 5
-            
-            do{
-                try _provisioningManager.identify(andAttractFor: attentionTimer)
-            }
-            catch{
-                bearer.close()
-                print(error)
-            }
-            
-        }
-    }
-    
-    func bearer(_ bearer: Bearer, didClose error: Error?) {
-        guard let _provisioningManager = self.provisioningManager, case .complete = _provisioningManager.state else {
-            print("Device disconnected")
-            return
-        }
-        print("Provisioning complete")
-        
-        #warning("WIP, rename and find better way to do it")
-        compositionDataGetNeeded = true
-        
-        if let _meshNetworkManager = self.meshNetworkManager{
-            if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
-                if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
-                    _meshNetworkManager.localElements = []
-                    provisionerDidProvisionNewDevice(_node)
-                    
-                }
-            }else {
-                print("Mesh configuration could not be saved.")
-            }
-
-        }
-        
-        //        guard !compositionDataGetNeeded else{
-        
-        
-        return
-    }
-    //}
-    
-    func provisionerDidProvisionNewDevice(_ node: Node){
-        if let _meshNetworkManager = self.meshNetworkManager{
-            let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
-            guard localProvisioner?.hasConfigurationCapabilities ?? false else {
-                // The Provisioner cannot sent or receive messages.
-                
-                return
-            }
-            
-            self.node = node
-            
-            do{
-                
-                self.testGattBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
-                
-                if let _gattBearer = testGattBearer{
-                    _gattBearer.delegate = self
-                    _gattBearer.logger = self
-                    _gattBearer.open()
-                    _gattBearer.dataDelegate = _meshNetworkManager
-                    
-                    _meshNetworkManager.transmitter = _gattBearer
-                    _meshNetworkManager.delegate = self
-//                    node.name = "toto"
-//                    let messageHandle = try _meshNetworkManager.send(message, to: node)
-                    
-                }
-                
-                
-            }catch{
-                print("Error getting composition data")
-            }
-        }
-        
-        
-        
-        
-    }
-    
-    func getTtl(){
-        let message = ConfigDefaultTtlGet()
-
-        
-        if let _node = self.node,
-            let _meshNetworkManager = self.meshNetworkManager{
-            
-            _node.name = "toto"
-            
-            do{
-                print("📩 Sending message : ConfigCompositionDataGet")
-                let messageHandle = try _meshNetworkManager.send(message, to: _node)
-                compositionDataGetNeeded = false
-
-            }catch{
-                print(error)
-            }
-            
-        }
-    }
-    
-    func sendAppKey(){
-        if let _meshNetworkManager = self.meshNetworkManager, let _node = self.node{
-            do{
-                try _meshNetworkManager.meshNetwork?.add(applicationKey: Data.random128BitKey(), name: "appKeyTest")
-                
-                if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-                    try _meshNetworkManager.send(ConfigAppKeyAdd(applicationKey: _appKey), to: _node)
-                    print("💪 SEND APP KEY")
-                }
-            }catch{
-                print(error)
-            }
-            
-        }
-        
-    }
-    
-    func compositionDataGet(){
-        let message = ConfigCompositionDataGet()
-
-        if let _node = self.node,
-            let _meshNetworkManager = self.meshNetworkManager{
-            
-            _node.name = "toto"
-            
-            do{
-                print("📩 Sending message : ConfigCompositionDataGet")
-                let messageHandle = try _meshNetworkManager.send(message, to: _node)
-                compositionDataGetNeeded = false
-
-            }catch{
-                print(error)
-            }
-            
-        }
-    }
-    
-}
 
 
 extension DoozMeshManagerApi: DoozMeshProvisioningStatusDelegate{
@@ -756,14 +471,27 @@ extension DoozMeshManagerApi: DoozMeshProvisioningStatusDelegate{
 
 extension DoozMeshManagerApi: LoggerDelegate{
     func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
-        print("[LOGGER] \(message)")
+        print("[\(String(describing: self.classForCoder))] \(message)")
     }
     
     
 }
 
-extension DoozMeshManagerApi: GattBearerDelegate{
-    func bearerDidConnect(_ bearer: Bearer) {
-        print("✅ CONNECTED TO BEARER")
+extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
+    func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>){
+        if let _eventSink = self.eventSink{
+            _eventSink(eventSinkMessage)
+        }
     }
+    
+    
+    func didFinishProvisioning() {
+        if let _eventSink = self.eventSink{
+            _eventSink(
+                [
+                    EventSinkKeys.eventName : "onConfigAppKeyStatus"
+            ])
+        }
+    }
+    
 }
