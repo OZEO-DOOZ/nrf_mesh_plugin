@@ -79,6 +79,8 @@ enum ProvisioningEvent: String{
     case onProvisioningCompleted
     case onProvisioningFailed
     case onProvisioningStateChanged
+    
+    case onConfigAppKeyStatus
 }
 
 struct EventSinkKeys{

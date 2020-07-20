@@ -489,7 +489,7 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         if let _eventSink = self.eventSink{
             _eventSink(
                 [
-                    EventSinkKeys.eventName : "onConfigAppKeyStatus"
+                    EventSinkKeys.eventName : ProvisioningEvent.onConfigAppKeyStatus
             ])
         }
     }
