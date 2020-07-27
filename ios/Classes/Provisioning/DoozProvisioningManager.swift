@@ -89,12 +89,49 @@ class DoozProvisioningManager: NSObject {
             let type = PduType(rawValue: UInt8(data[0])) else{
                 return
         }
+        
+//        let tata = Array<Int>()
+//
+//        let toto = byteArray(from: tata)
+//        let encodedData = Data(bytes: data, count: MemoryLayout<Int>.size)
 
-        let encodedData = Data(bytes: data, count: MemoryLayout<Int>.size)
-
-        _provisioningManager.bearer(_provisioningBearer, didDeliverData: encodedData, ofType: type)
+        let titi = arrayListToByteArray(pdu: data)
+        let doto = Data(bytes: titi, count: data.count)
+        _provisioningManager.bearer(_provisioningBearer, didDeliverData: doto, ofType: type)
     }
     
+    func arrayListToByteArray(pdu: [Int]) -> [UInt] {
+        
+        var bytes = [UInt]()
+        for (index, value) in pdu.enumerated(){
+            bytes.append(toUint(signed: value)) 
+        }
+        
+        return bytes
+    }
+    
+    func byteArray<T>(from value: T) -> [UInt8] where T: FixedWidthInteger {
+        withUnsafeBytes(of: value.bigEndian, Array.init)
+    }
+    
+    func toUint(signed: Int) -> UInt {
+
+        let unsigned = signed >= 0 ?
+            UInt(signed) :
+            UInt(signed  - Int.min) + UInt(Int.max) + 1
+
+        return unsigned
+    }
+
+    func toInt(unsigned: UInt) -> Int {
+
+        let signed = (unsigned <= UInt(Int.max)) ?
+            Int(unsigned) :
+            Int(unsigned - UInt(Int.max) - 1) + Int.min
+
+        return signed
+    }
+
 }
 
 private extension DoozProvisioningManager{
@@ -324,7 +361,7 @@ private extension ProvisionigState{
         case .ready:
             return "PROVISIONER_READY"
         case .requestingCapabilities:
-            return "REQUESTING_CAPABILITIES"
+            return "PROVISIONING_CAPABILITIES"
         case .provisioning:
             return "PROVISIONING"
         default:
