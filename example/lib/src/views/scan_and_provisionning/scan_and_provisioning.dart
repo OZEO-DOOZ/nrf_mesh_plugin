@@ -102,7 +102,13 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       // Android is sending the mac Adress of the device, but Apple generates
       // an UUID specific by smartphone.
 
-      var deviceUUID = Platform.isAndroid ? _serviceData[device.id.id].toString() : device.id.id.toString();
+      String deviceUUID;
+
+      if (Platform.isAndroid) {
+        deviceUUID = _serviceData[device.id.id].toString();
+      } else if (Platform.isIOS) {
+        deviceUUID = device.id.id.toString();
+      }
 
       final provisionedMeshNodeF = provisioning(_meshManagerApi, device, deviceUUID);
       unawaited(provisionedMeshNodeF.then((_) async {

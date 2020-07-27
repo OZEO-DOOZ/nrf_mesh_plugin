@@ -174,12 +174,18 @@ private extension DoozMeshManagerApi {
             
         case .handleWriteCallbacks:
             
-            if let _args = call.arguments as? [String:Any], let _pdu = _args["pdu"] as? String{
-                #warning("to implement")
+            if
+                let _doozProvisioningManager = self.doozProvisioningManager,
+                let _args = call.arguments as? [String:Any],
+                let _pdu = _args["pdu"] as? [Int]
+            {
+
+                _doozProvisioningManager.didDeliverData(data: _pdu)
                 
-                //handleWriteCallbacks(call.argument<Int>("mtu")!!, pdu);
-                result(nil)
             }
+            
+            result(nil)
+            
             break
             
         case .setMtuSize:
@@ -217,7 +223,7 @@ private extension DoozMeshManagerApi{
                 
                 let meshNetwork = try _generateMeshNetwork()
                 try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
-
+                
                 
                 print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
                 
@@ -486,6 +492,11 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         }
     }
     
+    func sendMessage(_ msg: Dictionary<String, Any>) {
+        if let _eventSink = self.eventSink{
+            _eventSink(msg)
+        }
+    }
     
     func didFinishProvisioning() {
         if let _eventSink = self.eventSink{

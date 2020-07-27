@@ -11,6 +11,8 @@ import nRFMeshProvision
 protocol DoozProvisioningManagerDelegate{
     func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>)
     func didFinishProvisioning()
+    
+    func sendMessage(_ msg: Dictionary<String, Any>)
 }
 
 class DoozProvisioningManager: NSObject {
@@ -27,8 +29,8 @@ class DoozProvisioningManager: NSObject {
     
     private var unprovisionedDevice: UnprovisionedDevice?
     
-    private var provisioningBearer: PBGattBearer?
-    private var provisionedBearer: GattBearer?
+    private var provisioningBearer: DoozPBGattBearer?
+    private var provisionedBearer: DoozGattBearer?
     
     private var compositionDataGetNeeded = false
     private var node: Node?
@@ -43,20 +45,21 @@ class DoozProvisioningManager: NSObject {
     
     func identifyNode(_ uuid: UUID){
         do{
-            self.provisioningBearer = PBGattBearer(targetWithIdentifier: uuid)
+            
+            self.provisioningBearer = DoozPBGattBearer(targetWithIdentifier: uuid)
             if let _bearer = self.provisioningBearer{
                 self.unprovisionedDevice = UnprovisionedDevice(uuid: uuid)
+                self.provisioningBearer = DoozPBGattBearer(targetWithIdentifier: uuid)
                 
                 if let _unprovisionedDevice = self.unprovisionedDevice{
                     self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: _bearer)
                     
                     self.provisioningManager?.logger = self
                     _bearer.delegate = self
+                    _bearer.doozDelegate = self
                     _bearer.open()
                 }
             }
-            
-            
             
         }catch{
             print(error)
@@ -78,6 +81,20 @@ class DoozProvisioningManager: NSObject {
             
         }
     }
+    
+    public func didDeliverData(data: [Int]){
+        guard
+            let _provisioningManager = self.provisioningManager,
+            let _provisioningBearer = self.provisioningBearer,
+            let type = PduType(rawValue: UInt8(data[0])) else{
+                return
+        }
+
+        let encodedData = Data(bytes: data, count: MemoryLayout<Int>.size)
+
+        _provisioningManager.bearer(_provisioningBearer, didDeliverData: encodedData, ofType: type)
+    }
+    
 }
 
 private extension DoozProvisioningManager{
@@ -92,11 +109,11 @@ private extension DoozProvisioningManager{
             
             self.node = node
             
-            self.provisionedBearer = GattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
+            self.provisionedBearer = DoozGattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
             
             if let _gattBearer = provisionedBearer{
                 _gattBearer.delegate = self
-                _gattBearer.logger = self
+                //_gattBearer.logger = self
                 _gattBearer.open()
                 _gattBearer.dataDelegate = _meshNetworkManager
                 
@@ -223,7 +240,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             ] as [String : Any]
         
         delegate?.provisioningStateDidChange(device: unprovisionedDevice, state: state, eventSinkMessage: dict)
-
+        
         
     }
     
@@ -281,7 +298,7 @@ extension DoozProvisioningManager: BearerDelegate{
         
         return
     }
-
+    
 }
 
 private extension ProvisionigState{
@@ -327,5 +344,30 @@ extension DoozProvisioningManager: GattBearerDelegate{
 extension DoozProvisioningManager: LoggerDelegate{
     func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
         print("[\(String(describing: self.classForCoder))] \(message)")
+    }
+}
+
+extension DoozProvisioningManager: DoozPBGattBearerDelegate{
+    func send(data: Data, type: PduType) {
+        
+        //        Log.d(this.javaClass.name, "sendProvisioningPdu")
+        //        eventSink?.success(mapOf(
+        //                "eventName" to "sendProvisioningPdu",
+        //                "pdu" to pdu,
+        //                "meshNodeUuid" to meshNode?.deviceUuid?.toString()
+        //        ))
+        
+        #warning("rename meshNodeUuid into meshNode.uuid to keep consistence of code ? same on android.")
+        let dict = [
+            EventSinkKeys.eventName : "sendProvisioningPdu",
+            "pdu":data,
+            "meshNodeUuid":provisioningBearer?.identifier.uuidString
+            //            "meshNode":[
+            //                "uuid":unprovisionedDevice.uuid.uuidString
+            //            ]
+            ] as [String : Any]
+        
+        delegate?.sendMessage(dict)
+        
     }
 }
