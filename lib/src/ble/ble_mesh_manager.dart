@@ -118,13 +118,16 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         _meshProvisioningDataOutSubscription = _meshProvisioningDataOutCharacteristic.value
             .where((event) => event?.isNotEmpty == true)
             .listen((event) async {
+          print(event);
           callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
+
         await _meshProvisioningDataOutCharacteristic.setNotifyValue(true);
-        final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
-            .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
-        if (descriptor != null) {
-          if (Platform.isAndroid) {
+
+        if (Platform.isAndroid) {
+          final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
+              .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
+          if (descriptor != null) {
             await descriptor.write(enableNotificationValue);
           }
         }

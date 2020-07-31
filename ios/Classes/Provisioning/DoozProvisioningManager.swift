@@ -86,6 +86,7 @@ class DoozProvisioningManager: NSObject {
         guard
             let _provisioningManager = self.provisioningManager,
             let _provisioningBearer = self.provisioningBearer,
+            data.count > 0,
             let type = PduType(rawValue: UInt8(data[0])) else{
                 return
         }
@@ -98,6 +99,9 @@ class DoozProvisioningManager: NSObject {
         let titi = arrayListToByteArray(pdu: data)
         let doto = Data(bytes: titi, count: data.count)
         _provisioningManager.bearer(_provisioningBearer, didDeliverData: doto, ofType: type)
+//        if type == .provisioningPdu{
+//            type as?
+//        }
     }
     
     func arrayListToByteArray(pdu: [Int]) -> [UInt] {
@@ -361,7 +365,7 @@ private extension ProvisionigState{
         case .ready:
             return "PROVISIONER_READY"
         case .requestingCapabilities:
-            return "PROVISIONING_CAPABILITIES"
+            return "REQUESTING_CAPABILITIES"
         case .provisioning:
             return "PROVISIONING"
         default:

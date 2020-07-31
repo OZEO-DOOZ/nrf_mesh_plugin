@@ -93,13 +93,6 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
       await meshManagerApi.provisioning(unprovisionedMeshNode);
     } else if (event.state == 'PROVISIONER_READY') {
     } else if (event.state == 'REQUESTING_CAPABILITIES') {
-      if (!bleMeshManager.isProvisioningCompleted) {
-        events?._provisioningInvitationController?.add(null);
-      } else if (bleMeshManager.isProvisioningCompleted) {
-        events?._provisioningReconnectController?.add(null);
-        final unicast = await provisionedMeshNode.unicastAddress;
-        await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
-      }
     } else if (event.state == 'PROVISIONING') {}
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {

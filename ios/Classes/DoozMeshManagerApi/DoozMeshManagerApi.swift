@@ -164,16 +164,6 @@ private extension DoozMeshManagerApi {
             
         case .handleNotifications:
             print(call.arguments)
-            if let _args = call.arguments as? [String:Any], let _pdu = _args["pdu"] as? String{
-                #warning("to implement")
-                
-                //handleNotifications(call.argument<Int>("mtu")!!, pdu)
-                result(nil)
-            }
-            break
-            
-        case .handleWriteCallbacks:
-            
             if
                 let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
@@ -182,6 +172,23 @@ private extension DoozMeshManagerApi {
 
                 _doozProvisioningManager.didDeliverData(data: _pdu)
                 
+            }
+            
+            result(nil)
+            
+            break
+            
+        case .handleWriteCallbacks:
+            // Does not exists in iOS ?
+            if
+                let _doozProvisioningManager = self.doozProvisioningManager,
+                let _args = call.arguments as? [String:Any],
+                let _pdu = _args["pdu"] as? [Int]
+            {
+
+                #warning("passer en requestingCapabilities HOW TO ?")
+                _doozProvisioningManager.didDeliverData(data: _pdu)
+
             }
             
             result(nil)
