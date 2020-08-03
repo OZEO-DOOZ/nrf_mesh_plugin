@@ -167,10 +167,10 @@ private extension DoozMeshManagerApi {
             if
                 let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
-                let _pdu = _args["pdu"] as? [Int]
+                let _flutterPdu = _args["pdu"] as? FlutterStandardTypedData
             {
 
-                _doozProvisioningManager.didDeliverData(data: _pdu)
+                _doozProvisioningManager.didDeliverData(data: _flutterPdu.data)
                 
             }
             
@@ -180,14 +180,14 @@ private extension DoozMeshManagerApi {
             
         case .handleWriteCallbacks:
             // Does not exists in iOS ?
+            #warning("useless in ios ?")
             if
                 let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
                 let _pdu = _args["pdu"] as? [Int]
             {
 
-                #warning("passer en requestingCapabilities HOW TO ?")
-                _doozProvisioningManager.didDeliverData(data: _pdu)
+                //_doozProvisioningManager.didDeliverData(data: _pdu)
 
             }
             
@@ -198,12 +198,18 @@ private extension DoozMeshManagerApi {
         case .setMtuSize:
             
             if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
-                #warning("to test")
+                #warning("useless in ios ?")
                 delegate?.mtuSize = _mtuSize
                 result(nil)
             }
             break
             
+        case .cleanProvisioningData:
+            if
+                let _doozProvisioningManager = self.doozProvisioningManager{
+                _doozProvisioningManager.cleanProvisioningData()
+                result(nil)
+            }
             
         }
         

@@ -30,7 +30,7 @@ class DoozUnprovisionedDevice: NSObject{
 private extension DoozUnprovisionedDevice {
     
     func _initChannels(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice){
-
+        
         FlutterMethodChannel(
             name: FlutterChannels.DoozUnprovisionedMeshNode.getMethodChannelName(deviceUUID: unprovisionedDevice.uuid.uuidString),
             binaryMessenger: messenger
@@ -52,18 +52,29 @@ private extension DoozUnprovisionedDevice {
         }
         
         switch _method {
-        
+            
         case .getNumberOfElements:
-            result(provisioningManager?.provisioningCapabilities?.numberOfElements)
+            
+            var nbElements = 0
+            if let _nbElements = provisioningManager?.provisioningCapabilities?.numberOfElements{
+                nbElements = Int(_nbElements)
+            }
+            result(nbElements)
             break
             
         case .setUnicastAddress:
             #warning("to implement or remove if useless in ios")
-            result(nil)
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["unicastAddress"] as? UInt16,
+                let _provisioningManager = self.provisioningManager{
+                _provisioningManager.unicastAddress = _address
+                result(nil)
+                break
+            }
             
-            break
         }
-
+        
     }
     
 }

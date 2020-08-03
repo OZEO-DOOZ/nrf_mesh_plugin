@@ -53,7 +53,6 @@ class DoozProvisioningManager: NSObject {
                 
                 if let _unprovisionedDevice = self.unprovisionedDevice{
                     self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: _bearer)
-                    provisioningManager?.provisioningCapabilities?.numberOfElements
                     self.provisioningManager?.logger = self
                     _bearer.delegate = self
                     _bearer.doozDelegate = self
@@ -82,50 +81,52 @@ class DoozProvisioningManager: NSObject {
         }
     }
     
-    public func didDeliverData(data: [Int]){
+    public func didDeliverData(data: Data){
         guard
             let _provisioningManager = self.provisioningManager,
             let _provisioningBearer = self.provisioningBearer,
             let type = PduType(rawValue: UInt8(data[0])) else{
                 return
         }
-    
-        let titi = arrayListToByteArray(pdu: data)
-        let doto = Data(bytes: titi, count: data.count)
-        _provisioningManager.bearer(_provisioningBearer, didDeliverData: doto, ofType: type)
-
-    }
-    
-    func arrayListToByteArray(pdu: [Int]) -> [UInt] {
         
-        var bytes = [UInt]()
-        for (index, value) in pdu.enumerated(){
-            bytes.append(toUint(signed: value)) 
+        let packet = data.subdata(in: 1 ..< data.count)
+
+        switch type {
+        case .provisioningPdu:
+            _provisioningManager.bearer(_provisioningBearer, didDeliverData: packet, ofType: type)
+        case .meshBeacon:
+            if let _meshNetworkManager = self.meshNetworkManager{
+                let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
+                guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+                    // The Provisioner cannot sent or receive messages.
+                    
+                    return
+                }
+                
+                //self.node = node
+                
+                self.provisionedBearer = DoozGattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
+                
+                if let _gattBearer = provisionedBearer{
+                    _gattBearer.delegate = self
+                    //_gattBearer.logger = self
+                    _gattBearer.open()
+                    _gattBearer.dataDelegate = _meshNetworkManager
+                    
+                    _meshNetworkManager.transmitter = _gattBearer
+                    _meshNetworkManager.delegate = self
+                }
+            }
+        default:
+            break
         }
+    
         
-        return bytes
     }
     
-    func byteArray<T>(from value: T) -> [UInt8] where T: FixedWidthInteger {
-        withUnsafeBytes(of: value.bigEndian, Array.init)
-    }
-    
-    func toUint(signed: Int) -> UInt {
-
-        let unsigned = signed >= 0 ?
-            UInt(signed) :
-            UInt(signed  - Int.min) + UInt(Int.max) + 1
-
-        return unsigned
-    }
-
-    func toInt(unsigned: UInt) -> Int {
-
-        let signed = (unsigned <= UInt(Int.max)) ?
-            Int(unsigned) :
-            Int(unsigned - UInt(Int.max) - 1) + Int.min
-
-        return signed
+    func cleanProvisioningData(){
+        unprovisionedDevices.removeAll()
+        unprovisionedDevice = nil
     }
 
 }
@@ -269,6 +270,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             "data":[],
             "meshNode":[
                 "uuid":unprovisionedDevice.uuid.uuidString
+                //"provisionerPublicKeyXY":provisioningManager.publ
             ]
             ] as [String : Any]
         
@@ -287,24 +289,25 @@ extension DoozProvisioningManager: BearerDelegate{
     func bearerDidOpen(_ bearer: Bearer) {
         print("bearerDidOpen")
         
-        guard !compositionDataGetNeeded else{
+        if bearer is DoozPBGattBearer{
+            if let _provisioningManager = self.provisioningManager{
+                _provisioningManager.delegate = self
+                let attentionTimer: UInt8 = 5
+                
+                do{
+                    try _provisioningManager.identify(andAttractFor: attentionTimer)
+                }
+                catch{
+                    bearer.close()
+                    print(error)
+                }
+                
+            }
+        }else if bearer is DoozGattBearer{
             compositionDataGet()
-            return
         }
         
-        if let _provisioningManager = self.provisioningManager{
-            _provisioningManager.delegate = self
-            let attentionTimer: UInt8 = 5
-            
-            do{
-                try _provisioningManager.identify(andAttractFor: attentionTimer)
-            }
-            catch{
-                bearer.close()
-                print(error)
-            }
-            
-        }
+        
     }
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {

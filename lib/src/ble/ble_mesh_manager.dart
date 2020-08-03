@@ -96,10 +96,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
         await _meshProxyDataOutCharacteristic.setNotifyValue(true);
-        final descriptor = _meshProxyDataOutCharacteristic.descriptors
-            .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
-        if (descriptor != null) {
-          await descriptor.write(enableNotificationValue);
+        if (Platform.isAndroid) {
+          final descriptor = _meshProxyDataOutCharacteristic.descriptors
+              .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
+          if (descriptor != null) {
+            await descriptor.write(enableNotificationValue);
+          }
         }
       }
     } else {

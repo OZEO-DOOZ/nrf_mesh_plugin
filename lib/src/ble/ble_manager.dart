@@ -51,7 +51,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _device = device;
     _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
       print('mtu changed $event');
-      mtuSize = event - 3;
+
+      if (Platform.isAndroid) {
+        mtuSize = event - 3;
+      } else if (Platform.isIOS) {
+        mtuSize = event;
+      }
+
       await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     });
     await _callbacks.sendMtuToMeshManagerApi(mtuSize);

@@ -45,14 +45,8 @@ open class DoozPBGattBearer: ProvisioningBearer {
         
     }
     
-    
     public var supportedPduTypes: PduTypes {
         return [.provisioningPdu]
     }
-    
-//    open override func send(_ data: Data, ofType type: PduType) throws {
-//        #warning("call delegate to send message via flutter")
-//
-//    }
     
 }

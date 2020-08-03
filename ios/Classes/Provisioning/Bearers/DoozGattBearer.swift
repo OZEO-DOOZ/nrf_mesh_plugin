@@ -20,7 +20,8 @@ open class DoozGattBearer: Bearer {
     
     public var identifier: UUID
     public var name: String?
-    
+    public var doozDelegate: DoozPBGattBearerDelegate?
+
     
     init(targetWithIdentifier uuid: UUID) {
         identifier = uuid
@@ -28,11 +29,15 @@ open class DoozGattBearer: Bearer {
     }
         
     public func send(_ data: Data, ofType type: PduType) throws {
-        print("[DoozGattBearer] CALLING SEND - not implemented yet")
+        // Add the pdu type to the data before sending it via flutter_blue
+        var packet = Data([type.rawValue])
+        packet += data
+        doozDelegate?.send(data: packet)
     }
     
     public func open() {
-        
+        isOpen = true
+        delegate?.bearerDidOpen(self)
     }
     
     public func close() {
@@ -42,13 +47,5 @@ open class DoozGattBearer: Bearer {
     public var supportedPduTypes: PduTypes{
         return [.networkPdu, .meshBeacon, .proxyConfiguration]
     }
-    
-//    public override var supportedPduTypes: PduTypes{
-//        return [.networkPdu, .meshBeacon, .proxyConfiguration]
-//    }
-//
-//    open override func send(_ data: Data, ofType type: PduType) throws {
-//        #warning("call delegate to send message via flutter")
-//    }
     
 }
