@@ -119,6 +119,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         mMeshManagerApi.meshNetwork!!.sequenceNumbers[0]
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null);
             }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!;
