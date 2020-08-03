@@ -9,7 +9,7 @@ import Foundation
 import nRFMeshProvision
 
 public protocol DoozPBGattBearerDelegate{
-    func send(data: Data, type: PduType)
+    func send(data: Data)
 }
 
 open class DoozPBGattBearer: ProvisioningBearer {
@@ -30,7 +30,10 @@ open class DoozPBGattBearer: ProvisioningBearer {
     
     
     public func send(_ data: Data, ofType type: PduType) throws {
-        doozDelegate?.send(data: data, type: type)
+        // Add the pdu type to the data before sending it via flutter_blue
+        var packet = Data([type.rawValue])
+        packet += data
+        doozDelegate?.send(data: packet)
     }
     
     public func open() {

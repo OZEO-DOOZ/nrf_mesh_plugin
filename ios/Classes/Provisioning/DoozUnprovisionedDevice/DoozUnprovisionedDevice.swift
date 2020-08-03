@@ -15,11 +15,13 @@ class DoozUnprovisionedDevice: NSObject{
     
     //MARK: Private properties
     private var eventSink: FlutterEventSink?
-
-    init(messenger: FlutterBinaryMessenger, unprovisionedMeshNode: UnprovisionedDevice) {
+    private var provisioningManager: ProvisioningManager?
+    
+    init(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice, provisioningManager: ProvisioningManager?) {
         super.init()
-        self.unprovisionedDevice = unprovisionedMeshNode
-        _initChannels(messenger: messenger, unprovisionedMeshNode: unprovisionedMeshNode)
+        self.unprovisionedDevice = unprovisionedDevice
+        self.provisioningManager = provisioningManager
+        _initChannels(messenger: messenger, unprovisionedDevice: unprovisionedDevice)
     }
     
     
@@ -27,10 +29,10 @@ class DoozUnprovisionedDevice: NSObject{
 
 private extension DoozUnprovisionedDevice {
     
-    func _initChannels(messenger: FlutterBinaryMessenger, unprovisionedMeshNode: UnprovisionedDevice){
+    func _initChannels(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice){
 
         FlutterMethodChannel(
-            name: FlutterChannels.DoozUnprovisionedMeshNode.getMethodChannelName(deviceUUID: unprovisionedMeshNode.uuid.uuidString),
+            name: FlutterChannels.DoozUnprovisionedMeshNode.getMethodChannelName(deviceUUID: unprovisionedDevice.uuid.uuidString),
             binaryMessenger: messenger
         )
             .setMethodCallHandler { (call, result) in
@@ -52,8 +54,7 @@ private extension DoozUnprovisionedDevice {
         switch _method {
         
         case .getNumberOfElements:
-            #warning("wrong implementation")
-            result(1)
+            result(provisioningManager?.provisioningCapabilities?.numberOfElements)
             break
             
         case .setUnicastAddress:
@@ -66,16 +67,3 @@ private extension DoozUnprovisionedDevice {
     }
     
 }
-
-//private extension DoozUnprovisionedMeshNode{
-//    // Events native implemenations
-//    
-//    func _getMeshNetworkName() -> String?{
-//        return meshNetwork?.meshName
-//    }
-//    
-//    func _getId() -> String?{
-//        return meshNetwork?.id
-//    }
-//
-//}

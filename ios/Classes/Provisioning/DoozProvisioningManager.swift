@@ -53,7 +53,7 @@ class DoozProvisioningManager: NSObject {
                 
                 if let _unprovisionedDevice = self.unprovisionedDevice{
                     self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: _bearer)
-                    
+                    provisioningManager?.provisioningCapabilities?.numberOfElements
                     self.provisioningManager?.logger = self
                     _bearer.delegate = self
                     _bearer.doozDelegate = self
@@ -86,22 +86,14 @@ class DoozProvisioningManager: NSObject {
         guard
             let _provisioningManager = self.provisioningManager,
             let _provisioningBearer = self.provisioningBearer,
-            data.count > 0,
             let type = PduType(rawValue: UInt8(data[0])) else{
                 return
         }
-        
-//        let tata = Array<Int>()
-//
-//        let toto = byteArray(from: tata)
-//        let encodedData = Data(bytes: data, count: MemoryLayout<Int>.size)
-
+    
         let titi = arrayListToByteArray(pdu: data)
         let doto = Data(bytes: titi, count: data.count)
         _provisioningManager.bearer(_provisioningBearer, didDeliverData: doto, ofType: type)
-//        if type == .provisioningPdu{
-//            type as?
-//        }
+
     }
     
     func arrayListToByteArray(pdu: [Int]) -> [UInt] {
@@ -258,7 +250,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
         
         if let _messenger = self.messenger{
             if !(unprovisionedDevices.contains(where: { $0.unprovisionedDevice?.uuid == unprovisionedDevice.uuid })) {
-                unprovisionedDevices.append(DoozUnprovisionedDevice(messenger: _messenger, unprovisionedMeshNode: unprovisionedDevice))
+                unprovisionedDevices.append(DoozUnprovisionedDevice(messenger: _messenger, unprovisionedDevice: unprovisionedDevice, provisioningManager: provisioningManager))
             }
         }
         
@@ -389,14 +381,7 @@ extension DoozProvisioningManager: LoggerDelegate{
 }
 
 extension DoozProvisioningManager: DoozPBGattBearerDelegate{
-    func send(data: Data, type: PduType) {
-        
-        //        Log.d(this.javaClass.name, "sendProvisioningPdu")
-        //        eventSink?.success(mapOf(
-        //                "eventName" to "sendProvisioningPdu",
-        //                "pdu" to pdu,
-        //                "meshNodeUuid" to meshNode?.deviceUuid?.toString()
-        //        ))
+    func send(data: Data) {
         
         #warning("rename meshNodeUuid into meshNode.uuid to keep consistence of code ? same on android.")
         let dict = [

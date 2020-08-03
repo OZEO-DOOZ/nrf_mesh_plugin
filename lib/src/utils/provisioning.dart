@@ -133,7 +133,7 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
   });
   final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
     print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
-    await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
+    //await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
   });
 
   final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
