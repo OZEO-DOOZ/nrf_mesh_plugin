@@ -110,7 +110,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
                 result.success(null);
             }
-            "sendGenericLevel" -> {
+            "sendGenericLevelSet" -> {
                 val address = call.argument<Int>("address")!!;
                 val level = call.argument<Int>("level")!!
                 val meshMessage: MeshMessage = GenericLevelSet(
