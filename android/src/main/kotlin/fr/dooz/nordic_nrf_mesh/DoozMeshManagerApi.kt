@@ -1,5 +1,6 @@
 package fr.dooz.nordic_nrf_mesh
 
+import android.R.attr.level
 import android.content.Context
 import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
@@ -12,8 +13,11 @@ import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshNetwork
 import no.nordicsemi.android.mesh.transport.ConfigAppKeyAdd
 import no.nordicsemi.android.mesh.transport.ConfigCompositionDataGet
+import no.nordicsemi.android.mesh.transport.GenericLevelSet
+import no.nordicsemi.android.mesh.transport.MeshMessage
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
@@ -105,6 +109,16 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             "identifyNode" -> {
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
                 result.success(null);
+            }
+            "sendGenericLevel" -> {
+                val address = call.argument<Int>("address")!!;
+                val level = call.argument<Int>("level")!!
+                val meshMessage: MeshMessage = GenericLevelSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(0),
+                        level,
+                        mMeshManagerApi.meshNetwork!!.sequenceNumbers[0]
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
             }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!;

@@ -62,7 +62,9 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     while (scanResult == null) {
       final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid]) as List<ScanResult>);
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
-      await Future.delayed(Duration(milliseconds: 500));
+      if (scanResult == null) {
+        await Future.delayed(Duration(milliseconds: 500));
+      }
     }
     if (scanResult == null) {
       completer.completeError(Exception('Didn\'t find module'));
