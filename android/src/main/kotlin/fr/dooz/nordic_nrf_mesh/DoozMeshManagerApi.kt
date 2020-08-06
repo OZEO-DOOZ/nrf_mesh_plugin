@@ -106,6 +106,12 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
                 result.success(null);
             }
+            "sendGenericOnOffSet" -> {
+                val address = call.argument<Int>("address")!!;
+                val meshMessage: MeshMessage = GenericOnOffGet(mMeshManagerApi.meshNetwork!!.getAppKey(0))
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null);
+            }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!;
                 result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());
