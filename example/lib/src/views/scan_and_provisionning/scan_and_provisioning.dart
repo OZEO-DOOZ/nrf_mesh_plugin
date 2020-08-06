@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/device.dart';
+import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 import 'package:pedantic/pedantic.dart';
 
 class ScanningAndProvisioning extends StatefulWidget {
@@ -23,6 +23,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   bool isProvisioning = false;
   StreamSubscription _scanSubscription;
   MeshManagerApi _meshManagerApi;
+  BleMeshManagerHelper _bleMeshManagerHelper;
 
   final _serviceData = <String, Guid>{};
   final _devices = <BluetoothDevice>{};
@@ -48,6 +49,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     _meshManagerApi = await widget.nordicNrfMesh.meshManagerApi;
 
     await _meshManagerApi.loadMeshNetwork();
+
+    _bleMeshManagerHelper = BleMeshManagerHelper(_meshManagerApi);
 
     setState(() {
       loading = false;
@@ -98,7 +101,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
     try {
-      final provisionedMeshNodeF = provisioning(_meshManagerApi, device, _serviceData[device.id.id].toString());
+      final provisionedMeshNodeF = _bleMeshManagerHelper.provisioning(device, _serviceData[device.id.id].toString());
       unawaited(provisionedMeshNodeF.then((_) async {
         Navigator.of(context).pop();
       }));

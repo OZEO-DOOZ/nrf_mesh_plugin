@@ -8,8 +8,6 @@ import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: ProvisionedMeshNode): MethodChannel.MethodCallHandler {
     init {
         MethodChannel(binaryMessenger, "$namespace/provisioned_mesh_node/${meshNode.uuid}/methods").setMethodCallHandler(this)
-
-        meshNode.sequenceNumber
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {

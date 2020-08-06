@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/views/control_module/provisioned_devices.dart';
 import 'package:nordic_nrf_mesh_example/src/views/home/home.dart';
 import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/scan_and_provisioning.dart';
 
@@ -14,11 +15,6 @@ class _MyAppState extends State<MyApp> {
   int _bottomNavigationBarIndex = 0;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     Widget body;
 
@@ -30,6 +26,11 @@ class _MyAppState extends State<MyApp> {
     } else if (_bottomNavigationBarIndex == 1) {
       //  scanning & provisionning
       body = ScanningAndProvisioning(
+        nordicNrfMesh: nordicNrfMesh,
+      );
+    } else if (_bottomNavigationBarIndex == 2) {
+      //  List provisioned devices and then can control/setup them
+      body = ProvisionedDevices(
         nordicNrfMesh: nordicNrfMesh,
       );
     }
@@ -53,6 +54,10 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: Icon(Icons.bluetooth_searching),
               title: Text('Provisioning'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.videogame_asset),
+              title: Text('Control'),
             ),
           ],
         ),
