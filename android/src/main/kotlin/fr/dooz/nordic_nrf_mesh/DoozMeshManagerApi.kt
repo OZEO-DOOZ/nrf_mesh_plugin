@@ -1,6 +1,5 @@
 package fr.dooz.nordic_nrf_mesh
 
-import android.R.attr.level
 import android.content.Context
 import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
