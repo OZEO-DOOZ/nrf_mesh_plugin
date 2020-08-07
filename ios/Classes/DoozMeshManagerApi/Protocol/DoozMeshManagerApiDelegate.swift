@@ -20,9 +20,5 @@ protocol DoozMeshManagerApiDelegate{
     func onNetworkImported(_ network: MeshNetwork?)
     func onNetworkImportFailed(_ error: Error)
     
-    #warning("TODO: Implement pdu and mtu methods")
-//    func sendProvisioningPdu(meshNode: UnprovisionedDevice, pdu: Int[])
-//    func getMtu() -> Int
-
 }
 

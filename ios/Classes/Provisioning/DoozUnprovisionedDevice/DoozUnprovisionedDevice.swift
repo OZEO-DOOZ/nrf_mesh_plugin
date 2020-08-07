@@ -63,7 +63,6 @@ private extension DoozUnprovisionedDevice {
             break
             
         case .setUnicastAddress:
-            #warning("to implement or remove if useless in ios")
             if
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["unicastAddress"] as? UInt16,

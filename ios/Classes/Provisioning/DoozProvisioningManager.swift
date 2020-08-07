@@ -32,7 +32,6 @@ class DoozProvisioningManager: NSObject {
     private var provisioningBearer: DoozPBGattBearer?
     private var provisionedBearer: DoozGattBearer?
     
-    private var compositionDataGetNeeded = false
     private var node: Node?
     
     private var provisionedDevice: DoozProvisionedDevice?
@@ -145,23 +144,7 @@ class DoozProvisioningManager: NSObject {
     }
     
     func createMeshPduForConfigCompositionDataGet(){
-        
-        
         compositionDataGet()
-        
-//        init(fromMeshMessage message: MeshMessage,
-//             sentFrom localElement: Element, to destination: MeshAddress,
-//             userInitiated: Bool) {
-//
-//            let dict = [
-//                EventSinkKeys.eventName : ProvisioningEvent.onMeshPduCreated.rawValue,
-//                EventSinkKeys.pdu : compositionDataGetPdu.parameters
-//
-//                ] as [String : Any]
-//
-//            delegate?.sendMessage(dict)
-//        }
-        
     }
 }
 
@@ -207,7 +190,6 @@ private extension DoozProvisioningManager{
             do{
                 print("📩 Sending message : ConfigCompositionDataGet")
                 _ = try _meshNetworkManager.send(message, to: _node)
-                compositionDataGetNeeded = false
                 
             }catch{
                 print(error)
@@ -221,9 +203,7 @@ private extension DoozProvisioningManager{
         
         if let _node = self.node,
             let _meshNetworkManager = self.meshNetworkManager{
-            
-            _node.name = "toto"
-            
+                        
             do{
                 print("📩 Sending message : ConfigDefaultTtlGet")
                 _ = try _meshNetworkManager.send(message, to: _node)
@@ -310,8 +290,8 @@ extension DoozProvisioningManager: ProvisioningDelegate{
         }
         
         let dict = [
-            EventSinkKeys.eventName : state.eventName(),
-            EventSinkKeys.state : state.flutterState(),
+            EventSinkKeys.eventName.rawValue : state.eventName(),
+            EventSinkKeys.state.rawValue : state.flutterState(),
             "data":[],
             "meshNode":[
                 "uuid":unprovisionedDevice.uuid.uuidString
@@ -332,7 +312,6 @@ extension DoozProvisioningManager: ProvisioningDelegate{
 
 extension DoozProvisioningManager: BearerDelegate{
     func bearerDidOpen(_ bearer: Bearer) {
-        print("bearerDidOpen")
         
         if bearer is DoozPBGattBearer{
             if let _provisioningManager = self.provisioningManager{
@@ -348,7 +327,6 @@ extension DoozProvisioningManager: BearerDelegate{
                 }
                 
             }
-            #warning("remove else")
         }
         
     }
@@ -359,16 +337,12 @@ extension DoozProvisioningManager: BearerDelegate{
             return
         }
         print("Provisioning complete")
-        
-        compositionDataGetNeeded = true
-        
+                
         if let _meshNetworkManager = self.meshNetworkManager{
             if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
                 if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
                     _meshNetworkManager.localElements = []
                     self.node = _node
-                    //provisionerDidProvisionNewDevice(_node)
-                    
                 }
             }else {
                 print("Mesh configuration could not be saved.")
@@ -430,14 +404,15 @@ extension DoozProvisioningManager: LoggerDelegate{
 extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
     func send(data: Data) {
         
+        guard let _provisioningBearer = self.provisioningBearer else{
+            return
+        }
         #warning("rename meshNodeUuid into meshNode.uuid to keep consistence of code ? same on android.")
         let dict = [
-            EventSinkKeys.eventName : "sendProvisioningPdu",
-            "pdu":data,
-            "meshNodeUuid":provisioningBearer?.identifier.uuidString
-            //            "meshNode":[
-            //                "uuid":unprovisionedDevice.uuid.uuidString
-            //            ]
+            
+            EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
+            EventSinkKeys.pdu.rawValue: data,
+            EventSinkKeys.meshNodeUuid.rawValue: _provisioningBearer.identifier.uuidString
             ] as [String : Any]
         
         delegate?.sendMessage(dict)

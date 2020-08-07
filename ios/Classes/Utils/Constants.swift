@@ -90,14 +90,14 @@ enum ProvisioningEvent: String{
     
     case onConfigAppKeyStatus
     case onMeshPduCreated
+    case sendProvisioningPdu
 }
 
-struct EventSinkKeys{
-    static let eventName = "eventName"
-    static let id = "id"
-    static let error = "error"
-    
-    static let state = "state"
-    
-    static let pdu = "pdu"
+enum EventSinkKeys: String{
+    case eventName
+    case id
+    case error
+    case state
+    case pdu
+    case meshNodeUuid
 }

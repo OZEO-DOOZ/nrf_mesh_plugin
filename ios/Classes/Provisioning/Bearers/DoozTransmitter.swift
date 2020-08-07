@@ -8,7 +8,7 @@
 import Foundation
 import nRFMeshProvision
 
-protocol DoozTransmitterDelegate{
+public protocol DoozTransmitterDelegate{
     func send(data: Data)
 }
 

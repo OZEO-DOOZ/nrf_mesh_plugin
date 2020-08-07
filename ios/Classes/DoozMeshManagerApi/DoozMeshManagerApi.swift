@@ -13,8 +13,10 @@ class DoozMeshManagerApi: NSObject{
     //MARK: Public properties
     var meshNetworkManager: MeshNetworkManager?
     var delegate: DoozMeshManagerApiDelegate?
-    var mtuSize: Int = -1
     
+    #warning("remove mtuSize ?")
+    var mtuSize: Int = -1
+
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
@@ -194,7 +196,7 @@ private extension DoozMeshManagerApi {
             result(nil)
             
             break
-            
+        
         case .setMtuSize:
             
             if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
@@ -203,7 +205,6 @@ private extension DoozMeshManagerApi {
                 result(nil)
             }
             break
-            
         case .cleanProvisioningData:
             if
                 let _doozProvisioningManager = self.doozProvisioningManager{
@@ -212,11 +213,8 @@ private extension DoozMeshManagerApi {
             result(nil)
 
         case .createMeshPduForConfigCompositionDataGet:
-            #warning("no need for dest in ios ?")
-            //if let _args = call.arguments as? [String:Any], let _dest = _args["dest"] as? Int{
-                doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
-            //}
-            
+            #warning("no need for dest in ios ")
+            doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
             result(nil)
         }
         
@@ -277,11 +275,10 @@ private extension DoozMeshManagerApi{
                 }
                 
                 if let _eventSink = self.eventSink{
-                    // Inform Flutter that a network was imported
                     _eventSink(
                         [
-                            EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                            EventSinkKeys.id : _network.id
+                            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                            EventSinkKeys.id.rawValue : _network.id
                     ])
                 }
                 #warning("save in db after import successful")
@@ -401,8 +398,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
-                EventSinkKeys.id : _network.id
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
+                EventSinkKeys.id.rawValue : _network.id
             ]
         )
         
@@ -417,8 +414,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
-                EventSinkKeys.error : error
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
+                EventSinkKeys.error.rawValue : error
             ]
         )
         
@@ -439,8 +436,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
-                EventSinkKeys.id : _network.id
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
+                EventSinkKeys.id.rawValue : _network.id
             ]
         )
     }
@@ -465,8 +462,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                EventSinkKeys.id : _network.id
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                EventSinkKeys.id.rawValue : _network.id
             ]
         )
         
@@ -481,8 +478,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
-                EventSinkKeys.error : error
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
+                EventSinkKeys.error.rawValue : error
             ]
         )
     }
@@ -490,19 +487,10 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
 }
 
-
-
-
-extension DoozMeshManagerApi: DoozMeshProvisioningStatusDelegate{
-    
-}
-
 extension DoozMeshManagerApi: LoggerDelegate{
     func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
         print("[\(String(describing: self.classForCoder))] \(message)")
     }
-    
-    
 }
 
 extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
@@ -522,7 +510,7 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         if let _eventSink = self.eventSink{
             _eventSink(
                 [
-                    EventSinkKeys.eventName : ProvisioningEvent.onConfigAppKeyStatus.rawValue
+                    EventSinkKeys.eventName.rawValue : ProvisioningEvent.onConfigAppKeyStatus.rawValue
             ])
         }
     }
