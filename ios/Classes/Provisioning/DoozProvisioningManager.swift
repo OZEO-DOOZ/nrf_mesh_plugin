@@ -35,6 +35,9 @@ class DoozProvisioningManager: NSObject {
     private var compositionDataGetNeeded = false
     private var node: Node?
     
+    private var provisionedDevice: DoozProvisionedDevice?
+    private var doozTransmitter: DoozTransmitter?
+    
     init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger, delegate: DoozProvisioningManagerDelegate) {
         super.init()
         self.meshNetworkManager = meshNetworkManager
@@ -49,7 +52,6 @@ class DoozProvisioningManager: NSObject {
             self.provisioningBearer = DoozPBGattBearer(targetWithIdentifier: uuid)
             if let _bearer = self.provisioningBearer{
                 self.unprovisionedDevice = UnprovisionedDevice(uuid: uuid)
-                self.provisioningBearer = DoozPBGattBearer(targetWithIdentifier: uuid)
                 
                 if let _unprovisionedDevice = self.unprovisionedDevice{
                     self.provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: _unprovisionedDevice, over: _bearer)
@@ -81,7 +83,7 @@ class DoozProvisioningManager: NSObject {
         }
     }
     
-    public func didDeliverData(data: Data){
+    func didDeliverData(data: Data){
         guard
             let _provisioningManager = self.provisioningManager,
             let _provisioningBearer = self.provisioningBearer,
@@ -90,37 +92,50 @@ class DoozProvisioningManager: NSObject {
         }
         
         let packet = data.subdata(in: 1 ..< data.count)
-
+        
         switch type {
         case .provisioningPdu:
             _provisioningManager.bearer(_provisioningBearer, didDeliverData: packet, ofType: type)
-        case .meshBeacon:
-            if let _meshNetworkManager = self.meshNetworkManager{
-                let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
-                guard localProvisioner?.hasConfigurationCapabilities ?? false else {
-                    // The Provisioner cannot sent or receive messages.
-                    
-                    return
-                }
-                
-                //self.node = node
-                
-                self.provisionedBearer = DoozGattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
-                
-                if let _gattBearer = provisionedBearer{
-                    _gattBearer.delegate = self
-                    //_gattBearer.logger = self
-                    _gattBearer.open()
-                    _gattBearer.dataDelegate = _meshNetworkManager
-                    
-                    _meshNetworkManager.transmitter = _gattBearer
-                    _meshNetworkManager.delegate = self
-                }
-            }
         default:
-            break
+            guard let _meshNetworkManager = self.meshNetworkManager else{
+                return
+            }
+            _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
+            
+//        case .meshBeacon:
+//            if let _meshNetworkManager = self.meshNetworkManager{
+//                let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
+//                guard localProvisioner?.hasConfigurationCapabilities ?? false else {
+//                    // The Provisioner cannot sent or receive messages.
+//
+//                    return
+//                }
+//
+//                //self.node = node
+//
+//                self.provisionedBearer = DoozGattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
+//
+//                if let _gattBearer = provisionedBearer{
+//                    _gattBearer.delegate = self
+//                    //_gattBearer.logger = self
+//                    _gattBearer.open()
+//                    _gattBearer.dataDelegate = _meshNetworkManager
+//
+//                    _meshNetworkManager.transmitter = _gattBearer
+//                    _meshNetworkManager.delegate = self
+//                }
+//            }
+//        case .proxyConfiguration:
+//            print("proxyConfiguration")
+//        case .networkPdu:
+//            guard let _meshNetworkManager = self.meshNetworkManager else{
+//                return
+//            }
+//            _meshNetworkManager.bearerDidDeliverData(data, ofType: .networkPdu)
+//            //meshNetworkManager(_meshNetworkManager, didReceiveMessage: BaseMeshMessage(parameters: data) as! MeshMessage, sentFrom: <#T##Address#>, to: <#T##Address#>)
+
         }
-    
+        
         
     }
     
@@ -128,7 +143,26 @@ class DoozProvisioningManager: NSObject {
         unprovisionedDevices.removeAll()
         unprovisionedDevice = nil
     }
-
+    
+    func createMeshPduForConfigCompositionDataGet(){
+        
+        
+        compositionDataGet()
+        
+//        init(fromMeshMessage message: MeshMessage,
+//             sentFrom localElement: Element, to destination: MeshAddress,
+//             userInitiated: Bool) {
+//
+//            let dict = [
+//                EventSinkKeys.eventName : ProvisioningEvent.onMeshPduCreated.rawValue,
+//                EventSinkKeys.pdu : compositionDataGetPdu.parameters
+//
+//                ] as [String : Any]
+//
+//            delegate?.sendMessage(dict)
+//        }
+        
+    }
 }
 
 private extension DoozProvisioningManager{
@@ -160,10 +194,15 @@ private extension DoozProvisioningManager{
     func compositionDataGet(){
         let message = ConfigCompositionDataGet()
         
+        self.doozTransmitter = DoozTransmitter()
+        
         if let _node = self.node,
-            let _meshNetworkManager = self.meshNetworkManager{
+            let _meshNetworkManager = self.meshNetworkManager, let _doozTransmitter = self.doozTransmitter{
+            _meshNetworkManager.transmitter = _doozTransmitter
             
-            _node.name = "toto"
+            _doozTransmitter.doozDelegate = self
+            #warning("set the right name")
+            //_node.name = "toto"
             
             do{
                 print("📩 Sending message : ConfigCompositionDataGet")
@@ -186,7 +225,7 @@ private extension DoozProvisioningManager{
             _node.name = "toto"
             
             do{
-                print("📩 Sending message : ConfigCompositionDataGet")
+                print("📩 Sending message : ConfigDefaultTtlGet")
                 _ = try _meshNetworkManager.send(message, to: _node)
                 
             }catch{
@@ -199,7 +238,8 @@ private extension DoozProvisioningManager{
     func sendAppKey(){
         if let _meshNetworkManager = self.meshNetworkManager, let _node = self.node{
             do{
-                
+                print("📩 Sending message : ConfigAppKeyAdd")
+
                 if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
                     _ = try _meshNetworkManager.send(ConfigAppKeyAdd(applicationKey: _appKey), to: _node)
                     print("💪 SEND APP KEY")
@@ -260,6 +300,11 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             if let _bearer = self.provisioningBearer{
                 _bearer.close()
             }
+            
+            if let _messenger = self.messenger, let _provisioningManager = self.provisioningManager, let _unprovisionedDevice = self.unprovisionedDevice{
+                self.provisionedDevice = DoozProvisionedDevice(messenger: _messenger, provisioningManager: _provisioningManager, uuid: _unprovisionedDevice.uuid)
+            }
+            
         default:
             break
         }
@@ -303,10 +348,8 @@ extension DoozProvisioningManager: BearerDelegate{
                 }
                 
             }
-        }else if bearer is DoozGattBearer{
-            compositionDataGet()
+            #warning("remove else")
         }
-        
         
     }
     
@@ -323,7 +366,8 @@ extension DoozProvisioningManager: BearerDelegate{
             if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
                 if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
                     _meshNetworkManager.localElements = []
-                    provisionerDidProvisionNewDevice(_node)
+                    self.node = _node
+                    //provisionerDidProvisionNewDevice(_node)
                     
                 }
             }else {
@@ -383,7 +427,7 @@ extension DoozProvisioningManager: LoggerDelegate{
     }
 }
 
-extension DoozProvisioningManager: DoozPBGattBearerDelegate{
+extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
     func send(data: Data) {
         
         #warning("rename meshNodeUuid into meshNode.uuid to keep consistence of code ? same on android.")

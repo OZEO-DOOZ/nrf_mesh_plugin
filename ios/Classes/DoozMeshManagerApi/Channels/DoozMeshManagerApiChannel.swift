@@ -19,5 +19,6 @@ enum DoozMeshManagerApiChannel: String{
     case cleanProvisioningData
     
     case provisioning
-        
+    
+    case createMeshPduForConfigCompositionDataGet
 }

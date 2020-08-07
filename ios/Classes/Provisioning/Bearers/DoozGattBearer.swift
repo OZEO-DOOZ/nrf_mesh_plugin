@@ -8,8 +8,8 @@
 import Foundation
 import nRFMeshProvision
 
-protocol DoozGattBearerDelegate{
-    
+public protocol DoozGattBearerDelegate{
+    func send(data: Data)
 }
 
 open class DoozGattBearer: Bearer {
@@ -20,7 +20,7 @@ open class DoozGattBearer: Bearer {
     
     public var identifier: UUID
     public var name: String?
-    public var doozDelegate: DoozPBGattBearerDelegate?
+    public var doozDelegate: DoozGattBearerDelegate?
 
     
     init(targetWithIdentifier uuid: UUID) {

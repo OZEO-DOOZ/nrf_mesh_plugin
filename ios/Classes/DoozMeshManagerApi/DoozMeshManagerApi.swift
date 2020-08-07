@@ -208,9 +208,16 @@ private extension DoozMeshManagerApi {
             if
                 let _doozProvisioningManager = self.doozProvisioningManager{
                 _doozProvisioningManager.cleanProvisioningData()
-                result(nil)
             }
+            result(nil)
+
+        case .createMeshPduForConfigCompositionDataGet:
+            #warning("no need for dest in ios ?")
+            //if let _args = call.arguments as? [String:Any], let _dest = _args["dest"] as? Int{
+                doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
+            //}
             
+            result(nil)
         }
         
     }

@@ -42,7 +42,7 @@ open class DoozPBGattBearer: ProvisioningBearer {
     }
     
     public func close() {
-        
+        delegate?.bearer(self, didClose: nil)
     }
     
     public var supportedPduTypes: PduTypes {

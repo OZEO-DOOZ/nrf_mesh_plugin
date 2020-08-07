@@ -63,6 +63,14 @@ struct FlutterChannels{
             return "\(namespace)\(url)/\(deviceUUID)\(methodsUrl)"
         }
     }
+    
+    struct DoozProvisionedMeshNode{
+        static let url = "/provisioned_mesh_node"
+        
+        static func getMethodChannelName(deviceUUID: String) -> String{
+            return "\(namespace)\(url)/\(deviceUUID)\(methodsUrl)"
+        }
+    }
         
 }
 
@@ -81,6 +89,7 @@ enum ProvisioningEvent: String{
     case onProvisioningStateChanged
     
     case onConfigAppKeyStatus
+    case onMeshPduCreated
 }
 
 struct EventSinkKeys{
@@ -89,4 +98,6 @@ struct EventSinkKeys{
     static let error = "error"
     
     static let state = "state"
+    
+    static let pdu = "pdu"
 }

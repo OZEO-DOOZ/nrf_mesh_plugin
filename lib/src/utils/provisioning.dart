@@ -127,7 +127,7 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
   final onDeviceConnectingSubscription = bleMeshManager.callbacks.onDeviceConnecting.listen((event) {
     print('onDeviceConnecting $event');
   });
-  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) {
+  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) async {
     print('onDeviceConnected $event');
   });
 
@@ -137,7 +137,12 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
 
   final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
     print('onDeviceReady ${event.id.id} ${serviceDataUuid}');
-    await meshManagerApi.identifyNode(serviceDataUuid);
+    if (bleMeshManager.isProvisioningCompleted) {
+      final unicast = await provisionedMeshNode.unicastAddress;
+      await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
+    } else {
+      await meshManagerApi.identifyNode(serviceDataUuid);
+    }
   });
 
   final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
@@ -146,7 +151,6 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
   });
   final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
     print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
-    //await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
   });
 
   final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
