@@ -28,4 +28,5 @@ class MeshManagerApiEvent {
 
   static const configCompositionDataStatus = MeshManagerApiEvent._('onConfigCompositionDataStatus');
   static const configAppKeyStatus = MeshManagerApiEvent._('onConfigAppKeyStatus');
+  static const genericLevelStatus = MeshManagerApiEvent._('onGenericLevelStatus');
 }

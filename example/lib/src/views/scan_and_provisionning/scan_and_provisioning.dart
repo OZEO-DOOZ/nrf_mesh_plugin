@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/device.dart';
+import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 import 'package:pedantic/pedantic.dart';
 
 class ScanningAndProvisioning extends StatefulWidget {
@@ -98,7 +98,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
     try {
-      final provisionedMeshNodeF = provisioning(_meshManagerApi, device, _serviceData[device.id.id].toString());
+      final provisionedMeshNodeF =
+          provisioning(_meshManagerApi, BleMeshManager(), device, _serviceData[device.id.id].toString());
       unawaited(provisionedMeshNodeF.then((_) async {
         Navigator.of(context).pop();
       }));
@@ -125,7 +126,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         ),
       );
       final provisionedMeshNode = await provisionedMeshNodeF;
-      print('mesh node unicast address = ${await provisionedMeshNode.unicastAddress}');
+      await provisionedMeshNode.nodeName(device.id.id);
       unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);
