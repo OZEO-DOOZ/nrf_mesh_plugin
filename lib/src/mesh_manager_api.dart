@@ -32,6 +32,7 @@ class MeshManagerApi {
 
   final _onConfigCompositionDataStatusController = StreamController<Map<String, dynamic>>.broadcast();
   final _onConfigAppKeyStatusController = StreamController<Map<String, dynamic>>.broadcast();
+  final _onGenericLevelStatusController = StreamController<Map<String, dynamic>>.broadcast();
 
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
@@ -45,7 +46,8 @@ class MeshManagerApi {
   StreamSubscription<MeshProvisioningCompletedData> _onProvisioningCompletedSubscription;
 
   StreamSubscription<Map> _onConfigCompositionDataStatusSubscription;
-  StreamSubscription<Map> _onConfigAppKeyStatusControllerSubscription;
+  StreamSubscription<Map> _onConfigAppKeyStatusSubscription;
+  StreamSubscription<Map> _onGenericLevelStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
@@ -100,9 +102,12 @@ class MeshManagerApi {
     _onConfigCompositionDataStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configCompositionDataStatus.value)
         .listen(_onConfigCompositionDataStatusController.add);
-    _onConfigAppKeyStatusControllerSubscription = _eventChannelStream
+    _onConfigAppKeyStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configAppKeyStatus.value)
         .listen(_onConfigAppKeyStatusController.add);
+    _onGenericLevelStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.genericLevelStatus.value)
+        .listen(_onGenericLevelStatusController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
@@ -129,6 +134,8 @@ class MeshManagerApi {
 
   Stream<Map<String, dynamic>> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
+  Stream<Map<String, dynamic>> get onGenericLevelStatus => _onGenericLevelStatusController.stream;
+
   MeshNetwork get meshNetwork => _lastMeshNetwork;
 
   String get meshProvisioningUuidServiceKey {
@@ -152,6 +159,8 @@ class MeshManagerApi {
         _onProvisioningFailedSubscription.cancel(),
         _onProvisioningCompletedSubscription.cancel(),
         _onConfigCompositionDataStatusSubscription.cancel(),
+        _onConfigAppKeyStatusSubscription.cancel(),
+        _onGenericLevelStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -163,6 +172,8 @@ class MeshManagerApi {
         _onProvisioningFailedController.close(),
         _onProvisioningCompletedController.close(),
         _onConfigCompositionDataStatusController.close(),
+        _onConfigAppKeyStatusController.close(),
+        _onGenericLevelStatusController.close(),
       ]);
 
   Future<MeshNetwork> loadMeshNetwork() async {
@@ -196,6 +207,9 @@ class MeshManagerApi {
 
   Future<void> sendGenericLevelSet(int address, int level) =>
       _methodChannel.invokeMethod('sendGenericLevelSet', {'address': address, 'level': level});
+
+  Future<void> sendGenericOnOffSet(int address) =>
+      _methodChannel.invokeMethod('sendGenricOnOffSet', {'address': address});
 
   Future<void> createMeshPduForConfigCompositionDataGet(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigCompositionDataGet', {'dest': dest});

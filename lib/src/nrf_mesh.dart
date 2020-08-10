@@ -20,6 +20,7 @@ class NordicNrfMesh {
 
   Future<MeshManagerApi> _createMeshManagerApi() async {
     await _methodChannel.invokeMethod('createMeshManagerApi');
-    return MeshManagerApi();
+    final meshManagerApi = MeshManagerApi();
+    return meshManagerApi;
   }
 }

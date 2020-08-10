@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
@@ -36,23 +37,58 @@ class ProvisioningEvent extends _ProvisioningEvent {
       ]);
 }
 
-Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BluetoothDevice device, String serviceDataUuid,
+Future<ProvisionedMeshNode> provisioning(
+    MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager, BluetoothDevice device, String serviceDataUuid,
     {ProvisioningEvent events}) async {
   print('serviceDataUuid $serviceDataUuid');
   if (Platform.isIOS) {
     await meshManagerApi.provisioningIos(serviceDataUuid);
   } else if (Platform.isAndroid) {
-    final bleMeshManager = BleMeshManager();
-    return _provisioningAndroid(meshManagerApi, device, bleMeshManager, serviceDataUuid, events);
+    final meshNode = await _provisioningAndroid(meshManagerApi, bleMeshManager, device, serviceDataUuid, events);
+    return meshNode;
   }
   return null;
 }
 
-Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, BluetoothDevice device,
-    BleMeshManager bleMeshManager, String serviceDataUuid, ProvisioningEvent events) async {
+Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
+    BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
-  final completer = Completer();
+  final completer = Completer<ProvisionedMeshNode>();
   ProvisionedMeshNode provisionedMeshNode;
+  final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
+  bleMeshManager.callbacks = provisioningCallbacks;
+
+  final onDeviceConnectingSubscription = bleMeshManager.callbacks.onDeviceConnecting.listen((event) {
+    print('onDeviceConnecting $event');
+  });
+  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) {
+    print('onDeviceConnected $event');
+  });
+
+  final onServicesDiscoveredSubscription = bleMeshManager.callbacks.onServicesDiscovered.listen((event) {
+    print('onServicesDiscovered');
+  });
+
+  final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
+    print('onDeviceReady ${event.id.id} ${serviceDataUuid}');
+    await meshManagerApi.identifyNode(serviceDataUuid);
+  });
+
+  final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
+    print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
+    await meshManagerApi.handleNotifications(event.mtu, event.pdu);
+  });
+  final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
+    print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
+    await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
+  });
+
+  final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
+    print('onDeviceDisconnecting $event');
+  });
+  final onDeviceDisconnectedSubscription = bleMeshManager.callbacks.onDeviceDisconnected.listen((event) {
+    print('onDeviceDisconnected $event');
+  });
 
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     print('onProvisioningCompleted $event');
@@ -67,6 +103,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       }
     }
     if (scanResult == null) {
+      await meshManagerApi.cleanProvisioningData();
       completer.completeError(Exception('Didn\'t find module'));
       return;
     }
@@ -123,43 +160,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     print('sendProvisioningPdu $event');
     await bleMeshManager.sendPdu(event.pdu);
   });
-  final onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
-    print('onMeshPduCreated $event');
-    await bleMeshManager.sendPdu(event);
-  });
-
-  bleMeshManager.callbacks = _DoozBleMeshManagerCallbacks(meshManagerApi);
-  final onDeviceConnectingSubscription = bleMeshManager.callbacks.onDeviceConnecting.listen((event) {
-    print('onDeviceConnecting $event');
-  });
-  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) {
-    print('onDeviceConnected $event');
-  });
-
-  final onServicesDiscoveredSubscription = bleMeshManager.callbacks.onServicesDiscovered.listen((event) {
-    print('onServicesDiscovered');
-  });
-
-  final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
-    print('onDeviceReady ${event.id.id} ${serviceDataUuid}');
-    await meshManagerApi.identifyNode(serviceDataUuid);
-  });
-
-  final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
-    print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
-    await meshManagerApi.handleNotifications(event.mtu, event.pdu);
-  });
-  final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
-    print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
-    await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
-  });
-
-  final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
-    print('onDeviceDisconnecting $event');
-  });
-  final onDeviceDisconnectedSubscription = bleMeshManager.callbacks.onDeviceDisconnected.listen((event) {
-    print('onDeviceDisconnected $event');
-  });
 
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     print('onConfigCompositionDataStatus $event');
@@ -172,6 +172,11 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     completer.complete(provisionedMeshNode);
   });
 
+  final onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+    print('onMeshPduCreated $event');
+    await bleMeshManager.sendPdu(event);
+  });
+
   if (bleMeshManager.connected) {
     await bleMeshManager.disconnect();
   }
@@ -180,7 +185,9 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
   await bleMeshManager.connect(device);
 
   try {
-    return await completer.future;
+    await completer.future;
+    await device.disconnect();
+    return provisionedMeshNode;
   } catch (e) {
     await device.disconnect();
     rethrow;
@@ -190,7 +197,8 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       onProvisioningStateChangedSubscription.cancel(),
       onProvisioningFailedSubscription.cancel(),
       sendProvisioningPduSubscription.cancel(),
-      onMeshPduCreatedSubscription.cancel(),
+      onConfigCompositionDataStatusSubscription.cancel(),
+      onConfigAppKeyStatusSubscription.cancel(),
       onDeviceConnectingSubscription.cancel(),
       onDeviceConnectedSubscription.cancel(),
       onServicesDiscoveredSubscription.cancel(),
@@ -199,18 +207,17 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       onDataSentSubscription.cancel(),
       onDeviceDisconnectingSubscription.cancel(),
       onDeviceDisconnectedSubscription.cancel(),
-      onConfigCompositionDataStatusSubscription.cancel(),
-      onConfigAppKeyStatusSubscription.cancel(),
+      onMeshPduCreatedSubscription.cancel(),
       bleMeshManager?.callbacks?.dispose(),
     ]);
   }
 }
 
-class _DoozBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
-  final MeshManagerApi _meshManagerApi;
+class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
+  final MeshManagerApi meshManagerApi;
 
-  _DoozBleMeshManagerCallbacks(this._meshManagerApi);
+  BleMeshManagerProvisioningCallbacks(this.meshManagerApi);
 
   @override
-  Future<void> sendMtuToMeshManagerApi(int mtu) async => _meshManagerApi.setMtu(mtu);
+  Future<void> sendMtuToMeshManagerApi(int mtu) => meshManagerApi.setMtu(mtu);
 }

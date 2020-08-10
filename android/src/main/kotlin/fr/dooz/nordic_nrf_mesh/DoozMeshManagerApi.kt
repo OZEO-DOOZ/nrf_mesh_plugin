@@ -13,6 +13,7 @@ import no.nordicsemi.android.mesh.MeshNetwork
 import no.nordicsemi.android.mesh.transport.ConfigAppKeyAdd
 import no.nordicsemi.android.mesh.transport.ConfigCompositionDataGet
 import no.nordicsemi.android.mesh.transport.GenericLevelSet
+import no.nordicsemi.android.mesh.transport.GenericOnOffSet
 import no.nordicsemi.android.mesh.transport.MeshMessage
 import java.util.*
 import kotlin.collections.ArrayList
@@ -34,7 +35,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
         doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(binaryMessenger, eventSink, unprovisionedMeshNodes, this)
-        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink)
+        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink, mMeshManagerApi)
 
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
         mMeshManagerApi.setProvisioningStatusCallbacks(doozMeshProvisioningStatusCallbacks)
@@ -116,6 +117,17 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         mMeshManagerApi.meshNetwork!!.getAppKey(0),
                         level,
                         mMeshManagerApi.meshNetwork!!.sequenceNumbers[0]
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null);
+            }
+            "sendGenericOnOffSet" -> {
+                val address = call.argument<Int>("address")!!;
+                val value = call.argument<Boolean>("value")!!;
+                val meshMessage: MeshMessage = GenericOnOffSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(0),
+                        value,
+                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address)
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null);
