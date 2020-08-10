@@ -30,8 +30,8 @@ class _ModuleState extends State<Module> {
 
   @override
   void dispose() {
-    bleMeshManager.callbacks.dispose();
     bleMeshManager.disconnect();
+    bleMeshManager.callbacks.dispose();
     super.dispose();
   }
 
