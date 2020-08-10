@@ -205,6 +205,9 @@ class MeshManagerApi {
 
   Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
 
+  Future<void> sendGenericOnOffSet(int address) =>
+      _methodChannel.invokeMethod('sendGenricOnOffSet', {'address': address});
+
   Future<void> createMeshPduForConfigCompositionDataGet(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigCompositionDataGet', {'dest': dest});
 
