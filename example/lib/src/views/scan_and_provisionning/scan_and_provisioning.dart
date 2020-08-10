@@ -23,7 +23,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   bool isProvisioning = false;
   StreamSubscription _scanSubscription;
   MeshManagerApi _meshManagerApi;
-  BleMeshManagerHelper _bleMeshManagerHelper;
 
   final _serviceData = <String, Guid>{};
   final _devices = <BluetoothDevice>{};
@@ -49,8 +48,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     _meshManagerApi = await widget.nordicNrfMesh.meshManagerApi;
 
     await _meshManagerApi.loadMeshNetwork();
-
-    _bleMeshManagerHelper = BleMeshManagerHelper(_meshManagerApi);
 
     setState(() {
       loading = false;
@@ -101,7 +98,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
     try {
-      final provisionedMeshNodeF = _bleMeshManagerHelper.provisioning(device, _serviceData[device.id.id].toString());
+      final provisionedMeshNodeF =
+          provisioning(_meshManagerApi, BleMeshManager(), device, _serviceData[device.id.id].toString());
       unawaited(provisionedMeshNodeF.then((_) async {
         Navigator.of(context).pop();
       }));

@@ -13,23 +13,20 @@ class Module extends StatefulWidget {
 }
 
 class _ModuleState extends State<Module> {
-  BleMeshManagerHelper bleMeshManagerHelper;
-
   bool isLoading = true;
+  final bleMeshManager = BleMeshManager();
 
   @override
   void initState() {
     super.initState();
-    bleMeshManagerHelper = BleMeshManagerHelper(widget.meshManagerApi);
-    bleMeshManagerHelper.isProvisioning = false;
-    bleMeshManagerHelper.bleMeshManager.connect(widget.device);
+    bleMeshManager.connect(widget.device);
 
     _init();
   }
 
   @override
   void dispose() {
-    bleMeshManagerHelper.bleMeshManager.disconnect();
+    bleMeshManager.disconnect();
     super.dispose();
   }
 
