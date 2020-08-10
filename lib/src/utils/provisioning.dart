@@ -80,10 +80,8 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
 
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController?.add(null);
-      var assigned = false;
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
       final elementSize = await unprovisionedMeshNode.getNumberOfElements();
-      final maxAddress = await meshManagerApi.meshNetwork.highestAllocatableAddress;
 
       if (elementSize == 0) {
         await meshManagerApi.cleanProvisioningData();
@@ -91,17 +89,6 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, Blue
         return;
       }
 
-      var unicast = await meshManagerApi.meshNetwork.nextAvailableUnicastAddress(elementSize);
-      while (!assigned && unicast < maxAddress && unicast > 0) {
-        try {
-          await meshManagerApi.meshNetwork.assignUnicastAddress(unicast);
-          assigned = true;
-        } catch (e) {
-          print('Failed to assign $unicast to meshNetwork retry with ${unicast + 1}');
-          unicast += 1;
-        }
-      }
-      await unprovisionedMeshNode.setUnicastAddress(unicast);
       events?._provisioningController?.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
     } else if (event.state == 'PROVISIONER_READY') {

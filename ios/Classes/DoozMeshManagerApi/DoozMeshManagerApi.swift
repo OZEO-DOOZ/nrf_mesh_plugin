@@ -14,7 +14,6 @@ class DoozMeshManagerApi: NSObject{
     var meshNetworkManager: MeshNetworkManager?
     var delegate: DoozMeshManagerApiDelegate?
     
-    #warning("remove mtuSize ?")
     var mtuSize: Int = -1
 
     //MARK: Private properties
@@ -155,17 +154,7 @@ private extension DoozMeshManagerApi {
             
             break
             
-        case .getDeviceUuid:
-            
-            if let _args = call.arguments as? [String:Any], let _serviceData = _args["serviceData"] as? String{
-                #warning("to implement")
-                //result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());
-                
-            }
-            break
-            
         case .handleNotifications:
-            print(call.arguments)
             if
                 let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
@@ -179,28 +168,10 @@ private extension DoozMeshManagerApi {
             result(nil)
             
             break
-            
-        case .handleWriteCallbacks:
-            // Does not exists in iOS ?
-            #warning("useless in ios ?")
-            if
-                let _doozProvisioningManager = self.doozProvisioningManager,
-                let _args = call.arguments as? [String:Any],
-                let _pdu = _args["pdu"] as? [Int]
-            {
-
-                //_doozProvisioningManager.didDeliverData(data: _pdu)
-
-            }
-            
-            result(nil)
-            
-            break
         
         case .setMtuSize:
             
             if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
-                #warning("useless in ios ?")
                 delegate?.mtuSize = _mtuSize
                 result(nil)
             }
@@ -213,7 +184,6 @@ private extension DoozMeshManagerApi {
             result(nil)
 
         case .createMeshPduForConfigCompositionDataGet:
-            #warning("no need for dest in ios ")
             doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
             result(nil)
         }

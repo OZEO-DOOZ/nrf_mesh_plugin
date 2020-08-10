@@ -77,39 +77,9 @@ private extension DoozMeshNetwork {
             result(maxAddress)
             
             break
-        case .nextAvailableUnicastAddress:
-            
-            if
-                let _args = call.arguments as? [String:Any],
-                let _elementSize = _args["elementSize"] as? UInt8,
-                let _provisioner = meshNetwork?.localProvisioner{
-                
-                let nextAvailableUnicastAddress = meshNetwork?.nextAvailableUnicastAddress(for: _elementSize, elementsUsing: _provisioner)
-                result(nextAvailableUnicastAddress)
-            }
-            
-            break
-            
-            case .assignUnicastAddress:
-                #warning("useless in ios ?")
-                do{
-                    if
-                        let _args = call.arguments as? [String:Any],
-                        let _unicastAddress = _args["unicastAddress"] as? UInt16,
-                        let _provisioner = meshNetwork?.localProvisioner{
-                        
-                        //try meshNetwork?.assign(unicastAddress: _unicastAddress, for: _provisioner)
-                        
-                        result(nil)
-                    }
-
-                }catch{
-                    print("Failed to assign unicast address : \(error)")
-                }
-        }
-
-    }
     
+        }
+    }
 }
 
 private extension DoozMeshNetwork{

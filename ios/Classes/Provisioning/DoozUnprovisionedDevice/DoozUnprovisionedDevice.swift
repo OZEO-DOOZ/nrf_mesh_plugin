@@ -62,18 +62,6 @@ private extension DoozUnprovisionedDevice {
             result(nbElements)
             break
             
-        case .setUnicastAddress:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["unicastAddress"] as? UInt16,
-                let _provisioningManager = self.provisioningManager{
-                _provisioningManager.unicastAddress = _address
-                result(nil)
-                break
-            }
-            
         }
-        
     }
-    
 }

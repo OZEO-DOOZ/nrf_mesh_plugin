@@ -100,41 +100,7 @@ class DoozProvisioningManager: NSObject {
                 return
             }
             _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
-            
-//        case .meshBeacon:
-//            if let _meshNetworkManager = self.meshNetworkManager{
-//                let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
-//                guard localProvisioner?.hasConfigurationCapabilities ?? false else {
-//                    // The Provisioner cannot sent or receive messages.
-//
-//                    return
-//                }
-//
-//                //self.node = node
-//
-//                self.provisionedBearer = DoozGattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
-//
-//                if let _gattBearer = provisionedBearer{
-//                    _gattBearer.delegate = self
-//                    //_gattBearer.logger = self
-//                    _gattBearer.open()
-//                    _gattBearer.dataDelegate = _meshNetworkManager
-//
-//                    _meshNetworkManager.transmitter = _gattBearer
-//                    _meshNetworkManager.delegate = self
-//                }
-//            }
-//        case .proxyConfiguration:
-//            print("proxyConfiguration")
-//        case .networkPdu:
-//            guard let _meshNetworkManager = self.meshNetworkManager else{
-//                return
-//            }
-//            _meshNetworkManager.bearerDidDeliverData(data, ofType: .networkPdu)
-//            //meshNetworkManager(_meshNetworkManager, didReceiveMessage: BaseMeshMessage(parameters: data) as! MeshMessage, sentFrom: <#T##Address#>, to: <#T##Address#>)
-
         }
-        
         
     }
     
@@ -184,8 +150,6 @@ private extension DoozProvisioningManager{
             _meshNetworkManager.transmitter = _doozTransmitter
             
             _doozTransmitter.doozDelegate = self
-            #warning("set the right name")
-            //_node.name = "toto"
             
             do{
                 print("📩 Sending message : ConfigCompositionDataGet")
@@ -295,7 +259,6 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             "data":[],
             "meshNode":[
                 "uuid":unprovisionedDevice.uuid.uuidString
-                //"provisionerPublicKeyXY":provisioningManager.publ
             ]
             ] as [String : Any]
         
@@ -407,7 +370,7 @@ extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDeleg
         guard let _provisioningBearer = self.provisioningBearer else{
             return
         }
-        #warning("rename meshNodeUuid into meshNode.uuid to keep consistence of code ? same on android.")
+
         let dict = [
             
             EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,

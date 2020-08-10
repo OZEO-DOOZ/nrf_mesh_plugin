@@ -7,5 +7,4 @@
 
 enum DoozUnprovisionedMeshNodeChannel: String{
     case getNumberOfElements
-    case setUnicastAddress
 }
