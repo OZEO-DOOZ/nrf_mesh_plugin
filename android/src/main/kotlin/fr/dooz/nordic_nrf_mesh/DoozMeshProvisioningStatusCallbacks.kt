@@ -59,16 +59,4 @@ class DoozMeshProvisioningStatusCallbacks(var binaryMessenger: BinaryMessenger, 
         )
         doozMeshManagerApi.currentProvisionedMeshNode = DoozProvisionedMeshNode(binaryMessenger, meshNode!!)
     }
-
-    @SuppressLint("RestrictedApi")
-    fun getHighestAllocatableAddress(): Int {
-        var maxAddress = 0
-        for (addressRange in doozMeshManagerApi.mMeshManagerApi.meshNetwork!!.selectedProvisioner!!.allocatedUnicastRanges) {
-            if (maxAddress < addressRange.highAddress) {
-                maxAddress = addressRange.highAddress
-            }
-        }
-        return maxAddress
-    }
-
 }
