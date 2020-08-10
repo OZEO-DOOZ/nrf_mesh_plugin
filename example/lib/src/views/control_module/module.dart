@@ -48,6 +48,7 @@ class _ModuleState extends State<Module> {
   Future<void> _init() async {
     //  TODO: get list of nodes from native directly
     final meshNetworkJson = json.decode(await widget.meshManagerApi.exportMeshNetwork());
+    debugPrint(meshNetworkJson, wrapWidth: 180);
     final node = meshNetworkJson['nodes'].firstWhere((node) => node['name'] == widget.device.id.id, orElse: () => null);
     if (node == null) {
       print('module not found');
