@@ -23,7 +23,8 @@ class _ModuleState extends State<Module> {
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
+        widget.meshManagerApi, bleMeshManager);
 
     _init();
   }
@@ -52,16 +53,19 @@ class _ModuleState extends State<Module> {
     await bleMeshManager.connect(widget.device);
 
     //  TODO: get list of nodes from native directly
-    final meshNetworkJson = json.decode(await widget.meshManagerApi.exportMeshNetwork());
+    final meshNetworkJson =
+        json.decode(await widget.meshManagerApi.exportMeshNetwork());
     debugPrint(json.encode(meshNetworkJson), wrapWidth: 180);
-    final node = meshNetworkJson['nodes'].firstWhere((node) => node['name'] == widget.device.id.id, orElse: () => null);
+    final node = meshNetworkJson['nodes'].firstWhere(
+        (node) => node['name'] == widget.device.id.id,
+        orElse: () => null);
     if (node == null) {
       print('module not found');
       return;
     }
     debugPrint(json.encode(node), wrapWidth: 180);
 
-    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
+//    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
 
     //  TODO: get mesh network data to know if we should setup the board
   }
@@ -73,15 +77,18 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
 
   StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
+  StreamSubscription<BleManagerCallbacksDiscoveredServices>
+      onServicesDiscoveredSubscription;
   StreamSubscription<BluetoothDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
+  StreamSubscription<BleMeshManagerCallbacksDataReceived>
+      onDataReceivedSubscription;
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
-  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
+  DoozProvisionedBleMeshManagerCallbacks(
+      this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
       print('onDeviceConnecting $event');
     });
@@ -113,7 +120,8 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onDeviceDisconnected $event');
     });
 
-    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+    onMeshPduCreatedSubscription =
+        meshManagerApi.onMeshPduCreated.listen((event) async {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });

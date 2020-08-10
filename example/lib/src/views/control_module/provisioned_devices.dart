@@ -23,7 +23,7 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   bool loading = true;
   bool isScanning = false;
   StreamSubscription<ScanResult> _scanSubscription;
-  final _serviceData = <String, Guid>{};
+//  final _serviceData = <String, Guid>{};
 
   @override
   void initState() {
@@ -57,7 +57,9 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return Module(device: device, meshManagerApi: _meshManagerApi);
+                            return Module(
+                                device: device,
+                                meshManagerApi: _meshManagerApi);
                           },
                         ),
                       );

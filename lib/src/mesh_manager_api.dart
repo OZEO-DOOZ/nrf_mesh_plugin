@@ -205,6 +205,9 @@ class MeshManagerApi {
 
   Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
 
+  Future<void> sendGenericLevelSet(int address, int level) =>
+      _methodChannel.invokeMethod('sendGenericLevelSet', {'address': address, 'level': level});
+
   Future<void> sendGenericOnOffSet(int address) =>
       _methodChannel.invokeMethod('sendGenricOnOffSet', {'address': address});
 
