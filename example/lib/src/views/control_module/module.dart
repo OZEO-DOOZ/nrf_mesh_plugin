@@ -117,6 +117,10 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });
+
+    meshManagerApi.onGenericLevelStatus.listen((event) {
+      print(event);
+    });
   }
 
   @override
