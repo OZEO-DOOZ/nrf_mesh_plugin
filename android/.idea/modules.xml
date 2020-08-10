@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/fr.dooz.nordic_nrf_mesh-nordic_nrf_mesh.iml" filepath="$PROJECT_DIR$/.idea/modules/fr.dooz.nordic_nrf_mesh-nordic_nrf_mesh.iml" group="nordic_nrf_mesh" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/nordic_nrf_mesh.iml" filepath="$PROJECT_DIR$/.idea/modules/nordic_nrf_mesh.iml" group="nordic_nrf_mesh" />
     </modules>
   </component>

@@ -2,13 +2,11 @@ package fr.dooz.nordic_nrf_mesh
 
 import android.util.Log
 import io.flutter.plugin.common.EventChannel
+import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshStatusCallbacks
-import no.nordicsemi.android.mesh.transport.ConfigAppKeyStatus
-import no.nordicsemi.android.mesh.transport.ConfigCompositionDataStatus
-import no.nordicsemi.android.mesh.transport.ControlMessage
-import no.nordicsemi.android.mesh.transport.MeshMessage
+import no.nordicsemi.android.mesh.transport.*
 
-class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStatusCallbacks {
+class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?, var meshManagerApi: MeshManagerApi): MeshStatusCallbacks {
     override fun onMeshMessageProcessed(dst: Int, meshMessage: MeshMessage) {
         Log.d("DoozMeshStatusCallbacks", "onMeshMessageProcessed")
     }
@@ -37,6 +35,15 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                             "aszmic" to meshMessage.aszmic,
                             "dst" to meshMessage.dst
                     )
+            ))
+        } else if (meshMessage is GenericLevelStatus) {
+            val pNode: ProvisionedMeshNode = meshManagerApi.meshNetwork!!.getNode(meshMessage.getSrc())
+
+            eventSink?.success(mapOf(
+                    "eventName" to "onGenericLevelStatus",
+                    "level" to java.lang.String.valueOf(meshMessage.presentLevel).toInt(),
+                    "elementId" to meshMessage.src,
+                    "targetLevel" to meshMessage.targetLevel
             ))
         } else {
             Log.d("DoozMeshStatusCallbacks", meshMessage.javaClass.toString())
