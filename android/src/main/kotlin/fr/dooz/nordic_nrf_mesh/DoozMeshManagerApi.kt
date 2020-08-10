@@ -10,7 +10,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshNetwork
-import no.nordicsemi.android.mesh.Provisioner
 import no.nordicsemi.android.mesh.transport.ConfigAppKeyAdd
 import no.nordicsemi.android.mesh.transport.ConfigCompositionDataGet
 import no.nordicsemi.android.mesh.transport.GenericOnOffSet
