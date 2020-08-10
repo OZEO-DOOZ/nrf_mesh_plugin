@@ -8,4 +8,6 @@ class ProvisionedMeshNode {
   ProvisionedMeshNode(this.uuid) : _methodChannel = MethodChannel('$namespace/provisioned_mesh_node/${uuid}/methods');
 
   Future<int> get unicastAddress => _methodChannel.invokeMethod('unicastAddress');
+
+  Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
 }

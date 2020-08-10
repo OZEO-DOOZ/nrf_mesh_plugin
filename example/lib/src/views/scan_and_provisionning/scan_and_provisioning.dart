@@ -126,7 +126,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         ),
       );
       final provisionedMeshNode = await provisionedMeshNodeF;
-      print('mesh node unicast address = ${await provisionedMeshNode.unicastAddress}');
+      await provisionedMeshNode.nodeName(device.id.id);
       unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);
