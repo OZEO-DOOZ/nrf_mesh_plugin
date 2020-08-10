@@ -186,6 +186,56 @@ private extension DoozMeshManagerApi {
         case .createMeshPduForConfigCompositionDataGet:
             doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
             result(nil)
+            
+        case .sendGenericLevelSet:
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let _level = _args["level"] as? Int16,
+                let _meshNetworkManager = self.meshNetworkManager,
+                let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+                    
+                let message = GenericLevelSet(level: _level)
+                
+                do{
+                    _ = try _meshNetworkManager.send(
+                        message,
+                        to: MeshAddress(Address(bitPattern: _address)),
+                        using: _appKey
+                    )
+                }catch{
+                    #warning("TODO : manage errors")
+                    print(error)
+                }
+                
+            }
+            
+            result(nil)
+        case .sendGenericOnOffSet:
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let _isOn = _args["value"] as? Bool,
+                let _meshNetworkManager = self.meshNetworkManager,
+                let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+                    
+                let message = GenericOnOffSet(_isOn)
+                
+                do{
+                    _ = try _meshNetworkManager.send(
+                        message,
+                        to: MeshAddress(Address(bitPattern: _address)),
+                        using: _appKey
+                    )
+                }catch{
+                    #warning("TODO : manage errors")
+                    print(error)
+                }
+                
+            }
+            
+            result(nil)
+            break
         }
         
     }
