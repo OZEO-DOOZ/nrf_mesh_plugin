@@ -69,6 +69,7 @@ class _ModuleState extends State<Module> {
 
 class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   final MeshManagerApi meshManagerApi;
+  final BleMeshManager bleMeshManager;
 
   StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
@@ -78,8 +79,9 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
+  StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
-  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi) {
+  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
       print('onDeviceConnecting $event');
     });
@@ -110,6 +112,11 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
     onDeviceDisconnectedSubscription = onDeviceDisconnected.listen((event) {
       print('onDeviceDisconnected $event');
     });
+
+    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+      print('onMeshPduCreated $event');
+      await bleMeshManager.sendPdu(event);
+    });
   }
 
   @override
@@ -122,6 +129,7 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
     onDataSentSubscription.cancel();
     onDeviceDisconnectingSubscription.cancel();
     onDeviceDisconnectedSubscription.cancel();
+    onMeshPduCreatedSubscription.cancel();
     return super.dispose();
   }
 
