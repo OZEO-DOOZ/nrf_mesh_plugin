@@ -34,9 +34,10 @@ class _HomeState extends State<Home> {
             },
           ),
           Divider(),
-          MeshNetworkWidget(
-            meshNetwork: _meshNetwork,
-          ),
+          if (_meshNetwork != null)
+            MeshNetworkWidget(
+              meshNetwork: _meshNetwork,
+            ),
         ],
       ),
     );
@@ -147,16 +148,32 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   }
 }
 
-class MeshNetworkWidget extends StatelessWidget {
+class MeshNetworkWidget extends StatefulWidget {
   final MeshNetwork meshNetwork;
 
   const MeshNetworkWidget({Key key, @required this.meshNetwork}) : super(key: key);
 
   @override
+  _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
+}
+
+class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
+  @override
+  void initState() {
+    super.initState();
+
+    widget.meshNetwork.nodes.then((nodes) async {
+      for (final node in nodes) {
+        print('node uuid : ${node.uuid}, elements: ${await node.elements}');
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (meshNetwork == null) {
+    if (widget.meshNetwork == null) {
       return Text('No mesh network');
     }
-    return Text('MeshNetwork ID: ${meshNetwork.id}');
+    return Text('MeshNetwork ID: ${widget.meshNetwork.id}');
   }
 }

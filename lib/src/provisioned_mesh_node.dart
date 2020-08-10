@@ -10,4 +10,9 @@ class ProvisionedMeshNode {
   Future<int> get unicastAddress => _methodChannel.invokeMethod('unicastAddress');
 
   Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
+
+  Future<List> get elements async {
+    final _elements = await _methodChannel.invokeMethod<List<dynamic>>('elements');
+    return _elements;
+  }
 }

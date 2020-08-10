@@ -1,6 +1,7 @@
 package fr.dooz.nordic_nrf_mesh
 
 import android.annotation.SuppressLint
+import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
@@ -8,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshNetwork
 import java.lang.IllegalArgumentException
 
-class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
+class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
     private var eventSink : EventChannel.EventSink? = null
     private var eventChannel: EventChannel = EventChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/events")
     private var methodChannel: MethodChannel = MethodChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/methods")
@@ -53,6 +54,17 @@ class DoozMeshNetwork(binaryMessenger: BinaryMessenger, var meshNetwork: MeshNet
                 } catch (e: IllegalArgumentException) {
                     result.error("ASSIGN_UNICAST_ADDRESS", "Failed to assign unicast address", e)
                 }
+            }
+            "nodes" -> {
+                val provisionedMeshNodes = meshNetwork.nodes.map { node ->
+                    DoozProvisionedMeshNode(binaryMessenger, node)
+                }
+                val nodes = provisionedMeshNodes.map { node ->
+                    mapOf(
+                            "uuid" to node.meshNode.uuid
+                    )
+                }
+                result.success(nodes)
             }
             "highestAllocatableAddress" -> {
                 var maxAddress = 0;
