@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named
+// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
 
 part of 'mesh_network_event.dart';
 
@@ -15,6 +15,7 @@ MeshNetworkEventData _$MeshNetworkEventDataFromJson(Map<String, dynamic> json) {
 class _$MeshNetworkEventDataTearOff {
   const _$MeshNetworkEventDataTearOff();
 
+// ignore: unused_element
   _MeshNetworkEventData call(String id) {
     return _MeshNetworkEventData(
       id,
@@ -144,6 +145,7 @@ MeshNetworkEventError _$MeshNetworkEventErrorFromJson(
 class _$MeshNetworkEventErrorTearOff {
   const _$MeshNetworkEventErrorTearOff();
 
+// ignore: unused_element
   _MeshNetworkEventError call(String error) {
     return _MeshNetworkEventError(
       error,

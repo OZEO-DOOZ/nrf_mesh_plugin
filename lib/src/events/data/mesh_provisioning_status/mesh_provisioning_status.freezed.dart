@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named
+// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
 
 part of 'mesh_provisioning_status.dart';
 
@@ -16,6 +16,7 @@ UnprovisionedMeshNodeData _$UnprovisionedMeshNodeDataFromJson(
 class _$UnprovisionedMeshNodeDataTearOff {
   const _$UnprovisionedMeshNodeDataTearOff();
 
+// ignore: unused_element
   _UnprovisionedMeshNodeData call(
       {@required String uuid,
       @nullable List<int> provisionerPublicKeyXY = const []}) {
@@ -176,6 +177,7 @@ ProvisionedMeshNodeData _$ProvisionedMeshNodeDataFromJson(
 class _$ProvisionedMeshNodeDataTearOff {
   const _$ProvisionedMeshNodeDataTearOff();
 
+// ignore: unused_element
   _ProvisionedMeshNodeData call({@required String uuid}) {
     return _ProvisionedMeshNodeData(
       uuid: uuid,
@@ -308,6 +310,7 @@ MeshProvisioningStatusData _$MeshProvisioningStatusDataFromJson(
 class _$MeshProvisioningStatusDataTearOff {
   const _$MeshProvisioningStatusDataTearOff();
 
+// ignore: unused_element
   _MeshProvisioningStatusData call(String state, List<int> data,
       @nullable UnprovisionedMeshNodeData meshNode) {
     return _MeshProvisioningStatusData(
@@ -503,6 +506,7 @@ MeshProvisioningCompletedData _$MeshProvisioningCompletedDataFromJson(
 class _$MeshProvisioningCompletedDataTearOff {
   const _$MeshProvisioningCompletedDataTearOff();
 
+// ignore: unused_element
   _MeshProvisioningCompletedData call(String state, List<int> data,
       @nullable ProvisionedMeshNodeData meshNode) {
     return _MeshProvisioningCompletedData(
