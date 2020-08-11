@@ -16,10 +16,10 @@ SendProvisioningPduData _$SendProvisioningPduDataFromJson(
 class _$SendProvisioningPduDataTearOff {
   const _$SendProvisioningPduDataTearOff();
 
-  _SendProvisioningPduData call(List<int> pdu, String meshNodeUuid) {
+  _SendProvisioningPduData call(List<int> pdu, UnprovisionedMeshNode meshNode) {
     return _SendProvisioningPduData(
       pdu,
-      meshNodeUuid,
+      meshNode,
     );
   }
 }
@@ -29,7 +29,7 @@ const $SendProvisioningPduData = _$SendProvisioningPduDataTearOff();
 
 mixin _$SendProvisioningPduData {
   List<int> get pdu;
-  String get meshNodeUuid;
+  UnprovisionedMeshNode get meshNode;
 
   Map<String, dynamic> toJson();
   $SendProvisioningPduDataCopyWith<SendProvisioningPduData> get copyWith;
@@ -39,7 +39,7 @@ abstract class $SendProvisioningPduDataCopyWith<$Res> {
   factory $SendProvisioningPduDataCopyWith(SendProvisioningPduData value,
           $Res Function(SendProvisioningPduData) then) =
       _$SendProvisioningPduDataCopyWithImpl<$Res>;
-  $Res call({List<int> pdu, String meshNodeUuid});
+  $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
 class _$SendProvisioningPduDataCopyWithImpl<$Res>
@@ -53,13 +53,13 @@ class _$SendProvisioningPduDataCopyWithImpl<$Res>
   @override
   $Res call({
     Object pdu = freezed,
-    Object meshNodeUuid = freezed,
+    Object meshNode = freezed,
   }) {
     return _then(_value.copyWith(
       pdu: pdu == freezed ? _value.pdu : pdu as List<int>,
-      meshNodeUuid: meshNodeUuid == freezed
-          ? _value.meshNodeUuid
-          : meshNodeUuid as String,
+      meshNode: meshNode == freezed
+          ? _value.meshNode
+          : meshNode as UnprovisionedMeshNode,
     ));
   }
 }
@@ -70,7 +70,7 @@ abstract class _$SendProvisioningPduDataCopyWith<$Res>
           $Res Function(_SendProvisioningPduData) then) =
       __$SendProvisioningPduDataCopyWithImpl<$Res>;
   @override
-  $Res call({List<int> pdu, String meshNodeUuid});
+  $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
 class __$SendProvisioningPduDataCopyWithImpl<$Res>
@@ -87,20 +87,20 @@ class __$SendProvisioningPduDataCopyWithImpl<$Res>
   @override
   $Res call({
     Object pdu = freezed,
-    Object meshNodeUuid = freezed,
+    Object meshNode = freezed,
   }) {
     return _then(_SendProvisioningPduData(
       pdu == freezed ? _value.pdu : pdu as List<int>,
-      meshNodeUuid == freezed ? _value.meshNodeUuid : meshNodeUuid as String,
+      meshNode == freezed ? _value.meshNode : meshNode as UnprovisionedMeshNode,
     ));
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class _$_SendProvisioningPduData implements _SendProvisioningPduData {
-  const _$_SendProvisioningPduData(this.pdu, this.meshNodeUuid)
+  const _$_SendProvisioningPduData(this.pdu, this.meshNode)
       : assert(pdu != null),
-        assert(meshNodeUuid != null);
+        assert(meshNode != null);
 
   factory _$_SendProvisioningPduData.fromJson(Map<String, dynamic> json) =>
       _$_$_SendProvisioningPduDataFromJson(json);
@@ -108,11 +108,11 @@ class _$_SendProvisioningPduData implements _SendProvisioningPduData {
   @override
   final List<int> pdu;
   @override
-  final String meshNodeUuid;
+  final UnprovisionedMeshNode meshNode;
 
   @override
   String toString() {
-    return 'SendProvisioningPduData(pdu: $pdu, meshNodeUuid: $meshNodeUuid)';
+    return 'SendProvisioningPduData(pdu: $pdu, meshNode: $meshNode)';
   }
 
   @override
@@ -121,16 +121,16 @@ class _$_SendProvisioningPduData implements _SendProvisioningPduData {
         (other is _SendProvisioningPduData &&
             (identical(other.pdu, pdu) ||
                 const DeepCollectionEquality().equals(other.pdu, pdu)) &&
-            (identical(other.meshNodeUuid, meshNodeUuid) ||
+            (identical(other.meshNode, meshNode) ||
                 const DeepCollectionEquality()
-                    .equals(other.meshNodeUuid, meshNodeUuid)));
+                    .equals(other.meshNode, meshNode)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(pdu) ^
-      const DeepCollectionEquality().hash(meshNodeUuid);
+      const DeepCollectionEquality().hash(meshNode);
 
   @override
   _$SendProvisioningPduDataCopyWith<_SendProvisioningPduData> get copyWith =>
@@ -144,7 +144,8 @@ class _$_SendProvisioningPduData implements _SendProvisioningPduData {
 }
 
 abstract class _SendProvisioningPduData implements SendProvisioningPduData {
-  const factory _SendProvisioningPduData(List<int> pdu, String meshNodeUuid) =
+  const factory _SendProvisioningPduData(
+          List<int> pdu, UnprovisionedMeshNode meshNode) =
       _$_SendProvisioningPduData;
 
   factory _SendProvisioningPduData.fromJson(Map<String, dynamic> json) =
@@ -153,7 +154,7 @@ abstract class _SendProvisioningPduData implements SendProvisioningPduData {
   @override
   List<int> get pdu;
   @override
-  String get meshNodeUuid;
+  UnprovisionedMeshNode get meshNode;
   @override
   _$SendProvisioningPduDataCopyWith<_SendProvisioningPduData> get copyWith;
 }

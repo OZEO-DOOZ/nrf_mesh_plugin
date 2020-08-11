@@ -6,11 +6,12 @@ part of 'send_provisioning_pdu.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_SendProvisioningPduData _$_$_SendProvisioningPduDataFromJson(
-    Map<String, dynamic> json) {
+_$_SendProvisioningPduData _$_$_SendProvisioningPduDataFromJson(Map json) {
   return _$_SendProvisioningPduData(
     (json['pdu'] as List)?.map((e) => e as int)?.toList(),
-    json['meshNodeUuid'] as String,
+    json['meshNode'] == null
+        ? null
+        : UnprovisionedMeshNode.fromJson(json['meshNode'] as Map),
   );
 }
 
@@ -18,5 +19,5 @@ Map<String, dynamic> _$_$_SendProvisioningPduDataToJson(
         _$_SendProvisioningPduData instance) =>
     <String, dynamic>{
       'pdu': instance.pdu,
-      'meshNodeUuid': instance.meshNodeUuid,
+      'meshNode': instance.meshNode?.toJson(),
     };
