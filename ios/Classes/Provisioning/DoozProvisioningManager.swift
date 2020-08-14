@@ -106,30 +106,6 @@ class DoozProvisioningManager: NSObject {
 }
 
 private extension DoozProvisioningManager{
-    func provisionerDidProvisionNewDevice(_ node: Node){
-        if let _meshNetworkManager = self.meshNetworkManager{
-            let localProvisioner = _meshNetworkManager.meshNetwork?.localProvisioner
-            guard localProvisioner?.hasConfigurationCapabilities ?? false else {
-                // The Provisioner cannot sent or receive messages.
-                
-                return
-            }
-            
-            self.node = node
-            
-            self.provisionedBearer = DoozGattBearer(targetWithIdentifier: unprovisionedDevice!.uuid)
-            
-            if let _gattBearer = provisionedBearer{
-                _gattBearer.delegate = self
-                //_gattBearer.logger = self
-                _gattBearer.open()
-                _gattBearer.dataDelegate = _meshNetworkManager
-                
-                _meshNetworkManager.transmitter = _gattBearer
-                _meshNetworkManager.delegate = self
-            }
-        }
-    }
     
     func compositionDataGet(){
         let message = ConfigCompositionDataGet()
@@ -236,8 +212,8 @@ extension DoozProvisioningManager: ProvisioningDelegate{
                 _bearer.close()
             }
             
-            if let _messenger = self.messenger, let _provisioningManager = self.provisioningManager, let _unprovisionedDevice = self.unprovisionedDevice{
-                self.provisionedDevice = DoozProvisionedDevice(messenger: _messenger, provisioningManager: _provisioningManager, uuid: _unprovisionedDevice.uuid)
+            if let _messenger = self.messenger, let _node = self.node{
+                self.provisionedDevice = DoozProvisionedDevice(messenger: _messenger, node: _node)
             }
             
         default:

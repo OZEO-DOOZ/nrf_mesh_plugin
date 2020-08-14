@@ -14,14 +14,12 @@ class DoozProvisionedDevice: NSObject{
     
     //MARK: Private properties
     private var eventSink: FlutterEventSink?
-    private var provisioningManager: ProvisioningManager?
-    private var uuid: UUID?
+    private var node: Node?
     
-    init(messenger: FlutterBinaryMessenger, provisioningManager: ProvisioningManager, uuid: UUID) {
+    init(messenger: FlutterBinaryMessenger, node: Node){
         super.init()
-        self.uuid = uuid
-        self.provisioningManager = provisioningManager
-        _initChannels(messenger: messenger, uuid: uuid)
+        self.node = node
+        _initChannels(messenger: messenger, uuid: node.uuid)
     }
     
     
@@ -54,21 +52,25 @@ private extension DoozProvisionedDevice {
         switch _method {
             
         case .unicastAddress:
-            guard let _provisioningManager = self.provisioningManager else{
+            guard let _node = self.node else{
                 result(nil)
                 return
             }
             
-            result(_provisioningManager.unicastAddress)
+            result(_node.unicastAddress)
             
         case .nodeName:
             if
+                let _node = self.node,
                 let _args = call.arguments as? [String:Any],
-                let _name = _args["name"] as? Int{
+                let _name = _args["name"] as? String {
+                
+                _node.name = _name
+                
             }
             result(nil)
         }
         
     }
-    
 }
+
