@@ -58,8 +58,15 @@ private extension DoozProvisionedDevice {
                 result(nil)
                 return
             }
-
+            
             result(_provisioningManager.unicastAddress)
+            
+        case .nodeName:
+            if
+                let _args = call.arguments as? [String:Any],
+                let _name = _args["name"] as? Int{
+            }
+            result(nil)
         }
         
     }
