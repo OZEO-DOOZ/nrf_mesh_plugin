@@ -15,10 +15,12 @@ class DoozMeshNetwork: NSObject{
     
     //MARK: Private properties
     private var eventSink: FlutterEventSink?
-
+    private var messenger: FlutterBinaryMessenger?
+    
     init(messenger: FlutterBinaryMessenger, network: MeshNetwork) {
         super.init()
         self.meshNetwork = network
+        self.messenger = messenger
         _initChannels(messenger: messenger, network: network)
     }
     
@@ -33,7 +35,7 @@ private extension DoozMeshNetwork {
             name: FlutterChannels.DoozMeshNetwork.getEventChannelName(networkId: network.id),
             binaryMessenger: messenger
         )
-        .setStreamHandler(self)
+            .setStreamHandler(self)
         
         FlutterMethodChannel(
             name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: network.id),
@@ -77,7 +79,27 @@ private extension DoozMeshNetwork {
             result(maxAddress)
             
             break
-    
+            
+        case .nodes:
+            #warning("need tests")
+            #warning("set uuid key to EventSinkKey once ready")
+            
+            if
+                let _messenger = self.messenger,
+                let _meshNetwork = self.meshNetwork {
+                let provisionedDevices = _meshNetwork.nodes.map({ node  in
+                    return DoozProvisionedDevice(messenger: _messenger, node: node)
+                })
+                
+                let nodes = provisionedDevices.map({ device in
+                    return ["uuid": device.node.uuid.uuidString]
+                })
+                
+                result(nodes)
+                   
+            }
+            
+            break
         }
     }
 }
@@ -91,7 +113,7 @@ private extension DoozMeshNetwork{
     func _getId() -> String?{
         return meshNetwork?.id
     }
-
+    
 }
 
 extension DoozMeshNetwork: FlutterStreamHandler{
