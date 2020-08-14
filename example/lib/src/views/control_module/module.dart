@@ -17,6 +17,9 @@ class Module extends StatefulWidget {
 
 class _ModuleState extends State<Module> {
   bool isLoading = true;
+  int selectedElementAddress;
+  int selectedLevel;
+  List<ProvisionedMeshNode> nodes;
   final bleMeshManager = BleMeshManager();
 
   @override
@@ -25,6 +28,8 @@ class _ModuleState extends State<Module> {
 
     bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
         widget.meshManagerApi, bleMeshManager);
+    widget.meshManagerApi.meshNetwork.nodes
+        .then((value) => setState(() => nodes = value));
 
     _init();
   }
@@ -42,7 +47,36 @@ class _ModuleState extends State<Module> {
       child: CircularProgressIndicator(),
     );
     if (!isLoading) {
-      body = Container();
+      body = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              ...nodes.map((node) => Node(node).build(node)).toList()
+            ],
+          ),
+          TextField(
+            decoration: InputDecoration(hintText: 'Element Address'),
+            onChanged: (text) {
+              selectedElementAddress = int.parse(text);
+            },
+          ),
+          TextField(
+            decoration: InputDecoration(hintText: 'Level Value'),
+            onChanged: (text) {
+              selectedLevel = int.parse(text);
+            },
+          ),
+          RaisedButton(
+            child: Text('Send level'),
+            onPressed: () {
+              print('send level $selectedLevel to $selectedElementAddress');
+              widget.meshManagerApi
+                  .sendGenericLevelSet(selectedElementAddress, selectedLevel);
+            },
+          )
+        ],
+      );
     }
     return Scaffold(
       body: body,
@@ -63,11 +97,24 @@ class _ModuleState extends State<Module> {
       print('module not found');
       return;
     }
-    debugPrint(json.encode(node), wrapWidth: 180);
 
+    setState(() {
+      isLoading = false;
+    });
 //    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
 
     //  TODO: get mesh network data to know if we should setup the board
+  }
+}
+
+class Node extends StatelessWidget {
+  final ProvisionedMeshNode provisionedMeshNode;
+
+  const Node(this.provisionedMeshNode) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(provisionedMeshNode.name);
   }
 }
 
