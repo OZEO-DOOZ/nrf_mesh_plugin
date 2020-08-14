@@ -51,9 +51,7 @@ class _ModuleState extends State<Module> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Row(
-            children: <Widget>[
-              ...nodes.map((node) => Node(node).build(node)).toList()
-            ],
+            children: <Widget>[...nodes.map((node) => Node(node)).toList()],
           ),
           TextField(
             decoration: InputDecoration(hintText: 'Element Address'),
@@ -107,14 +105,21 @@ class _ModuleState extends State<Module> {
   }
 }
 
-class Node extends StatelessWidget {
+class Node extends StatefulWidget {
   final ProvisionedMeshNode provisionedMeshNode;
 
   const Node(this.provisionedMeshNode) : super();
 
   @override
+  _ModuleState createState() => _ModuleState();
+}
+
+class NodeState extends State<Node> {
+  int nodeAddress;
+
+  @override
   Widget build(BuildContext context) {
-    return Text(provisionedMeshNode.name);
+    return Text(nodeAddress != null ? nodeAddress.toString() : '');
   }
 }
 
