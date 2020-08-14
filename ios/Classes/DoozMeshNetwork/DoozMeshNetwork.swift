@@ -62,14 +62,27 @@ private extension DoozMeshNetwork {
         case .getMeshNetworkName:
             result(_getMeshNetworkName())
             break
-        }
-
-    }
+        case .highestAllocatableAddress:
+            
+            var maxAddress = 0
+            
+            if let _allocatedUnicastRanges = meshNetwork?.localProvisioner?.allocatedUnicastRange{
+                for addressRange in _allocatedUnicastRanges {
+                    if (maxAddress < addressRange.highAddress) {
+                        maxAddress = Int(addressRange.highAddress)
+                    }
+                }
+            }
+            
+            result(maxAddress)
+            
+            break
     
+        }
+    }
 }
 
 private extension DoozMeshNetwork{
-    // Events native implemenations
     
     func _getMeshNetworkName() -> String?{
         return meshNetwork?.meshName

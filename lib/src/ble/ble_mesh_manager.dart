@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -95,10 +96,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
         await _meshProxyDataOutCharacteristic.setNotifyValue(true);
-        final descriptor = _meshProxyDataOutCharacteristic.descriptors
-            .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
-        if (descriptor != null) {
-          await descriptor.write(enableNotificationValue);
+        if (Platform.isAndroid) {
+          final descriptor = _meshProxyDataOutCharacteristic.descriptors
+              .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
+          if (descriptor != null) {
+            await descriptor.write(enableNotificationValue);
+          }
         }
       }
     } else {
@@ -117,13 +120,18 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         _meshProvisioningDataOutSubscription = _meshProvisioningDataOutCharacteristic.value
             .where((event) => event?.isNotEmpty == true)
             .listen((event) async {
+          print(event);
           callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
+
         await _meshProvisioningDataOutCharacteristic.setNotifyValue(true);
-        final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
-            .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
-        if (descriptor != null) {
-          await descriptor.write(enableNotificationValue);
+
+        if (Platform.isAndroid) {
+          final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
+              .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
+          if (descriptor != null) {
+            await descriptor.write(enableNotificationValue);
+          }
         }
       }
     }

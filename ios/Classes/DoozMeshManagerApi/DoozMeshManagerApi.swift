@@ -13,13 +13,16 @@ class DoozMeshManagerApi: NSObject{
     //MARK: Public properties
     var meshNetworkManager: MeshNetworkManager?
     var delegate: DoozMeshManagerApiDelegate?
+    
     var mtuSize: Int = -1
-
+    
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
     private var messenger: FlutterBinaryMessenger?
     private var doozStorage: LocalStorage?
+    
+    private var doozProvisioningManager: DoozProvisioningManager?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -29,6 +32,7 @@ class DoozMeshManagerApi: NSObject{
         
         _initMeshNetworkManager()
         _initChannels(messenger: messenger)
+        _initDoozProvisioningManager()
     }
     
 }
@@ -44,12 +48,11 @@ private extension DoozMeshManagerApi {
         }
         
         meshNetworkManager = MeshNetworkManager(using: _doozStorage)
+        meshNetworkManager?.logger = self
         
         guard let _meshNetworkManager = self.meshNetworkManager else{
             return
         }
-        
-        _meshNetworkManager.delegate = self
         
         _meshNetworkManager.acknowledgmentTimerInterval = 0.150
         _meshNetworkManager.transmissionTimerInteral = 0.600
@@ -81,6 +84,14 @@ private extension DoozMeshManagerApi {
                 self._handleMethodCall(call, result: result)
             })
         
+    }
+    
+    func _initDoozProvisioningManager(){
+        guard let _meshNetworkManager = self.meshNetworkManager, let _messenger = self.messenger else{
+            return
+        }
+        
+        doozProvisioningManager = DoozProvisioningManager(meshNetworkManager: _meshNetworkManager, messenger: _messenger, delegate: self)
     }
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -119,81 +130,60 @@ private extension DoozMeshManagerApi {
             }
             break
         case .identifyNode:
+            
             if
+                let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
                 let _strServiceUUID = _args["serviceUuid"] as? String,
                 let _serviceUUID = UUID(uuidString: _strServiceUUID)
             {
-                #warning("to implement")
-//                let bearer = ProvisioningBearer()
-//                meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: <#T##ProvisioningBearer#>)
-//                let provisioningManager = ProvisioningManager(for: <#UnprovisionedDevice#>, over: <#ProvisioningBearer#>, in: <#MeshNetwork#>)
-//                provisioningManager
-//
-//                mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
-                result(nil)
+                _doozProvisioningManager.identifyNode(_serviceUUID)
             }
+            
+            result(nil)
+            
             break
             
         case .provisioning:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _strServiceUUID = _args["uuid"] as? String,
-                let _serviceUUID = UUID(uuidString: _strServiceUUID)
-            {
-                #warning("to implement")
-                
-                do{
-                    let provisioningManager = try meshNetworkManager?.provision(unprovisionedDevice: UnprovisionedDevice(uuid: _serviceUUID), over: DoozBearer())
-                    print(provisioningManager)
-                }catch{
-                    print(error)
-                }
-                
-                //mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")))
-                result(nil)
+            if let _doozProvisioningManager = self.doozProvisioningManager{
+                _doozProvisioningManager.provision()
             }
-            break
             
             
+            result(nil)
             
-        case .getDeviceUuid:
-            
-            if let _args = call.arguments as? [String:Any], let _serviceData = _args["serviceData"] as? String{
-                #warning("to implement")
-                //result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());
-                
-            }
             break
             
         case .handleNotifications:
-            print(call.arguments)
-            if let _args = call.arguments as? [String:Any], let _pdu = _args["pdu"] as? String{
-                #warning("to implement")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _pdu = _args["pdu"] as? FlutterStandardTypedData
+            {
+                self._didDeliverData(data: _pdu.data)
                 
-                //handleNotifications(call.argument<Int>("mtu")!!, pdu)
-                result(nil)
             }
-            break
             
-        case .handleWriteCallbacks:
+            result(nil)
             
-            if let _args = call.arguments as? [String:Any], let _pdu = _args["pdu"] as? String{
-                #warning("to implement")
-                
-                //handleWriteCallbacks(call.argument<Int>("mtu")!!, pdu);
-                result(nil)
-            }
             break
             
         case .setMtuSize:
             
             if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
-                #warning("to test")
                 delegate?.mtuSize = _mtuSize
                 result(nil)
             }
             break
+        case .cleanProvisioningData:
+            if
+                let _doozProvisioningManager = self.doozProvisioningManager{
+                _doozProvisioningManager.cleanProvisioningData()
+            }
+            result(nil)
+            
+        case .createMeshPduForConfigCompositionDataGet:
+            doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
+            result(nil)
         }
         
     }
@@ -218,6 +208,8 @@ private extension DoozMeshManagerApi{
                 print("✅ No Mesh Network in database, creating a new one...")
                 
                 let meshNetwork = try _generateMeshNetwork()
+                try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
+                
                 
                 print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
                 
@@ -251,11 +243,10 @@ private extension DoozMeshManagerApi{
                 }
                 
                 if let _eventSink = self.eventSink{
-                    // Inform Flutter that a network was imported
                     _eventSink(
                         [
-                            EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                            EventSinkKeys.id : _network.id
+                            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                            EventSinkKeys.id.rawValue : _network.id
                     ])
                 }
                 #warning("save in db after import successful")
@@ -326,8 +317,6 @@ private extension DoozMeshManagerApi{
         }
         
         // Delete the existing network in local database and recreate a new / empty Mesh Network
-        //        if let _storage =
-        //        delete()
         do{
             try _deleteMeshNetworkFromDb(_meshNetwork.id)
             let meshNetwork = try _generateMeshNetwork()
@@ -340,17 +329,31 @@ private extension DoozMeshManagerApi{
         
     }
     
-}
-
-
-extension DoozMeshManagerApi: MeshNetworkDelegate{
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
+    func _didDeliverData(data: Data){
+        guard
+            let type = PduType(rawValue: UInt8(data[0])) else{
+                return
+        }
+        
+        let packet = data.subdata(in: 1 ..< data.count)
+        
+        switch type {
+        case .provisioningPdu:
+            guard let _doozProvisioningManager = self.doozProvisioningManager else{
+                return
+            }
+            
+            _doozProvisioningManager.didDeliverData(data, ofType: type)
+            
+        default:
+            guard let _meshNetworkManager = self.meshNetworkManager else{
+                return
+            }
+            _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
+        }
         
     }
-    
 }
-
 
 extension DoozMeshManagerApi: FlutterStreamHandler{
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
@@ -387,8 +390,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
-                EventSinkKeys.id : _network.id
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
+                EventSinkKeys.id.rawValue : _network.id
             ]
         )
         
@@ -403,8 +406,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
-                EventSinkKeys.error : error
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
+                EventSinkKeys.error.rawValue : error
             ]
         )
         
@@ -425,8 +428,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
-                EventSinkKeys.id : _network.id
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
+                EventSinkKeys.id.rawValue : _network.id
             ]
         )
     }
@@ -451,8 +454,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                EventSinkKeys.id : _network.id
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                EventSinkKeys.id.rawValue : _network.id
             ]
         )
         
@@ -467,8 +470,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         _eventSink(
             [
-                EventSinkKeys.eventName : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
-                EventSinkKeys.error : error
+                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
+                EventSinkKeys.error.rawValue : error
             ]
         )
     }
@@ -476,26 +479,32 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
 }
 
-class DoozBearer: ProvisioningBearer{
-    var delegate: BearerDelegate? = nil
-    
-    var dataDelegate: BearerDataDelegate? = nil
-    
-    var supportedPduTypes: PduTypes = []
-    
-    var isOpen: Bool = false
-    
-    func open() {
-        
+extension DoozMeshManagerApi: LoggerDelegate{
+    func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
+        print("[\(String(describing: self.classForCoder))] \(message)")
+    }
+}
+
+extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
+    func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>){
+        if let _eventSink = self.eventSink{
+            _eventSink(eventSinkMessage)
+        }
     }
     
-    func close() {
-        
+    func sendMessage(_ msg: Dictionary<String, Any>) {
+        if let _eventSink = self.eventSink{
+            _eventSink(msg)
+        }
     }
     
-    func send(_ data: Data, ofType type: PduType) throws {
-        
+    func didFinishProvisioning() {
+        if let _eventSink = self.eventSink{
+            _eventSink(
+                [
+                    EventSinkKeys.eventName.rawValue : ProvisioningEvent.onConfigAppKeyStatus.rawValue
+            ])
+        }
     }
-    
     
 }
