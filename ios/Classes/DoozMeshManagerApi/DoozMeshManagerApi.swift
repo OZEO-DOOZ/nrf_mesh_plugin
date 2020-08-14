@@ -15,7 +15,7 @@ class DoozMeshManagerApi: NSObject{
     var delegate: DoozMeshManagerApiDelegate?
     
     var mtuSize: Int = -1
-
+    
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
@@ -156,19 +156,17 @@ private extension DoozMeshManagerApi {
             
         case .handleNotifications:
             if
-                let _doozProvisioningManager = self.doozProvisioningManager,
                 let _args = call.arguments as? [String:Any],
-                let _flutterPdu = _args["pdu"] as? FlutterStandardTypedData
+                let _pdu = _args["pdu"] as? FlutterStandardTypedData
             {
-
-                _doozProvisioningManager.didDeliverData(data: _flutterPdu.data)
+                self._didDeliverData(data: _pdu.data)
                 
             }
             
             result(nil)
             
             break
-        
+            
         case .setMtuSize:
             
             if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
@@ -182,7 +180,7 @@ private extension DoozMeshManagerApi {
                 _doozProvisioningManager.cleanProvisioningData()
             }
             result(nil)
-
+            
         case .createMeshPduForConfigCompositionDataGet:
             doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
             result(nil)
@@ -331,6 +329,30 @@ private extension DoozMeshManagerApi{
         
     }
     
+    func _didDeliverData(data: Data){
+        guard
+            let type = PduType(rawValue: UInt8(data[0])) else{
+                return
+        }
+        
+        let packet = data.subdata(in: 1 ..< data.count)
+        
+        switch type {
+        case .provisioningPdu:
+            guard let _doozProvisioningManager = self.doozProvisioningManager else{
+                return
+            }
+            
+            _doozProvisioningManager.didDeliverData(data, ofType: type)
+            
+        default:
+            guard let _meshNetworkManager = self.meshNetworkManager else{
+                return
+            }
+            _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
+        }
+        
+    }
 }
 
 extension DoozMeshManagerApi: FlutterStreamHandler{

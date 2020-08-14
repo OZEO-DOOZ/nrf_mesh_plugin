@@ -82,25 +82,16 @@ class DoozProvisioningManager: NSObject {
         }
     }
     
-    func didDeliverData(data: Data){
+    func didDeliverData(_ data: Data, ofType type: PduType){
         guard
             let _provisioningManager = self.provisioningManager,
-            let _provisioningBearer = self.provisioningBearer,
-            let type = PduType(rawValue: UInt8(data[0])) else{
+            let _provisioningBearer = self.provisioningBearer
+            else{
                 return
         }
         
         let packet = data.subdata(in: 1 ..< data.count)
-        
-        switch type {
-        case .provisioningPdu:
-            _provisioningManager.bearer(_provisioningBearer, didDeliverData: packet, ofType: type)
-        default:
-            guard let _meshNetworkManager = self.meshNetworkManager else{
-                return
-            }
-            _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
-        }
+        _provisioningManager.bearer(_provisioningBearer, didDeliverData: packet, ofType: type)
         
     }
     
