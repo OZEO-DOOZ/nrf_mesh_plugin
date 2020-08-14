@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+
+import 'node.dart';
 
 class Module extends StatefulWidget {
   final BluetoothDevice device;
@@ -19,7 +20,7 @@ class _ModuleState extends State<Module> {
   bool isLoading = true;
   int selectedElementAddress;
   int selectedLevel;
-  List<ProvisionedMeshNode> nodes;
+  List<ProvisionedMeshNode> nodes = [];
   final bleMeshManager = BleMeshManager();
 
   @override
@@ -50,9 +51,9 @@ class _ModuleState extends State<Module> {
       body = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Row(
-            children: <Widget>[...nodes.map((node) => Node(node)).toList()],
-          ),
+          ...nodes.map((node) => Node(node)).toList(),
+          Divider(),
+          Text('Send a generic level set'),
           TextField(
             decoration: InputDecoration(hintText: 'Element Address'),
             onChanged: (text) {
@@ -84,42 +85,12 @@ class _ModuleState extends State<Module> {
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
 
-    //  TODO: get list of nodes from native directly
-    final meshNetworkJson =
-        json.decode(await widget.meshManagerApi.exportMeshNetwork());
-    debugPrint(json.encode(meshNetworkJson), wrapWidth: 180);
-    final node = meshNetworkJson['nodes'].firstWhere(
-        (node) => node['name'] == widget.device.id.id,
-        orElse: () => null);
-    if (node == null) {
-      print('module not found');
-      return;
-    }
-
     setState(() {
       isLoading = false;
     });
 //    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
 
     //  TODO: get mesh network data to know if we should setup the board
-  }
-}
-
-class Node extends StatefulWidget {
-  final ProvisionedMeshNode provisionedMeshNode;
-
-  const Node(this.provisionedMeshNode) : super();
-
-  @override
-  _ModuleState createState() => _ModuleState();
-}
-
-class NodeState extends State<Node> {
-  int nodeAddress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(nodeAddress != null ? nodeAddress.toString() : '');
   }
 }
 
