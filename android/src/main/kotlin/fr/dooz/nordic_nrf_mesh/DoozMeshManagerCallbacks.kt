@@ -90,7 +90,9 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         eventSink?.success(mapOf(
                 "eventName" to "sendProvisioningPdu",
                 "pdu" to pdu,
-                "meshNodeUuid" to meshNode?.deviceUuid?.toString()
+                "meshNode" to mapOf(
+                        "uuid" to meshNode!!.deviceUuid!!.toString()
+                )
         ))
     }
 }
