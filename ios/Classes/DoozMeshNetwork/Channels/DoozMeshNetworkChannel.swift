@@ -9,4 +9,6 @@ enum DoozMeshNetworkChannel: String{
     case getId
     case getMeshNetworkName
     case highestAllocatableAddress
+    case nodes
+    
 }
