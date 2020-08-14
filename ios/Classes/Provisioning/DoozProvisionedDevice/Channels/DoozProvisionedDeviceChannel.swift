@@ -7,4 +7,5 @@
 
 enum DoozProvisionedMeshNodeChannel: String{
     case unicastAddress
+    case nodeName
 }
