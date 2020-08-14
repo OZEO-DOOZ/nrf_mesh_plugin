@@ -248,7 +248,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             EventSinkKeys.eventName.rawValue : state.eventName(),
             EventSinkKeys.state.rawValue : state.flutterState(),
             EventSinkKeys.data.rawValue:[],
-            EventSinkKeys.meshNode.key.rawValue:[
+            EventSinkKeys.meshNode.meshNode.rawValue:[
                 EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
             ]
             ] as [String : Any]
@@ -366,7 +366,7 @@ extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDeleg
             
             EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
             EventSinkKeys.pdu.rawValue: data,
-            EventSinkKeys.meshNode.key.rawValue:[
+            EventSinkKeys.meshNode.meshNode.rawValue:[
                 EventSinkKeys.meshNode.uuid.rawValue: _provisioningBearer.identifier.uuidString
             ]
             ] as [String : Any]
