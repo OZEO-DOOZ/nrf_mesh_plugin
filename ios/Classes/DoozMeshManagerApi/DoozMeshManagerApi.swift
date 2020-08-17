@@ -23,6 +23,7 @@ class DoozMeshManagerApi: NSObject{
     private var doozStorage: LocalStorage?
     
     private var doozProvisioningManager: DoozProvisioningManager?
+    private var doozTransmitter: DoozTransmitter?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -195,6 +196,9 @@ private extension DoozMeshManagerApi {
                 
                 let message = GenericLevelSet(level: _level)
                 
+                self.doozTransmitter = DoozTransmitter()
+                _meshNetworkManager.transmitter = doozTransmitter
+                
                 do{
                     _ = try _meshNetworkManager.send(
                         message,
@@ -218,6 +222,9 @@ private extension DoozMeshManagerApi {
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
                 
                 let message = GenericOnOffSet(_isOn)
+                
+                self.doozTransmitter = DoozTransmitter()
+                _meshNetworkManager.transmitter = doozTransmitter
                 
                 do{
                     _ = try _meshNetworkManager.send(
