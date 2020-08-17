@@ -37,13 +37,12 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?, var meshM
                     )
             ))
         } else if (meshMessage is GenericLevelStatus) {
-            val pNode: ProvisionedMeshNode = meshManagerApi.meshNetwork!!.getNode(meshMessage.getSrc())
-
             eventSink?.success(mapOf(
                     "eventName" to "onGenericLevelStatus",
-                    "level" to java.lang.String.valueOf(meshMessage.presentLevel).toInt(),
+                    "level" to meshMessage.presentLevel,
                     "elementId" to meshMessage.src,
-                    "targetLevel" to meshMessage.targetLevel
+                    "targetLevel" to meshMessage.targetLevel,
+                    "source" to meshMessage.src
             ))
         } else {
             Log.d("DoozMeshStatusCallbacks", meshMessage.javaClass.toString())
