@@ -81,9 +81,7 @@ private extension DoozMeshNetwork {
             break
             
         case .nodes:
-            #warning("need tests")
-            #warning("set uuid key to EventSinkKey once ready")
-            
+
             if
                 let _messenger = self.messenger,
                 let _meshNetwork = self.meshNetwork {
