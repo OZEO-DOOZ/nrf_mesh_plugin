@@ -65,40 +65,18 @@ private extension DoozProvisionedDevice {
             result(nil)
             
         case .elements:
-            #warning("WIP")
-            #warning("no 'key' on ios ?")
-            #warning("on model : modelId is private but we have access to modelIdentifier")
-            
-//            "elements" -> {
-//                result.success(meshNode.elements.map { element ->
-//                    mapOf(
-//                            "key" to element.key,
-//                            "address" to element.value.elementAddress,
-//                            "location" to element.value.locationDescriptor,
-//                            "models" to element.value.meshModels.map {
-//                                mapOf(
-//                                        "key" to it.key,
-//                                        "id" to it.value.modelId,
-//                                        "subscribedAddresses" to it.value.subscribedAddresses
-//                                )
-//                            }
-//                    )
-//                })
-//            }
-            
-//            address : unicastAddress ou Address(index) ?
+            #warning("address : unicastAddress ou Address(index) ?")
             
             let elements = node.elements.map { element in
                 return [
-                    //"key": element
-                    "key": element.index,
-                    "address" : element.unicastAddress,
-                    "locationDescriptor" : element.location.rawValue,
-                    "models" : element.models.enumerated().map({ (index,model) in
+                    EventSinkKeys.meshNode.elements.key.rawValue: element.index,
+                    EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
+                    EventSinkKeys.meshNode.elements.locationDescriptor.rawValue : element.location.rawValue,
+                    EventSinkKeys.meshNode.elements.models.rawValue : element.models.enumerated().map({ (index,model) in
                         return [
-                            "key" : index,
-                            "id" : model.modelIdentifier,
-                            "subscribedAddresses" : model.subscriptions.map{ sub in
+                            EventSinkKeys.meshNode.elements.model.key.rawValue : index,
+                            EventSinkKeys.meshNode.elements.model.id.rawValue : model.modelIdentifier,
+                            EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
                                 return sub.address
                             }
                         ]
