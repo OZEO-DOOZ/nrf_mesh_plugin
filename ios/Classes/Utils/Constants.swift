@@ -94,6 +94,9 @@ enum ProvisioningEvent: String{
 }
 
 enum EventSinkKeys: String{
+    enum network: String{
+        case uuid
+    }
     enum meshNode: String{
         case meshNode
         case uuid
