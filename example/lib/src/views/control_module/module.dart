@@ -36,10 +36,10 @@ class _ModuleState extends State<Module> {
   }
 
   @override
-  void dispose() {
-    bleMeshManager.disconnect();
-    bleMeshManager.callbacks.dispose();
+  void dispose() async {
     super.dispose();
+    await bleMeshManager.disconnect();
+    await bleMeshManager.callbacks.dispose();
   }
 
   @override
@@ -100,18 +100,15 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
 
   StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices>
-      onServicesDiscoveredSubscription;
+  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
   StreamSubscription<BluetoothDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived>
-      onDataReceivedSubscription;
+  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
-  DoozProvisionedBleMeshManagerCallbacks(
-      this.meshManagerApi, this.bleMeshManager) {
+  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
       print('onDeviceConnecting $event');
     });
@@ -143,8 +140,7 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onDeviceDisconnected $event');
     });
 
-    onMeshPduCreatedSubscription =
-        meshManagerApi.onMeshPduCreated.listen((event) async {
+    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });

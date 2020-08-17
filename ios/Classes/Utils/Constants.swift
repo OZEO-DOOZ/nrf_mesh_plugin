@@ -35,11 +35,11 @@ struct FlutterChannels{
         static let url = "/mesh_network"
         
         static func getEventChannelName(networkId: String) -> String{
-            return "\(namespace)\(url)\(networkId)\(eventsUrl)"
+            return "\(namespace)\(url)/\(networkId)\(eventsUrl)"
         }
         
         static func getMethodChannelName(networkId: String) -> String{
-            return "\(namespace)\(url)\(networkId)\(methodsUrl)"
+            return "\(namespace)\(url)/\(networkId)\(methodsUrl)"
         }
         
     }
@@ -55,6 +55,22 @@ struct FlutterChannels{
             return "\(namespace)\(url)\(methodsUrl)"
         }
     }
+    
+    struct DoozUnprovisionedMeshNode{
+        static let url = "/unprovisioned_mesh_node"
+        
+        static func getMethodChannelName(deviceUUID: String) -> String{
+            return "\(namespace)\(url)/\(deviceUUID)\(methodsUrl)"
+        }
+    }
+    
+    struct DoozProvisionedMeshNode{
+        static let url = "/provisioned_mesh_node"
+        
+        static func getMethodChannelName(deviceUUID: String) -> String{
+            return "\(namespace)\(url)/\(deviceUUID)\(methodsUrl)"
+        }
+    }
         
 }
 
@@ -67,8 +83,25 @@ enum MeshNetworkApiEvent: String{
     case onNetworkImportFailed
 }
 
-struct EventSinkKeys{
-    static let eventName = "eventName"
-    static let id = "id"
-    static let error = "error"
+enum ProvisioningEvent: String{
+    case onProvisioningCompleted
+    case onProvisioningFailed
+    case onProvisioningStateChanged
+    
+    case onConfigAppKeyStatus
+    case onMeshPduCreated
+    case sendProvisioningPdu
+}
+
+enum EventSinkKeys: String{
+    enum meshNode: String{
+        case meshNode
+        case uuid
+    }
+    case eventName
+    case id
+    case error
+    case state
+    case pdu
+    case data
 }

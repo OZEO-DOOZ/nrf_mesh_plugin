@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -98,8 +99,19 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
     try {
-      final provisionedMeshNodeF =
-          provisioning(_meshManagerApi, BleMeshManager(), device, _serviceData[device.id.id].toString());
+      // Android is sending the mac Adress of the device, but Apple generates
+      // an UUID specific by smartphone.
+
+      String deviceUUID;
+
+      if (Platform.isAndroid) {
+        deviceUUID = _serviceData[device.id.id].toString();
+      } else if (Platform.isIOS) {
+        deviceUUID = device.id.id.toString();
+      }
+		final provisionedMeshNodeF =
+          provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID);
+
       unawaited(provisionedMeshNodeF.then((_) async {
         Navigator.of(context).pop();
       }));

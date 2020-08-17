@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:meta/meta.dart';
@@ -50,7 +51,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _device = device;
     _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
       print('mtu changed $event');
-      mtuSize = event - 3;
+
+      if (Platform.isAndroid) {
+        mtuSize = event - 3;
+      } else if (Platform.isIOS) {
+        mtuSize = event;
+      }
+
       await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     });
     await _callbacks.sendMtuToMeshManagerApi(mtuSize);
@@ -62,8 +69,11 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     await initGatt(device);
     final fMtuChanged = device.mtu.skip(1).first;
-    await device.requestMtu(517);
-    await fMtuChanged;
+    if (Platform.isAndroid) {
+      await device.requestMtu(517);
+      await fMtuChanged;
+    }
+
     _callbacks.onDeviceReadyController.add(device);
   }
 
