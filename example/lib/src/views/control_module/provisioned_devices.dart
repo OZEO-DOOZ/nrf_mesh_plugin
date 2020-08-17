@@ -57,9 +57,7 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return Module(
-                                device: device,
-                                meshManagerApi: _meshManagerApi);
+                            return Module(device: device, meshManagerApi: _meshManagerApi);
                           },
                         ),
                       );
@@ -82,10 +80,24 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     });
   }
 
-  Future<void> _scanProvisionned() {
+  Future<void> isNotScanning(FlutterBlue flutterBlue) {
+    final completer = Completer<void>();
+
+    flutterBlue.isScanning.listen((event) {
+      if (!event && !completer.isCompleted) {
+        completer.complete(null);
+      }
+    });
+
+    return completer.future;
+  }
+
+  Future<void> _scanProvisionned() async {
     setState(() {
       _devices.clear();
     });
+
+    await isNotScanning(flutterBlue);
 
     //  TODO: we should check if the device advertise with the good network id
     _scanSubscription = flutterBlue.scan(

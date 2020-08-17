@@ -55,11 +55,25 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     });
   }
 
-  Future<void> _scanUnprovisionned() {
+  Future<void> isNotScanning(FlutterBlue flutterBlue) {
+    final completer = Completer<void>();
+
+    flutterBlue.isScanning.listen((event) {
+      if (!event && !completer.isCompleted) {
+        completer.complete(null);
+      }
+    });
+
+    return completer.future;
+  }
+
+  Future<void> _scanUnprovisionned() async {
     _serviceData.clear();
     setState(() {
       _devices.clear();
     });
+
+    await isNotScanning(flutterBlue);
 
     _scanSubscription = flutterBlue.scan(
       withServices: [
@@ -109,8 +123,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       } else if (Platform.isIOS) {
         deviceUUID = device.id.id.toString();
       }
-		final provisionedMeshNodeF =
-          provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID);
+      final provisionedMeshNodeF = provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID);
 
       unawaited(provisionedMeshNodeF.then((_) async {
         Navigator.of(context).pop();

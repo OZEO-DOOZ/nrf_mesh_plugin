@@ -18,10 +18,8 @@ class _NodeState extends State<Node> {
   @override
   void initState() {
     super.initState();
-    widget.provisionedMeshNode.unicastAddress
-        .then((value) => setState(() => nodeAddress = value));
-    widget.provisionedMeshNode.elements
-        .then((value) => setState(() => elements = value));
+    widget.provisionedMeshNode.unicastAddress.then((value) => setState(() => nodeAddress = value));
+    widget.provisionedMeshNode.elements.then((value) => setState(() => elements = value));
   }
 
   @override
@@ -42,12 +40,12 @@ class _NodeState extends State<Node> {
 }
 
 class Element extends StatelessWidget {
-  final element;
+  final ElementData element;
 
   const Element(this.element) : super();
 
   @override
   Widget build(BuildContext context) {
-    return Text('$element');
+    return Text('${element.key} ${element.address} ${element.locationDescriptor}');
   }
 }

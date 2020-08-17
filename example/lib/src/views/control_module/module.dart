@@ -27,10 +27,8 @@ class _ModuleState extends State<Module> {
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
-        widget.meshManagerApi, bleMeshManager);
-    widget.meshManagerApi.meshNetwork.nodes
-        .then((value) => setState(() => nodes = value));
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
+    widget.meshManagerApi.meshNetwork.nodes.then((value) => setState(() => nodes = value));
 
     _init();
   }
@@ -70,8 +68,7 @@ class _ModuleState extends State<Module> {
             child: Text('Send level'),
             onPressed: () {
               print('send level $selectedLevel to $selectedElementAddress');
-              widget.meshManagerApi
-                  .sendGenericLevelSet(selectedElementAddress, selectedLevel);
+              widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel);
             },
           )
         ],
@@ -146,6 +143,10 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
     });
 
     meshManagerApi.onGenericLevelStatus.listen((event) {
+      print(event);
+    });
+
+    meshManagerApi.onGenericOnOffStatus.listen((event) {
       print(event);
     });
   }
