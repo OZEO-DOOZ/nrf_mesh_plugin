@@ -93,7 +93,7 @@ private extension DoozProvisionedDevice {
                     //"key": element
                     "key": element.index,
                     "address" : element.unicastAddress,
-                    "location" : element.location.rawValue,
+                    "locationDescriptor" : element.location.rawValue,
                     "models" : element.models.enumerated().map({ (index,model) in
                         return [
                             "key" : index,
