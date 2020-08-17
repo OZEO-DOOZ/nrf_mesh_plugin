@@ -36,11 +36,19 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?, var meshM
                             "dst" to meshMessage.dst
                     )
             ))
+        } else if (meshMessage is GenericOnOffStatus) {
+            eventSink?.success(mapOf(
+                    "eventName" to "onGenericOnOffStatus",
+                    "source" to meshMessage.src,
+                    "presentState" to meshMessage.presentState,
+                    "targetState" to meshMessage.targetState,
+                    "transitionResolution" to meshMessage.transitionResolution,
+                    "transitionSteps" to meshMessage.transitionSteps
+            ))
         } else if (meshMessage is GenericLevelStatus) {
             eventSink?.success(mapOf(
                     "eventName" to "onGenericLevelStatus",
                     "level" to meshMessage.presentLevel,
-                    "elementId" to meshMessage.src,
                     "targetLevel" to meshMessage.targetLevel,
                     "source" to meshMessage.src
             ))

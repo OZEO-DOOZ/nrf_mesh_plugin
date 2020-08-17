@@ -18,10 +18,9 @@ class _$GenericLevelStatusDataTearOff {
 
 // ignore: unused_element
   _GenericLevelStatusData call(
-      int level, int elementId, int targetLevel, int source) {
+      int level, @nullable int targetLevel, int source) {
     return _GenericLevelStatusData(
       level,
-      elementId,
       targetLevel,
       source,
     );
@@ -33,7 +32,7 @@ const $GenericLevelStatusData = _$GenericLevelStatusDataTearOff();
 
 mixin _$GenericLevelStatusData {
   int get level;
-  int get elementId;
+  @nullable
   int get targetLevel;
   int get source;
 
@@ -45,7 +44,7 @@ abstract class $GenericLevelStatusDataCopyWith<$Res> {
   factory $GenericLevelStatusDataCopyWith(GenericLevelStatusData value,
           $Res Function(GenericLevelStatusData) then) =
       _$GenericLevelStatusDataCopyWithImpl<$Res>;
-  $Res call({int level, int elementId, int targetLevel, int source});
+  $Res call({int level, @nullable int targetLevel, int source});
 }
 
 class _$GenericLevelStatusDataCopyWithImpl<$Res>
@@ -59,13 +58,11 @@ class _$GenericLevelStatusDataCopyWithImpl<$Res>
   @override
   $Res call({
     Object level = freezed,
-    Object elementId = freezed,
     Object targetLevel = freezed,
     Object source = freezed,
   }) {
     return _then(_value.copyWith(
       level: level == freezed ? _value.level : level as int,
-      elementId: elementId == freezed ? _value.elementId : elementId as int,
       targetLevel:
           targetLevel == freezed ? _value.targetLevel : targetLevel as int,
       source: source == freezed ? _value.source : source as int,
@@ -79,7 +76,7 @@ abstract class _$GenericLevelStatusDataCopyWith<$Res>
           $Res Function(_GenericLevelStatusData) then) =
       __$GenericLevelStatusDataCopyWithImpl<$Res>;
   @override
-  $Res call({int level, int elementId, int targetLevel, int source});
+  $Res call({int level, @nullable int targetLevel, int source});
 }
 
 class __$GenericLevelStatusDataCopyWithImpl<$Res>
@@ -95,13 +92,11 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res>
   @override
   $Res call({
     Object level = freezed,
-    Object elementId = freezed,
     Object targetLevel = freezed,
     Object source = freezed,
   }) {
     return _then(_GenericLevelStatusData(
       level == freezed ? _value.level : level as int,
-      elementId == freezed ? _value.elementId : elementId as int,
       targetLevel == freezed ? _value.targetLevel : targetLevel as int,
       source == freezed ? _value.source : source as int,
     ));
@@ -111,10 +106,8 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_GenericLevelStatusData implements _GenericLevelStatusData {
   const _$_GenericLevelStatusData(
-      this.level, this.elementId, this.targetLevel, this.source)
+      this.level, @nullable this.targetLevel, this.source)
       : assert(level != null),
-        assert(elementId != null),
-        assert(targetLevel != null),
         assert(source != null);
 
   factory _$_GenericLevelStatusData.fromJson(Map<String, dynamic> json) =>
@@ -123,15 +116,14 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
   @override
   final int level;
   @override
-  final int elementId;
-  @override
+  @nullable
   final int targetLevel;
   @override
   final int source;
 
   @override
   String toString() {
-    return 'GenericLevelStatusData(level: $level, elementId: $elementId, targetLevel: $targetLevel, source: $source)';
+    return 'GenericLevelStatusData(level: $level, targetLevel: $targetLevel, source: $source)';
   }
 
   @override
@@ -140,9 +132,6 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
         (other is _GenericLevelStatusData &&
             (identical(other.level, level) ||
                 const DeepCollectionEquality().equals(other.level, level)) &&
-            (identical(other.elementId, elementId) ||
-                const DeepCollectionEquality()
-                    .equals(other.elementId, elementId)) &&
             (identical(other.targetLevel, targetLevel) ||
                 const DeepCollectionEquality()
                     .equals(other.targetLevel, targetLevel)) &&
@@ -154,7 +143,6 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(level) ^
-      const DeepCollectionEquality().hash(elementId) ^
       const DeepCollectionEquality().hash(targetLevel) ^
       const DeepCollectionEquality().hash(source);
 
@@ -171,7 +159,7 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
 
 abstract class _GenericLevelStatusData implements GenericLevelStatusData {
   const factory _GenericLevelStatusData(
-          int level, int elementId, int targetLevel, int source) =
+          int level, @nullable int targetLevel, int source) =
       _$_GenericLevelStatusData;
 
   factory _GenericLevelStatusData.fromJson(Map<String, dynamic> json) =
@@ -180,8 +168,7 @@ abstract class _GenericLevelStatusData implements GenericLevelStatusData {
   @override
   int get level;
   @override
-  int get elementId;
-  @override
+  @nullable
   int get targetLevel;
   @override
   int get source;

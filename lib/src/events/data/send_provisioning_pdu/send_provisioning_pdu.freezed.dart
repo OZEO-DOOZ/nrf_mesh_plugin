@@ -16,6 +16,7 @@ SendProvisioningPduData _$SendProvisioningPduDataFromJson(
 class _$SendProvisioningPduDataTearOff {
   const _$SendProvisioningPduDataTearOff();
 
+// ignore: unused_element
   _SendProvisioningPduData call(List<int> pdu, UnprovisionedMeshNode meshNode) {
     return _SendProvisioningPduData(
       pdu,

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_provisioning_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
@@ -34,6 +35,7 @@ class MeshManagerApi {
   final _onConfigCompositionDataStatusController = StreamController<Map<String, dynamic>>.broadcast();
   final _onConfigAppKeyStatusController = StreamController<Map<String, dynamic>>.broadcast();
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
+  final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
 
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
@@ -49,6 +51,7 @@ class MeshManagerApi {
   StreamSubscription<Map> _onConfigCompositionDataStatusSubscription;
   StreamSubscription<Map> _onConfigAppKeyStatusSubscription;
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
+  StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
@@ -110,6 +113,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.genericLevelStatus.value)
         .map((event) => GenericLevelStatusData.fromJson(event))
         .listen(_onGenericLevelStatusController.add);
+    _onGenericOnOffStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.genericOnOffStatus.value)
+        .map((event) => GenericOnOffStatusData.fromJson(event))
+        .listen(_onGenericOnOffStatusController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
@@ -137,6 +144,8 @@ class MeshManagerApi {
   Stream<Map<String, dynamic>> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
   Stream<GenericLevelStatusData> get onGenericLevelStatus => _onGenericLevelStatusController.stream;
+
+  Stream<GenericOnOffStatusData> get onGenericOnOffStatus => _onGenericOnOffStatusController.stream;
 
   MeshNetwork get meshNetwork => _lastMeshNetwork;
 
@@ -210,8 +219,8 @@ class MeshManagerApi {
   Future<void> sendGenericLevelSet(int address, int level) =>
       _methodChannel.invokeMethod('sendGenericLevelSet', {'address': address, 'level': level});
 
-  Future<void> sendGenericOnOffSet(int address) =>
-      _methodChannel.invokeMethod('sendGenricOnOffSet', {'address': address});
+  Future<void> sendGenericOnOffSet(int address, bool value) =>
+      _methodChannel.invokeMethod('sendGenericOnOffSet', {'address': address, 'value': value});
 
   Future<void> createMeshPduForConfigCompositionDataGet(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigCompositionDataGet', {'dest': dest});

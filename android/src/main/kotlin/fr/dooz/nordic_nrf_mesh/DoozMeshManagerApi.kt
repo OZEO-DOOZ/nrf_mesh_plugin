@@ -116,7 +116,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val meshMessage: MeshMessage = GenericLevelSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(0),
                         level,
-                        mMeshManagerApi.meshNetwork!!.sequenceNumbers[0]
+                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address)
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null);
