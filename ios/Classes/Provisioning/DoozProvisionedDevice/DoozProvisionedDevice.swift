@@ -86,13 +86,17 @@ private extension DoozProvisionedDevice {
 //                })
 //            }
             
-            node.elements.map { element in
+//            address : unicastAddress ou Address(index) ?
+            
+            let elements = node.elements.map { element in
                 return [
                     //"key": element
+                    "key": element.index,
                     "address" : element.unicastAddress,
                     "location" : element.location.rawValue,
-                    "models" : element.models.map({ model in
+                    "models" : element.models.enumerated().map({ (index,model) in
                         return [
+                            "key" : index,
                             "id" : model.modelIdentifier,
                             "subscribedAddresses" : model.subscriptions.map{ sub in
                                 return sub.address
@@ -102,10 +106,11 @@ private extension DoozProvisionedDevice {
                 ]
             }
             
-            
+            result(elements)
             
         case .elementAt:
             #warning("WIP")
+            //node.element(withAddress: <#T##Address#>)
         }
         
     }
