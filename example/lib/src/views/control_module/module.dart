@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+
+import 'node.dart';
 
 class Module extends StatefulWidget {
   final BluetoothDevice device;
@@ -17,13 +18,19 @@ class Module extends StatefulWidget {
 
 class _ModuleState extends State<Module> {
   bool isLoading = true;
+  int selectedElementAddress;
+  int selectedLevel;
+  List<ProvisionedMeshNode> nodes = [];
   final bleMeshManager = BleMeshManager();
 
   @override
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
+        widget.meshManagerApi, bleMeshManager);
+    widget.meshManagerApi.meshNetwork.nodes
+        .then((value) => setState(() => nodes = value));
 
     _init();
   }
@@ -41,7 +48,34 @@ class _ModuleState extends State<Module> {
       child: CircularProgressIndicator(),
     );
     if (!isLoading) {
-      body = Container();
+      body = Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ...nodes.map((node) => Node(node)).toList(),
+          Divider(),
+          Text('Send a generic level set'),
+          TextField(
+            decoration: InputDecoration(hintText: 'Element Address'),
+            onChanged: (text) {
+              selectedElementAddress = int.parse(text);
+            },
+          ),
+          TextField(
+            decoration: InputDecoration(hintText: 'Level Value'),
+            onChanged: (text) {
+              selectedLevel = int.parse(text);
+            },
+          ),
+          RaisedButton(
+            child: Text('Send level'),
+            onPressed: () {
+              print('send level $selectedLevel to $selectedElementAddress');
+              widget.meshManagerApi
+                  .sendGenericLevelSet(selectedElementAddress, selectedLevel);
+            },
+          )
+        ],
+      );
     }
     return Scaffold(
       body: body,
@@ -51,16 +85,9 @@ class _ModuleState extends State<Module> {
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
 
-    //  TODO: get list of nodes from native directly
-    final meshNetworkJson = json.decode(await widget.meshManagerApi.exportMeshNetwork());
-    debugPrint(json.encode(meshNetworkJson), wrapWidth: 180);
-    final node = meshNetworkJson['nodes'].firstWhere((node) => node['name'] == widget.device.id.id, orElse: () => null);
-    if (node == null) {
-      print('module not found');
-      return;
-    }
-    debugPrint(json.encode(node), wrapWidth: 180);
-
+    setState(() {
+      isLoading = false;
+    });
 //    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
 
     //  TODO: get mesh network data to know if we should setup the board

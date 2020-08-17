@@ -32,7 +32,8 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
                                 mapOf(
                                         "key" to it.key,
                                         "id" to it.value.modelId,
-                                        "subscribedAddresses" to it.value.subscribedAddresses
+                                        "subscribedAddresses" to it.value.subscribedAddresses,
+                                        "pub" to it.value.publicationSettings
                                 )
                             }
                     )
