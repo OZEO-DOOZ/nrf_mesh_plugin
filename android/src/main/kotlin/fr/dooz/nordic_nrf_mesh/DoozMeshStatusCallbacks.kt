@@ -52,6 +52,15 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?, var meshM
                     "targetLevel" to meshMessage.targetLevel,
                     "source" to meshMessage.src
             ))
+        } else if (meshMessage is ConfigModelAppStatus) {
+            Log.d("DoozMeshStatusCallbacks", meshMessage.javaClass.toString())
+
+            eventSink?.success(mapOf(
+                    "eventName" to "onConfigModelAppStatus",
+                    "elementAddress" to meshMessage.elementAddress,
+                    "modelId" to meshMessage.modelIdentifier,
+                    "appKeyIndex" to meshMessage.appKeyIndex
+            ))
         } else {
             Log.d("DoozMeshStatusCallbacks", meshMessage.javaClass.toString())
         }

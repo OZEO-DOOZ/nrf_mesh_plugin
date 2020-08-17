@@ -66,9 +66,6 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 }
                 result.success(nodes)
             }
-            "provisioners" -> {
-            meshNetwork.sequenceNumbers
-            }
             "selectedProvisionerUuid" -> {
                 result.success(meshNetwork.selectedProvisioner.provisionerUuid)
             }
