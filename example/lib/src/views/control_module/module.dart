@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:pedantic/pedantic.dart';
 
 import 'node.dart';
 
@@ -28,7 +29,6 @@ class _ModuleState extends State<Module> {
     super.initState();
 
     bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
-    widget.meshManagerApi.meshNetwork.nodes.then((value) => setState(() => nodes = value));
 
     _init();
   }
@@ -66,9 +66,17 @@ class _ModuleState extends State<Module> {
           ),
           RaisedButton(
             child: Text('Send level'),
-            onPressed: () {
+            onPressed: () async {
               print('send level $selectedLevel to $selectedElementAddress');
-              widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel);
+              final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+              final nodes = await widget.meshManagerApi.meshNetwork.nodes;
+
+              final provisionedNode =
+                  nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+              final provisionerAddress = await provisionedNode.unicastAddress;
+              final status = await widget.meshManagerApi
+                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, provisionerAddress);
+              print(status);
             },
           )
         ],
@@ -84,6 +92,12 @@ class _ModuleState extends State<Module> {
 
     setState(() {
       isLoading = false;
+    });
+
+    final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
+
+    setState(() {
+      nodes = _nodes;
     });
 //    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
 
@@ -104,6 +118,9 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
+
+  StreamSubscription<GenericLevelStatusData> onGenericLevelStatusSubscription;
+  StreamSubscription<GenericOnOffStatusData> onGenericOnOffStatusSubscription;
 
   DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
@@ -141,29 +158,22 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });
-
-    meshManagerApi.onGenericLevelStatus.listen((event) {
-      print(event);
-    });
-
-    meshManagerApi.onGenericOnOffStatus.listen((event) {
-      print(event);
-    });
   }
 
   @override
-  Future<void> dispose() {
-    onDeviceConnectingSubscription.cancel();
-    onDeviceConnectedSubscription.cancel();
-    onServicesDiscoveredSubscription.cancel();
-    onDeviceReadySubscription.cancel();
-    onDataReceivedSubscription.cancel();
-    onDataSentSubscription.cancel();
-    onDeviceDisconnectingSubscription.cancel();
-    onDeviceDisconnectedSubscription.cancel();
-    onMeshPduCreatedSubscription.cancel();
-    return super.dispose();
-  }
+  Future<void> dispose() => Future.wait([
+        onDeviceConnectingSubscription.cancel(),
+        onDeviceConnectedSubscription.cancel(),
+        onServicesDiscoveredSubscription.cancel(),
+        onDeviceReadySubscription.cancel(),
+        onDataReceivedSubscription.cancel(),
+        onDataSentSubscription.cancel(),
+        onDeviceDisconnectingSubscription.cancel(),
+        onDeviceDisconnectedSubscription.cancel(),
+        onMeshPduCreatedSubscription.cancel(),
+        onGenericLevelStatusSubscription.cancel(),
+        super.dispose(),
+      ]);
 
   @override
   Future<void> sendMtuToMeshManagerApi(int mtu) => meshManagerApi.setMtu(mtu);

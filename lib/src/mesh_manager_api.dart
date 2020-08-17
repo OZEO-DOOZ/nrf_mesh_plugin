@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
@@ -32,7 +33,7 @@ class MeshManagerApi {
   final _onProvisioningFailedController = StreamController<MeshProvisioningStatusData>.broadcast();
   final _onProvisioningCompletedController = StreamController<MeshProvisioningCompletedData>.broadcast();
 
-  final _onConfigCompositionDataStatusController = StreamController<Map<String, dynamic>>.broadcast();
+  final _onConfigCompositionDataStatusController = StreamController<ConfigCompositionDataStatusData>.broadcast();
   final _onConfigAppKeyStatusController = StreamController<Map<String, dynamic>>.broadcast();
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
   final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
@@ -48,7 +49,7 @@ class MeshManagerApi {
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningFailedSubscription;
   StreamSubscription<MeshProvisioningCompletedData> _onProvisioningCompletedSubscription;
 
-  StreamSubscription<Map> _onConfigCompositionDataStatusSubscription;
+  StreamSubscription<ConfigCompositionDataStatusData> _onConfigCompositionDataStatusSubscription;
   StreamSubscription<Map> _onConfigAppKeyStatusSubscription;
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
@@ -105,6 +106,7 @@ class MeshManagerApi {
 
     _onConfigCompositionDataStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configCompositionDataStatus.value)
+        .map((event) => ConfigCompositionDataStatusData.fromJson(event))
         .listen(_onConfigCompositionDataStatusController.add);
     _onConfigAppKeyStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configAppKeyStatus.value)
@@ -139,7 +141,8 @@ class MeshManagerApi {
 
   Stream<MeshProvisioningStatusData> get onProvisioningFailed => _onProvisioningFailedController.stream;
 
-  Stream<Map<String, dynamic>> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+  Stream<ConfigCompositionDataStatusData> get onConfigCompositionDataStatus =>
+      _onConfigCompositionDataStatusController.stream;
 
   Stream<Map<String, dynamic>> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
@@ -172,6 +175,7 @@ class MeshManagerApi {
         _onConfigCompositionDataStatusSubscription.cancel(),
         _onConfigAppKeyStatusSubscription.cancel(),
         _onGenericLevelStatusSubscription.cancel(),
+        _onGenericOnOffStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -185,6 +189,7 @@ class MeshManagerApi {
         _onConfigCompositionDataStatusController.close(),
         _onConfigAppKeyStatusController.close(),
         _onGenericLevelStatusController.close(),
+        _onGenericOnOffStatusController.close(),
       ]);
 
   Future<MeshNetwork> loadMeshNetwork() async {
@@ -216,17 +221,33 @@ class MeshManagerApi {
 
   Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
 
-  Future<void> sendGenericLevelSet(int address, int level) =>
-      _methodChannel.invokeMethod('sendGenericLevelSet', {'address': address, 'level': level});
+  Future<GenericLevelStatusData> sendGenericLevelSet(int address, int level, int provisionerAddress) async {
+    final status = _onGenericLevelStatusController.stream
+        .firstWhere((element) => element.source == address && element.level == level, orElse: () => null);
+    await _methodChannel.invokeMethod(
+        'sendGenericLevelSet', {'address': address, 'level': level, 'provisionerAddress': provisionerAddress});
+    return status;
+  }
 
-  Future<void> sendGenericOnOffSet(int address, bool value) =>
-      _methodChannel.invokeMethod('sendGenericOnOffSet', {'address': address, 'value': value});
+  Future<GenericOnOffStatusData> sendGenericOnOffSet(int address, bool value) async {
+    final status = _onGenericOnOffStatusController.stream
+        .firstWhere((element) => element.source == address && element.presentState == value, orElse: () => null);
+    await _methodChannel.invokeMethod('sendGenericOnOffSet', {'address': address, 'value': value});
+    return status;
+  }
 
   Future<void> createMeshPduForConfigCompositionDataGet(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigCompositionDataGet', {'dest': dest});
 
   Future<void> createMeshPduForConfigAppKeyAdd(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigAppKeyAdd', {'dest': dest});
+
+  Future<void> sendConfigModelAppBind(int nodeId, int elementId, int modelId) =>
+      _methodChannel.invokeMethod('sendConfigModelAppBind', {
+        'nodeId': nodeId,
+        'elementId': elementId,
+        'modelId': modelId,
+      });
 
   String getDeviceUuid(List<int> serviceData) {
     var msb = 0;

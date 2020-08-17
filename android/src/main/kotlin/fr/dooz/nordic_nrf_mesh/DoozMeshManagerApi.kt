@@ -10,11 +10,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshNetwork
-import no.nordicsemi.android.mesh.transport.ConfigAppKeyAdd
-import no.nordicsemi.android.mesh.transport.ConfigCompositionDataGet
-import no.nordicsemi.android.mesh.transport.GenericLevelSet
-import no.nordicsemi.android.mesh.transport.GenericOnOffSet
-import no.nordicsemi.android.mesh.transport.MeshMessage
+import no.nordicsemi.android.mesh.Provisioner
+import no.nordicsemi.android.mesh.transport.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -110,27 +107,39 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
                 result.success(null);
             }
+            "sendConfigModelAppBind" -> {
+                val nodeId = call.argument<Int>("nodeId")!!
+                val elementId = call.argument<Int>("elementId")!!
+                val modelId = call.argument<Int>("modelId")!!
+
+                val configModelAppBind = ConfigModelAppBind(elementId, modelId, 0)
+                mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
+
+                result.success(null)
+            }
             "sendGenericLevelSet" -> {
-                val address = call.argument<Int>("address")!!;
+                val provisionerAddress = call.argument<Int>("provisionerAddress")!!
+                val address = call.argument<Int>("address")!!
                 val level = call.argument<Int>("level")!!
+                Log.d("sendGenericLevelSet", "provisionerAddress $provisionerAddress address $address level $level")
                 val meshMessage: MeshMessage = GenericLevelSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(0),
                         level,
-                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address)
+                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(provisionerAddress)
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
-                result.success(null);
+                result.success(null)
             }
             "sendGenericOnOffSet" -> {
-                val address = call.argument<Int>("address")!!;
-                val value = call.argument<Boolean>("value")!!;
+                val address = call.argument<Int>("address")!!
+                val value = call.argument<Boolean>("value")!!
                 val meshMessage: MeshMessage = GenericOnOffSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(0),
                         value,
                         mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address)
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
-                result.success(null);
+                result.success(null)
             }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!;

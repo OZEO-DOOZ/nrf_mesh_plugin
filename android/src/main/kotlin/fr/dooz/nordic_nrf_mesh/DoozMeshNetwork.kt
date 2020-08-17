@@ -66,6 +66,12 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 }
                 result.success(nodes)
             }
+            "provisioners" -> {
+            meshNetwork.sequenceNumbers
+            }
+            "selectedProvisionerUuid" -> {
+                result.success(meshNetwork.selectedProvisioner.provisionerUuid)
+            }
             "highestAllocatableAddress" -> {
                 var maxAddress = 0;
                 for (addressRange in meshNetwork.selectedProvisioner.allocatedUnicastRanges) {

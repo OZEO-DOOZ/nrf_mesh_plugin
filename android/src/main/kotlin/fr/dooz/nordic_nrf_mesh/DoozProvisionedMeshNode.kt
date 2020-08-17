@@ -22,6 +22,9 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
             "elementAt" -> {
 
             }
+            "getSequenceNumber" -> {
+                result.success(meshNode.sequenceNumber);
+            }
             "elements" -> {
                 result.success(meshNode.elements.map { element ->
                     mapOf(
@@ -31,8 +34,9 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
                             "models" to element.value.meshModels.map {
                                 mapOf(
                                         "key" to it.key,
-                                        "id" to it.value.modelId,
-                                        "subscribedAddresses" to it.value.subscribedAddresses
+                                        "modelId" to it.value.modelId,
+                                        "subscribedAddresses" to it.value.subscribedAddresses,
+                                        "boundAppKey" to it.value.boundAppKeyIndexes
                                 )
                             }
                     )
