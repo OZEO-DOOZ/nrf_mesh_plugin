@@ -19,4 +19,7 @@ enum DoozMeshManagerApiChannel: String{
     case provisioning
     
     case createMeshPduForConfigCompositionDataGet
+    
+    case sendGenericLevelSet
+    case sendGenericOnOffSet
 }
