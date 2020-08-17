@@ -19,6 +19,25 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
                 meshNode.nodeName = nodeName
                 result.success(null)
             }
+            "elementAt" -> {
+
+            }
+            "elements" -> {
+                result.success(meshNode.elements.map { element ->
+                    mapOf(
+                            "key" to element.key,
+                            "address" to element.value.elementAddress,
+                            "location" to element.value.locationDescriptor,
+                            "models" to element.value.meshModels.map {
+                                mapOf(
+                                        "key" to it.key,
+                                        "id" to it.value.modelId,
+                                        "subscribedAddresses" to it.value.subscribedAddresses
+                                )
+                            }
+                    )
+                })
+            }
             "unicastAddress" -> {
                 result.success(meshNode.unicastAddress)
             }
