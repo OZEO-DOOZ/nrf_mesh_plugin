@@ -94,10 +94,14 @@ enum ProvisioningEvent: String{
 }
 
 enum EventSinkKeys: String{
+    enum meshNode: String{
+        case meshNode
+        case uuid
+    }
     case eventName
     case id
     case error
     case state
     case pdu
-    case meshNodeUuid
+    case data
 }

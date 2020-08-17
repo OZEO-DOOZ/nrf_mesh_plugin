@@ -223,9 +223,9 @@ extension DoozProvisioningManager: ProvisioningDelegate{
         let dict = [
             EventSinkKeys.eventName.rawValue : state.eventName(),
             EventSinkKeys.state.rawValue : state.flutterState(),
-            "data":[],
-            "meshNode":[
-                "uuid":unprovisionedDevice.uuid.uuidString
+            EventSinkKeys.data.rawValue:[],
+            EventSinkKeys.meshNode.meshNode.rawValue:[
+                EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
             ]
             ] as [String : Any]
         
@@ -342,7 +342,9 @@ extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDeleg
             
             EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
             EventSinkKeys.pdu.rawValue: data,
-            EventSinkKeys.meshNodeUuid.rawValue: _provisioningBearer.identifier.uuidString
+            EventSinkKeys.meshNode.meshNode.rawValue:[
+                EventSinkKeys.meshNode.uuid.rawValue: _provisioningBearer.identifier.uuidString
+            ]
             ] as [String : Any]
         
         delegate?.sendMessage(dict)
