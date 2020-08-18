@@ -103,9 +103,10 @@ class _ModuleState extends State<Module> {
       print('node mesh node connected');
       return;
     }
-    for (final element in await currentNode.elements) {
+    final elements = await currentNode.elements;
+    for (final element in elements) {
       for (final model in element.models) {
-        if (model.boundAppKey.isEmpty) {
+        if (model.boundAppKey.isEmpty && element != elements.first && element.models.first != model) {
           final unicast = await currentNode.unicastAddress;
           print('need to bind app key');
           await widget.meshManagerApi.sendConfigModelAppBind(
@@ -125,7 +126,7 @@ class _ModuleState extends State<Module> {
     print(getBoardTypeStatus);
     final boardType = BoardData.decode(getBoardTypeStatus.level);
     if (boardType.payload == 0xA) {
-      print('Doobl V');
+      print('it\'s a Doobl V board');
       print('setup sortie 1 to be a dimmer');
       final data = BoardData(0, 0x1, 0x1);
       final setupDimmerStatus = await widget.meshManagerApi

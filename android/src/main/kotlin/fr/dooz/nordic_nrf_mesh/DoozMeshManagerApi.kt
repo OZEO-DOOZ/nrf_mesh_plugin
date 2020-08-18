@@ -32,7 +32,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
         doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(binaryMessenger, eventSink, unprovisionedMeshNodes, this)
-        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink, mMeshManagerApi)
+        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink)
 
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
         mMeshManagerApi.setProvisioningStatusCallbacks(doozMeshProvisioningStatusCallbacks)
