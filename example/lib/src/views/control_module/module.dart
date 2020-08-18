@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
 
 import 'node.dart';
 
@@ -118,19 +119,17 @@ class _ModuleState extends State<Module> {
       }
     }
 
+    final target = 0;
     //  check if the board need to be configured
-    final data = BoardData(0, 0x1f, 0);
-    print('send generic level set to ${await currentNode.unicastAddress} level ${data.toByte()}');
-    final getBoardTypeStatus = await widget.meshManagerApi
-        .sendGenericLevelSet(await currentNode.unicastAddress, data.toByte(), await provisioner.sequenceNumber);
+    final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
+        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), await provisioner.sequenceNumber);
     print(getBoardTypeStatus);
     final boardType = BoardData.decode(getBoardTypeStatus.level);
     if (boardType.payload == 0xA) {
       print('it\'s a Doobl V board');
-      print('setup sortie 1 to be a dimmer');
-      final data = BoardData(0, 0x1, 0x1);
-      final setupDimmerStatus = await widget.meshManagerApi
-          .sendGenericLevelSet(await currentNode.unicastAddress, data.toByte(), await provisioner.sequenceNumber);
+      print('setup sortie ${target + 1} to be a dimmer');
+      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(await currentNode.unicastAddress,
+          BoardData.lightDimmerOutput(target).toByte(), await provisioner.sequenceNumber);
       final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
       print(dimmerBoardData);
     }
@@ -149,41 +148,6 @@ class _ModuleState extends State<Module> {
     }
     return null;
   }
-}
-
-class BoardData {
-  final int targetIo;
-  final int offset;
-  final int payload;
-
-  BoardData(this.targetIo, this.offset, this.payload);
-
-  factory BoardData.decode(int level) {
-    final payload = (level & 0x1FF).toString();
-    final offset = ((level >> 9) & 0x1F).toString();
-    var io = (level >> (9 + 5)) & 0x3;
-    if (level < 0) {
-      io = io | 0x02;
-    }
-    return BoardData(io, int.tryParse(offset), int.tryParse(payload));
-  }
-
-  int toByte() {
-    int buff;
-    int outLevel;
-    buff = ((targetIo & 0x3) << (9 + 5)) | ((offset & 0x1f) << (9)) | (payload & 0x1FF);
-    buff = buff.toUnsigned(16);
-    if (buff & (1 << 15) != 0) {
-      buff = ~buff ^ 0x01;
-      outLevel = buff * -1;
-    } else {
-      outLevel = buff;
-    }
-    return outLevel;
-  }
-
-  @override
-  String toString() => 'targetIo: $targetIo, offset: $offset, payload: $payload';
 }
 
 class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
