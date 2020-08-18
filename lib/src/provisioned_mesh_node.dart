@@ -50,6 +50,8 @@ class ProvisionedMeshNode {
 
   Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
 
+  Future<String> get name => _methodChannel.invokeMethod('name');
+
   Future<List<ElementData>> get elements async {
     final _elements = await _methodChannel.invokeMethod<List>('elements');
     return _elements.map((e) => ElementData.fromJson(e)).toList();

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
@@ -37,6 +38,7 @@ class MeshManagerApi {
   final _onConfigAppKeyStatusController = StreamController<Map<String, dynamic>>.broadcast();
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
   final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
+  final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
 
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
@@ -48,23 +50,22 @@ class MeshManagerApi {
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningStateChangedSubscription;
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningFailedSubscription;
   StreamSubscription<MeshProvisioningCompletedData> _onProvisioningCompletedSubscription;
-
   StreamSubscription<ConfigCompositionDataStatusData> _onConfigCompositionDataStatusSubscription;
   StreamSubscription<Map> _onConfigAppKeyStatusSubscription;
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
+  StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
 
   MeshManagerApi() {
+    //  this is for debug purpose
     _eventChannelStream = _eventChannel
         .receiveBroadcastStream()
         .cast<Map>()
         .map((event) => event.cast<String, dynamic>())
-        .doOnData((event) {
-      print(event);
-    });
+        .doOnData(print);
 
     _onNetworkLoadedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded).listen(_onNetworkLoadedStreamController.add);
@@ -119,6 +120,11 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.genericOnOffStatus.value)
         .map((event) => GenericOnOffStatusData.fromJson(event))
         .listen(_onGenericOnOffStatusController.add);
+
+    _onConfigModelAppStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
+        .map((event) => ConfigModelAppStatusData.fromJson(event))
+        .listen(_onConfigModelAppStatusController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
@@ -176,6 +182,7 @@ class MeshManagerApi {
         _onConfigAppKeyStatusSubscription.cancel(),
         _onGenericLevelStatusSubscription.cancel(),
         _onGenericOnOffStatusSubscription.cancel(),
+        _onConfigModelAppStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -190,6 +197,7 @@ class MeshManagerApi {
         _onConfigAppKeyStatusController.close(),
         _onGenericLevelStatusController.close(),
         _onGenericOnOffStatusController.close(),
+        _onConfigModelAppStatusController.close(),
       ]);
 
   Future<MeshNetwork> loadMeshNetwork() async {
@@ -221,11 +229,26 @@ class MeshManagerApi {
 
   Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
 
-  Future<GenericLevelStatusData> sendGenericLevelSet(int address, int level, int provisionerAddress) async {
-    final status = _onGenericLevelStatusController.stream
-        .firstWhere((element) => element.source == address && element.level == level, orElse: () => null);
-    await _methodChannel.invokeMethod(
-        'sendGenericLevelSet', {'address': address, 'level': level, 'provisionerAddress': provisionerAddress});
+  Future<GenericLevelStatusData> sendGenericLevelSet(
+    int address,
+    int level,
+    int sequenceNumber, {
+    int keyIndex = 0,
+    int transitionStep,
+    int transitionResolution,
+    int delay,
+  }) async {
+    final status =
+        _onGenericLevelStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('sendGenericLevelSet', {
+      'address': address,
+      'level': level,
+      'sequenceNumber': sequenceNumber,
+      'keyIndex': keyIndex,
+      'transitionStep': transitionStep,
+      'transitionResolution': transitionResolution,
+      'delay': delay,
+    });
     return status;
   }
 
@@ -242,12 +265,19 @@ class MeshManagerApi {
   Future<void> createMeshPduForConfigAppKeyAdd(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigAppKeyAdd', {'dest': dest});
 
-  Future<void> sendConfigModelAppBind(int nodeId, int elementId, int modelId) =>
-      _methodChannel.invokeMethod('sendConfigModelAppBind', {
-        'nodeId': nodeId,
-        'elementId': elementId,
-        'modelId': modelId,
-      });
+  Future<void> sendConfigModelAppBind(int nodeId, int elementId, int modelId, {int appKeyIndex = 0}) async {
+    final status = _onConfigModelAppStatusController.stream.firstWhere(
+        (element) =>
+            element.elementAddress == elementId && element.modelId == modelId && element.appKeyIndex == appKeyIndex,
+        orElse: () => null);
+    await _methodChannel.invokeMethod('sendConfigModelAppBind', {
+      'nodeId': nodeId,
+      'elementId': elementId,
+      'modelId': modelId,
+      'appKeyIndex': appKeyIndex,
+    });
+    return status;
+  }
 
   String getDeviceUuid(List<int> serviceData) {
     var msb = 0;

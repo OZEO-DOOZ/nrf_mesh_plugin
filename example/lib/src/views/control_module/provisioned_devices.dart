@@ -5,6 +5,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/module.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
+import 'package:pedantic/pedantic.dart';
 
 class ProvisionedDevices extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -34,6 +35,13 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    flutterBlue.stopScan();
+    _scanSubscription?.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -52,15 +60,16 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
                 for (final device in _devices)
                   Device(
                     device: device,
-                    onTap: () {
-                      _stopScan();
-                      Navigator.of(context).push(
+                    onTap: () async {
+                      await _stopScan();
+                      await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
                             return Module(device: device, meshManagerApi: _meshManagerApi);
                           },
                         ),
                       );
+                      unawaited(_scanProvisionned());
                     },
                   ),
               ],

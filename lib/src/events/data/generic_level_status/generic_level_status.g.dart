@@ -12,6 +12,7 @@ _$_GenericLevelStatusData _$_$_GenericLevelStatusDataFromJson(
     json['level'] as int,
     json['targetLevel'] as int,
     json['source'] as int,
+    json['destination'] as int,
   );
 }
 
@@ -21,4 +22,5 @@ Map<String, dynamic> _$_$_GenericLevelStatusDataToJson(
       'level': instance.level,
       'targetLevel': instance.targetLevel,
       'source': instance.source,
+      'destination': instance.destination,
     };

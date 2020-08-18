@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
@@ -332,33 +331,13 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
   try {
     await completer.future;
 
-    //  ------
-    //  All this is here temporary it should not be done here
-    final elements = await provisionedMeshNode.elements;
-    print(elements);
+    //  TODO: this is to simplify debug remove it when it's no more needed
+    await provisionedMeshNode.nodeName(device.id.id);
 
-    for (final element in elements) {
-      for (final model in element.models) {
-        final unicast = await provisionedMeshNode.unicastAddress;
-        print('config model app bind for $unicast ${element.address} ${model.modelId}');
-        await meshManagerApi.sendConfigModelAppBind(
-          unicast,
-          element.address,
-          model.modelId,
-        );
-
-        //  instead of this we should listen for an event that tell us when ConfigModelAppBind is done
-        //  ideally this will be done inside the Future of meshManagerApi.sendConfigModelAppBind
-        await Future.delayed(Duration(seconds: 10));
-      }
-    }
-    //  END
-    //  ------
-
-    await device.disconnect();
+    await bleMeshManager.disconnect();
     return provisionedMeshNode;
   } catch (e) {
-    await device.disconnect();
+    await bleMeshManager.disconnect();
     rethrow;
   } finally {
     await Future.wait([
