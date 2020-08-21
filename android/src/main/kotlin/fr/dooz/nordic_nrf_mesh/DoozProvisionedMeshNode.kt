@@ -47,6 +47,8 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
             }
             "unicastAddress" -> {
                 result.success(meshNode.unicastAddress)
+                var model = meshNode.elements[0]!!.meshModels[0]!!
+                model.k
             }
             else -> {
                 result.notImplemented()

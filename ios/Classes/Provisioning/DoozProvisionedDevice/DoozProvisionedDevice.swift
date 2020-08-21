@@ -11,17 +11,17 @@ import nRFMeshProvision
 class DoozProvisionedDevice: NSObject{
     
     //MARK: Public properties
+    public var node: Node
     
     //MARK: Private properties
     private var eventSink: FlutterEventSink?
-    private var node: Node?
+    
     
     init(messenger: FlutterBinaryMessenger, node: Node){
-        super.init()
         self.node = node
+        super.init()
         _initChannels(messenger: messenger, uuid: node.uuid)
     }
-    
     
 }
 
@@ -52,23 +52,43 @@ private extension DoozProvisionedDevice {
         switch _method {
             
         case .unicastAddress:
-            guard let _node = self.node else{
-                result(nil)
-                return
-            }
-            
-            result(_node.unicastAddress)
+            result(node.unicastAddress)
             
         case .nodeName:
             if
-                let _node = self.node,
                 let _args = call.arguments as? [String:Any],
                 let _name = _args["name"] as? String {
                 
-                _node.name = _name
+                node.name = _name
                 
             }
             result(nil)
+            
+        case .elements:
+            #warning("address : unicastAddress ou Address(index) ?")
+            
+            let elements = node.elements.map { element in
+                return [
+                    EventSinkKeys.meshNode.elements.key.rawValue: element.index,
+                    EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
+                    EventSinkKeys.meshNode.elements.locationDescriptor.rawValue : element.location.rawValue,
+                    EventSinkKeys.meshNode.elements.models.rawValue : element.models.enumerated().map({ (index,model) in
+                        return [
+                            EventSinkKeys.meshNode.elements.model.key.rawValue : index,
+                            EventSinkKeys.meshNode.elements.model.id.rawValue : model.modelIdentifier,
+                            EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
+                                return sub.address
+                            }
+                        ]
+                    })
+                ]
+            }
+            
+            result(elements)
+            
+        case .elementAt:
+            #warning("WIP")
+            //node.element(withAddress: <#T##Address#>)
         }
         
     }

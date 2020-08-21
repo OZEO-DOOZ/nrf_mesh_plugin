@@ -94,9 +94,23 @@ enum ProvisioningEvent: String{
 }
 
 enum EventSinkKeys: String{
+    enum network: String{
+        case uuid
+    }
     enum meshNode: String{
         case meshNode
         case uuid
+        enum elements: String{
+            case key
+            case address
+            case locationDescriptor
+            case models
+            enum model: String{
+                case key
+                case id
+                case subscribedAddresses
+            }
+        }
     }
     case eventName
     case id
@@ -105,3 +119,15 @@ enum EventSinkKeys: String{
     case pdu
     case data
 }
+//"key": element.index,
+//                  "address" : element.unicastAddress,
+//                  "locationDescriptor" : element.location.rawValue,
+//                  "models" : element.models.enumerated().map({ (index,model) in
+//                      return [
+//                          "key" : index,
+//                          "id" : model.modelIdentifier,
+//                          "subscribedAddresses" : model.subscriptions.map{ sub in
+//                              return sub.address
+//                          }
+//                      ]
+//                  })
