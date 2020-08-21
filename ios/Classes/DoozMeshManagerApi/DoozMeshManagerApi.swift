@@ -271,7 +271,8 @@ private extension DoozMeshManagerApi {
                 let nodeId = _args["nodeId"] as? UInt16,
                 let elementId = _args["elementId"] as? Int16,
                 let modelId = _args["modelId"] as? UInt16,
-                let appKeyIndex = _args["appKeyIndex"] as? Int16{
+                let appKeyIndex = _args["appKeyIndex"] as? Int16,
+                let _meshNetworkManager = self.meshNetworkManager{
                 
                 var _modelId = modelId
                 var _elementAddress = Address(bitPattern: elementId)
@@ -279,13 +280,17 @@ private extension DoozMeshManagerApi {
                 
                 let data =
                     Data()
-                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt8>.size)
-                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt8>.size)
-                    + Data(bytes: &_modelId, count: MemoryLayout<UInt8>.size)
+                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt16>.size)
+                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt16>.size)
+                    + Data(bytes: &_modelId, count: MemoryLayout<UInt16>.size)
                 
+                self.doozTransmitter = DoozTransmitter()
+                _meshNetworkManager.transmitter = doozTransmitter
+                
+                _meshNetworkManager.delegate = self
                 do{
                     if let configModelAppBind = ConfigModelAppBind(parameters: data){
-                        try meshNetworkManager?.send(configModelAppBind, to: _elementAddress)
+                        try _ = _meshNetworkManager.send(configModelAppBind, to: _elementAddress)
                     }
                 }
                 catch{
@@ -624,6 +629,37 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
                     EventSinkKeys.eventName.rawValue : ProvisioningEvent.onConfigAppKeyStatus.rawValue
             ])
         }
+    }
+    
+}
+
+
+extension DoozMeshManagerApi: MeshNetworkDelegate{
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
+        print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
+        
+        switch message {
+            
+        case is ConfigCompositionDataStatus:
+            break
+            
+        case is ConfigDefaultTtlStatus:
+            break
+        case is ConfigAppKeyStatus:
+            break
+        default:
+            break
+        }
+        
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
+        print("📣 didSendMessage : \(message) from \(localElement) to \(destination)")
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage, from localElement: Element, to destination: Address, error: Error) {
+        print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
     }
     
 }

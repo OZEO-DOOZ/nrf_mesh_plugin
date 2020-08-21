@@ -50,10 +50,10 @@ private extension DoozProvisionedDevice {
         }
         
         switch _method {
-            
+        
         case .unicastAddress:
             result(node.unicastAddress)
-            
+        
         case .nodeName:
             if
                 let _args = call.arguments as? [String:Any],
@@ -66,8 +66,10 @@ private extension DoozProvisionedDevice {
             
         case .elements:
             #warning("address : unicastAddress ou Address(index) ?")
-            
-            let elements = node.elements.map { element in
+            #warning("we dont have access to boundAppKey on iOS")
+            //in model : EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.
+                                  
+            var elements = node.elements.map { element in
                 return [
                     EventSinkKeys.meshNode.elements.key.rawValue: element.index,
                     EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
@@ -75,15 +77,17 @@ private extension DoozProvisionedDevice {
                     EventSinkKeys.meshNode.elements.models.rawValue : element.models.enumerated().map({ (index,model) in
                         return [
                             EventSinkKeys.meshNode.elements.model.key.rawValue : index,
-                            EventSinkKeys.meshNode.elements.model.id.rawValue : model.modelIdentifier,
+                            EventSinkKeys.meshNode.elements.model.modelId.rawValue : model.modelIdentifier,
                             EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
                                 return sub.address
                             }
+                            
                         ]
+                      
                     })
                 ]
             }
-            
+
             result(elements)
             
         case .elementAt:

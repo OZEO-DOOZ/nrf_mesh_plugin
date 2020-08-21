@@ -107,8 +107,9 @@ enum EventSinkKeys: String{
             case models
             enum model: String{
                 case key
-                case id
+                case modelId
                 case subscribedAddresses
+                case boundAppKey
             }
         }
     }
