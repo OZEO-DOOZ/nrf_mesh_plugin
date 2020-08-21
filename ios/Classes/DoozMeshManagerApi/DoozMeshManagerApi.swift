@@ -192,7 +192,7 @@ private extension DoozMeshManagerApi {
                 let _level = _args["level"] as? Int16,
                 let _meshNetworkManager = self.meshNetworkManager,
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-                    
+                
                 let message = GenericLevelSet(level: _level)
                 
                 do{
@@ -216,7 +216,7 @@ private extension DoozMeshManagerApi {
                 let _isOn = _args["value"] as? Bool,
                 let _meshNetworkManager = self.meshNetworkManager,
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-                    
+                
                 let message = GenericOnOffSet(_isOn)
                 
                 do{
@@ -234,6 +234,45 @@ private extension DoozMeshManagerApi {
             
             result(nil)
             break
+            
+        case .sendConfigModelAppBind:
+            if
+                let _args = call.arguments as? [String:Any],
+                let nodeId = _args["nodeId"] as? UInt16,
+                let elementId = _args["elementId"] as? Int16,
+                let modelId = _args["modelId"] as? UInt16,
+                let appKeyIndex = _args["appKeyIndex"] as? Int16{
+                
+                var _modelId = modelId
+                var _elementAddress = Address(bitPattern: elementId)
+                var _appKeyIndex = KeyIndex(bitPattern: appKeyIndex)
+                
+                let data =
+                    Data()
+                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt8>.size)
+                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt8>.size)
+                    + Data(bytes: &_modelId, count: MemoryLayout<UInt8>.size)
+                
+                do{
+                    if let configModelAppBind = ConfigModelAppBind(parameters: data){
+                        try meshNetworkManager?.send(configModelAppBind, to: _elementAddress)
+                    }
+                }
+                catch{
+                    print(error)
+                }
+                
+                
+            }
+            
+            result(nil)
+            //            val nodeId = call.argument<Int>("nodeId")!!
+            //                           val elementId = call.argument<Int>("elementId")!!
+            //                           val modelId = call.argument<Int>("modelId")!!
+            //                           val appKeyIndex = call.argument<Int>("appKeyIndex")!!
+            //                           val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
+            //                           mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
+            //                           result.success(null)
         }
         
     }
