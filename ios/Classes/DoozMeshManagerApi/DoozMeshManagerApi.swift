@@ -242,6 +242,29 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
             
+//            func bindAppKey(to model: Model){
+//                  if let _meshNetworkManager = self.meshNetworkManager{
+//                      do{
+//                          print("📩 Sending message : ConfigModelAppBind")
+//
+//                          if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+//
+//                              guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
+//                                  return
+//                              }
+//
+//
+//                              _ = try _meshNetworkManager.send(message, to: model)
+//
+//                              print("💪 BIND APP KEY TO MODEL \(model)")
+//                          }
+//                      }catch{
+//                          print(error)
+//                      }
+//
+//                  }
+//              }
+            
         case .sendConfigModelAppBind:
             if
                 let _args = call.arguments as? [String:Any],
