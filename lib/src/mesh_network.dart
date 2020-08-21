@@ -25,6 +25,9 @@ class MeshNetwork {
 
   Future<String> selectedProvisionerUuid() => _methodChannel.invokeMethod('selectedProvisionerUuid');
 
+  Future<int> getSequenceNumber(int address) =>
+      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
     //  skip 1 is to skip the provisionner since it's not a provisioned mesh node

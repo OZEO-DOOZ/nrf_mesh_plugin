@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
 
 import 'node.dart';
 
@@ -20,7 +21,7 @@ class _ModuleState extends State<Module> {
   bool isLoading = true;
   int selectedElementAddress;
   int selectedLevel;
-  List<ProvisionedMeshNode> nodes = [];
+  ProvisionedMeshNode currentNode;
   final bleMeshManager = BleMeshManager();
 
   @override
@@ -48,7 +49,7 @@ class _ModuleState extends State<Module> {
       body = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ...nodes.map((node) => Node(node)).toList(),
+          Node(currentNode),
           Divider(),
           Text('Send a generic level set'),
           TextField(
@@ -73,8 +74,9 @@ class _ModuleState extends State<Module> {
               final provisionedNode =
                   nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
               final provisionerAddress = await provisionedNode.unicastAddress;
+              final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
               final status = await widget.meshManagerApi
-                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, provisionerAddress);
+                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
               print(status);
             },
           )
@@ -88,19 +90,63 @@ class _ModuleState extends State<Module> {
 
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
+    final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
+
+    final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+    final provisioner = _nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+    if (provisioner == null) {
+      print('provisioner is null');
+      return;
+    }
+
+    currentNode = await currentConnectedMeshNode(widget.device.id.id, _nodes);
+    if (currentNode == null) {
+      print('node mesh node connected');
+      return;
+    }
+    final elements = await currentNode.elements;
+    for (final element in elements) {
+      for (final model in element.models) {
+        if (model.boundAppKey.isEmpty && element != elements.first && element.models.first != model) {
+          final unicast = await currentNode.unicastAddress;
+          print('need to bind app key');
+          await widget.meshManagerApi.sendConfigModelAppBind(
+            unicast,
+            element.address,
+            model.modelId,
+          );
+        }
+      }
+    }
+
+    final target = 0;
+    //  check if the board need to be configured
+    final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
+        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), await provisioner.sequenceNumber);
+    print(getBoardTypeStatus);
+    final boardType = BoardData.decode(getBoardTypeStatus.level);
+    if (boardType.payload == 0xA) {
+      print('it\'s a Doobl V board');
+      print('setup sortie ${target + 1} to be a dimmer');
+      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(await currentNode.unicastAddress,
+          BoardData.lightDimmerOutput(target).toByte(), await provisioner.sequenceNumber);
+      final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
+      print(dimmerBoardData);
+    }
 
     setState(() {
       isLoading = false;
     });
+  }
 
-    final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
-
-    setState(() {
-      nodes = _nodes;
-    });
-//    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
-
-    //  TODO: get mesh network data to know if we should setup the board
+  Future<ProvisionedMeshNode> currentConnectedMeshNode(String macAddress, List<ProvisionedMeshNode> nodes) async {
+    for (final node in nodes) {
+      final name = await node.name;
+      if (name == macAddress) {
+        return node;
+      }
+    }
+    return null;
   }
 }
 
@@ -117,9 +163,6 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
-
-  StreamSubscription<GenericLevelStatusData> onGenericLevelStatusSubscription;
-  StreamSubscription<GenericOnOffStatusData> onGenericOnOffStatusSubscription;
 
   DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
@@ -170,7 +213,6 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
         onDeviceDisconnectingSubscription.cancel(),
         onDeviceDisconnectedSubscription.cancel(),
         onMeshPduCreatedSubscription.cancel(),
-        onGenericLevelStatusSubscription.cancel(),
         super.dispose(),
       ]);
 

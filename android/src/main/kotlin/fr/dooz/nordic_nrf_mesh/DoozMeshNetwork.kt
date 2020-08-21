@@ -55,6 +55,10 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                     result.error("ASSIGN_UNICAST_ADDRESS", "Failed to assign unicast address", e)
                 }
             }
+            "getSequenceNumberForAddress" -> {
+                val address = call.argument<Int>("address")!!
+                result.success(meshNetwork.sequenceNumbers.get(address))
+            }
             "nodes" -> {
                 val provisionedMeshNodes = meshNetwork.nodes.map { node ->
                     DoozProvisionedMeshNode(binaryMessenger, node)

@@ -32,7 +32,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
         doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(binaryMessenger, eventSink, unprovisionedMeshNodes, this)
-        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink, mMeshManagerApi)
+        doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink)
 
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
         mMeshManagerApi.setProvisioningStatusCallbacks(doozMeshProvisioningStatusCallbacks)
@@ -111,21 +111,26 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val nodeId = call.argument<Int>("nodeId")!!
                 val elementId = call.argument<Int>("elementId")!!
                 val modelId = call.argument<Int>("modelId")!!
-
-                val configModelAppBind = ConfigModelAppBind(elementId, modelId, 0)
+                val appKeyIndex = call.argument<Int>("appKeyIndex")!!
+                val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
                 mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
-
                 result.success(null)
             }
             "sendGenericLevelSet" -> {
-                val provisionerAddress = call.argument<Int>("provisionerAddress")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
                 val address = call.argument<Int>("address")!!
                 val level = call.argument<Int>("level")!!
-                Log.d("sendGenericLevelSet", "provisionerAddress $provisionerAddress address $address level $level")
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val transitionStep = call.argument<Int>("transitionStep")
+                val transitionResolution = call.argument<Int>("transitionResolution")
+                val delay = call.argument<Int>("delay")
                 val meshMessage: MeshMessage = GenericLevelSet(
-                        mMeshManagerApi.meshNetwork!!.getAppKey(0),
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        transitionStep,
+                        transitionResolution,
+                        delay,
                         level,
-                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(provisionerAddress)
+                        sequenceNumber
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
@@ -133,10 +138,14 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             "sendGenericOnOffSet" -> {
                 val address = call.argument<Int>("address")!!
                 val value = call.argument<Boolean>("value")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
                 val meshMessage: MeshMessage = GenericOnOffSet(
-                        mMeshManagerApi.meshNetwork!!.getAppKey(0),
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         value,
-                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address)
+                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address),
+                        null,
+                        null,
+                        null
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
@@ -182,6 +191,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
             "setMtuSize" -> {
                 doozMeshManagerCallbacks.mtuSize = call.argument<Int>("mtuSize")!!
+                Log.d("SET MTU SIZE", doozMeshManagerCallbacks.mtuSize.toString())
                 result.success(null)
             }
             else -> {

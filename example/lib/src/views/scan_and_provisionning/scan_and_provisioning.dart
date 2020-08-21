@@ -64,6 +64,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       }
     });
 
+    flutterBlue.stopScan();
+
     return completer.future;
   }
 
@@ -150,8 +152,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
           ),
         ),
       );
-      final provisionedMeshNode = await provisionedMeshNodeF;
-      await provisionedMeshNode.nodeName(device.id.id);
       unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);

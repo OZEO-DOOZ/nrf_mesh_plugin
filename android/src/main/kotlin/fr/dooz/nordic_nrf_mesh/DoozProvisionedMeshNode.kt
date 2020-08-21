@@ -19,6 +19,9 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
                 meshNode.nodeName = nodeName
                 result.success(null)
             }
+            "name" -> {
+                result.success(meshNode.nodeName)
+            }
             "elementAt" -> {
 
             }
