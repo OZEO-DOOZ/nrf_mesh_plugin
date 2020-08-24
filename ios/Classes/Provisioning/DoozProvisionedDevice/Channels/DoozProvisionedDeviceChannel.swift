@@ -11,4 +11,6 @@ enum DoozProvisionedMeshNodeChannel: String{
     case name
     case elements
     case elementAt
+
+    case getSequenceNumber
 }

@@ -84,6 +84,9 @@ private extension DoozProvisionedDevice {
                             EventSinkKeys.meshNode.elements.model.modelId.rawValue : model.modelIdentifier,
                             EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
                                 return sub.address
+                            },
+                            EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.boundApplicationKeys.map{ key in
+                                return key.index
                             }
                             
                         ]
@@ -97,6 +100,12 @@ private extension DoozProvisionedDevice {
         case .elementAt:
             #warning("WIP")
             //node.element(withAddress: <#T##Address#>)
+        case .getSequenceNumber:
+            #warning("Wrong sequence number")
+            result(99)
+            //node.meshNetwork.getSequenceNumber(of: node.elements[0])
+            //result()
+
         }
         
     }

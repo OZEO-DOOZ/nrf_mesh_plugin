@@ -89,11 +89,21 @@ enum ProvisioningEvent: String{
     case onProvisioningStateChanged
     
     case onConfigAppKeyStatus
-    case onMeshPduCreated
     case sendProvisioningPdu
 }
 
+enum MessageEvent: String{
+    case onMeshPduCreated
+    case onConfigModelAppStatus
+}
+
 enum EventSinkKeys: String{
+    enum message: String{
+        case elementAddress
+        case modelId
+        case appKeyIndex
+    }
+    
     enum network: String{
         case uuid
     }

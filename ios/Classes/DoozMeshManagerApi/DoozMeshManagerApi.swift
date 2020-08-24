@@ -242,56 +242,51 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
             
-//            func bindAppKey(to model: Model){
-//                  if let _meshNetworkManager = self.meshNetworkManager{
-//                      do{
-//                          print("📩 Sending message : ConfigModelAppBind")
-//
-//                          if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-//
-//                              guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
-//                                  return
-//                              }
-//
-//
-//                              _ = try _meshNetworkManager.send(message, to: model)
-//
-//                              print("💪 BIND APP KEY TO MODEL \(model)")
-//                          }
-//                      }catch{
-//                          print(error)
-//                      }
-//
-//                  }
-//              }
+
             
         case .sendConfigModelAppBind:
             if
                 let _args = call.arguments as? [String:Any],
-                let nodeId = _args["nodeId"] as? UInt16,
-                let elementId = _args["elementId"] as? Int16,
-                let modelId = _args["modelId"] as? UInt16,
+                let nodeId = _args["nodeId"] as? Int16, // nodeId is an unicastAddress
+                let elementId = _args["elementId"] as? Int16, // elementId is an unicastAddress
+                let modelId = _args["modelId"] as? UInt32,
                 let appKeyIndex = _args["appKeyIndex"] as? Int16,
                 let _meshNetworkManager = self.meshNetworkManager{
                 
-                var _modelId = modelId
+//                var _modelId = modelId
                 var _elementAddress = Address(bitPattern: elementId)
-                var _appKeyIndex = KeyIndex(bitPattern: appKeyIndex)
+//                var _appKeyIndex = KeyIndex(bitPattern: appKeyIndex)
                 
-                let data =
-                    Data()
-                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt16>.size)
-                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt16>.size)
-                    + Data(bytes: &_modelId, count: MemoryLayout<UInt16>.size)
+//                let data =
+//                    Data()
+//                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt16>.size)
+//                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt16>.size)
+//                    + Data(bytes: &_modelId, count: MemoryLayout<UInt16>.size)
                 
                 self.doozTransmitter = DoozTransmitter()
+                doozTransmitter?.doozDelegate = self
                 _meshNetworkManager.transmitter = doozTransmitter
-                
                 _meshNetworkManager.delegate = self
+                _meshNetworkManager.localElements = []
+                
                 do{
-                    if let configModelAppBind = ConfigModelAppBind(parameters: data){
-                        try _ = _meshNetworkManager.send(configModelAppBind, to: _elementAddress)
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: nodeId))
+                    let element = node?.element(withAddress: Address(bitPattern: elementId))
+                    let model = element?.model(withModelId: modelId)
+                    let appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(appKeyIndex)]
+                    
+                    if let _appKey = appKey, let _model = model{
+                        
+                        if let configModelAppBind = ConfigModelAppBind(applicationKey: _appKey, to: _model){
+                            try _ =  _meshNetworkManager.send(configModelAppBind, to: _model)
+//                            try _ = _meshNetworkManager.send(configModelAppBind, to: _elementAddress)
+                        }
                     }
+                    
+                    
+//                    if let configModelAppBind = ConfigModelAppBind(parameters: data){
+//
+//                    }
                 }
                 catch{
                     print(error)
@@ -301,13 +296,6 @@ private extension DoozMeshManagerApi {
             }
             
             result(nil)
-            //            val nodeId = call.argument<Int>("nodeId")!!
-            //                           val elementId = call.argument<Int>("elementId")!!
-            //                           val modelId = call.argument<Int>("modelId")!!
-            //                           val appKeyIndex = call.argument<Int>("appKeyIndex")!!
-            //                           val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
-            //                           mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
-            //                           result.success(null)
         }
         
     }
@@ -317,6 +305,29 @@ private extension DoozMeshManagerApi {
 
 private extension DoozMeshManagerApi{
     // Events native implementations
+//    #warning("remove")
+//    func bindAppKey(to model: Model){
+//          if let _meshNetworkManager = self.meshNetworkManager{
+//              do{
+//                  print("📩 Sending message : ConfigModelAppBind")
+//
+//                  if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+//
+//                      guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
+//                          return
+//                      }
+//
+//
+//                      _ = try _meshNetworkManager.send(message, to: model)
+//
+//                      print("💪 BIND APP KEY TO MODEL \(model)")
+//                  }
+//              }catch{
+//                  print(error)
+//              }
+//
+//          }
+//      }
     
     func _loadMeshNetwork(){
         guard let _meshNetworkManager = self.meshNetworkManager else{
@@ -454,6 +465,7 @@ private extension DoozMeshManagerApi{
     }
     
     func _didDeliverData(data: Data){
+        
         guard
             let type = PduType(rawValue: UInt8(data[0])) else{
                 return
@@ -473,6 +485,7 @@ private extension DoozMeshManagerApi{
             guard let _meshNetworkManager = self.meshNetworkManager else{
                 return
             }
+                        
             _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
         }
         
@@ -638,16 +651,44 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
         print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
+
         
+        // Handle the message based on its type.
         switch message {
             
-        case is ConfigCompositionDataStatus:
+        case let status as ConfigModelAppStatus:
+
+            if status.isSuccess {
+                let dict = [
+
+                    EventSinkKeys.eventName.rawValue: MessageEvent.onConfigModelAppStatus.rawValue,
+                    EventSinkKeys.message.elementAddress.rawValue: status.elementAddress,
+                    EventSinkKeys.message.modelId.rawValue: status.modelId,
+                    EventSinkKeys.message.appKeyIndex.rawValue: status.applicationKeyIndex,
+
+                    ] as [String : Any]
+
+                sendMessage(dict)
+            } else {
+                break
+            }
+            
+        case let status as ConfigModelPublicationStatus:
+            // If the Model is being refreshed, the Bindings, Subscriptions
+            // and Publication has been read. If the Model has custom UI,
+            // try refreshing it as well.
             break
             
-        case is ConfigDefaultTtlStatus:
+        case let status as ConfigModelSubscriptionStatus:
             break
-        case is ConfigAppKeyStatus:
+            
+        case let list as ConfigModelAppList:
+           break
+        
+            
+        case let list as ConfigModelSubscriptionList:
             break
+            
         default:
             break
         }
@@ -662,4 +703,18 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
         print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
     }
     
+}
+
+extension DoozMeshManagerApi: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
+    func send(data: Data) {
+
+        let dict = [
+            
+            EventSinkKeys.eventName.rawValue: MessageEvent.onMeshPduCreated.rawValue,
+            EventSinkKeys.pdu.rawValue: data
+            ] as [String : Any]
+        
+        sendMessage(dict)
+        
+    }
 }

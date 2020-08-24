@@ -94,7 +94,7 @@ private extension DoozMeshNetwork {
                 })
                 
                 result(nodes)
-                   
+                
             }
             
             break
