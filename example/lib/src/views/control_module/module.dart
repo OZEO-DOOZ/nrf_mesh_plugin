@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
+import 'package:nordic_nrf_mesh_example/src/global.dart';
 
 import 'node.dart';
 
@@ -99,7 +100,7 @@ class _ModuleState extends State<Module> {
       return;
     }
 
-    currentNode = await currentConnectedMeshNode(widget.device.id.id, _nodes);
+    currentNode = provisionedNode;
     if (currentNode == null) {
       print('node mesh node connected');
       return;
@@ -137,16 +138,6 @@ class _ModuleState extends State<Module> {
     setState(() {
       isLoading = false;
     });
-  }
-
-  Future<ProvisionedMeshNode> currentConnectedMeshNode(String macAddress, List<ProvisionedMeshNode> nodes) async {
-    for (final node in nodes) {
-      final name = await node.name;
-      if (name == macAddress) {
-        return node;
-      }
-    }
-    return null;
   }
 }
 

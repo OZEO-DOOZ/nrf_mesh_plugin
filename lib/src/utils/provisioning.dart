@@ -266,7 +266,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
 
     ScanResult scanResult;
     while (scanResult == null) {
-      final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid]) as List<ScanResult>);
+      final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid])) as List<ScanResult>;
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
       if (scanResult == null) {
         await Future.delayed(Duration(milliseconds: 500));
@@ -356,9 +356,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
 
   try {
     await completer.future;
-
-    //  TODO: this is to simplify debug remove it when it's no more needed
-    await provisionedMeshNode.nodeName(device.id.id);
 
     await bleMeshManager.disconnect();
     return provisionedMeshNode;
