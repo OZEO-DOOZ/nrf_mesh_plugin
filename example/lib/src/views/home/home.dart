@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/views/control_module/node.dart';
 
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -34,9 +35,10 @@ class _HomeState extends State<Home> {
             },
           ),
           Divider(),
-          MeshNetworkWidget(
-            meshNetwork: _meshNetwork,
-          ),
+          if (_meshNetwork != null)
+            MeshNetworkWidget(meshNetwork: _meshNetwork)
+          else
+            Text('No meshNetwork loaded'),
         ],
       ),
     );
@@ -76,7 +78,8 @@ class MeshManagerApiWidget extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
   final ValueChanged<MeshNetwork> onNewMeshNetwork;
 
-  const MeshManagerApiWidget({Key key, @required this.nordicNrfMesh, @required this.onNewMeshNetwork})
+  const MeshManagerApiWidget(
+      {Key key, @required this.nordicNrfMesh, @required this.onNewMeshNetwork})
       : super(key: key);
 
   @override
@@ -90,7 +93,8 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   @override
   void initState() {
     super.initState();
-    widget.nordicNrfMesh.meshManagerApi.then((value) => setState(() => _meshManagerApi = value));
+    widget.nordicNrfMesh.meshManagerApi
+        .then((value) => setState(() => _meshManagerApi = value));
   }
 
   @override
@@ -125,7 +129,8 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
           child: Text('Export MeshNetwork'),
           onPressed: _meshNetwork != null
               ? () async {
-                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
+                  final meshNetworkJson =
+                      await _meshManagerApi.exportMeshNetwork();
                   debugPrint(meshNetworkJson);
                 }
               : null,
@@ -147,16 +152,36 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   }
 }
 
-class MeshNetworkWidget extends StatelessWidget {
+class MeshNetworkWidget extends StatefulWidget {
   final MeshNetwork meshNetwork;
 
-  const MeshNetworkWidget({Key key, @required this.meshNetwork}) : super(key: key);
+  const MeshNetworkWidget({Key key, @required this.meshNetwork})
+      : super(key: key);
+
+  @override
+  _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
+}
+
+class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
+  List<ProvisionedMeshNode> _nodes = [];
+
+  @override
+  void initState() {
+    widget.meshNetwork.nodes.then((value) => setState(() => _nodes = value));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (meshNetwork == null) {
+    if (widget.meshNetwork == null) {
       return Text('No mesh network');
     }
-    return Text('MeshNetwork ID: ${meshNetwork.id}');
+    return Column(
+      children: <Widget>[
+        Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
+        Text('Nodes: '),
+        ..._nodes.map((e) => Node(e)),
+      ],
+    );
   }
 }
