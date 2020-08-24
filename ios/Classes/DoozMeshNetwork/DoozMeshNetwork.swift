@@ -98,6 +98,9 @@ private extension DoozMeshNetwork {
             }
             
             break
+        case .selectedProvisionerUuid:
+            result(meshNetwork?.localProvisioner?.uuid.uuidString)
+            break
         }
     }
 }

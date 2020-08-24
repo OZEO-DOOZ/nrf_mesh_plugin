@@ -170,28 +170,8 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
   try {
     await completer.future;
 
-    //  ------
-    //  All this is here temporary it should not be done here
-    final elements = await provisionedMeshNode.elements;
-    print(elements);
-
-    for (final element in elements) {
-      for (final model in element.models) {
-        final unicast = await provisionedMeshNode.unicastAddress;
-        print('config model app bind for $unicast ${element.address} ${model.modelId}');
-        await meshManagerApi.sendConfigModelAppBind(
-          unicast,
-          element.address,
-          model.modelId,
-        );
-
-        //  instead of this we should listen for an event that tell us when ConfigModelAppBind is done
-        //  ideally this will be done inside the Future of meshManagerApi.sendConfigModelAppBind
-        await Future.delayed(Duration(seconds: 10));
-      }
-    }
-    //  END
-    //  ------
+    //  TODO: this is to simplify debug remove it when it's no more needed
+    await provisionedMeshNode.nodeName(device.id.id);
 
     await device.disconnect();
     return provisionedMeshNode;

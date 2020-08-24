@@ -63,11 +63,15 @@ private extension DoozProvisionedDevice {
                 
             }
             result(nil)
+        
+        case .name:
+            #warning("Wrong name here; returns 'iPhone de xxx'")
+            result(node.name)
             
         case .elements:
             #warning("address : unicastAddress ou Address(index) ?")
             #warning("we dont have access to boundAppKey on iOS")
-            //in model : EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.
+            //in model : "boundAppKey" to it.value.boundAppKeyIndexes
                                   
             var elements = node.elements.map { element in
                 return [
