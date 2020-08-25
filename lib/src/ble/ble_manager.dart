@@ -45,7 +45,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       throw Exception('You have to set callbacks using callbacks(E callbacks) before connecting');
     }
     _callbacks.onDeviceConnectingController.add(device);
-    await device.connect(autoConnect: false);
+    await device.connect(autoConnect: false, timeout: Duration(seconds: 30));
     _connected = true;
     _callbacks.onDeviceConnectedController.add(device);
     _device = device;

@@ -8,6 +8,7 @@ import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
+import 'package:retry/retry.dart';
 
 class _ProvisioningEvent {
   final _provisioningController = StreamController<void>();
@@ -278,7 +279,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       return;
     }
 
-    await bleMeshManager.connect(scanResult.device);
+    await retry(() => bleMeshManager.connect(scanResult.device), retryIf: (e) => e is TimeoutException);
 
     provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
