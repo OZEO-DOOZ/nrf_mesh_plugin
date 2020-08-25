@@ -1,25 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
 
-part of 'config_model_subscription_add_status.dart';
+part of 'config_model_subscription_status.dart';
 
 // **************************************************************************
 // FreezedGenerator
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-ConfigModelSubscriptionAddStatus _$ConfigModelSubscriptionAddStatusFromJson(
+ConfigModelSubscriptionStatus _$ConfigModelSubscriptionStatusFromJson(
     Map<String, dynamic> json) {
-  return _ConfigModelSubscriptionAddStatus.fromJson(json);
+  return _ConfigModelSubscriptionStatus.fromJson(json);
 }
 
-class _$ConfigModelSubscriptionAddStatusTearOff {
-  const _$ConfigModelSubscriptionAddStatusTearOff();
+class _$ConfigModelSubscriptionStatusTearOff {
+  const _$ConfigModelSubscriptionStatusTearOff();
 
 // ignore: unused_element
-  _ConfigModelSubscriptionAddStatus call(int source, int destination,
+  _ConfigModelSubscriptionStatus call(int source, int destination,
       int elementAddress, int subscriptionAddress, int modelIdentifier) {
-    return _ConfigModelSubscriptionAddStatus(
+    return _ConfigModelSubscriptionStatus(
       source,
       destination,
       elementAddress,
@@ -30,10 +30,9 @@ class _$ConfigModelSubscriptionAddStatusTearOff {
 }
 
 // ignore: unused_element
-const $ConfigModelSubscriptionAddStatus =
-    _$ConfigModelSubscriptionAddStatusTearOff();
+const $ConfigModelSubscriptionStatus = _$ConfigModelSubscriptionStatusTearOff();
 
-mixin _$ConfigModelSubscriptionAddStatus {
+mixin _$ConfigModelSubscriptionStatus {
   int get source;
   int get destination;
   int get elementAddress;
@@ -41,15 +40,15 @@ mixin _$ConfigModelSubscriptionAddStatus {
   int get modelIdentifier;
 
   Map<String, dynamic> toJson();
-  $ConfigModelSubscriptionAddStatusCopyWith<ConfigModelSubscriptionAddStatus>
+  $ConfigModelSubscriptionStatusCopyWith<ConfigModelSubscriptionStatus>
       get copyWith;
 }
 
-abstract class $ConfigModelSubscriptionAddStatusCopyWith<$Res> {
-  factory $ConfigModelSubscriptionAddStatusCopyWith(
-          ConfigModelSubscriptionAddStatus value,
-          $Res Function(ConfigModelSubscriptionAddStatus) then) =
-      _$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>;
+abstract class $ConfigModelSubscriptionStatusCopyWith<$Res> {
+  factory $ConfigModelSubscriptionStatusCopyWith(
+          ConfigModelSubscriptionStatus value,
+          $Res Function(ConfigModelSubscriptionStatus) then) =
+      _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>;
   $Res call(
       {int source,
       int destination,
@@ -58,13 +57,13 @@ abstract class $ConfigModelSubscriptionAddStatusCopyWith<$Res> {
       int modelIdentifier});
 }
 
-class _$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>
-    implements $ConfigModelSubscriptionAddStatusCopyWith<$Res> {
-  _$ConfigModelSubscriptionAddStatusCopyWithImpl(this._value, this._then);
+class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
+    implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
+  _$ConfigModelSubscriptionStatusCopyWithImpl(this._value, this._then);
 
-  final ConfigModelSubscriptionAddStatus _value;
+  final ConfigModelSubscriptionStatus _value;
   // ignore: unused_field
-  final $Res Function(ConfigModelSubscriptionAddStatus) _then;
+  final $Res Function(ConfigModelSubscriptionStatus) _then;
 
   @override
   $Res call({
@@ -91,12 +90,12 @@ class _$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>
   }
 }
 
-abstract class _$ConfigModelSubscriptionAddStatusCopyWith<$Res>
-    implements $ConfigModelSubscriptionAddStatusCopyWith<$Res> {
-  factory _$ConfigModelSubscriptionAddStatusCopyWith(
-          _ConfigModelSubscriptionAddStatus value,
-          $Res Function(_ConfigModelSubscriptionAddStatus) then) =
-      __$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>;
+abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res>
+    implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
+  factory _$ConfigModelSubscriptionStatusCopyWith(
+          _ConfigModelSubscriptionStatus value,
+          $Res Function(_ConfigModelSubscriptionStatus) then) =
+      __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>;
   @override
   $Res call(
       {int source,
@@ -106,17 +105,17 @@ abstract class _$ConfigModelSubscriptionAddStatusCopyWith<$Res>
       int modelIdentifier});
 }
 
-class __$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>
-    extends _$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>
-    implements _$ConfigModelSubscriptionAddStatusCopyWith<$Res> {
-  __$ConfigModelSubscriptionAddStatusCopyWithImpl(
-      _ConfigModelSubscriptionAddStatus _value,
-      $Res Function(_ConfigModelSubscriptionAddStatus) _then)
-      : super(_value, (v) => _then(v as _ConfigModelSubscriptionAddStatus));
+class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
+    extends _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
+    implements _$ConfigModelSubscriptionStatusCopyWith<$Res> {
+  __$ConfigModelSubscriptionStatusCopyWithImpl(
+      _ConfigModelSubscriptionStatus _value,
+      $Res Function(_ConfigModelSubscriptionStatus) _then)
+      : super(_value, (v) => _then(v as _ConfigModelSubscriptionStatus));
 
   @override
-  _ConfigModelSubscriptionAddStatus get _value =>
-      super._value as _ConfigModelSubscriptionAddStatus;
+  _ConfigModelSubscriptionStatus get _value =>
+      super._value as _ConfigModelSubscriptionStatus;
 
   @override
   $Res call({
@@ -126,7 +125,7 @@ class __$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>
     Object subscriptionAddress = freezed,
     Object modelIdentifier = freezed,
   }) {
-    return _then(_ConfigModelSubscriptionAddStatus(
+    return _then(_ConfigModelSubscriptionStatus(
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
       elementAddress == freezed ? _value.elementAddress : elementAddress as int,
@@ -141,9 +140,9 @@ class __$ConfigModelSubscriptionAddStatusCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
-class _$_ConfigModelSubscriptionAddStatus
-    implements _ConfigModelSubscriptionAddStatus {
-  const _$_ConfigModelSubscriptionAddStatus(this.source, this.destination,
+class _$_ConfigModelSubscriptionStatus
+    implements _ConfigModelSubscriptionStatus {
+  const _$_ConfigModelSubscriptionStatus(this.source, this.destination,
       this.elementAddress, this.subscriptionAddress, this.modelIdentifier)
       : assert(source != null),
         assert(destination != null),
@@ -151,9 +150,9 @@ class _$_ConfigModelSubscriptionAddStatus
         assert(subscriptionAddress != null),
         assert(modelIdentifier != null);
 
-  factory _$_ConfigModelSubscriptionAddStatus.fromJson(
+  factory _$_ConfigModelSubscriptionStatus.fromJson(
           Map<String, dynamic> json) =>
-      _$_$_ConfigModelSubscriptionAddStatusFromJson(json);
+      _$_$_ConfigModelSubscriptionStatusFromJson(json);
 
   @override
   final int source;
@@ -168,13 +167,13 @@ class _$_ConfigModelSubscriptionAddStatus
 
   @override
   String toString() {
-    return 'ConfigModelSubscriptionAddStatus(source: $source, destination: $destination, elementAddress: $elementAddress, subscriptionAddress: $subscriptionAddress, modelIdentifier: $modelIdentifier)';
+    return 'ConfigModelSubscriptionStatus(source: $source, destination: $destination, elementAddress: $elementAddress, subscriptionAddress: $subscriptionAddress, modelIdentifier: $modelIdentifier)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _ConfigModelSubscriptionAddStatus &&
+        (other is _ConfigModelSubscriptionStatus &&
             (identical(other.source, source) ||
                 const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
@@ -201,27 +200,27 @@ class _$_ConfigModelSubscriptionAddStatus
       const DeepCollectionEquality().hash(modelIdentifier);
 
   @override
-  _$ConfigModelSubscriptionAddStatusCopyWith<_ConfigModelSubscriptionAddStatus>
-      get copyWith => __$ConfigModelSubscriptionAddStatusCopyWithImpl<
-          _ConfigModelSubscriptionAddStatus>(this, _$identity);
+  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus>
+      get copyWith => __$ConfigModelSubscriptionStatusCopyWithImpl<
+          _ConfigModelSubscriptionStatus>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$_$_ConfigModelSubscriptionAddStatusToJson(this);
+    return _$_$_ConfigModelSubscriptionStatusToJson(this);
   }
 }
 
-abstract class _ConfigModelSubscriptionAddStatus
-    implements ConfigModelSubscriptionAddStatus {
-  const factory _ConfigModelSubscriptionAddStatus(
+abstract class _ConfigModelSubscriptionStatus
+    implements ConfigModelSubscriptionStatus {
+  const factory _ConfigModelSubscriptionStatus(
       int source,
       int destination,
       int elementAddress,
       int subscriptionAddress,
-      int modelIdentifier) = _$_ConfigModelSubscriptionAddStatus;
+      int modelIdentifier) = _$_ConfigModelSubscriptionStatus;
 
-  factory _ConfigModelSubscriptionAddStatus.fromJson(
-      Map<String, dynamic> json) = _$_ConfigModelSubscriptionAddStatus.fromJson;
+  factory _ConfigModelSubscriptionStatus.fromJson(Map<String, dynamic> json) =
+      _$_ConfigModelSubscriptionStatus.fromJson;
 
   @override
   int get source;
@@ -234,6 +233,6 @@ abstract class _ConfigModelSubscriptionAddStatus
   @override
   int get modelIdentifier;
   @override
-  _$ConfigModelSubscriptionAddStatusCopyWith<_ConfigModelSubscriptionAddStatus>
+  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus>
       get copyWith;
 }
