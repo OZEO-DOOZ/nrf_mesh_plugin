@@ -40,7 +40,6 @@ class ProvisioningEvent extends _ProvisioningEvent {
 Future<ProvisionedMeshNode> provisioning(
     MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager, BluetoothDevice device, String serviceDataUuid,
     {ProvisioningEvent events}) async {
-  print('serviceDataUuid $serviceDataUuid');
   if (Platform.isIOS) {
     final meshNode = await _provisioningIOS(meshManagerApi, bleMeshManager, device, serviceDataUuid, events);
     return meshNode;
@@ -60,7 +59,6 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
   bleMeshManager.callbacks = provisioningCallbacks;
 
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
-    print('onProvisioningCompleted $event');
     await bleMeshManager.disconnect();
 
     ScanResult scanResult;
@@ -80,8 +78,6 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
   });
 
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
-    print('onProvisioningStateChanged $event');
-
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController?.add(null);
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
@@ -100,33 +96,18 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
     } else if (event.state == 'PROVISIONING') {}
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
-    print('onProvisioningFailed $event');
     await meshManagerApi.cleanProvisioningData();
     completer.completeError(Exception('Failed to provision device ${device.id.id}'));
   });
 
   final sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
-    print('sendProvisioningPdu $event');
     await bleMeshManager.sendPdu(event.pdu);
   });
   final onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
-    print('onMeshPduCreated $event');
     await bleMeshManager.sendPdu(event);
   });
 
-  final onDeviceConnectingSubscription = bleMeshManager.callbacks.onDeviceConnecting.listen((event) {
-    print('onDeviceConnecting $event');
-  });
-  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) async {
-    print('onDeviceConnected $event');
-  });
-
-  final onServicesDiscoveredSubscription = bleMeshManager.callbacks.onServicesDiscovered.listen((event) {
-    print('onServicesDiscovered');
-  });
-
   final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
-    print('onDeviceReady ${event.id.id} ${serviceDataUuid}');
     if (bleMeshManager.isProvisioningCompleted) {
       final unicast = await provisionedMeshNode.unicastAddress;
       await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
@@ -136,27 +117,14 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
   });
 
   final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
-    print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
-  });
-  final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
-    print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
-  });
-
-  final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
-    print('onDeviceDisconnecting $event');
-  });
-  final onDeviceDisconnectedSubscription = bleMeshManager.callbacks.onDeviceDisconnected.listen((event) {
-    print('onDeviceDisconnected $event');
   });
 
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
-    print('onConfigCompositionDataStatus $event');
     events?._onConfigCompositionDataStatusController?.add(null);
     await meshManagerApi.createMeshPduForConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
   final onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
-    print('onConfigAppKeyStatus $event');
     events?._onConfigAppKeyStatusController?.add(null);
     completer.complete(provisionedMeshNode);
   });
@@ -165,34 +133,10 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
     await bleMeshManager.disconnect();
   }
 
-  print('connect');
   await bleMeshManager.connect(device);
 
   try {
     await completer.future;
-
-    //  ------
-    //  All this is here temporary it should not be done here
-    final elements = await provisionedMeshNode.elements;
-    print(elements);
-
-    for (final element in elements) {
-      for (final model in element.models) {
-        final unicast = await provisionedMeshNode.unicastAddress;
-        print('config model app bind for $unicast ${element.address} ${model.modelId}');
-        await meshManagerApi.sendConfigModelAppBind(
-          unicast,
-          element.address,
-          model.modelId,
-        );
-
-        //  instead of this we should listen for an event that tell us when ConfigModelAppBind is done
-        //  ideally this will be done inside the Future of meshManagerApi.sendConfigModelAppBind
-        await Future.delayed(Duration(seconds: 10));
-      }
-    }
-    //  END
-    //  ------
 
     await device.disconnect();
     return provisionedMeshNode;
@@ -206,14 +150,8 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
       onProvisioningFailedSubscription.cancel(),
       sendProvisioningPduSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
-      onDeviceConnectingSubscription.cancel(),
-      onDeviceConnectedSubscription.cancel(),
-      onServicesDiscoveredSubscription.cancel(),
       onDeviceReadySubscription.cancel(),
       onDataReceivedSubscription.cancel(),
-      onDataSentSubscription.cancel(),
-      onDeviceDisconnectingSubscription.cancel(),
-      onDeviceDisconnectedSubscription.cancel(),
       onConfigCompositionDataStatusSubscription.cancel(),
       onConfigAppKeyStatusSubscription.cancel(),
       bleMeshManager?.callbacks?.dispose(),
@@ -229,40 +167,18 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
   bleMeshManager.callbacks = provisioningCallbacks;
 
-  final onDeviceConnectingSubscription = bleMeshManager.callbacks.onDeviceConnecting.listen((event) {
-    print('onDeviceConnecting $event');
-  });
-  final onDeviceConnectedSubscription = bleMeshManager.callbacks.onDeviceConnected.listen((event) {
-    print('onDeviceConnected $event');
-  });
-
-  final onServicesDiscoveredSubscription = bleMeshManager.callbacks.onServicesDiscovered.listen((event) {
-    print('onServicesDiscovered');
-  });
-
   final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
-    print('onDeviceReady ${event.id.id} ${serviceDataUuid}');
     await meshManagerApi.identifyNode(serviceDataUuid);
   });
 
   final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
-    print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
   final onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
-    print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
     await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
   });
 
-  final onDeviceDisconnectingSubscription = bleMeshManager.callbacks.onDeviceDisconnecting.listen((event) {
-    print('onDeviceDisconnecting $event');
-  });
-  final onDeviceDisconnectedSubscription = bleMeshManager.callbacks.onDeviceDisconnected.listen((event) {
-    print('onDeviceDisconnected $event');
-  });
-
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
-    print('onProvisioningCompleted $event');
     await bleMeshManager.disconnect();
 
     ScanResult scanResult;
@@ -284,7 +200,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
-    print('onProvisioningStateChanged $event');
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController?.add(null);
       var assigned = false;
@@ -304,7 +219,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
           await meshManagerApi.meshNetwork.assignUnicastAddress(unicast);
           assigned = true;
         } catch (e) {
-          print('Failed to assign $unicast to meshNetwork retry with ${unicast + 1}');
           unicast += 1;
         }
       }
@@ -322,29 +236,24 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     }
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
-    print('onProvisioningFailed $event');
     await meshManagerApi.cleanProvisioningData();
     completer.completeError(Exception('Failed to provision device ${device.id.id}'));
   });
 
   final sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
-    print('sendProvisioningPdu $event');
     await bleMeshManager.sendPdu(event.pdu);
   });
 
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
-    print('onConfigCompositionDataStatus $event');
     events?._onConfigCompositionDataStatusController?.add(null);
     await meshManagerApi.createMeshPduForConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
   final onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
-    print('onConfigAppKeyStatus $event');
     events?._onConfigAppKeyStatusController?.add(null);
     completer.complete(provisionedMeshNode);
   });
 
   final onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
-    print('onMeshPduCreated $event');
     await bleMeshManager.sendPdu(event);
   });
 
@@ -352,7 +261,6 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     await bleMeshManager.disconnect();
   }
 
-  print('connect');
   await bleMeshManager.connect(device);
 
   try {
@@ -371,14 +279,9 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       sendProvisioningPduSubscription.cancel(),
       onConfigCompositionDataStatusSubscription.cancel(),
       onConfigAppKeyStatusSubscription.cancel(),
-      onDeviceConnectingSubscription.cancel(),
-      onDeviceConnectedSubscription.cancel(),
-      onServicesDiscoveredSubscription.cancel(),
       onDeviceReadySubscription.cancel(),
       onDataReceivedSubscription.cancel(),
       onDataSentSubscription.cancel(),
-      onDeviceDisconnectingSubscription.cancel(),
-      onDeviceDisconnectedSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
       bleMeshManager?.callbacks?.dispose(),
     ]);

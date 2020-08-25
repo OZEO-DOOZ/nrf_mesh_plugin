@@ -92,7 +92,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       if (dataOut.notify) {
         await _meshProxyDataOutSubscription?.cancel();
         _meshProxyDataOutSubscription =
-            _meshProxyDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) async {
+            _meshProxyDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) {
           callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
         await _meshProxyDataOutCharacteristic.setNotifyValue(true);
@@ -117,10 +117,8 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
       if (dataOut.notify) {
         await _meshProvisioningDataOutSubscription?.cancel();
-        _meshProvisioningDataOutSubscription = _meshProvisioningDataOutCharacteristic.value
-            .where((event) => event?.isNotEmpty == true)
-            .listen((event) async {
-          print(event);
+        _meshProvisioningDataOutSubscription =
+            _meshProvisioningDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) {
           callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
         });
 
