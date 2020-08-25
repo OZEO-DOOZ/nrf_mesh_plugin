@@ -157,6 +157,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
                 val meshMessage = ConfigModelSubscriptionAdd(elementAddress, subscriptionAddress, modelIdentifier)
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
             }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!;
