@@ -131,7 +131,7 @@ class MeshManagerApi {
         .map((event) => ConfigModelAppStatusData.fromJson(event))
         .listen(_onConfigModelAppStatusController.add);
     _onConfigModelSubscriptionStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelSubscriptionStatus.value)
         .map((event) => ConfigModelSubscriptionStatus.fromJson(event))
         .listen(_onConfigModelSubscriptionStatusController.add);
   }
