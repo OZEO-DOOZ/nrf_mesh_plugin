@@ -75,7 +75,8 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                         "publicationResolution" to meshMessage.publicationResolution,
                         "retransmitCount" to meshMessage.publishRetransmitCount,
                         "retransmitIntervalSteps" to meshMessage.publishRetransmitIntervalSteps,
-                        "modelIdentifier" to meshMessage.modelIdentifier
+                        "modelIdentifier" to meshMessage.modelIdentifier,
+                        "isSuccessful" to meshMessage.isSuccessful
                 ))
             }
             else -> {

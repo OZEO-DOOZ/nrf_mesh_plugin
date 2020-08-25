@@ -16,6 +16,7 @@ abstract class ConfigModelPublicationStatus with _$ConfigModelPublicationStatus 
     int publishRetransmitCount,
     int publishRetransmitIntervalSteps,
     int modelIdentifier,
+    bool isSuccessful,
   ) = _ConfigModelPublicationStatus;
 
   factory ConfigModelPublicationStatus.fromJson(Map<String, dynamic> json) =>

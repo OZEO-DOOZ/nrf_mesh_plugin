@@ -19,6 +19,7 @@ _$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(
     json['publishRetransmitCount'] as int,
     json['publishRetransmitIntervalSteps'] as int,
     json['modelIdentifier'] as int,
+    json['isSuccessful'] as bool,
   );
 }
 
@@ -35,4 +36,5 @@ Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(
       'publishRetransmitCount': instance.publishRetransmitCount,
       'publishRetransmitIntervalSteps': instance.publishRetransmitIntervalSteps,
       'modelIdentifier': instance.modelIdentifier,
+      'isSuccessful': instance.isSuccessful,
     };

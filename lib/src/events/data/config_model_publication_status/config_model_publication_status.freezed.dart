@@ -27,7 +27,8 @@ class _$ConfigModelPublicationStatusTearOff {
       int publicationResolution,
       int publishRetransmitCount,
       int publishRetransmitIntervalSteps,
-      int modelIdentifier) {
+      int modelIdentifier,
+      bool isSuccessful) {
     return _ConfigModelPublicationStatus(
       elementAddress,
       publishAddress,
@@ -39,6 +40,7 @@ class _$ConfigModelPublicationStatusTearOff {
       publishRetransmitCount,
       publishRetransmitIntervalSteps,
       modelIdentifier,
+      isSuccessful,
     );
   }
 }
@@ -57,6 +59,7 @@ mixin _$ConfigModelPublicationStatus {
   int get publishRetransmitCount;
   int get publishRetransmitIntervalSteps;
   int get modelIdentifier;
+  bool get isSuccessful;
 
   Map<String, dynamic> toJson();
   $ConfigModelPublicationStatusCopyWith<ConfigModelPublicationStatus>
@@ -78,7 +81,8 @@ abstract class $ConfigModelPublicationStatusCopyWith<$Res> {
       int publicationResolution,
       int publishRetransmitCount,
       int publishRetransmitIntervalSteps,
-      int modelIdentifier});
+      int modelIdentifier,
+      bool isSuccessful});
 }
 
 class _$ConfigModelPublicationStatusCopyWithImpl<$Res>
@@ -101,6 +105,7 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res>
     Object publishRetransmitCount = freezed,
     Object publishRetransmitIntervalSteps = freezed,
     Object modelIdentifier = freezed,
+    Object isSuccessful = freezed,
   }) {
     return _then(_value.copyWith(
       elementAddress: elementAddress == freezed
@@ -130,6 +135,8 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res>
       modelIdentifier: modelIdentifier == freezed
           ? _value.modelIdentifier
           : modelIdentifier as int,
+      isSuccessful:
+          isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
 }
@@ -151,7 +158,8 @@ abstract class _$ConfigModelPublicationStatusCopyWith<$Res>
       int publicationResolution,
       int publishRetransmitCount,
       int publishRetransmitIntervalSteps,
-      int modelIdentifier});
+      int modelIdentifier,
+      bool isSuccessful});
 }
 
 class __$ConfigModelPublicationStatusCopyWithImpl<$Res>
@@ -178,6 +186,7 @@ class __$ConfigModelPublicationStatusCopyWithImpl<$Res>
     Object publishRetransmitCount = freezed,
     Object publishRetransmitIntervalSteps = freezed,
     Object modelIdentifier = freezed,
+    Object isSuccessful = freezed,
   }) {
     return _then(_ConfigModelPublicationStatus(
       elementAddress == freezed ? _value.elementAddress : elementAddress as int,
@@ -202,6 +211,7 @@ class __$ConfigModelPublicationStatusCopyWithImpl<$Res>
       modelIdentifier == freezed
           ? _value.modelIdentifier
           : modelIdentifier as int,
+      isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
 }
@@ -218,7 +228,8 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
       this.publicationResolution,
       this.publishRetransmitCount,
       this.publishRetransmitIntervalSteps,
-      this.modelIdentifier)
+      this.modelIdentifier,
+      this.isSuccessful)
       : assert(elementAddress != null),
         assert(publishAddress != null),
         assert(appKeyIndex != null),
@@ -228,7 +239,8 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
         assert(publicationResolution != null),
         assert(publishRetransmitCount != null),
         assert(publishRetransmitIntervalSteps != null),
-        assert(modelIdentifier != null);
+        assert(modelIdentifier != null),
+        assert(isSuccessful != null);
 
   factory _$_ConfigModelPublicationStatus.fromJson(Map<String, dynamic> json) =>
       _$_$_ConfigModelPublicationStatusFromJson(json);
@@ -253,10 +265,12 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
   final int publishRetransmitIntervalSteps;
   @override
   final int modelIdentifier;
+  @override
+  final bool isSuccessful;
 
   @override
   String toString() {
-    return 'ConfigModelPublicationStatus(elementAddress: $elementAddress, publishAddress: $publishAddress, appKeyIndex: $appKeyIndex, credentialFlag: $credentialFlag, publishTtl: $publishTtl, publicationSteps: $publicationSteps, publicationResolution: $publicationResolution, publishRetransmitCount: $publishRetransmitCount, publishRetransmitIntervalSteps: $publishRetransmitIntervalSteps, modelIdentifier: $modelIdentifier)';
+    return 'ConfigModelPublicationStatus(elementAddress: $elementAddress, publishAddress: $publishAddress, appKeyIndex: $appKeyIndex, credentialFlag: $credentialFlag, publishTtl: $publishTtl, publicationSteps: $publicationSteps, publicationResolution: $publicationResolution, publishRetransmitCount: $publishRetransmitCount, publishRetransmitIntervalSteps: $publishRetransmitIntervalSteps, modelIdentifier: $modelIdentifier, isSuccessful: $isSuccessful)';
   }
 
   @override
@@ -294,7 +308,10 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
                     publishRetransmitIntervalSteps)) &&
             (identical(other.modelIdentifier, modelIdentifier) ||
                 const DeepCollectionEquality()
-                    .equals(other.modelIdentifier, modelIdentifier)));
+                    .equals(other.modelIdentifier, modelIdentifier)) &&
+            (identical(other.isSuccessful, isSuccessful) ||
+                const DeepCollectionEquality()
+                    .equals(other.isSuccessful, isSuccessful)));
   }
 
   @override
@@ -309,7 +326,8 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
       const DeepCollectionEquality().hash(publicationResolution) ^
       const DeepCollectionEquality().hash(publishRetransmitCount) ^
       const DeepCollectionEquality().hash(publishRetransmitIntervalSteps) ^
-      const DeepCollectionEquality().hash(modelIdentifier);
+      const DeepCollectionEquality().hash(modelIdentifier) ^
+      const DeepCollectionEquality().hash(isSuccessful);
 
   @override
   _$ConfigModelPublicationStatusCopyWith<_ConfigModelPublicationStatus>
@@ -334,7 +352,8 @@ abstract class _ConfigModelPublicationStatus
       int publicationResolution,
       int publishRetransmitCount,
       int publishRetransmitIntervalSteps,
-      int modelIdentifier) = _$_ConfigModelPublicationStatus;
+      int modelIdentifier,
+      bool isSuccessful) = _$_ConfigModelPublicationStatus;
 
   factory _ConfigModelPublicationStatus.fromJson(Map<String, dynamic> json) =
       _$_ConfigModelPublicationStatus.fromJson;
@@ -359,6 +378,8 @@ abstract class _ConfigModelPublicationStatus
   int get publishRetransmitIntervalSteps;
   @override
   int get modelIdentifier;
+  @override
+  bool get isSuccessful;
   @override
   _$ConfigModelPublicationStatusCopyWith<_ConfigModelPublicationStatus>
       get copyWith;
