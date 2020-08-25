@@ -17,14 +17,20 @@ class _$ConfigModelSubscriptionStatusTearOff {
   const _$ConfigModelSubscriptionStatusTearOff();
 
 // ignore: unused_element
-  _ConfigModelSubscriptionStatus call(int source, int destination,
-      int elementAddress, int subscriptionAddress, int modelIdentifier) {
+  _ConfigModelSubscriptionStatus call(
+      int source,
+      int destination,
+      int elementAddress,
+      int subscriptionAddress,
+      int modelIdentifier,
+      bool isSuccessful) {
     return _ConfigModelSubscriptionStatus(
       source,
       destination,
       elementAddress,
       subscriptionAddress,
       modelIdentifier,
+      isSuccessful,
     );
   }
 }
@@ -38,6 +44,7 @@ mixin _$ConfigModelSubscriptionStatus {
   int get elementAddress;
   int get subscriptionAddress;
   int get modelIdentifier;
+  bool get isSuccessful;
 
   Map<String, dynamic> toJson();
   $ConfigModelSubscriptionStatusCopyWith<ConfigModelSubscriptionStatus>
@@ -54,7 +61,8 @@ abstract class $ConfigModelSubscriptionStatusCopyWith<$Res> {
       int destination,
       int elementAddress,
       int subscriptionAddress,
-      int modelIdentifier});
+      int modelIdentifier,
+      bool isSuccessful});
 }
 
 class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
@@ -72,6 +80,7 @@ class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
     Object elementAddress = freezed,
     Object subscriptionAddress = freezed,
     Object modelIdentifier = freezed,
+    Object isSuccessful = freezed,
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
@@ -86,6 +95,8 @@ class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
       modelIdentifier: modelIdentifier == freezed
           ? _value.modelIdentifier
           : modelIdentifier as int,
+      isSuccessful:
+          isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
 }
@@ -102,7 +113,8 @@ abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res>
       int destination,
       int elementAddress,
       int subscriptionAddress,
-      int modelIdentifier});
+      int modelIdentifier,
+      bool isSuccessful});
 }
 
 class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
@@ -124,6 +136,7 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
     Object elementAddress = freezed,
     Object subscriptionAddress = freezed,
     Object modelIdentifier = freezed,
+    Object isSuccessful = freezed,
   }) {
     return _then(_ConfigModelSubscriptionStatus(
       source == freezed ? _value.source : source as int,
@@ -135,6 +148,7 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
       modelIdentifier == freezed
           ? _value.modelIdentifier
           : modelIdentifier as int,
+      isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
 }
@@ -142,13 +156,19 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
 @JsonSerializable()
 class _$_ConfigModelSubscriptionStatus
     implements _ConfigModelSubscriptionStatus {
-  const _$_ConfigModelSubscriptionStatus(this.source, this.destination,
-      this.elementAddress, this.subscriptionAddress, this.modelIdentifier)
+  const _$_ConfigModelSubscriptionStatus(
+      this.source,
+      this.destination,
+      this.elementAddress,
+      this.subscriptionAddress,
+      this.modelIdentifier,
+      this.isSuccessful)
       : assert(source != null),
         assert(destination != null),
         assert(elementAddress != null),
         assert(subscriptionAddress != null),
-        assert(modelIdentifier != null);
+        assert(modelIdentifier != null),
+        assert(isSuccessful != null);
 
   factory _$_ConfigModelSubscriptionStatus.fromJson(
           Map<String, dynamic> json) =>
@@ -164,10 +184,12 @@ class _$_ConfigModelSubscriptionStatus
   final int subscriptionAddress;
   @override
   final int modelIdentifier;
+  @override
+  final bool isSuccessful;
 
   @override
   String toString() {
-    return 'ConfigModelSubscriptionStatus(source: $source, destination: $destination, elementAddress: $elementAddress, subscriptionAddress: $subscriptionAddress, modelIdentifier: $modelIdentifier)';
+    return 'ConfigModelSubscriptionStatus(source: $source, destination: $destination, elementAddress: $elementAddress, subscriptionAddress: $subscriptionAddress, modelIdentifier: $modelIdentifier, isSuccessful: $isSuccessful)';
   }
 
   @override
@@ -187,7 +209,10 @@ class _$_ConfigModelSubscriptionStatus
                     .equals(other.subscriptionAddress, subscriptionAddress)) &&
             (identical(other.modelIdentifier, modelIdentifier) ||
                 const DeepCollectionEquality()
-                    .equals(other.modelIdentifier, modelIdentifier)));
+                    .equals(other.modelIdentifier, modelIdentifier)) &&
+            (identical(other.isSuccessful, isSuccessful) ||
+                const DeepCollectionEquality()
+                    .equals(other.isSuccessful, isSuccessful)));
   }
 
   @override
@@ -197,7 +222,8 @@ class _$_ConfigModelSubscriptionStatus
       const DeepCollectionEquality().hash(destination) ^
       const DeepCollectionEquality().hash(elementAddress) ^
       const DeepCollectionEquality().hash(subscriptionAddress) ^
-      const DeepCollectionEquality().hash(modelIdentifier);
+      const DeepCollectionEquality().hash(modelIdentifier) ^
+      const DeepCollectionEquality().hash(isSuccessful);
 
   @override
   _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus>
@@ -217,7 +243,8 @@ abstract class _ConfigModelSubscriptionStatus
       int destination,
       int elementAddress,
       int subscriptionAddress,
-      int modelIdentifier) = _$_ConfigModelSubscriptionStatus;
+      int modelIdentifier,
+      bool isSuccessful) = _$_ConfigModelSubscriptionStatus;
 
   factory _ConfigModelSubscriptionStatus.fromJson(Map<String, dynamic> json) =
       _$_ConfigModelSubscriptionStatus.fromJson;
@@ -232,6 +259,8 @@ abstract class _ConfigModelSubscriptionStatus
   int get subscriptionAddress;
   @override
   int get modelIdentifier;
+  @override
+  bool get isSuccessful;
   @override
   _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus>
       get copyWith;

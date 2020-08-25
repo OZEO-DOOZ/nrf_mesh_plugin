@@ -14,6 +14,7 @@ _$_ConfigModelSubscriptionStatus _$_$_ConfigModelSubscriptionStatusFromJson(
     json['elementAddress'] as int,
     json['subscriptionAddress'] as int,
     json['modelIdentifier'] as int,
+    json['isSuccessful'] as bool,
   );
 }
 
@@ -25,4 +26,5 @@ Map<String, dynamic> _$_$_ConfigModelSubscriptionStatusToJson(
       'elementAddress': instance.elementAddress,
       'subscriptionAddress': instance.subscriptionAddress,
       'modelIdentifier': instance.modelIdentifier,
+      'isSuccessful': instance.isSuccessful,
     };
