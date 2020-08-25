@@ -1,14 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'config_model_subscription_status.dart';
+part of 'config_model_subscription_add_status.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigModelSubscriptionStatus _$_$_ConfigModelSubscriptionStatusFromJson(
-    Map<String, dynamic> json) {
-  return _$_ConfigModelSubscriptionStatus(
+_$_ConfigModelSubscriptionAddStatus
+    _$_$_ConfigModelSubscriptionAddStatusFromJson(Map<String, dynamic> json) {
+  return _$_ConfigModelSubscriptionAddStatus(
     json['source'] as int,
     json['destination'] as int,
     json['elementAddress'] as int,
@@ -17,8 +17,8 @@ _$_ConfigModelSubscriptionStatus _$_$_ConfigModelSubscriptionStatusFromJson(
   );
 }
 
-Map<String, dynamic> _$_$_ConfigModelSubscriptionStatusToJson(
-        _$_ConfigModelSubscriptionStatus instance) =>
+Map<String, dynamic> _$_$_ConfigModelSubscriptionAddStatusToJson(
+        _$_ConfigModelSubscriptionAddStatus instance) =>
     <String, dynamic>{
       'source': instance.source,
       'destination': instance.destination,
