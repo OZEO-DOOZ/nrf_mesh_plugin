@@ -75,6 +75,7 @@ class _ModuleState extends State<Module> {
               final provisionedNode =
                   nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
               final provisionerAddress = await provisionedNode.unicastAddress;
+              // final sequenceNumber = await provisionedNode.sequenceNumber;
               final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
               final status = await widget.meshManagerApi
                   .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
@@ -102,13 +103,16 @@ class _ModuleState extends State<Module> {
 
     currentNode = provisionedNode;
     if (currentNode == null) {
-      print('node mesh node connected');
+      print('node mesh not connected');
       return;
     }
     final elements = await currentNode.elements;
     for (final element in elements) {
       for (final model in element.models) {
-        if (model.boundAppKey.isEmpty && element != elements.first && element.models.first != model) {
+        if (model.boundAppKey.isEmpty) {
+          if (element == elements.first && model == element.models.first) {
+            continue;
+          }
           final unicast = await currentNode.unicastAddress;
           print('need to bind app key');
           await widget.meshManagerApi.sendConfigModelAppBind(

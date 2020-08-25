@@ -15,7 +15,7 @@ abstract class ConfigCompositionDataStatusData with _$ConfigCompositionDataStatu
 
 @freezed
 abstract class ConfigCompositionDataStatusMeshMessage with _$ConfigCompositionDataStatusMeshMessage {
-  const factory ConfigCompositionDataStatusMeshMessage(int source, int aszmic, int destination) =
+  const factory ConfigCompositionDataStatusMeshMessage(int source, @nullable int aszmic, int destination) =
       _ConfigCompositionDataStatusMeshMessage;
 
   factory ConfigCompositionDataStatusMeshMessage.fromJson(Map<String, dynamic> json) =>

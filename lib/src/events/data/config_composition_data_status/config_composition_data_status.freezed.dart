@@ -199,7 +199,7 @@ class _$ConfigCompositionDataStatusMeshMessageTearOff {
 
 // ignore: unused_element
   _ConfigCompositionDataStatusMeshMessage call(
-      int source, int aszmic, int destination) {
+      int source, @nullable int aszmic, int destination) {
     return _ConfigCompositionDataStatusMeshMessage(
       source,
       aszmic,
@@ -214,6 +214,7 @@ const $ConfigCompositionDataStatusMeshMessage =
 
 mixin _$ConfigCompositionDataStatusMeshMessage {
   int get source;
+  @nullable
   int get aszmic;
   int get destination;
 
@@ -227,7 +228,7 @@ abstract class $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> {
           ConfigCompositionDataStatusMeshMessage value,
           $Res Function(ConfigCompositionDataStatusMeshMessage) then) =
       _$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>;
-  $Res call({int source, int aszmic, int destination});
+  $Res call({int source, @nullable int aszmic, int destination});
 }
 
 class _$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
@@ -260,7 +261,7 @@ abstract class _$ConfigCompositionDataStatusMeshMessageCopyWith<$Res>
           $Res Function(_ConfigCompositionDataStatusMeshMessage) then) =
       __$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>;
   @override
-  $Res call({int source, int aszmic, int destination});
+  $Res call({int source, @nullable int aszmic, int destination});
 }
 
 class __$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
@@ -294,9 +295,8 @@ class __$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
 class _$_ConfigCompositionDataStatusMeshMessage
     implements _ConfigCompositionDataStatusMeshMessage {
   const _$_ConfigCompositionDataStatusMeshMessage(
-      this.source, this.aszmic, this.destination)
+      this.source, @nullable this.aszmic, this.destination)
       : assert(source != null),
-        assert(aszmic != null),
         assert(destination != null);
 
   factory _$_ConfigCompositionDataStatusMeshMessage.fromJson(
@@ -306,6 +306,7 @@ class _$_ConfigCompositionDataStatusMeshMessage
   @override
   final int source;
   @override
+  @nullable
   final int aszmic;
   @override
   final int destination;
@@ -350,7 +351,7 @@ class _$_ConfigCompositionDataStatusMeshMessage
 abstract class _ConfigCompositionDataStatusMeshMessage
     implements ConfigCompositionDataStatusMeshMessage {
   const factory _ConfigCompositionDataStatusMeshMessage(
-          int source, int aszmic, int destination) =
+          int source, @nullable int aszmic, int destination) =
       _$_ConfigCompositionDataStatusMeshMessage;
 
   factory _ConfigCompositionDataStatusMeshMessage.fromJson(
@@ -360,6 +361,7 @@ abstract class _ConfigCompositionDataStatusMeshMessage
   @override
   int get source;
   @override
+  @nullable
   int get aszmic;
   @override
   int get destination;
