@@ -3,6 +3,8 @@ export 'src/mesh_network.dart';
 export 'src/mesh_manager_api.dart';
 export 'src/provisioned_mesh_node.dart';
 export 'src/unprovisioned_mesh_node.dart';
+export 'src/events/data/generic_level_status/generic_level_status.dart';
+export 'src/events/data/generic_on_off_status/generic_on_off_status.dart';
 export 'src/ble/ble_manager.dart';
 export 'src/ble/ble_manager_callbacks.dart';
 export 'src/ble/ble_mesh_manager.dart';

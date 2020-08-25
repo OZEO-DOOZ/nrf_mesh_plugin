@@ -45,26 +45,22 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       throw Exception('You have to set callbacks using callbacks(E callbacks) before connecting');
     }
     _callbacks.onDeviceConnectingController.add(device);
-    await device.connect(autoConnect: false);
+    await device.connect(autoConnect: false, timeout: Duration(seconds: 30));
     _connected = true;
     _callbacks.onDeviceConnectedController.add(device);
     _device = device;
     _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
-      print('mtu changed $event');
-
       if (Platform.isAndroid) {
         mtuSize = event - 3;
       } else if (Platform.isIOS) {
         mtuSize = event;
       }
-
       await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     });
     await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     final service = await isRequiredServiceSupported(device);
     if (service == null) {
-      print('required service not found');
-      return;
+      throw Exception('Required service not found');
     }
     _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     await initGatt(device);
@@ -73,7 +69,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       await device.requestMtu(517);
       await fMtuChanged;
     }
-
     _callbacks.onDeviceReadyController.add(device);
   }
 

@@ -23,10 +23,15 @@ class MeshNetwork {
   Future<void> assignUnicastAddress(int unicastAddress) =>
       _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
 
+  Future<String> selectedProvisionerUuid() => _methodChannel.invokeMethod('selectedProvisionerUuid');
+
+  Future<int> getSequenceNumber(int address) =>
+      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
     //  skip 1 is to skip the provisionner since it's not a provisioned mesh node
-    return _nodes.skip(1).map((e) => ProvisionedMeshNode(e['uuid'])).toList();
+    return _nodes.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
   }
 
   @override

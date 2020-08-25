@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
+import 'package:nordic_nrf_mesh_example/src/global.dart';
 
 import 'node.dart';
 
@@ -20,7 +22,7 @@ class _ModuleState extends State<Module> {
   bool isLoading = true;
   int selectedElementAddress;
   int selectedLevel;
-  List<ProvisionedMeshNode> nodes = [];
+  ProvisionedMeshNode currentNode;
   final bleMeshManager = BleMeshManager();
 
   @override
@@ -28,7 +30,6 @@ class _ModuleState extends State<Module> {
     super.initState();
 
     bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
-    widget.meshManagerApi.meshNetwork.nodes.then((value) => setState(() => nodes = value));
 
     _init();
   }
@@ -49,7 +50,7 @@ class _ModuleState extends State<Module> {
       body = Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          ...nodes.map((node) => Node(node)).toList(),
+          Node(currentNode),
           Divider(),
           Text('Send a generic level set'),
           TextField(
@@ -66,9 +67,19 @@ class _ModuleState extends State<Module> {
           ),
           RaisedButton(
             child: Text('Send level'),
-            onPressed: () {
+            onPressed: () async {
               print('send level $selectedLevel to $selectedElementAddress');
-              widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel);
+              final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+              final nodes = await widget.meshManagerApi.meshNetwork.nodes;
+
+              final provisionedNode =
+                  nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+              final provisionerAddress = await provisionedNode.unicastAddress;
+              // final sequenceNumber = await provisionedNode.sequenceNumber;
+              final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
+              final status = await widget.meshManagerApi
+                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
+              print(status);
             },
           )
         ],
@@ -81,13 +92,56 @@ class _ModuleState extends State<Module> {
 
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
+    final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
+
+    final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+    final provisioner = _nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+    if (provisioner == null) {
+      print('provisioner is null');
+      return;
+    }
+
+    currentNode = provisionedNode;
+    if (currentNode == null) {
+      print('node mesh not connected');
+      return;
+    }
+    final elements = await currentNode.elements;
+    for (final element in elements) {
+      for (final model in element.models) {
+        if (model.boundAppKey.isEmpty) {
+          if (element == elements.first && model == element.models.first) {
+            continue;
+          }
+          final unicast = await currentNode.unicastAddress;
+          print('need to bind app key');
+          await widget.meshManagerApi.sendConfigModelAppBind(
+            unicast,
+            element.address,
+            model.modelId,
+          );
+        }
+      }
+    }
+
+    final target = 0;
+    //  check if the board need to be configured
+    final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
+        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), await provisioner.sequenceNumber);
+    print(getBoardTypeStatus);
+    final boardType = BoardData.decode(getBoardTypeStatus.level);
+    if (boardType.payload == 0xA) {
+      print('it\'s a Doobl V board');
+      print('setup sortie ${target + 1} to be a dimmer');
+      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(await currentNode.unicastAddress,
+          BoardData.lightDimmerOutput(target).toByte(), await provisioner.sequenceNumber);
+      final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
+      print(dimmerBoardData);
+    }
 
     setState(() {
       isLoading = false;
     });
-//    final provisionedMeshNode = ProvisionedMeshNode(node['uuid']);
-
-    //  TODO: get mesh network data to know if we should setup the board
   }
 }
 
@@ -141,29 +195,21 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });
-
-    meshManagerApi.onGenericLevelStatus.listen((event) {
-      print(event);
-    });
-
-    meshManagerApi.onGenericOnOffStatus.listen((event) {
-      print(event);
-    });
   }
 
   @override
-  Future<void> dispose() {
-    onDeviceConnectingSubscription.cancel();
-    onDeviceConnectedSubscription.cancel();
-    onServicesDiscoveredSubscription.cancel();
-    onDeviceReadySubscription.cancel();
-    onDataReceivedSubscription.cancel();
-    onDataSentSubscription.cancel();
-    onDeviceDisconnectingSubscription.cancel();
-    onDeviceDisconnectedSubscription.cancel();
-    onMeshPduCreatedSubscription.cancel();
-    return super.dispose();
-  }
+  Future<void> dispose() => Future.wait([
+        onDeviceConnectingSubscription.cancel(),
+        onDeviceConnectedSubscription.cancel(),
+        onServicesDiscoveredSubscription.cancel(),
+        onDeviceReadySubscription.cancel(),
+        onDataReceivedSubscription.cancel(),
+        onDataSentSubscription.cancel(),
+        onDeviceDisconnectingSubscription.cancel(),
+        onDeviceDisconnectedSubscription.cancel(),
+        onMeshPduCreatedSubscription.cancel(),
+        super.dispose(),
+      ]);
 
   @override
   Future<void> sendMtuToMeshManagerApi(int mtu) => meshManagerApi.setMtu(mtu);

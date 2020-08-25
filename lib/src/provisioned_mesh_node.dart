@@ -9,10 +9,16 @@ class ModelData {
   final int key;
   final int modelId;
   final List<int> subscribedAddresses;
+  final List<int> boundAppKey;
 
-  ModelData(this.key, this.modelId, this.subscribedAddresses);
+  ModelData(this.key, this.modelId, this.subscribedAddresses, this.boundAppKey);
 
   factory ModelData.fromJson(Map json) => _$ModelDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ModelDataToJson(this);
+
+  @override
+  String toString() => 'ModelData ${toJson()}';
 }
 
 @JsonSerializable(anyMap: true)
@@ -25,6 +31,11 @@ class ElementData {
   ElementData(this.key, this.address, this.locationDescriptor, this.models);
 
   factory ElementData.fromJson(Map json) => _$ElementDataFromJson(json.cast<String, dynamic>());
+
+  Map<String, dynamic> toJson() => _$ElementDataToJson(this);
+
+  @override
+  String toString() => 'ElementData ${toJson()}';
 }
 
 class ProvisionedMeshNode {
@@ -35,9 +46,13 @@ class ProvisionedMeshNode {
 
   Future<int> get unicastAddress => _methodChannel.invokeMethod('unicastAddress');
 
+  Future<int> get sequenceNumber => _methodChannel.invokeMethod('getSequenceNumber');
+
   Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
 
-  Future<List> get elements async {
+  Future<String> get name => _methodChannel.invokeMethod('name');
+
+  Future<List<ElementData>> get elements async {
     final _elements = await _methodChannel.invokeMethod<List>('elements');
     return _elements.map((e) => ElementData.fromJson(e)).toList();
   }

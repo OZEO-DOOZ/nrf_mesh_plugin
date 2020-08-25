@@ -23,6 +23,7 @@ class DoozMeshManagerApi: NSObject{
     private var doozStorage: LocalStorage?
     
     private var doozProvisioningManager: DoozProvisioningManager?
+    private var doozTransmitter: DoozTransmitter?
     
     init(messenger: FlutterBinaryMessenger) {
         super.init()
@@ -192,8 +193,11 @@ private extension DoozMeshManagerApi {
                 let _level = _args["level"] as? Int16,
                 let _meshNetworkManager = self.meshNetworkManager,
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-                    
+                
                 let message = GenericLevelSet(level: _level)
+                
+                self.doozTransmitter = DoozTransmitter()
+                _meshNetworkManager.transmitter = doozTransmitter
                 
                 do{
                     _ = try _meshNetworkManager.send(
@@ -216,8 +220,11 @@ private extension DoozMeshManagerApi {
                 let _isOn = _args["value"] as? Bool,
                 let _meshNetworkManager = self.meshNetworkManager,
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-                    
+                
                 let message = GenericOnOffSet(_isOn)
+                
+                self.doozTransmitter = DoozTransmitter()
+                _meshNetworkManager.transmitter = doozTransmitter
                 
                 do{
                     _ = try _meshNetworkManager.send(
@@ -234,6 +241,73 @@ private extension DoozMeshManagerApi {
             
             result(nil)
             break
+            
+//            func bindAppKey(to model: Model){
+//                  if let _meshNetworkManager = self.meshNetworkManager{
+//                      do{
+//                          print("📩 Sending message : ConfigModelAppBind")
+//
+//                          if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+//
+//                              guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
+//                                  return
+//                              }
+//
+//
+//                              _ = try _meshNetworkManager.send(message, to: model)
+//
+//                              print("💪 BIND APP KEY TO MODEL \(model)")
+//                          }
+//                      }catch{
+//                          print(error)
+//                      }
+//
+//                  }
+//              }
+            
+        case .sendConfigModelAppBind:
+            if
+                let _args = call.arguments as? [String:Any],
+                let nodeId = _args["nodeId"] as? UInt16,
+                let elementId = _args["elementId"] as? Int16,
+                let modelId = _args["modelId"] as? UInt16,
+                let appKeyIndex = _args["appKeyIndex"] as? Int16,
+                let _meshNetworkManager = self.meshNetworkManager{
+                
+                var _modelId = modelId
+                var _elementAddress = Address(bitPattern: elementId)
+                var _appKeyIndex = KeyIndex(bitPattern: appKeyIndex)
+                
+                let data =
+                    Data()
+                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt16>.size)
+                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt16>.size)
+                    + Data(bytes: &_modelId, count: MemoryLayout<UInt16>.size)
+                
+                self.doozTransmitter = DoozTransmitter()
+                _meshNetworkManager.transmitter = doozTransmitter
+                
+                _meshNetworkManager.delegate = self
+                do{
+                    if let configModelAppBind = ConfigModelAppBind(parameters: data){
+                        try _ = _meshNetworkManager.send(configModelAppBind, to: _elementAddress)
+                    }
+                }
+                catch{
+                    print(error)
+                }
+                
+                
+            }
+            
+            result(nil)
+            //            val nodeId = call.argument<Int>("nodeId")!!
+            //                           val elementId = call.argument<Int>("elementId")!!
+            //                           val modelId = call.argument<Int>("modelId")!!
+            //                           val appKeyIndex = call.argument<Int>("appKeyIndex")!!
+            //                           val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
+            //                           mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
+            //                           result.success(null)
         }
         
     }
@@ -555,6 +629,37 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
                     EventSinkKeys.eventName.rawValue : ProvisioningEvent.onConfigAppKeyStatus.rawValue
             ])
         }
+    }
+    
+}
+
+
+extension DoozMeshManagerApi: MeshNetworkDelegate{
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
+        print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
+        
+        switch message {
+            
+        case is ConfigCompositionDataStatus:
+            break
+            
+        case is ConfigDefaultTtlStatus:
+            break
+        case is ConfigAppKeyStatus:
+            break
+        default:
+            break
+        }
+        
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
+        print("📣 didSendMessage : \(message) from \(localElement) to \(destination)")
+    }
+    
+    func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage, from localElement: Element, to destination: Address, error: Error) {
+        print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
     }
     
 }

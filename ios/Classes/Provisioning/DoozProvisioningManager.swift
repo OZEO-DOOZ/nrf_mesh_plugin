@@ -162,11 +162,35 @@ private extension DoozProvisioningManager{
         }
         
     }
+
 }
 
 
 extension DoozProvisioningManager: MeshNetworkDelegate{
     
+//    func bindAppKey(to model: Model){
+//                      if let _meshNetworkManager = self.meshNetworkManager{
+//                          do{
+//                              print("📩 Sending message : ConfigModelAppBind")
+//
+//                              if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+//
+//                                  guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
+//                                      return
+//                                  }
+//
+//
+//                                  _ = try _meshNetworkManager.send(message, to: model)
+//
+//                                  print("💪 BIND APP KEY TO MODEL \(model)")
+//                              }
+//                          }catch{
+//                              print(error)
+//                          }
+//
+//                      }
+//                  }
+        
     func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
         print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
         
@@ -178,6 +202,11 @@ extension DoozProvisioningManager: MeshNetworkDelegate{
         case is ConfigDefaultTtlStatus:
             self.sendAppKey()
         case is ConfigAppKeyStatus:
+//            for element in self.node!.elements{
+//                           for model in element.models{
+//                               self.bindAppKey(to: model)
+//                           }
+//                       }
             delegate?.didFinishProvisioning()
         default:
             break

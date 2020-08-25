@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/global.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 import 'package:pedantic/pedantic.dart';
 
@@ -31,8 +32,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   @override
   void initState() {
     super.initState();
-
-    flutterBlue.state.listen((event) => print('bluetooth state changed to $event'));
 
     _scanUnprovisionned();
     _init();
@@ -63,6 +62,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         completer.complete(null);
       }
     });
+
+    flutterBlue.stopScan();
 
     return completer.future;
   }
@@ -125,8 +126,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       }
       final provisionedMeshNodeF = provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID);
 
-      unawaited(provisionedMeshNodeF.then((_) async {
+      unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
+        provisionedNode = node;
       }));
       await showDialog(
         context: context,
@@ -150,8 +152,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
           ),
         ),
       );
-      final provisionedMeshNode = await provisionedMeshNodeF;
-      await provisionedMeshNode.nodeName(device.id.id);
       unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);
