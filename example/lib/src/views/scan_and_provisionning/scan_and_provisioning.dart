@@ -128,6 +128,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
+
         provisionedNode = node;
       }));
       await showDialog(
