@@ -33,6 +33,7 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
                     mapOf(
                             "key" to element.key,
                             "address" to element.value.elementAddress,
+                            "name" to element.value.name,
                             "locationDescriptor" to element.value.locationDescriptor,
                             "models" to element.value.meshModels.map {
                                 mapOf(

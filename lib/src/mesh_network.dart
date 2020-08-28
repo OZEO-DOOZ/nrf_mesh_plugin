@@ -23,6 +23,11 @@ class MeshNetwork {
     return _groups.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
+  Future<List<ElementData>> elementsForGroup(int id) async {
+    final result = await _methodChannel.invokeMethod('getElementsForGroup') as List;
+    return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
+  }
+
   Future<int> nextAvailableUnicastAddress(int elementSize) =>
       _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
 

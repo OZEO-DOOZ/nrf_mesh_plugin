@@ -80,8 +80,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 result.success(meshNetwork.addGroup(group))
             }
             "groups" -> {
-                result.success(listOf(
-                        meshNetwork.groups.map {
+                result.success(meshNetwork.groups.map {
                             mapOf(
                                     "id" to it.id,
                                     "name" to it.name,
@@ -93,7 +92,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
 
                             )
                         }
-                ))
+                )
             }
             "deleteGroup" -> {
                 val id = call.argument<Int>("id")!!
@@ -101,6 +100,27 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                     it.id == id
                 }!!
                 result.success(meshNetwork.removeGroup(group))
+            }
+            "getElementsForGroup" -> {
+                val id = call.argument<Int>("id")!!
+                val group = meshNetwork.groups.first {
+                    it.id == id
+                }!!
+                result.success(meshNetwork.getElements(group).map {element ->
+                    mapOf(
+                            "name" to element.name,
+                            "address" to element.elementAddress,
+                            "locationDescriptor" to element.locationDescriptor,
+                            "models" to element.meshModels.map {
+                                mapOf(
+                                        "key" to it.key,
+                                        "modelId" to it.value.modelId,
+                                        "subscribedAddresses" to it.value.subscribedAddresses,
+                                        "boundAppKey" to it.value.boundAppKeyIndexes
+                                )
+                            }
+                    )
+                })
             }
             "nodes" -> {
                 val provisionedMeshNodes = meshNetwork.nodes.map { node ->
