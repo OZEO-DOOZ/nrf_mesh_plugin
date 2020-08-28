@@ -72,6 +72,36 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         "parentAddressLabel" to group.parentAddressLabel.toString()
                 ))
             }
+            "addGroup" -> {
+                val id = call.argument<Int>("id")!!
+                val group = meshNetwork.groups.first {
+                    it.id == id
+                }!!
+                result.success(meshNetwork.addGroup(group))
+            }
+            "groups" -> {
+                result.success(listOf(
+                        meshNetwork.groups.map {
+                            mapOf(
+                                    "id" to it.id,
+                                    "name" to it.name,
+                                    "address" to it.address,
+                                    "addressLabel" to it.addressLabel.toString(),
+                                    "meshUuid" to it.meshUuid,
+                                    "parentAddress" to it.parentAddress,
+                                    "parentAddressLabel" to it.parentAddressLabel.toString()
+
+                            )
+                        }
+                ))
+            }
+            "deleteGroup" -> {
+                val id = call.argument<Int>("id")!!
+                val group = meshNetwork.groups.first {
+                    it.id == id
+                }!!
+                result.success(meshNetwork.removeGroup(group))
+            }
             "nodes" -> {
                 val provisionedMeshNodes = meshNetwork.nodes.map { node ->
                     DoozProvisionedMeshNode(binaryMessenger, node)
