@@ -69,11 +69,8 @@ private extension DoozProvisionedDevice {
             result(node.name)
             
         case .elements:
-            #warning("address : unicastAddress ou Address(index) ?")
-            #warning("we dont have access to boundAppKey on iOS")
-            //in model : "boundAppKey" to it.value.boundAppKeyIndexes
-                                  
-            var elements = node.elements.map { element in
+            
+            let elements = node.elements.map { element in
                 return [
                     EventSinkKeys.meshNode.elements.key.rawValue: element.index,
                     EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
@@ -100,11 +97,6 @@ private extension DoozProvisionedDevice {
         case .elementAt:
             #warning("WIP")
             //node.element(withAddress: <#T##Address#>)
-        case .getSequenceNumber:
-            #warning("Wrong sequence number")
-            result(99)
-            //node.meshNetwork.getSequenceNumber(of: node.elements[0])
-            //result()
 
         }
         

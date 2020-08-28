@@ -206,6 +206,7 @@ private extension DoozMeshManagerApi {
             result(nil)
             
         case .sendGenericLevelSet:
+            #warning("get appkey from args ?")
             if
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
@@ -214,9 +215,7 @@ private extension DoozMeshManagerApi {
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
                 
                 let message = GenericLevelSet(level: _level)
-                
 
-                
                 do{
                     _ = try _meshNetworkManager.send(
                         message,
@@ -240,9 +239,6 @@ private extension DoozMeshManagerApi {
                 let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
                 
                 let message = GenericOnOffSet(_isOn)
-                
-                self.doozTransmitter = DoozTransmitter()
-                _meshNetworkManager.transmitter = doozTransmitter
                 
                 do{
                     _ = try _meshNetworkManager.send(
@@ -271,19 +267,8 @@ private extension DoozMeshManagerApi {
                 let appKeyIndex = _args["appKeyIndex"] as? Int16,
                 let _meshNetworkManager = self.meshNetworkManager{
                 
-                //                var _modelId = modelId
                 var _elementAddress = Address(bitPattern: elementId)
-                //                var _appKeyIndex = KeyIndex(bitPattern: appKeyIndex)
-                
-                //                let data =
-                //                    Data()
-                //                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt16>.size)
-                //                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt16>.size)
-                //                    + Data(bytes: &_modelId, count: MemoryLayout<UInt16>.size)
-                
-                self.doozTransmitter = DoozTransmitter()
-                doozTransmitter?.doozDelegate = self
-                _meshNetworkManager.transmitter = doozTransmitter
+
                 _meshNetworkManager.localElements = []
                 
                 do{
@@ -296,30 +281,17 @@ private extension DoozMeshManagerApi {
                         
                         if let configModelAppBind = ConfigModelAppBind(applicationKey: _appKey, to: _model){
                             try _ =  _meshNetworkManager.send(configModelAppBind, to: _model)
-                            //                            try _ = _meshNetworkManager.send(configModelAppBind, to: _elementAddress)
                         }
                     }
                     
-                    
-                    //                    if let configModelAppBind = ConfigModelAppBind(parameters: data){
-                    //
-                    //                    }
                 }
                 catch{
                     print(error)
                 }
                 
-                
             }
             
             result(nil)
-            //            val nodeId = call.argument<Int>("nodeId")!!
-            //                           val elementId = call.argument<Int>("elementId")!!
-            //                           val modelId = call.argument<Int>("modelId")!!
-            //                           val appKeyIndex = call.argument<Int>("appKeyIndex")!!
-            //                           val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
-            //                           mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
-            //                           result.success(null)
             
         case .getSequenceNumberForAddress:
             if
@@ -343,31 +315,7 @@ private extension DoozMeshManagerApi {
 
 
 private extension DoozMeshManagerApi{
-    // Events native implementations
-    //    #warning("remove")
-    //    func bindAppKey(to model: Model){
-    //          if let _meshNetworkManager = self.meshNetworkManager{
-    //              do{
-    //                  print("📩 Sending message : ConfigModelAppBind")
-    //
-    //                  if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-    //
-    //                      guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
-    //                          return
-    //                      }
-    //
-    //
-    //                      _ = try _meshNetworkManager.send(message, to: model)
-    //
-    //                      print("💪 BIND APP KEY TO MODEL \(model)")
-    //                  }
-    //              }catch{
-    //                  print(error)
-    //              }
-    //
-    //          }
-    //      }
-    
+  
     func _loadMeshNetwork(){
         guard let _meshNetworkManager = self.meshNetworkManager else{
             return
@@ -674,15 +622,6 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         }
     }
     
-    //    func didFinishProvisioning() {
-    //        if let _eventSink = self.eventSink{
-    //            _eventSink(
-    //                [
-    //                    EventSinkKeys.eventName.rawValue : ProvisioningEvent.onConfigAppKeyStatus.rawValue
-    //            ])
-    //        }
-    //    }
-    
 }
 
 
@@ -690,7 +629,6 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
     
     func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
         print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
-        
         
         // Handle the message based on its type.
         switch message {
@@ -713,9 +651,6 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
             }
             
         case let status as ConfigModelPublicationStatus:
-            // If the Model is being refreshed, the Bindings, Subscriptions
-            // and Publication has been read. If the Model has custom UI,
-            // try refreshing it as well.
             break
             
         case let status as ConfigModelSubscriptionStatus:
@@ -725,11 +660,11 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
             
             let dict = [
                 
-                "eventName" : "onConfigCompositionDataStatus",
-                "source" : source,
-                "meshMessage" : [
-                    "source" : source,
-                    "destination" : destination
+                EventSinkKeys.eventName.rawValue : MessageEvent.onConfigCompositionDataStatus.rawValue,
+                EventSinkKeys.source.rawValue : source,
+                EventSinkKeys.message.meshMessage.rawValue : [
+                    EventSinkKeys.message.source.rawValue : source,
+                    EventSinkKeys.message.destination.rawValue : destination
                 ]
                 
                 ] as [String : Any]
@@ -740,11 +675,11 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
             if status.isSuccess {
                 let dict = [
                     
-                    "eventName" : "onConfigAppKeyStatus",
-                    "source" : source,
-                    "meshMessage" : [
-                        "source" : source,
-                        "destination" : destination
+                    EventSinkKeys.eventName.rawValue : MessageEvent.onConfigAppKeyStatus.rawValue,
+                    EventSinkKeys.source.rawValue : source,
+                    EventSinkKeys.message.meshMessage.rawValue : [
+                        EventSinkKeys.message.source.rawValue : source,
+                        EventSinkKeys.message.destination.rawValue : destination
                     ]
                     
                     ] as [String : Any]
@@ -758,11 +693,8 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
         case let list as ConfigModelAppList:
             break
             
-            
         case let list as ConfigModelSubscriptionList:
             break
-            
-            
             
         default:
             break

@@ -95,6 +95,8 @@ enum ProvisioningEvent: String{
 enum MessageEvent: String{
     case onMeshPduCreated
     case onConfigModelAppStatus
+    case onConfigAppKeyStatus
+    case onConfigCompositionDataStatus
 }
 
 enum EventSinkKeys: String{
@@ -102,6 +104,9 @@ enum EventSinkKeys: String{
         case elementAddress
         case modelId
         case appKeyIndex
+        case meshMessage
+        case source
+        case destination
     }
     
     enum network: String{
@@ -129,16 +134,6 @@ enum EventSinkKeys: String{
     case state
     case pdu
     case data
+    case source
+    
 }
-//"key": element.index,
-//                  "address" : element.unicastAddress,
-//                  "locationDescriptor" : element.location.rawValue,
-//                  "models" : element.models.enumerated().map({ (index,model) in
-//                      return [
-//                          "key" : index,
-//                          "id" : model.modelIdentifier,
-//                          "subscribedAddresses" : model.subscriptions.map{ sub in
-//                              return sub.address
-//                          }
-//                      ]
-//                  })
