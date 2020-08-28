@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
@@ -35,7 +36,7 @@ class MeshManagerApi {
   final _onProvisioningCompletedController = StreamController<MeshProvisioningCompletedData>.broadcast();
 
   final _onConfigCompositionDataStatusController = StreamController<ConfigCompositionDataStatusData>.broadcast();
-  final _onConfigAppKeyStatusController = StreamController<Map<String, dynamic>>.broadcast();
+  final _onConfigAppKeyStatusController = StreamController<ConfigAppKeyStatusData>.broadcast();
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
   final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
   final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
@@ -51,7 +52,7 @@ class MeshManagerApi {
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningFailedSubscription;
   StreamSubscription<MeshProvisioningCompletedData> _onProvisioningCompletedSubscription;
   StreamSubscription<ConfigCompositionDataStatusData> _onConfigCompositionDataStatusSubscription;
-  StreamSubscription<Map> _onConfigAppKeyStatusSubscription;
+  StreamSubscription<ConfigAppKeyStatusData> _onConfigAppKeyStatusSubscription;
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
   StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
@@ -111,6 +112,7 @@ class MeshManagerApi {
         .listen(_onConfigCompositionDataStatusController.add);
     _onConfigAppKeyStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configAppKeyStatus.value)
+        .map((event) => ConfigAppKeyStatusData.fromJson(event))
         .listen(_onConfigAppKeyStatusController.add);
     _onGenericLevelStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.genericLevelStatus.value)
@@ -150,7 +152,7 @@ class MeshManagerApi {
   Stream<ConfigCompositionDataStatusData> get onConfigCompositionDataStatus =>
       _onConfigCompositionDataStatusController.stream;
 
-  Stream<Map<String, dynamic>> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+  Stream<ConfigAppKeyStatusData> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
   Stream<GenericLevelStatusData> get onGenericLevelStatus => _onGenericLevelStatusController.stream;
 
@@ -295,6 +297,9 @@ class MeshManagerApi {
 
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
+
+  Future<int> getSequenceNumber(int address) =>
+      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
 
   String _digits(int val, int digits) {
     var hi = 1 << (digits * 4);

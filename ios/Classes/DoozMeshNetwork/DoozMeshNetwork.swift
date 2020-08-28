@@ -81,7 +81,7 @@ private extension DoozMeshNetwork {
             break
             
         case .nodes:
-
+            
             if
                 let _messenger = self.messenger,
                 let _meshNetwork = self.meshNetwork {

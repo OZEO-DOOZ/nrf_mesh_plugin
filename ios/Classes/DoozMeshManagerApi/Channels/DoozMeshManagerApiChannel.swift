@@ -24,4 +24,6 @@ enum DoozMeshManagerApiChannel: String{
     
     case sendGenericLevelSet
     case sendGenericOnOffSet
+    
+    case getSequenceNumberForAddress
 }

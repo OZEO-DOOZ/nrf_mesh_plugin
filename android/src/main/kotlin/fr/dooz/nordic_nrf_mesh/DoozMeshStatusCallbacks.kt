@@ -19,22 +19,20 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
 
                 eventSink?.success(mapOf(
                         "eventName" to "onConfigCompositionDataStatus",
-                        "src" to src,
+                        "source" to src,
                         "meshMessage" to mapOf(
-                                "src" to meshMessage.src,
-                                "aszmic" to meshMessage.aszmic,
-                                "dst" to meshMessage.dst
+                                "source" to meshMessage.src,
+                                "destination" to meshMessage.dst
                         )
                 ))
             }
             is ConfigAppKeyStatus -> {
                 eventSink?.success(mapOf(
                         "eventName" to "onConfigAppKeyStatus",
-                        "src" to src,
+                        "source" to src,
                         "meshMessage" to mapOf(
-                                "src" to meshMessage.src,
-                                "aszmic" to meshMessage.aszmic,
-                                "dst" to meshMessage.dst
+                                "source" to meshMessage.src,
+                                "destination" to meshMessage.dst
                         )
                 ))
             }

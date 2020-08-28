@@ -191,7 +191,6 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
             "setMtuSize" -> {
                 doozMeshManagerCallbacks.mtuSize = call.argument<Int>("mtuSize")!!
-                Log.d("SET MTU SIZE", doozMeshManagerCallbacks.mtuSize.toString())
                 result.success(null)
             }
             else -> {

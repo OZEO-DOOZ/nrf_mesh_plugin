@@ -296,6 +296,28 @@ private extension DoozMeshManagerApi {
             }
             
             result(nil)
+            //            val nodeId = call.argument<Int>("nodeId")!!
+            //                           val elementId = call.argument<Int>("elementId")!!
+            //                           val modelId = call.argument<Int>("modelId")!!
+            //                           val appKeyIndex = call.argument<Int>("appKeyIndex")!!
+            //                           val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
+            //                           mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
+            //                           result.success(null)
+            
+        case .getSequenceNumberForAddress:
+            if
+                let _meshNetworkManager = self.meshNetworkManager,
+                let _meshNetwork = _meshNetworkManager.meshNetwork,
+                let _args = call.arguments as? [String:Any],
+                let _nodeAddress = _args["address"] as? Int16,
+                let _node = _meshNetwork.node(withAddress: Address(bitPattern: _nodeAddress)),
+                _node.elementsCount > 0{
+                
+                let sequenceNumber = _meshNetworkManager.getSequenceNumber(ofLocalElement: _node.elements[0])
+                result(sequenceNumber)
+                
+            }
+            result(nil)
         }
         
     }

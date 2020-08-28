@@ -33,8 +33,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   void initState() {
     super.initState();
 
-    flutterBlue.state.listen((event) => print('bluetooth state changed to $event'));
-
     _scanUnprovisionned();
     _init();
   }

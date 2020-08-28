@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -75,10 +76,19 @@ class _ModuleState extends State<Module> {
               final provisionedNode =
                   nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
               final provisionerAddress = await provisionedNode.unicastAddress;
-              final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
-              final status = await widget.meshManagerApi
-                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
-              print(status);
+              // final sequenceNumber = await provisionedNode.sequenceNumber;
+
+              if (Platform.isIOS) {
+                final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionerAddress);
+                final status = await widget.meshManagerApi
+                    .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
+                print(status);
+              } else if (Platform.isAndroid) {
+                final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
+                final status = await widget.meshManagerApi
+                    .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
+                print(status);
+              }
             },
           )
         ],
@@ -102,13 +112,16 @@ class _ModuleState extends State<Module> {
 
     currentNode = provisionedNode;
     if (currentNode == null) {
-      print('node mesh node connected');
+      print('node mesh not connected');
       return;
     }
     final elements = await currentNode.elements;
     for (final element in elements) {
       for (final model in element.models) {
-        if (model.boundAppKey.isEmpty && element != elements.first && element.models.first != model) {
+        if (model.boundAppKey.isEmpty) {
+          if (element == elements.first && model == element.models.first) {
+            continue;
+          }
           final unicast = await currentNode.unicastAddress;
           print('need to bind app key');
           await widget.meshManagerApi.sendConfigModelAppBind(
