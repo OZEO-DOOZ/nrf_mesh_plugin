@@ -53,7 +53,7 @@ Future<ProvisionedMeshNode> provisioning(
 Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
     BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
-  final completer = Completer();
+  final completer = Completer<ProvisionedMeshNode>();
   ProvisionedMeshNode provisionedMeshNode;
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
   bleMeshManager.callbacks = provisioningCallbacks;

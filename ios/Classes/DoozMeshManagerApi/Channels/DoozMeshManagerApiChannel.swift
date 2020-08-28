@@ -18,6 +18,7 @@ enum DoozMeshManagerApiChannel: String{
     
     case provisioning
     
+    case createMeshPduForConfigAppKeyAdd
     case createMeshPduForConfigCompositionDataGet
     
     case sendConfigModelAppBind
