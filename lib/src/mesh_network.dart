@@ -16,10 +16,15 @@ class MeshNetwork {
 
   Future<String> get name => _methodChannel.invokeMethod('getMeshNetworkName');
 
+  Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
+
+  Future<List<GroupData>> get groups async {
+    final _groups = await _methodChannel.invokeMethod('groups') as List;
+    return _groups.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
+  }
+
   Future<int> nextAvailableUnicastAddress(int elementSize) =>
       _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
-
-  Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
 
   Future<void> assignUnicastAddress(int unicastAddress) =>
       _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
@@ -30,9 +35,13 @@ class MeshNetwork {
       _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
 
   Future<GroupData> createGroupWithName(String name) async {
-    final result = await _methodChannel.invokeMethod('createGroupWithName', {'name': name});
+    final result = await _methodChannel.invokeMethod<Map<String, dynamic>>('createGroupWithName', {'name': name});
     return GroupData.fromJson(result);
   }
+
+  Future<bool> addGroup(int id) => _methodChannel.invokeMethod('addGroup', {'id': id});
+
+  Future<bool> removeGroup(int id) => _methodChannel.invokeMethod('removeGroup', {'id': id});
 
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
