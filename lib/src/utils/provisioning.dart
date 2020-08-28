@@ -67,12 +67,14 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
       await Future.delayed(Duration(milliseconds: 500));
     }
+
     if (scanResult == null) {
+      await meshManagerApi.cleanProvisioningData();
       completer.completeError(Exception('Didn\'t find module'));
       return;
     }
 
-    await bleMeshManager.connect(scanResult.device);
+    await retry(() => bleMeshManager.connect(scanResult.device), retryIf: (e) => e is TimeoutException);
 
     provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
@@ -139,6 +141,7 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
     await completer.future;
 
     await device.disconnect();
+    print(provisionedMeshNode);
     return provisionedMeshNode;
   } catch (e) {
     await device.disconnect();
