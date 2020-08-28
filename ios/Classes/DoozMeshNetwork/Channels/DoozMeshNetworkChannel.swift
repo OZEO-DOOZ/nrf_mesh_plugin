@@ -10,5 +10,4 @@ enum DoozMeshNetworkChannel: String{
     case getMeshNetworkName
     case highestAllocatableAddress
     case nodes
-    
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -76,10 +77,18 @@ class _ModuleState extends State<Module> {
                   nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
               final provisionerAddress = await provisionedNode.unicastAddress;
               // final sequenceNumber = await provisionedNode.sequenceNumber;
-              final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
-              final status = await widget.meshManagerApi
-                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
-              print(status);
+
+              if (Platform.isIOS) {
+                final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionerAddress);
+                final status = await widget.meshManagerApi
+                    .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
+                print(status);
+              } else if (Platform.isAndroid) {
+                final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
+                final status = await widget.meshManagerApi
+                    .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
+                print(status);
+              }
             },
           )
         ],
