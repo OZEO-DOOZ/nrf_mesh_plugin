@@ -148,7 +148,7 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
     await device.disconnect();
     rethrow;
   } finally {
-    await Future.wait([
+    unawaited(Future.wait([
       onProvisioningCompletedSubscription.cancel(),
       onProvisioningStateChangedSubscription.cancel(),
       onProvisioningFailedSubscription.cancel(),
@@ -159,7 +159,7 @@ Future<ProvisionedMeshNode> _provisioningIOS(MeshManagerApi meshManagerApi, BleM
       onConfigCompositionDataStatusSubscription.cancel(),
       onConfigAppKeyStatusSubscription.cancel(),
       bleMeshManager?.callbacks?.dispose(),
-    ]);
+    ]));
   }
 }
 

@@ -135,15 +135,23 @@ class _ModuleState extends State<Module> {
 
     final target = 0;
     //  check if the board need to be configured
+
+    var sequenceNumber;
+    if (Platform.isIOS) {
+      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await (provisioner.unicastAddress));
+    } else if (Platform.isAndroid) {
+      sequenceNumber = await provisioner.sequenceNumber;
+    }
+
     final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
-        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), await provisioner.sequenceNumber);
+        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
     print(getBoardTypeStatus);
     final boardType = BoardData.decode(getBoardTypeStatus.level);
     if (boardType.payload == 0xA) {
       print('it\'s a Doobl V board');
       print('setup sortie ${target + 1} to be a dimmer');
-      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(await currentNode.unicastAddress,
-          BoardData.lightDimmerOutput(target).toByte(), await provisioner.sequenceNumber);
+      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
+          await currentNode.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
       final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
       print(dimmerBoardData);
     }

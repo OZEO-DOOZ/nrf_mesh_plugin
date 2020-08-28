@@ -216,6 +216,8 @@ private extension DoozMeshManagerApi {
                 
                 let message = GenericLevelSet(level: _level)
 
+                _meshNetworkManager.localElements = []
+                
                 do{
                     _ = try _meshNetworkManager.send(
                         message,
@@ -305,8 +307,10 @@ private extension DoozMeshManagerApi {
                 let sequenceNumber = _meshNetworkManager.getSequenceNumber(ofLocalElement: _node.elements[0])
                 result(sequenceNumber)
                 
+            }else{
+                result(nil)
             }
-            result(nil)
+            
         }
         
     }
