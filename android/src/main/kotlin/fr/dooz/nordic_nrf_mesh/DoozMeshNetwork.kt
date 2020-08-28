@@ -59,6 +59,19 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val address = call.argument<Int>("address")!!
                 result.success(meshNetwork.sequenceNumbers.get(address))
             }
+            "createGroupWithName" -> {
+                val groupName = call.argument<String>("name")!!
+                val group = meshNetwork.createGroup(meshNetwork.selectedProvisioner, groupName)
+                result.success(mapOf(
+                        "id" to group.id,
+                        "name" to group.name,
+                        "address" to group.address,
+                        "addressLabel" to group.addressLabel.toString(),
+                        "meshUuid" to group.meshUuid,
+                        "parentAddress" to group.parentAddress,
+                        "parentAddressLabel" to group.parentAddressLabel.toString()
+                ))
+            }
             "nodes" -> {
                 val provisionedMeshNodes = meshNetwork.nodes.map { node ->
                     DoozProvisionedMeshNode(binaryMessenger, node)

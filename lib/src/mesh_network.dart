@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
+import 'package:nordic_nrf_mesh/src/models/group/group.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 
 class MeshNetwork {
@@ -27,6 +28,11 @@ class MeshNetwork {
 
   Future<int> getSequenceNumber(int address) =>
       _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+
+  Future<GroupData> createGroupWithName(String name) async {
+    final result = await _methodChannel.invokeMethod('createGroupWithName', {'name': name});
+    return GroupData.fromJson(result);
+  }
 
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
