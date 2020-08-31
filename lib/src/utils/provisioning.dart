@@ -9,7 +9,6 @@ import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:retry/retry.dart';
 
 class _ProvisioningEvent {
   final _provisioningController = StreamController<void>();
