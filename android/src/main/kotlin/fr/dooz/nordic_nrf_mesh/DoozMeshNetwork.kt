@@ -66,10 +66,10 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         "id" to group.id,
                         "name" to group.name,
                         "address" to group.address,
-                        "addressLabel" to group.addressLabel.toString(),
+                        "addressLabel" to group.addressLabel?.toString(),
                         "meshUuid" to group.meshUuid,
                         "parentAddress" to group.parentAddress,
-                        "parentAddressLabel" to group.parentAddressLabel.toString()
+                        "parentAddressLabel" to group.parentAddressLabel?.toString()
                 ))
             }
             "addGroup" -> {

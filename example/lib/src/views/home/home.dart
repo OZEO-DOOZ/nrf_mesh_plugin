@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh_example/src/views/control_module/node.dart';
+import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
 
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -147,40 +147,6 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
                 }
               : null,
         )
-      ],
-    );
-  }
-}
-
-class MeshNetworkWidget extends StatefulWidget {
-  final MeshNetwork meshNetwork;
-
-  const MeshNetworkWidget({Key key, @required this.meshNetwork})
-      : super(key: key);
-
-  @override
-  _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
-}
-
-class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
-  List<ProvisionedMeshNode> _nodes = [];
-
-  @override
-  void initState() {
-    widget.meshNetwork.nodes.then((value) => setState(() => _nodes = value));
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.meshNetwork == null) {
-      return Text('No mesh network');
-    }
-    return Column(
-      children: <Widget>[
-        Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
-        Text('Nodes: '),
-        ..._nodes.map((e) => Node(e)),
       ],
     );
   }
