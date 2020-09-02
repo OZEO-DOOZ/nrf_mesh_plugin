@@ -59,17 +59,21 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val address = call.argument<Int>("address")!!
                 result.success(meshNetwork.sequenceNumbers.get(address))
             }
-            "createGroupWithName" -> {
+            "addGroupWithName" -> {
                 val groupName = call.argument<String>("name")!!
                 val group = meshNetwork.createGroup(meshNetwork.selectedProvisioner, groupName)
+                val success = meshNetwork.addGroup(group)
                 result.success(mapOf(
-                        "id" to group.id,
-                        "name" to group.name,
-                        "address" to group.address,
-                        "addressLabel" to group.addressLabel.toString(),
-                        "meshUuid" to group.meshUuid,
-                        "parentAddress" to group.parentAddress,
-                        "parentAddressLabel" to group.parentAddressLabel.toString()
+                        "group" to mapOf(
+                                "id" to group.id,
+                                "name" to group.name,
+                                "address" to group.address,
+                                "addressLabel" to group.addressLabel?.toString(),
+                                "meshUuid" to group.meshUuid,
+                                "parentAddress" to group.parentAddress,
+                                "parentAddressLabel" to group.parentAddressLabel?.toString()
+                        ),
+                        "successfullyAdded" to success
                 ))
             }
             "addGroup" -> {
@@ -85,10 +89,10 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                                     "id" to it.id,
                                     "name" to it.name,
                                     "address" to it.address,
-                                    "addressLabel" to it.addressLabel.toString(),
+                                    "addressLabel" to it.addressLabel?.toString(),
                                     "meshUuid" to it.meshUuid,
                                     "parentAddress" to it.parentAddress,
-                                    "parentAddressLabel" to it.parentAddressLabel.toString()
+                                    "parentAddressLabel" to it.parentAddressLabel?.toString()
 
                             )
                         }

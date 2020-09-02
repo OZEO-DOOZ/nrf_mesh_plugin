@@ -16,8 +16,14 @@ class _$GroupDataTearOff {
   const _$GroupDataTearOff();
 
 // ignore: unused_element
-  _GroupData call(int id, String name, int address, String addressLabel,
-      String meshUuid, int parentAddress, String parentAddressLabel) {
+  _GroupData call(
+      int id,
+      String name,
+      int address,
+      @nullable String addressLabel,
+      String meshUuid,
+      int parentAddress,
+      @nullable String parentAddressLabel) {
     return _GroupData(
       id,
       name,
@@ -37,9 +43,11 @@ mixin _$GroupData {
   int get id;
   String get name;
   int get address;
+  @nullable
   String get addressLabel;
   String get meshUuid;
   int get parentAddress;
+  @nullable
   String get parentAddressLabel;
 
   Map<String, dynamic> toJson();
@@ -53,10 +61,10 @@ abstract class $GroupDataCopyWith<$Res> {
       {int id,
       String name,
       int address,
-      String addressLabel,
+      @nullable String addressLabel,
       String meshUuid,
       int parentAddress,
-      String parentAddressLabel});
+      @nullable String parentAddressLabel});
 }
 
 class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
@@ -103,10 +111,10 @@ abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
       {int id,
       String name,
       int address,
-      String addressLabel,
+      @nullable String addressLabel,
       String meshUuid,
       int parentAddress,
-      String parentAddressLabel});
+      @nullable String parentAddressLabel});
 }
 
 class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
@@ -143,15 +151,19 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
 
 @JsonSerializable()
 class _$_GroupData implements _GroupData {
-  const _$_GroupData(this.id, this.name, this.address, this.addressLabel,
-      this.meshUuid, this.parentAddress, this.parentAddressLabel)
+  const _$_GroupData(
+      this.id,
+      this.name,
+      this.address,
+      @nullable this.addressLabel,
+      this.meshUuid,
+      this.parentAddress,
+      @nullable this.parentAddressLabel)
       : assert(id != null),
         assert(name != null),
         assert(address != null),
-        assert(addressLabel != null),
         assert(meshUuid != null),
-        assert(parentAddress != null),
-        assert(parentAddressLabel != null);
+        assert(parentAddress != null);
 
   factory _$_GroupData.fromJson(Map<String, dynamic> json) =>
       _$_$_GroupDataFromJson(json);
@@ -163,12 +175,14 @@ class _$_GroupData implements _GroupData {
   @override
   final int address;
   @override
+  @nullable
   final String addressLabel;
   @override
   final String meshUuid;
   @override
   final int parentAddress;
   @override
+  @nullable
   final String parentAddressLabel;
 
   @override
@@ -227,10 +241,10 @@ abstract class _GroupData implements GroupData {
       int id,
       String name,
       int address,
-      String addressLabel,
+      @nullable String addressLabel,
       String meshUuid,
       int parentAddress,
-      String parentAddressLabel) = _$_GroupData;
+      @nullable String parentAddressLabel) = _$_GroupData;
 
   factory _GroupData.fromJson(Map<String, dynamic> json) =
       _$_GroupData.fromJson;
@@ -242,12 +256,14 @@ abstract class _GroupData implements GroupData {
   @override
   int get address;
   @override
+  @nullable
   String get addressLabel;
   @override
   String get meshUuid;
   @override
   int get parentAddress;
   @override
+  @nullable
   String get parentAddressLabel;
   @override
   _$GroupDataCopyWith<_GroupData> get copyWith;

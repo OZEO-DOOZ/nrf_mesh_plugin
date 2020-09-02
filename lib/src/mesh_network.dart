@@ -19,7 +19,7 @@ class MeshNetwork {
   Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
 
   Future<List<GroupData>> get groups async {
-    final _groups = await _methodChannel.invokeMethod('groups') as List;
+    final _groups = await _methodChannel.invokeMethod<List>('groups');
     return _groups.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
@@ -39,9 +39,12 @@ class MeshNetwork {
   Future<int> getSequenceNumber(int address) =>
       _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
 
-  Future<GroupData> createGroupWithName(String name) async {
-    final result = await _methodChannel.invokeMethod<Map<String, dynamic>>('createGroupWithName', {'name': name});
-    return GroupData.fromJson(result);
+  Future<GroupData> addGroupWithName(String name) async {
+    final result = await _methodChannel.invokeMethod<Map>('addGroupWithName', {'name': name});
+    if (result['successfullyAdded'] == false) {
+      return null;
+    }
+    return GroupData.fromJson((result.cast<String, dynamic>()['group'] as Map).cast<String, dynamic>());
   }
 
   Future<bool> addGroup(int id) => _methodChannel.invokeMethod('addGroup', {'id': id});
