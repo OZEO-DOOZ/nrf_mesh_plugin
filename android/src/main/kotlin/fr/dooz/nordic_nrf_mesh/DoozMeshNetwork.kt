@@ -98,7 +98,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         }
                 )
             }
-            "deleteGroup" -> {
+            "removeGroup" -> {
                 val id = call.argument<Int>("id")!!
                 val group = meshNetwork.groups.first {
                     it.id == id

@@ -27,8 +27,8 @@ class _SendDeleteGroupState extends State<SendDeleteGroup> {
         RaisedButton(
           child: Text('Send delete group'),
           onPressed: () async {
-            // final status = await widget.meshManagerApi.meshNetwork.deleteGroup(_id);
-            // print(status);
+            final status = await widget.meshManagerApi.meshNetwork.removeGroup(_id);
+            print(status);
           },
         )
       ],
