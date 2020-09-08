@@ -10,6 +10,8 @@ import 'commands/send_create_group_with_name.dart';
 import 'commands/send_delete_group.dart';
 import 'commands/send_get_elements_for_group.dart';
 import 'commands/send_groups.dart';
+import 'commands/send_config_model_subscription_add.dart';
+import 'commands/send_generic_level.dart';
 import 'node.dart';
 
 class Module extends StatefulWidget {
@@ -57,39 +59,9 @@ class _ModuleState extends State<Module> {
         children: <Widget>[
           Node(currentNode),
           Divider(),
-          Text('Send a generic level set'),
-          TextField(
-            decoration: InputDecoration(hintText: 'Element Address'),
-            onChanged: (text) {
-              selectedElementAddress = int.parse(text);
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(hintText: 'Level Value'),
-            onChanged: (text) {
-              selectedLevel = int.parse(text);
-            },
-          ),
-          RaisedButton(
-            child: Text('Send level'),
-            onPressed: () async {
-              print('send level $selectedLevel to $selectedElementAddress');
-              final provisionerUuid = await widget.meshManagerApi.meshNetwork
-                  .selectedProvisionerUuid();
-              final nodes = await widget.meshManagerApi.meshNetwork.nodes;
-
-              final provisionedNode = nodes.firstWhere(
-                  (element) => element.uuid == provisionerUuid,
-                  orElse: () => null);
-              final provisionerAddress = await provisionedNode.unicastAddress;
-              // final sequenceNumber = await provisionedNode.sequenceNumber;
-              final sequenceNumber = await widget.meshManagerApi.meshNetwork
-                  .getSequenceNumber(provisionerAddress);
-              final status = await widget.meshManagerApi.sendGenericLevelSet(
-                  selectedElementAddress, selectedLevel, sequenceNumber);
-              print(status);
-            },
-          ),
+          Text('Commands :'),
+          SendGenericLevel(widget.meshManagerApi),
+          SendConfigModelSubscriptionAdd(widget.meshManagerApi),
           SendGroups(widget.meshManagerApi),
           SendGetElementsForGroup(widget.meshManagerApi),
           SendCreateGroupWithName(widget.meshManagerApi),
