@@ -32,4 +32,5 @@ class MeshManagerApiEvent {
   static const genericOnOffStatus = MeshManagerApiEvent._('onGenericOnOffStatus');
 
   static const configModelAppStatus = MeshManagerApiEvent._('onConfigModelAppStatus');
+  static const configModelPublicationStatus = MeshManagerApiEvent._('onConfigModelPublicationStatus');
 }
