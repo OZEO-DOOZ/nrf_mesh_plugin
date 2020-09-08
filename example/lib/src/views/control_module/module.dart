@@ -6,6 +6,10 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
 import 'package:nordic_nrf_mesh_example/src/global.dart';
 
+import 'commands/send_create_group_with_name.dart';
+import 'commands/send_delete_group.dart';
+import 'commands/send_get_elements_for_group.dart';
+import 'commands/send_groups.dart';
 import 'commands/send_config_model_subscription_add.dart';
 import 'commands/send_generic_level.dart';
 import 'node.dart';
@@ -58,6 +62,10 @@ class _ModuleState extends State<Module> {
           Text('Commands :'),
           SendGenericLevel(widget.meshManagerApi),
           SendConfigModelSubscriptionAdd(widget.meshManagerApi),
+          SendGroups(widget.meshManagerApi),
+          SendGetElementsForGroup(widget.meshManagerApi),
+          SendCreateGroupWithName(widget.meshManagerApi),
+          SendDeleteGroup(widget.meshManagerApi),
         ],
       );
     }

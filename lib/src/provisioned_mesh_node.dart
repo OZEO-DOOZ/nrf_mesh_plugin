@@ -25,10 +25,11 @@ class ModelData {
 class ElementData {
   final int key;
   final int address;
+  final name;
   final int locationDescriptor;
   final List<ModelData> models;
 
-  ElementData(this.key, this.address, this.locationDescriptor, this.models);
+  ElementData(this.key, this.name, this.address, this.locationDescriptor, this.models);
 
   factory ElementData.fromJson(Map json) => _$ElementDataFromJson(json.cast<String, dynamic>());
 
