@@ -290,6 +290,23 @@ class MeshManagerApi {
     return status;
   }
 
+  Future<void> sendConfigModelSubscriptionDelete(
+      int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
+    final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
+        (element) =>
+            element.elementAddress == elementAddress &&
+            element.modelIdentifier == modelIdentifier &&
+            element.subscriptionAddress == subscriptionAddress,
+        orElse: () => null);
+    await _methodChannel.invokeMethod('sendConfigModelSubscriptionDelete', {
+      'address': address,
+      'elementAddress': elementAddress,
+      'subscriptionAddress': subscriptionAddress,
+      'modelIdentifier': modelIdentifier,
+    });
+    return status;
+  }
+
   Future<ConfigModelPublicationStatus> sendConfigModelPublicationSet(
     int elementAddress,
     int publishAddress,
