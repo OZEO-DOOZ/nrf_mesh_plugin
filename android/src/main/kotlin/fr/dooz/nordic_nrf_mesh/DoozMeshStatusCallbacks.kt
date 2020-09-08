@@ -63,6 +63,13 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                         "appKeyIndex" to meshMessage.appKeyIndex
                 ))
             }
+            is ConfigModelSubscriptionStatus -> {
+                eventSink?.success(mapOf(
+                        "eventName" to "onConfigModelSubscriptionStatus",
+                        "source" to meshMessage.src,
+                        "destination" to meshMessage.dst,
+                        "elementAddress" to meshMessage.elementAddress,
+                        "subscriptionAddress" to meshMessage.subscriptionAddress,
             is ConfigModelPublicationStatus -> {
                 eventSink?.success(mapOf(
                         "eventName" to "onConfigModelPublicationStatus",

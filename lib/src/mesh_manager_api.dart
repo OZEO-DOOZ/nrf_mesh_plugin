@@ -6,6 +6,7 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
@@ -41,6 +42,7 @@ class MeshManagerApi {
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
   final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
   final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
+  final _onConfigModelSubscriptionAddStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
   final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
 
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
@@ -58,6 +60,7 @@ class MeshManagerApi {
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
   StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
+  StreamSubscription<ConfigModelSubscriptionStatus> _onConfigModelSubscriptionAddStatusSubscription;
   StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
@@ -130,6 +133,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
         .map((event) => ConfigModelAppStatusData.fromJson(event))
         .listen(_onConfigModelAppStatusController.add);
+    _onConfigModelSubscriptionAddStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelSubscriptionStatus.value)
+        .map((event) => ConfigModelSubscriptionStatus.fromJson(event))
+        .listen(_onConfigModelSubscriptionAddStatusController.add);
     _onConfigModelPublicationStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configModelPublicationStatus.value)
         .map((event) => ConfigModelPublicationStatus.fromJson(event))
@@ -192,6 +199,7 @@ class MeshManagerApi {
         _onGenericLevelStatusSubscription.cancel(),
         _onGenericOnOffStatusSubscription.cancel(),
         _onConfigModelAppStatusSubscription.cancel(),
+        _onConfigModelSubscriptionAddStatusSubscription.cancel(),
         _onConfigModelPublicationStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
@@ -208,6 +216,7 @@ class MeshManagerApi {
         _onGenericLevelStatusController.close(),
         _onGenericOnOffStatusController.close(),
         _onConfigModelAppStatusController.close(),
+        _onConfigModelSubscriptionAddStatusController.close(),
         _onConfigModelPublicationStatusController.close(),
       ]);
 
@@ -276,7 +285,8 @@ class MeshManagerApi {
   Future<void> createMeshPduForConfigAppKeyAdd(int dest) =>
       _methodChannel.invokeMethod('createMeshPduForConfigAppKeyAdd', {'dest': dest});
 
-  Future<void> sendConfigModelAppBind(int nodeId, int elementId, int modelId, {int appKeyIndex = 0}) async {
+  Future<ConfigModelAppStatusData> sendConfigModelAppBind(int nodeId, int elementId, int modelId,
+      {int appKeyIndex = 0}) async {
     final status = _onConfigModelAppStatusController.stream.firstWhere(
         (element) =>
             element.elementAddress == elementId && element.modelId == modelId && element.appKeyIndex == appKeyIndex,
@@ -290,6 +300,23 @@ class MeshManagerApi {
     return status;
   }
 
+  Future<ConfigModelSubscriptionStatus> sendConfigModelSubscriptionAdd(
+      int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
+    final status = _onConfigModelSubscriptionAddStatusController.stream.firstWhere(
+        (element) =>
+            element.elementAddress == elementAddress &&
+            element.modelIdentifier == modelIdentifier &&
+            element.subscriptionAddress == subscriptionAddress,
+        orElse: () => null);
+    await _methodChannel.invokeMethod('sendConfigModelSubscriptionAdd', {
+      'address': address,
+      'elementAddress': elementAddress,
+      'subscriptionAddress': subscriptionAddress,
+      'modelIdentifier': modelIdentifier,
+    });
+    return status;
+  }
+      
   Future<void> sendConfigModelSubscriptionDelete(
       int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
