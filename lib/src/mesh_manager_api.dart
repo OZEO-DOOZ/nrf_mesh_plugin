@@ -6,6 +6,7 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
@@ -40,6 +41,7 @@ class MeshManagerApi {
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
   final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
   final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
+  final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
 
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
@@ -56,6 +58,7 @@ class MeshManagerApi {
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
   StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
+  StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
@@ -127,6 +130,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
         .map((event) => ConfigModelAppStatusData.fromJson(event))
         .listen(_onConfigModelAppStatusController.add);
+    _onConfigModelPublicationStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelPublicationStatus.value)
+        .map((event) => ConfigModelPublicationStatus.fromJson(event))
+        .listen(_onConfigModelPublicationStatusController.add);
   }
 
   Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
@@ -185,6 +192,7 @@ class MeshManagerApi {
         _onGenericLevelStatusSubscription.cancel(),
         _onGenericOnOffStatusSubscription.cancel(),
         _onConfigModelAppStatusSubscription.cancel(),
+        _onConfigModelPublicationStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -200,6 +208,7 @@ class MeshManagerApi {
         _onGenericLevelStatusController.close(),
         _onGenericOnOffStatusController.close(),
         _onConfigModelAppStatusController.close(),
+        _onConfigModelPublicationStatusController.close(),
       ]);
 
   Future<MeshNetwork> loadMeshNetwork() async {
@@ -293,6 +302,46 @@ class MeshManagerApi {
       'address': address,
       'elementAddress': elementAddress,
       'subscriptionAddress': subscriptionAddress,
+      'modelIdentifier': modelIdentifier,
+    });
+    return status;
+  }
+
+  Future<ConfigModelPublicationStatus> sendConfigModelPublicationSet(
+    int elementAddress,
+    int publishAddress,
+    int appKeyIndex,
+    bool credentialFlag,
+    int publishTtl,
+    int publicationSteps,
+    int publicationResolution,
+    int retransmitCount,
+    int retransmitIntervalSteps,
+    int modelIdentifier,
+  ) async {
+    final status = _onConfigModelPublicationStatusController.stream.firstWhere(
+        (element) =>
+            element.elementAddress == elementAddress &&
+            element.publishAddress == publishAddress &&
+            element.appKeyIndex == appKeyIndex &&
+            element.credentialFlag == credentialFlag &&
+            element.publishTtl == publishTtl &&
+            element.publicationSteps == publicationSteps &&
+            element.publicationResolution == publicationResolution &&
+            element.publishRetransmitCount == retransmitCount &&
+            element.publishRetransmitIntervalSteps == retransmitIntervalSteps &&
+            element.modelIdentifier == modelIdentifier,
+        orElse: () => null);
+    await _methodChannel.invokeMethod('sendConfigModelPublicationSet', {
+      'elementAddress': elementAddress,
+      'publishAddress': publishAddress,
+      'appKeyIndex': appKeyIndex,
+      'credentialFlag': credentialFlag,
+      'publishTtl': publishTtl,
+      'publicationSteps': publicationSteps,
+      'publicationResolution': publicationResolution,
+      'retransmitCount': retransmitCount,
+      'retransmitIntervalSteps': retransmitIntervalSteps,
       'modelIdentifier': modelIdentifier,
     });
     return status;

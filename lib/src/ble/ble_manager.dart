@@ -44,10 +44,14 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (_callbacks == null) {
       throw Exception('You have to set callbacks using callbacks(E callbacks) before connecting');
     }
-    _callbacks.onDeviceConnectingController.add(device);
+    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
+      _callbacks.onDeviceConnectingController.add(device);
+    }
     await device.connect(autoConnect: false, timeout: Duration(seconds: 30));
     _connected = true;
-    _callbacks.onDeviceConnectedController.add(device);
+    if (!_callbacks.onDeviceConnectedController.isClosed && _callbacks.onDeviceConnectedController.hasListener) {
+      _callbacks.onDeviceConnectedController.add(device);
+    }
     _device = device;
     _mtuSizeSubscription = device.mtu.skip(1).listen((event) async {
       if (Platform.isAndroid) {
@@ -62,14 +66,18 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (service == null) {
       throw Exception('Required service not found');
     }
-    _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
+    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
+      _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
+    }
     await initGatt(device);
     final fMtuChanged = device.mtu.skip(1).first;
     if (Platform.isAndroid) {
       await device.requestMtu(517);
       await fMtuChanged;
     }
-    _callbacks.onDeviceReadyController.add(device);
+    if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
+      _callbacks.onDeviceReadyController.add(device);
+    }
   }
 
   @visibleForOverriding
@@ -79,10 +87,15 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   Future<void> initGatt(final BluetoothDevice device);
 
   Future<void> disconnect() async {
-    _callbacks.onDeviceDisconnectingController.add(_device);
+    if (!_callbacks.onDeviceDisconnectingController.isClosed &&
+        _callbacks.onDeviceDisconnectingController.hasListener) {
+      _callbacks.onDeviceDisconnectingController.add(_device);
+    }
     await _device.disconnect();
     _connected = false;
-    _callbacks.onDeviceDisconnectedController.add(_device);
+    if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
+      _callbacks.onDeviceDisconnectedController.add(_device);
+    }
     await _mtuSizeSubscription.cancel();
   }
 }

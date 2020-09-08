@@ -8,6 +8,7 @@ import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:retry/retry.dart';
 
 class _ProvisioningEvent {
@@ -186,7 +187,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid])) as List<ScanResult>;
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
       if (scanResult == null) {
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(Duration(milliseconds: 200));
       }
     }
     if (scanResult == null) {
@@ -272,7 +273,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
     await bleMeshManager.disconnect();
     rethrow;
   } finally {
-    await Future.wait([
+    unawaited(Future.wait([
       onProvisioningCompletedSubscription.cancel(),
       onProvisioningStateChangedSubscription.cancel(),
       onProvisioningFailedSubscription.cancel(),
@@ -284,7 +285,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       onDataSentSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
       bleMeshManager?.callbacks?.dispose(),
-    ]);
+    ]));
   }
 }
 

@@ -159,6 +159,33 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "sendConfigModelPublicationSet" -> {
+                val address = call.argument<Int>("address")!!
+                val elementAddress = call.argument<Int>("elementAddress")!!
+                val publishAddress = call.argument<Int>("publishAddress")!!
+                val appKeyIndex = call.argument<Int>("appKeyIndex")!!
+                val credentialFlag = call.argument<Boolean>("credentialFlag")!!
+                val publishTtl = call.argument<Int>("publishTtl")!!
+                val publicationSteps  = call.argument<Int>("publicationSteps")!!
+                val publicationResolution = call.argument<Int>("publicationResolution")!!
+                val retransmitCount = call.argument<Int>("retransmitCount")!!
+                val retransmitIntervalSteps = call.argument<Int>("retransmitIntervalSteps")!!
+                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val meshMessage = ConfigModelPublicationSet(
+                        elementAddress,
+                        publishAddress,
+                        appKeyIndex,
+                        credentialFlag,
+                        publishTtl,
+                        publicationSteps,
+                        publicationResolution,
+                        retransmitCount,
+                        retransmitIntervalSteps,
+                        modelIdentifier
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!;
                 result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());

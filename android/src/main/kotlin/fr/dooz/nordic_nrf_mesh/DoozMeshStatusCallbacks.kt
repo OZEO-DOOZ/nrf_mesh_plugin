@@ -63,6 +63,22 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                         "appKeyIndex" to meshMessage.appKeyIndex
                 ))
             }
+            is ConfigModelPublicationStatus -> {
+                eventSink?.success(mapOf(
+                        "eventName" to "onConfigModelPublicationStatus",
+                        "elementAddress" to meshMessage.elementAddress,
+                        "publishAddress" to meshMessage.publishAddress,
+                        "appKeyIndex" to meshMessage.appKeyIndex,
+                        "credentialFlag" to meshMessage.credentialFlag,
+                        "publishTtl" to meshMessage.publishTtl,
+                        "publicationSteps" to meshMessage.publicationSteps,
+                        "publicationResolution" to meshMessage.publicationResolution,
+                        "retransmitCount" to meshMessage.publishRetransmitCount,
+                        "retransmitIntervalSteps" to meshMessage.publishRetransmitIntervalSteps,
+                        "modelIdentifier" to meshMessage.modelIdentifier,
+                        "isSuccessful" to meshMessage.isSuccessful
+                ))
+            }
             else -> {
                 Log.d("DoozMeshStatusCallbacks", meshMessage.javaClass.toString())
             }
