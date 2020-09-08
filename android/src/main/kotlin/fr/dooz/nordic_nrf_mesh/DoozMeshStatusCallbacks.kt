@@ -70,6 +70,11 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                         "destination" to meshMessage.dst,
                         "elementAddress" to meshMessage.elementAddress,
                         "subscriptionAddress" to meshMessage.subscriptionAddress,
+                        "modelIdentifier" to meshMessage.modelIdentifier,
+                        "isSuccessful" to meshMessage.isSuccessful
+
+                ))
+            }
             is ConfigModelPublicationStatus -> {
                 eventSink?.success(mapOf(
                         "eventName" to "onConfigModelPublicationStatus",
