@@ -17,7 +17,7 @@ class _SendGroupsState extends State<SendGroups> {
       title: Text('Send a groups command'),
       children: <Widget>[
         RaisedButton(
-          child: Text('groups'),
+          child: Text('get groups'),
           onPressed: () async {
             final status = await widget.meshManagerApi.meshNetwork.groups;
             print(status);
