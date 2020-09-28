@@ -4,26 +4,49 @@ import 'dart:io';
 void main(List<String> arguments) async {
   final targetOs = arguments.isNotEmpty && arguments.first == 'ios' ? Platform.isIOS : Platform.isAndroid;
 
-  print('building app');
-  await Process.run(
-    'flutter',
-    [
-      'build',
-      'apk',
-      '--debug',
-      '-t',
-      'test_driver/app.dart',
-    ],
-  );
-
   if (targetOs == Platform.isAndroid) {
     if (!Platform.environment.containsKey('ANDROID_SDK_ROOT')) {
       throw 'Please setup ANDROID_SDK_ROOT env variable';
     }
+
+    print('building app');
+    await Process.run(
+      'flutter',
+      [
+        'build',
+        'apk',
+        '--debug',
+        '-t',
+        'test_driver/app.dart',
+      ],
+    );
+    print('installing app');
+    await Process.run('flutter', ['install']);
     final adbPath = '${Platform.environment['ANDROID_SDK_ROOT']}/platform-tools/adb';
-    print('installing app and accept all permissions');
-    await Process.run(adbPath, ['install -g build/app/outputs/apk/debug/app-debug.apk']);
+    var baseCommand = [
+      '-d',
+      'shell',
+      'pm',
+      'grant',
+      'fr.dooz.nordic_nrf_mesh_example',
+    ];
+
+    //  setup permission
+    var accessCoarseLocation = [...baseCommand, 'android.permission.ACCESS_COARSE_LOCATION'];
+    await Process.run(
+      adbPath,
+      accessCoarseLocation,
+      runInShell: true,
+    );
+    var accessFineLocation = [...baseCommand, 'android.permission.ACCESS_FINE_LOCATION'];
+    await Process.run(
+      adbPath,
+      accessFineLocation,
+      runInShell: true,
+    );
   } else {
+    //  TODO: add building app for ios
+
     print('installing app');
     await Process.run('flutter', ['install']);
 
