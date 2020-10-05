@@ -181,12 +181,14 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
 
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     await bleMeshManager.disconnect();
-    await Future.delayed(Duration(seconds: 1));
 
     ScanResult scanResult;
     while (scanResult == null) {
-      final scanResults = (await FlutterBlue.instance
-          .startScan(withServices: [meshProxyUuid], scanMode: ScanMode.lowLatency)) as List<ScanResult>;
+      final scanResults = (await FlutterBlue.instance.startScan(
+        withServices: [meshProxyUuid],
+        scanMode: ScanMode.lowLatency,
+        timeout: Duration(seconds: 5),
+      )) as List<ScanResult>;
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
       if (scanResult == null) {
         await Future.delayed(Duration(milliseconds: 200));
@@ -197,9 +199,7 @@ Future<ProvisionedMeshNode> _provisioningAndroid(MeshManagerApi meshManagerApi, 
       completer.completeError(Exception('Didn\'t find module'));
       return;
     }
-
     await bleMeshManager.connect(scanResult.device);
-
     provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
