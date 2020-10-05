@@ -97,7 +97,7 @@ private extension DoozProvisionedDevice {
         case .elementAt:
             //node.element(withAddress: <#T##Address#>)
             break
-            
+                        
         }
         
     }

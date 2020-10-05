@@ -36,8 +36,7 @@ class _ModuleState extends State<Module> {
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
-        widget.meshManagerApi, bleMeshManager);
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
 
     _init();
   }
@@ -79,11 +78,8 @@ class _ModuleState extends State<Module> {
     await bleMeshManager.connect(widget.device);
     final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-    final provisionerUuid =
-        await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
-    final provisioner = _nodes.firstWhere(
-        (element) => element.uuid == provisionerUuid,
-        orElse: () => null);
+    final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+    final provisioner = _nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
     if (provisioner == null) {
       print('provisioner is null');
       return;
@@ -123,18 +119,14 @@ class _ModuleState extends State<Module> {
     }
 
     final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
-        await currentNode.unicastAddress,
-        BoardData.configuration(target).toByte(),
-        await provisioner.sequenceNumber);
+        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
     print(getBoardTypeStatus);
     final boardType = BoardData.decode(getBoardTypeStatus.level);
     if (boardType.payload == 0xA) {
       print('it\'s a Doobl V board');
       print('setup sortie ${target + 1} to be a dimmer');
       final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
-          await currentNode.unicastAddress,
-          BoardData.lightDimmerOutput(target).toByte(),
-          await provisioner.sequenceNumber);
+          await currentNode.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
       final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
       print(dimmerBoardData);
     }
@@ -151,18 +143,15 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
 
   StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices>
-      onServicesDiscoveredSubscription;
+  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
   StreamSubscription<BluetoothDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived>
-      onDataReceivedSubscription;
+  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
-  DoozProvisionedBleMeshManagerCallbacks(
-      this.meshManagerApi, this.bleMeshManager) {
+  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
       print('onDeviceConnecting $event');
     });
@@ -194,8 +183,7 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onDeviceDisconnected $event');
     });
 
-    onMeshPduCreatedSubscription =
-        meshManagerApi.onMeshPduCreated.listen((event) async {
+    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });
