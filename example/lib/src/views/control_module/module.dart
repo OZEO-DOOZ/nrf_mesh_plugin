@@ -7,6 +7,12 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
 import 'package:nordic_nrf_mesh_example/src/global.dart';
 
+import 'commands/send_create_group_with_name.dart';
+import 'commands/send_delete_group.dart';
+import 'commands/send_get_elements_for_group.dart';
+import 'commands/send_groups.dart';
+import 'commands/send_config_model_subscription_add.dart';
+import 'commands/send_generic_level.dart';
 import 'node.dart';
 
 class Module extends StatefulWidget {
@@ -30,7 +36,8 @@ class _ModuleState extends State<Module> {
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
+        widget.meshManagerApi, bleMeshManager);
 
     _init();
   }
@@ -53,44 +60,13 @@ class _ModuleState extends State<Module> {
         children: <Widget>[
           Node(currentNode),
           Divider(),
-          Text('Send a generic level set'),
-          TextField(
-            decoration: InputDecoration(hintText: 'Element Address'),
-            onChanged: (text) {
-              selectedElementAddress = int.parse(text);
-            },
-          ),
-          TextField(
-            decoration: InputDecoration(hintText: 'Level Value'),
-            onChanged: (text) {
-              selectedLevel = int.parse(text);
-            },
-          ),
-          RaisedButton(
-            child: Text('Send level'),
-            onPressed: () async {
-              print('send level $selectedLevel to $selectedElementAddress');
-              final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
-              final nodes = await widget.meshManagerApi.meshNetwork.nodes;
-
-              final provisionedNode =
-                  nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
-              final provisionerAddress = await provisionedNode.unicastAddress;
-              // final sequenceNumber = await provisionedNode.sequenceNumber;
-
-              if (Platform.isIOS) {
-                final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionerAddress);
-                final status = await widget.meshManagerApi
-                    .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
-                print(status);
-              } else if (Platform.isAndroid) {
-                final sequenceNumber = await widget.meshManagerApi.meshNetwork.getSequenceNumber(provisionerAddress);
-                final status = await widget.meshManagerApi
-                    .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
-                print(status);
-              }
-            },
-          )
+          Text('Commands :'),
+          SendGenericLevel(widget.meshManagerApi),
+          SendConfigModelSubscriptionAdd(widget.meshManagerApi),
+          SendGroups(widget.meshManagerApi),
+          SendGetElementsForGroup(widget.meshManagerApi),
+          SendCreateGroupWithName(widget.meshManagerApi),
+          SendDeleteGroup(widget.meshManagerApi),
         ],
       );
     }
@@ -103,8 +79,11 @@ class _ModuleState extends State<Module> {
     await bleMeshManager.connect(widget.device);
     final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-    final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
-    final provisioner = _nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+    final provisionerUuid =
+        await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+    final provisioner = _nodes.firstWhere(
+        (element) => element.uuid == provisionerUuid,
+        orElse: () => null);
     if (provisioner == null) {
       print('provisioner is null');
       return;
@@ -144,14 +123,18 @@ class _ModuleState extends State<Module> {
     }
 
     final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
-        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
+        await currentNode.unicastAddress,
+        BoardData.configuration(target).toByte(),
+        await provisioner.sequenceNumber);
     print(getBoardTypeStatus);
     final boardType = BoardData.decode(getBoardTypeStatus.level);
     if (boardType.payload == 0xA) {
       print('it\'s a Doobl V board');
       print('setup sortie ${target + 1} to be a dimmer');
       final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
-          await currentNode.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
+          await currentNode.unicastAddress,
+          BoardData.lightDimmerOutput(target).toByte(),
+          await provisioner.sequenceNumber);
       final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
       print(dimmerBoardData);
     }
@@ -168,15 +151,18 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
 
   StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
+  StreamSubscription<BleManagerCallbacksDiscoveredServices>
+      onServicesDiscoveredSubscription;
   StreamSubscription<BluetoothDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
+  StreamSubscription<BleMeshManagerCallbacksDataReceived>
+      onDataReceivedSubscription;
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
-  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
+  DoozProvisionedBleMeshManagerCallbacks(
+      this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
       print('onDeviceConnecting $event');
     });
@@ -208,7 +194,8 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onDeviceDisconnected $event');
     });
 
-    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+    onMeshPduCreatedSubscription =
+        meshManagerApi.onMeshPduCreated.listen((event) async {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });
