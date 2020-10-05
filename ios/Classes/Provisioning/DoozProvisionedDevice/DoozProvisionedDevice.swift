@@ -33,8 +33,8 @@ private extension DoozProvisionedDevice {
             name: FlutterChannels.DoozProvisionedMeshNode.getMethodChannelName(deviceUUID: uuid.uuidString),
             binaryMessenger: messenger
         )
-            .setMethodCallHandler { (call, result) in
-                self._handleMethodCall(call, result: result)
+        .setMethodCallHandler { (call, result) in
+            self._handleMethodCall(call, result: result)
         }
         
     }
@@ -53,7 +53,7 @@ private extension DoozProvisionedDevice {
         
         case .unicastAddress:
             result(node.unicastAddress)
-        
+            
         case .nodeName:
             if
                 let _args = call.arguments as? [String:Any],
@@ -63,7 +63,7 @@ private extension DoozProvisionedDevice {
                 
             }
             result(nil)
-        
+            
         case .name:
             #warning("Wrong name here; returns 'iPhone de xxx'")
             result(node.name)
@@ -87,17 +87,17 @@ private extension DoozProvisionedDevice {
                             }
                             
                         ]
-                      
+                        
                     })
                 ]
             }
-
+            
             result(elements)
             
         case .elementAt:
-            #warning("WIP")
             //node.element(withAddress: <#T##Address#>)
-
+            break
+            
         }
         
     }

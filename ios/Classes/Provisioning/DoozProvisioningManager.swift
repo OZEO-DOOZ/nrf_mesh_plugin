@@ -30,7 +30,7 @@ class DoozProvisioningManager: NSObject {
     
     private var provisioningBearer: DoozPBGattBearer?
     private var provisionedBearer: DoozGattBearer?
-        
+    
     private var provisionedDevice: DoozProvisionedDevice?
     
     init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger, delegate: DoozProvisioningManagerDelegate) {
@@ -81,8 +81,8 @@ class DoozProvisioningManager: NSObject {
         guard
             let _provisioningManager = self.provisioningManager,
             let _provisioningBearer = self.provisioningBearer
-            else{
-                return
+        else{
+            return
         }
         
         let packet = data.subdata(in: 1 ..< data.count)
@@ -103,7 +103,6 @@ class DoozProvisioningManager: NSObject {
             let message = ConfigCompositionDataGet()
             
             do{
-                print("📩 Sending message : ConfigCompositionDataGet")
                 _ = try _meshNetworkManager.send(message, to: _node)
             }catch{
                 print(error)
@@ -117,7 +116,6 @@ class DoozProvisioningManager: NSObject {
             let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
             let message = ConfigAppKeyAdd(applicationKey: appKey)
             do{
-                print("📩 Sending message : ConfigAppKeyAdd")
                 _ = try _meshNetworkManager.send(message, to: _node)
             }catch{
                 print(error)
@@ -162,7 +160,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             EventSinkKeys.meshNode.meshNode.rawValue:[
                 EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
             ]
-            ] as [String : Any]
+        ] as [String : Any]
         
         delegate?.provisioningStateDidChange(device: unprovisionedDevice, state: state, eventSinkMessage: dict)
         
@@ -198,11 +196,10 @@ extension DoozProvisioningManager: BearerDelegate{
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         guard let _provisioningManager = self.provisioningManager, case .complete = _provisioningManager.state else {
-            print("Device disconnected")
             return
         }
-        print("Provisioning complete")
         
+        // Provisioning is complete
         if let _meshNetworkManager = self.meshNetworkManager{
             if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
                 if let _meshNetwork = _meshNetworkManager.meshNetwork {
@@ -223,7 +220,7 @@ private extension ProvisionigState{
     
     func eventName() -> String{
         switch self {
-            
+        
         case .complete:
             return ProvisioningEvent.onProvisioningCompleted.rawValue
         case .fail(_):
@@ -236,7 +233,7 @@ private extension ProvisionigState{
     
     func flutterState() -> String {
         switch self {
-            
+        
         case .capabilitiesReceived(_):
             return "PROVISIONING_CAPABILITIES"
         case .ready:
@@ -255,7 +252,7 @@ private extension ProvisionigState{
 
 extension DoozProvisioningManager: GattBearerDelegate{
     func bearerDidConnect(_ bearer: Bearer) {
-        print("✅ CONNECTED TO BEARER")
+        
     }
 }
 
@@ -279,7 +276,7 @@ extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDeleg
             EventSinkKeys.meshNode.meshNode.rawValue:[
                 EventSinkKeys.meshNode.uuid.rawValue: _provisioningBearer.identifier.uuidString
             ]
-            ] as [String : Any]
+        ] as [String : Any]
         
         delegate?.sendMessage(dict)
         

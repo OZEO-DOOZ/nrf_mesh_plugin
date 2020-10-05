@@ -71,7 +71,7 @@ struct FlutterChannels{
             return "\(namespace)\(url)/\(deviceUUID)\(methodsUrl)"
         }
     }
-        
+    
 }
 
 enum MeshNetworkApiEvent: String{
