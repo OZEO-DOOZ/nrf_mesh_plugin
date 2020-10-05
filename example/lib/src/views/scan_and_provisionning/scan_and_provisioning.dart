@@ -189,10 +189,11 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
               child: ListView(
                 padding: EdgeInsets.all(8),
                 children: [
-                  for (final device in _devices)
+                  for (var i = 0; i < _devices.length; i++)
                     Device(
-                      device: device,
-                      onTap: () => provisionDevice(device),
+                      key: ValueKey('device-$i'),
+                      device: _devices.elementAt(i),
+                      onTap: () => provisionDevice(_devices.elementAt(i)),
                     ),
                 ],
               ),

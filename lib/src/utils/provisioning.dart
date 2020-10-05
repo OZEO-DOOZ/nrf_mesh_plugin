@@ -58,7 +58,11 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     await bleMeshManager.disconnect();
     ScanResult scanResult;
     while (scanResult == null) {
-      final scanResults = (await FlutterBlue.instance.startScan(withServices: [meshProxyUuid]) as List<ScanResult>);
+      final scanResults = (await FlutterBlue.instance.startScan(
+        withServices: [meshProxyUuid],
+        scanMode: ScanMode.lowLatency,
+        timeout: Duration(seconds: 5),
+      ) as List<ScanResult>);
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
       await Future.delayed(Duration(milliseconds: 500));
     }

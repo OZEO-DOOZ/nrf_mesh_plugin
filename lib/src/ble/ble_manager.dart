@@ -5,6 +5,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
+import 'package:pedantic/pedantic.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
@@ -96,6 +97,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
       _callbacks.onDeviceDisconnectedController.add(_device);
     }
-    await _mtuSizeSubscription.cancel();
+    unawaited(_mtuSizeSubscription.cancel());
   }
 }
