@@ -97,6 +97,7 @@ enum MessageEvent: String{
     case onConfigModelAppStatus
     case onConfigAppKeyStatus
     case onConfigCompositionDataStatus
+    case onGenericLevelStatus
 }
 
 enum EventSinkKeys: String{
@@ -136,4 +137,6 @@ enum EventSinkKeys: String{
     case data
     case source
     
+    case level
+    case targetLevel
 }
