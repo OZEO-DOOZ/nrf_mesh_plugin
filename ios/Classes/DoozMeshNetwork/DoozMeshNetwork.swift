@@ -103,7 +103,7 @@ private extension DoozMeshNetwork {
             break
             
         case .addGroupWithName:
-            
+            #warning("❌ TO TEST")
             if
                 let provisioner = meshNetwork?.localProvisioner,
                 let address = meshNetwork?.nextAvailableGroupAddress(for: provisioner),
@@ -136,6 +136,26 @@ private extension DoozMeshNetwork {
                 
             }
             
+        case .groups:
+            #warning("❌ TO TEST")
+
+            let groups = meshNetwork?.groups.map({ group in
+                return [
+                    // "id"
+                    "name" : group.name,
+                    "address" : group.address,
+                    "addressLabel" : group.address.virtualLabel?.uuidString,
+                    //"meshUuid" : group.
+                    "parentAddress" : group.parent?.address,
+                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString
+                ]
+            })
+            
+            result(groups)
+            
+        case .removeGroup:
+            #warning("❌ TO IMPLEMENT")
+            break
             
         }
     }

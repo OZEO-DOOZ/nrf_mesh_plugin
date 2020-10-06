@@ -13,4 +13,6 @@ enum DoozMeshNetworkChannel: String{
     case selectedProvisionerUuid
     
     case addGroupWithName
+    case groups
+    case removeGroup
 }
