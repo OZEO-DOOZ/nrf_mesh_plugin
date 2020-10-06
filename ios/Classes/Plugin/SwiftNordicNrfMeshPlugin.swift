@@ -27,12 +27,11 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
             print("❌ Plugin method - \(call.method) - isn't implemented")
             return
         }
-
+        
         switch _method {
         case .getPlatformVersion:
             let systemVersion = "iOS " + UIDevice.current.systemVersion
             result(systemVersion)
-            print("✅ Get Platform version returned \(systemVersion)")
             break
         case .createMeshManagerApi:
             guard let _messenger = self.messenger else{
@@ -40,12 +39,11 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
             }
             
             self.meshManagerApi = DoozMeshManagerApi(messenger: _messenger)
-            print("✅ Mesh Manager Api object created")
             result(nil)
             
             break
             
         }
-                
+        
     }
 }

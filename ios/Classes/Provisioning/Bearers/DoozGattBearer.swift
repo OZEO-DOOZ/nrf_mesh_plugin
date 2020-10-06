@@ -21,13 +21,13 @@ open class DoozGattBearer: Bearer {
     public var identifier: UUID
     public var name: String?
     public var doozDelegate: DoozGattBearerDelegate?
-
+    
     
     init(targetWithIdentifier uuid: UUID) {
         identifier = uuid
         isOpen = false
     }
-        
+    
     public func send(_ data: Data, ofType type: PduType) throws {
         // Add the pdu type to the data before sending it via flutter_blue
         var packet = Data([type.rawValue])

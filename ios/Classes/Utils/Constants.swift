@@ -71,7 +71,7 @@ struct FlutterChannels{
             return "\(namespace)\(url)/\(deviceUUID)\(methodsUrl)"
         }
     }
-        
+    
 }
 
 enum MeshNetworkApiEvent: String{
@@ -89,11 +89,27 @@ enum ProvisioningEvent: String{
     case onProvisioningStateChanged
     
     case onConfigAppKeyStatus
-    case onMeshPduCreated
     case sendProvisioningPdu
 }
 
+enum MessageEvent: String{
+    case onMeshPduCreated
+    case onConfigModelAppStatus
+    case onConfigAppKeyStatus
+    case onConfigCompositionDataStatus
+    case onGenericLevelStatus
+}
+
 enum EventSinkKeys: String{
+    enum message: String{
+        case elementAddress
+        case modelId
+        case appKeyIndex
+        case meshMessage
+        case source
+        case destination
+    }
+    
     enum network: String{
         case uuid
     }
@@ -119,16 +135,8 @@ enum EventSinkKeys: String{
     case state
     case pdu
     case data
+    case source
+    
+    case level
+    case targetLevel
 }
-//"key": element.index,
-//                  "address" : element.unicastAddress,
-//                  "locationDescriptor" : element.location.rawValue,
-//                  "models" : element.models.enumerated().map({ (index,model) in
-//                      return [
-//                          "key" : index,
-//                          "id" : model.modelIdentifier,
-//                          "subscribedAddresses" : model.subscriptions.map{ sub in
-//                              return sub.address
-//                          }
-//                      ]
-//                  })

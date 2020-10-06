@@ -35,8 +35,8 @@ private extension DoozUnprovisionedDevice {
             name: FlutterChannels.DoozUnprovisionedMeshNode.getMethodChannelName(deviceUUID: unprovisionedDevice.uuid.uuidString),
             binaryMessenger: messenger
         )
-            .setMethodCallHandler { (call, result) in
-                self._handleMethodCall(call, result: result)
+        .setMethodCallHandler { (call, result) in
+            self._handleMethodCall(call, result: result)
         }
         
     }
@@ -52,7 +52,7 @@ private extension DoozUnprovisionedDevice {
         }
         
         switch _method {
-            
+        
         case .getNumberOfElements:
             
             var nbElements = 0
