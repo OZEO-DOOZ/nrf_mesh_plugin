@@ -155,6 +155,24 @@ private extension DoozMeshNetwork {
             
         case .removeGroup:
             #warning("❌ TO IMPLEMENT")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let group = meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
+                
+                do{
+                    try meshNetwork?.remove(group: group)
+                    result(true)
+                }
+                catch{
+                    print(error)
+                    result(false)
+                }
+                
+            }else{
+                result(false)
+            }
+            
             break
             
         }
