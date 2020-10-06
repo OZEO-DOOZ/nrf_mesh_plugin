@@ -28,5 +28,59 @@ void main() {
 
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
-  }, timeout: Timeout(Duration(minutes: 10)));
+  }, timeout: Timeout(Duration(minutes: 5)));
+
+  test('go to control page', () async {
+    final controlItemFinder = find.text('Control');
+    await driver.tap(controlItemFinder);
+    final linearLoadingFinder = find.byType('LinearProgressIndicator');
+    await driver.waitForAbsent(linearLoadingFinder);
+  });
+
+  test('connect to device', () async {
+    final findFirstDevice = find.byValueKey('device-0');
+    await driver.tap(findFirstDevice);
+    final circularLoadingFinder = find.byType('CircularProgressIndicator');
+    await driver.waitForAbsent(circularLoadingFinder);
+  }, timeout: Timeout(Duration(minutes: 5)));
+
+  test('open node page to configure and go back', () async {
+    final firstNodeFinder = find.text('My Node');
+    await driver.tap(firstNodeFinder);
+    final circularLoadingFinder = find.byType('CircularProgressIndicator');
+    await driver.waitForAbsent(circularLoadingFinder);
+
+    final backPage = await find.pageBack();
+    await driver.tap(backPage);
+  }, timeout: Timeout(Duration(minutes: 1)));
+
+  test('turn first light on', () async {
+    final sendGenericLevelFinder = find.text('Send a generic level set');
+    await driver.tap(sendGenericLevelFinder);
+    final elementAddressInput = find.byValueKey('module-send-generic-level-address');
+    await driver.tap(elementAddressInput);
+    await driver.enterText('3');
+
+    final elementValueInput = find.byValueKey('module-send-generic-level-value');
+    await driver.tap(elementValueInput);
+    await driver.enterText('32767');
+
+    await driver.tap(find.text('Send level'));
+
+    await Future.delayed(Duration(seconds: 10));
+  }, timeout: Timeout(Duration(minutes: 1)));
+
+  test('turn first light off', () async {
+    final elementAddressInput = find.byValueKey('module-send-generic-level-address');
+    await driver.tap(elementAddressInput);
+    await driver.enterText('3');
+
+    final elementValueInput = find.byValueKey('module-send-generic-level-value');
+    await driver.tap(elementValueInput);
+    await driver.enterText('-32768');
+
+    await driver.tap(find.text('Send level'));
+
+    await Future.delayed(Duration(seconds: 10));
+  }, timeout: Timeout(Duration(minutes: 1)));
 }

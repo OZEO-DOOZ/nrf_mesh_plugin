@@ -1,43 +1,111 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
+import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_generic_level.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/mesh_element.dart';
 
 class Node extends StatefulWidget {
-  final ProvisionedMeshNode provisionedMeshNode;
+  final String name;
+  final ProvisionedMeshNode node;
+  final MeshManagerApi meshManagerApi;
 
-  const Node(this.provisionedMeshNode) : super();
+  const Node({Key key, this.node, this.meshManagerApi, this.name}) : super(key: key);
 
   @override
   _NodeState createState() => _NodeState();
 }
 
 class _NodeState extends State<Node> {
+  bool isLoading = true;
   int nodeAddress;
-  List elements = [];
+  List<ElementData> elements;
 
   @override
   void initState() {
     super.initState();
-    widget.provisionedMeshNode.unicastAddress
-        .then((value) => setState(() => nodeAddress = value));
-    widget.provisionedMeshNode.elements
-        .then((value) => setState(() => elements = value));
+    _init();
+  }
+
+  void _init() async {
+    nodeAddress = await widget.node.unicastAddress;
+    elements = await widget.node.elements;
+
+    //
+    //  ALL THE CODE UNDER THIS COMMENT IS SPECIFIC FOR DOOZ
+    //
+    final target = 0;
+    //  check if the board need to be configured
+    final provisioner = (await widget.meshManagerApi.meshNetwork.nodes).first;
+
+    int sequenceNumber;
+    if (Platform.isIOS) {
+      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
+    } else if (Platform.isAndroid) {
+      sequenceNumber = await provisioner.sequenceNumber;
+    }
+
+    final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
+        await widget.node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
+    print('getBoardTypeStatus $getBoardTypeStatus');
+    final boardType = BoardData.decode(getBoardTypeStatus.level);
+    if (boardType.payload == 0xA) {
+      print('it\'s a Doobl V board');
+      print('setup sortie ${target + 1} to be a dimmer');
+      if (Platform.isIOS) {
+        sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
+      } else if (Platform.isAndroid) {
+        sequenceNumber = await provisioner.sequenceNumber;
+      }
+      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
+          await widget.node.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
+      final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
+      print(dimmerBoardData);
+    }
+    //
+    //  END OF SPECIFIC CODE FOR DOOZ
+    //
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: Text('Node ${nodeAddress}'),
-      subtitle: Text('${widget.provisionedMeshNode.uuid}'),
-      children: <Widget>[
-        Text('Elements :'),
-        Column(
-          children: <Widget>[
-            ...elements.map((element) => MeshElement(element)).toList(),
+    Widget body = Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(),
+          Text('Configuring...'),
+        ],
+      ),
+    );
+    if (!isLoading) {
+      body = ListView(
+        children: [
+          Text('Node ${nodeAddress}'),
+          Text('${widget.node.uuid}'),
+          ...[
+            Text('Elements :'),
+            Column(
+              children: <Widget>[
+                ...elements.map((element) => MeshElement(element)).toList(),
+              ],
+            ),
           ],
-        ),
-      ],
+        ],
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.name),
+      ),
+      body: body,
     );
   }
 }

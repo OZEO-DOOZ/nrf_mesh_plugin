@@ -26,11 +26,11 @@ class Module extends StatefulWidget {
 }
 
 class _ModuleState extends State<Module> {
-  bool isLoading = true;
-  int selectedElementAddress;
-  int selectedLevel;
-  ProvisionedMeshNode currentNode;
   final bleMeshManager = BleMeshManager();
+
+  bool isLoading = true;
+  List<ProvisionedMeshNode> nodes;
+  List<String> nodesName = [];
 
   @override
   void initState() {
@@ -51,16 +51,43 @@ class _ModuleState extends State<Module> {
   @override
   Widget build(BuildContext context) {
     Widget body = Center(
-      child: CircularProgressIndicator(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(),
+          Text('Connecting ...'),
+        ],
+      ),
     );
     if (!isLoading) {
-      body = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body = ListView(
         children: <Widget>[
-          Node(currentNode),
+          for (var i = 0; i < nodes.length; i++)
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return Node(
+                        meshManagerApi: widget.meshManagerApi,
+                        node: nodes[i],
+                        name: nodesName[i],
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    child: Text(nodesName[i]),
+                  ),
+                ),
+              ),
+            ),
           Divider(),
-          Text('Commands :'),
-          SendGenericLevel(widget.meshManagerApi),
+          SendGenericLevel(meshManagerApi: widget.meshManagerApi),
           SendConfigModelSubscriptionAdd(widget.meshManagerApi),
           SendGroups(widget.meshManagerApi),
           SendGetElementsForGroup(widget.meshManagerApi),
@@ -70,69 +97,36 @@ class _ModuleState extends State<Module> {
       );
     }
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Nodes list'),
+      ),
       body: body,
     );
   }
 
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
-    final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
-    final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
-    final provisioner = _nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
-    if (provisioner == null) {
-      print('provisioner is null');
-      return;
-    }
+    nodes = (await widget.meshManagerApi.meshNetwork.nodes).skip(1).toList();
+    nodesName = await Future.wait(nodes.map((e) => e.name));
 
-    currentNode = _nodes.firstWhere((element) => element.uuid != provisionerUuid, orElse: () => null);
-    if (currentNode == null) {
-      print('node mesh not connected');
-      return;
-    }
-    final elements = await currentNode.elements;
-    for (final element in elements) {
-      for (final model in element.models) {
-        if (model.boundAppKey.isEmpty) {
-          if (element == elements.first && model == element.models.first) {
-            continue;
+    for (final node in nodes) {
+      final elements = await node.elements;
+      for (final element in elements) {
+        for (final model in element.models) {
+          if (model.boundAppKey.isEmpty) {
+            if (element == elements.first && model == element.models.first) {
+              continue;
+            }
+            final unicast = await node.unicastAddress;
+            print('need to bind app key');
+            await widget.meshManagerApi.sendConfigModelAppBind(
+              unicast,
+              element.address,
+              model.modelId,
+            );
           }
-          final unicast = await currentNode.unicastAddress;
-          print('need to bind app key');
-          await widget.meshManagerApi.sendConfigModelAppBind(
-            unicast,
-            element.address,
-            model.modelId,
-          );
         }
       }
-    }
-
-    final target = 0;
-    //  check if the board need to be configured
-
-    int sequenceNumber;
-    if (Platform.isIOS) {
-      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
-    } else if (Platform.isAndroid) {
-      sequenceNumber = await provisioner.sequenceNumber;
-    }
-
-    final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
-        await currentNode.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
-    print('getBoardTypeStatus $getBoardTypeStatus');
-    final boardType = BoardData.decode(getBoardTypeStatus.level);
-    if (boardType.payload == 0xA) {
-      print('it\'s a Doobl V board');
-      print('setup sortie ${target + 1} to be a dimmer');
-      if (Platform.isIOS) {
-        sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
-      } else if (Platform.isAndroid) {
-        sequenceNumber = await provisioner.sequenceNumber;
-      }
-      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
-          await currentNode.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
-      final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
-      print(dimmerBoardData);
     }
 
     setState(() {
