@@ -143,11 +143,11 @@ class MeshManagerApi {
         .listen(_onConfigModelPublicationStatusController.add);
   }
 
-  Stream<MeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
+  Stream<IMeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
 
-  Stream<MeshNetwork> get onNetworkImported => _onNetworkImportedController.stream;
+  Stream<IMeshNetwork> get onNetworkImported => _onNetworkImportedController.stream;
 
-  Stream<MeshNetwork> get onNetworkUpdated => _onNetworkUpdatedController.stream;
+  Stream<IMeshNetwork> get onNetworkUpdated => _onNetworkUpdatedController.stream;
 
   Stream<MeshNetworkEventError> get onNetworkLoadFailed => _onNetworkLoadFailedController.stream;
 
@@ -172,7 +172,7 @@ class MeshManagerApi {
 
   Stream<GenericOnOffStatusData> get onGenericOnOffStatus => _onGenericOnOffStatusController.stream;
 
-  MeshNetwork get meshNetwork => _lastMeshNetwork;
+  IMeshNetwork get meshNetwork => _lastMeshNetwork;
 
   String get meshProvisioningUuidServiceKey {
     if (Platform.isAndroid) {
@@ -220,13 +220,13 @@ class MeshManagerApi {
         _onConfigModelPublicationStatusController.close(),
       ]);
 
-  Future<MeshNetwork> loadMeshNetwork() async {
+  Future<IMeshNetwork> loadMeshNetwork() async {
     final future = _onNetworkLoadedStreamController.stream.first;
     await _methodChannel.invokeMethod('loadMeshNetwork');
     return future;
   }
 
-  Future<MeshNetwork> importMeshNetworkJson(final String json) async {
+  Future<IMeshNetwork> importMeshNetworkJson(final String json) async {
     final future = _onNetworkImportedController.stream.first;
     await _methodChannel.invokeMethod('importMeshNetworkJson', {'json': json});
     return future;

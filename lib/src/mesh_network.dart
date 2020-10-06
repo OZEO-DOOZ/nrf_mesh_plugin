@@ -3,7 +3,31 @@ import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/models/group/group.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 
-class MeshNetwork {
+abstract class IMeshNetwork {
+  Future<List<GroupData>> get groups;
+  Future<int> get highestAllocatableAddress;
+  Future<String> get name;
+  Future<List<ProvisionedMeshNode>> get nodes;
+
+  @Deprecated('Please use addGroupWithName instead')
+  Future<bool> addGroup(int id);
+
+  Future<GroupData> addGroupWithName(String name);
+
+  Future<void> assignUnicastAddress(int unicastAddress);
+
+  Future<List<ElementData>> elementsForGroup(int id);
+
+  @Deprecated('Please use getSequenceNumber from MeshManagerApi else it will only work on android')
+  Future<int> getSequenceNumber(int address);
+
+  Future<int> nextAvailableUnicastAddress(int elementSize);
+
+  Future<bool> removeGroup(int id);
+  Future<String> selectedProvisionerUuid();
+}
+
+class MeshNetwork implements IMeshNetwork {
   MethodChannel _methodChannel;
 
   final String _id;
@@ -12,33 +36,37 @@ class MeshNetwork {
     _methodChannel = MethodChannel('$namespace/mesh_network/$id/methods');
   }
 
-  String get id => _id;
-
-  Future<String> get name => _methodChannel.invokeMethod('getMeshNetworkName');
-
-  Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
-
+  @override
   Future<List<GroupData>> get groups async {
     final _groups = await _methodChannel.invokeMethod<List>('groups');
     return _groups.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
+  @override
+  Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
+
+  @override
   Future<List<ElementData>> elementsForGroup(int id) async {
     final result = await _methodChannel.invokeMethod('getElementsForGroup', {'id': id}) as List;
     return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
-  Future<int> nextAvailableUnicastAddress(int elementSize) =>
-      _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
+  String get id => _id;
 
-  Future<void> assignUnicastAddress(int unicastAddress) =>
-      _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
+  @override
+  Future<String> get name => _methodChannel.invokeMethod('getMeshNetworkName');
 
-  Future<String> selectedProvisionerUuid() => _methodChannel.invokeMethod('selectedProvisionerUuid');
+  @override
+  Future<List<ProvisionedMeshNode>> get nodes async {
+    final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
+    //  skip 1 is to skip the provisionner since it's not a provisioned mesh node
+    return _nodes.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
+  }
 
-  Future<int> getSequenceNumber(int address) =>
-      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+  @override
+  Future<bool> addGroup(int id) => _methodChannel.invokeMethod('addGroup', {'id': id});
 
+  @override
   Future<GroupData> addGroupWithName(String name) async {
     final result = await _methodChannel.invokeMethod<Map>('addGroupWithName', {'name': name});
     if (result['successfullyAdded'] == false) {
@@ -47,15 +75,29 @@ class MeshNetwork {
     return GroupData.fromJson((result.cast<String, dynamic>()['group'] as Map).cast<String, dynamic>());
   }
 
-  Future<bool> addGroup(int id) => _methodChannel.invokeMethod('addGroup', {'id': id});
+  @override
+  Future<void> assignUnicastAddress(int unicastAddress) =>
+      _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
 
+  @override
+  Future<List<ElementData>> elementsForGroup(int id) async {
+    final result = await _methodChannel.invokeMethod('getElementsForGroup') as List;
+    return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
+  }
+
+  @override
+  Future<int> getSequenceNumber(int address) =>
+      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+
+  @override
+  Future<int> nextAvailableUnicastAddress(int elementSize) =>
+      _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
+
+  @override
   Future<bool> removeGroup(int id) => _methodChannel.invokeMethod('removeGroup', {'id': id});
 
-  Future<List<ProvisionedMeshNode>> get nodes async {
-    final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
-    //  skip 1 is to skip the provisionner since it's not a provisioned mesh node
-    return _nodes.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
-  }
+  @override
+  Future<String> selectedProvisionerUuid() => _methodChannel.invokeMethod('selectedProvisionerUuid');
 
   @override
   String toString() => 'MeshNetwork{ $_id }';
