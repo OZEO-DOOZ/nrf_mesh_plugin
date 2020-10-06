@@ -154,7 +154,7 @@ private extension DoozMeshNetwork {
             result(groups)
             
         case .removeGroup:
-            #warning("❌ TO IMPLEMENT")
+            #warning("❌ TO TEST")
             if
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
@@ -175,6 +175,46 @@ private extension DoozMeshNetwork {
             
             break
             
+        case .getElementsForGroup:
+            #warning("❌ TO TEST")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let group = meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
+                                
+                if let models = meshNetwork?.models(subscribedTo: group){
+                    
+                    let elements = models.compactMap { model in
+                        return model.parentElement
+                    }
+                    
+                    let mappedElements = elements.map { element in
+                        return [
+                            "name" : element.name,
+                            "address" : element.unicastAddress,
+                            "locationDescriptor" : element.location,
+                            "models" : models.filter({$0.parentElement == element}).map({ m in
+                                return [
+                                    "subscribedAddresses" : m.subscriptions.map({ s in
+                                        return s.address
+                                    }),
+                                    "boundAppKey" : m.boundApplicationKeys.map{ key in
+                                        return key.index
+                                    }
+                                ]
+                            })
+                        ]
+                    }
+                    
+                    result(mappedElements)
+
+                }else{
+                    result(nil)
+                }
+                
+            }else{
+                result(false)
+            }
         }
     }
 }

@@ -15,4 +15,5 @@ enum DoozMeshNetworkChannel: String{
     case addGroupWithName
     case groups
     case removeGroup
+    case getElementsForGroup
 }

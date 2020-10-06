@@ -126,6 +126,7 @@ private extension DoozMeshManagerApi {
                     try _deleteMeshNetworkFromDb(_id)
                 }catch{
                     #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                 }
                 
             }
@@ -205,7 +206,7 @@ private extension DoozMeshManagerApi {
             result(nil)
             
         case .sendGenericLevelSet:
-            
+            #warning("TODO : add transitionTime and delay")
             if
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
@@ -221,7 +222,6 @@ private extension DoozMeshManagerApi {
                 
                 let message = GenericLevelSet(level: _level)
                 
-                
                 do{
                     _ = try meshNetworkManager?.send(
                         message,
@@ -230,6 +230,7 @@ private extension DoozMeshManagerApi {
                     )
                 }catch{
                     #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
                 }
                 
@@ -254,6 +255,7 @@ private extension DoozMeshManagerApi {
                     )
                 }catch{
                     #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
                 }
                 
@@ -264,6 +266,9 @@ private extension DoozMeshManagerApi {
             
         case .sendConfigModelSubscriptionAdd:
             #warning("WIP")
+//            let group = meshNetworkManager?.meshNetwork?.group(withAddress: <#T##MeshAddress#>)
+//            let model = meshNetworkManager?.meshNetwork?.models(subscribedTo: <#T##Group#>)
+//            ConfigModelSubscriptionAdd(group: <#T##Group#>, to: <#T##Model#>)
 //            if
 //                let _args = call.arguments as? [String:Any],
 //                let _address = _args["address"] as? Int16,
