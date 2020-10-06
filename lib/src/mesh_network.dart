@@ -24,7 +24,7 @@ class MeshNetwork {
   }
 
   Future<List<ElementData>> elementsForGroup(int id) async {
-    final result = await _methodChannel.invokeMethod('getElementsForGroup') as List;
+    final result = await _methodChannel.invokeMethod('getElementsForGroup', {'id': id}) as List;
     return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 

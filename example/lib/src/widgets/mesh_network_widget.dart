@@ -38,7 +38,7 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
         ..._nodes.map((e) => Node(e)),
         if (_groups.isNotEmpty) ...[
           Text('Groups: '),
-          ..._groups.map((e) => Group(e)),
+          ..._groups.map((e) => Group(e, widget.meshNetwork)),
         ]
       ],
     );
