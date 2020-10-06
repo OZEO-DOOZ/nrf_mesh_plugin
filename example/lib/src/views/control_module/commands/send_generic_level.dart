@@ -36,19 +36,15 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
           child: Text('Send level'),
           onPressed: () async {
             print('send level $selectedLevel to $selectedElementAddress');
-            final provisionerUuid = await widget.meshManagerApi.meshNetwork
-                .selectedProvisionerUuid();
+            final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
             final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-            final provisionedNode = nodes.firstWhere(
-                (element) => element.uuid == provisionerUuid,
-                orElse: () => null);
+            final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
             final provisionerAddress = await provisionedNode.unicastAddress;
             // final sequenceNumber = await provisionedNode.sequenceNumber;
-            final sequenceNumber = await widget.meshManagerApi.meshNetwork
-                .getSequenceNumber(provisionerAddress);
-            final status = await widget.meshManagerApi.sendGenericLevelSet(
-                selectedElementAddress, selectedLevel, sequenceNumber);
+            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionerAddress);
+            final status =
+                await widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
             print(status);
           },
         )
