@@ -101,6 +101,42 @@ private extension DoozMeshNetwork {
         case .selectedProvisionerUuid:
             result(meshNetwork?.localProvisioner?.uuid.uuidString)
             break
+            
+        case .addGroupWithName:
+            
+            if
+                let provisioner = meshNetwork?.localProvisioner,
+                let address = meshNetwork?.nextAvailableGroupAddress(for: provisioner),
+                let _args = call.arguments as? [String:Any],
+                let _name = _args["name"] as? String {
+                
+                do{
+                    let group = try Group(name: _name, address: address)
+                    try meshNetwork?.add(group: group)
+                    
+                    result(
+                        [
+                            "group" : [
+                                //"id"
+                                "name" : group.name,
+                                "address" : group.address,
+                                "addressLabel" : group.address.virtualLabel?.uuidString,
+                                //"meshUuid" : group.
+                                "parentAddress" : group.parent?.address,
+                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString
+                            ],
+                            "successfullyAdded" : true
+                            
+                        ]
+                    )
+                }catch{
+                    #warning("TODO : manage errors")
+                    print(error)
+                }
+                
+            }
+            
+            
         }
     }
 }

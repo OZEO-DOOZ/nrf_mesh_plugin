@@ -262,7 +262,48 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
             
-            
+        case .sendConfigModelSubscriptionAdd:
+            #warning("WIP")
+//            if
+//                let _args = call.arguments as? [String:Any],
+//                let _address = _args["address"] as? Int16,
+//                let _elementAddress = _args["elementAddress"] as? Int16,
+//                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
+//                let _modelId = _args["modelIdentifier"] as? Int16{
+//
+//                let group = meshNetworkManager?.meshNetwork?.group(withAddress: <#T##MeshAddress#>)
+//                doozMeshNetwork?.meshNetwork.no
+//                let model = meshNetworkManager?.meshNetwork?.nodes[0].elements[0].model(withModelId: _modelId)
+//
+//                Group(
+//                let message = ConfigModelSubscriptionAdd(group: <#T##Group#>, to: <#T##Model#>)
+//
+//
+//                val address = call.argument<Int>("address")!!
+//                val elementAddress = call.argument<Int>("elementAddress")!!
+//                val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
+//                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+//                val meshMessage = ConfigModelSubscriptionAdd(elementAddress, subscriptionAddress, modelIdentifier)
+//                mMeshManagerApi.createMeshPdu(address, meshMessage)
+//                result.success(null)
+//
+//                let message = GenericOnOffSet(_isOn)
+//
+//                do{
+//                    _ = try meshNetworkManager?.send(
+//                        message,
+//                        to: MeshAddress(Address(bitPattern: _address)),
+//                        using: _appKey
+//                    )
+//                }catch{
+//                    #warning("TODO : manage errors")
+//                    print(error)
+//                }
+//
+//            }
+//
+//            result(nil)
+            break
             
         case .sendConfigModelAppBind:
             if
