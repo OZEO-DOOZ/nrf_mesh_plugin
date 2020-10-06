@@ -265,49 +265,42 @@ private extension DoozMeshManagerApi {
             break
             
         case .sendConfigModelSubscriptionAdd:
-            #warning("WIP")
-//            let group = meshNetworkManager?.meshNetwork?.group(withAddress: <#T##MeshAddress#>)
-//            let model = meshNetworkManager?.meshNetwork?.models(subscribedTo: <#T##Group#>)
-//            ConfigModelSubscriptionAdd(group: <#T##Group#>, to: <#T##Model#>)
-//            if
-//                let _args = call.arguments as? [String:Any],
-//                let _address = _args["address"] as? Int16,
-//                let _elementAddress = _args["elementAddress"] as? Int16,
-//                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
-//                let _modelId = _args["modelIdentifier"] as? Int16{
-//
-//                let group = meshNetworkManager?.meshNetwork?.group(withAddress: <#T##MeshAddress#>)
-//                doozMeshNetwork?.meshNetwork.no
-//                let model = meshNetworkManager?.meshNetwork?.nodes[0].elements[0].model(withModelId: _modelId)
-//
-//                Group(
-//                let message = ConfigModelSubscriptionAdd(group: <#T##Group#>, to: <#T##Model#>)
-//
-//
-//                val address = call.argument<Int>("address")!!
-//                val elementAddress = call.argument<Int>("elementAddress")!!
-//                val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
-//                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
-//                val meshMessage = ConfigModelSubscriptionAdd(elementAddress, subscriptionAddress, modelIdentifier)
-//                mMeshManagerApi.createMeshPdu(address, meshMessage)
-//                result.success(null)
-//
-//                let message = GenericOnOffSet(_isOn)
-//
-//                do{
-//                    _ = try meshNetworkManager?.send(
-//                        message,
-//                        to: MeshAddress(Address(bitPattern: _address)),
-//                        using: _appKey
-//                    )
-//                }catch{
-//                    #warning("TODO : manage errors")
-//                    print(error)
-//                }
-//
-//            }
-//
-//            result(nil)
+            #warning("❌ TO TEST")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let _elementAddress = _args["elementAddress"] as? Int16,
+                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
+                let _modelId = _args["modelIdentifier"] as? UInt32,
+                
+                // Required (not existing yet)
+                let _nodeAddress = _args["nodeAddress"] as? Int16{
+                
+                
+                if
+                    let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
+                    
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _nodeAddress)),
+                    let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
+                    let model = element.model(withModelId: _modelId){
+                    
+                    let message: ConfigMessage =
+                        ConfigModelSubscriptionAdd(group: group, to: model) ??
+                        ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
+                    
+                    do{
+                        _ = try meshNetworkManager?.send(message, to: model)
+                        result(true)
+                    }catch{
+                        print(error)
+                        result(nil)
+                    }
+                }
+                
+                
+            }
+            
+            
             break
             
         case .sendConfigModelAppBind:
