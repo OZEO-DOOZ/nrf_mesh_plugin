@@ -56,6 +56,7 @@ void main() {
 
   test('turn first light on', () async {
     final sendGenericLevelFinder = find.text('Send a generic level set');
+
     await driver.tap(sendGenericLevelFinder);
     final elementAddressInput = find.byValueKey('module-send-generic-level-address');
     await driver.tap(elementAddressInput);

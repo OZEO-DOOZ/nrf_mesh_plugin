@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
-import 'package:nordic_nrf_mesh_example/src/global.dart';
 
 import 'commands/send_create_group_with_name.dart';
 import 'commands/send_delete_group.dart';

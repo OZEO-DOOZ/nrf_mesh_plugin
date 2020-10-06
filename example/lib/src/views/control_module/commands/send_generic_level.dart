@@ -43,9 +43,7 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
             final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
             final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
-            final provisionerAddress = await provisionedNode.unicastAddress;
-            // final sequenceNumber = await provisionedNode.sequenceNumber;
-            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionerAddress);
+            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
             final status =
                 await widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
             print(status);

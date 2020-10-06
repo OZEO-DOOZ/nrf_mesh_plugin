@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/data/board_data.dart';
-import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_generic_level.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/mesh_element.dart';
 
 class Node extends StatefulWidget {
@@ -40,12 +37,7 @@ class _NodeState extends State<Node> {
     //  check if the board need to be configured
     final provisioner = (await widget.meshManagerApi.meshNetwork.nodes).first;
 
-    int sequenceNumber;
-    if (Platform.isIOS) {
-      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
-    } else if (Platform.isAndroid) {
-      sequenceNumber = await provisioner.sequenceNumber;
-    }
+    var sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisioner);
 
     final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
         await widget.node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
@@ -54,11 +46,7 @@ class _NodeState extends State<Node> {
     if (boardType.payload == 0xA) {
       print('it\'s a Doobl V board');
       print('setup sortie ${target + 1} to be a dimmer');
-      if (Platform.isIOS) {
-        sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
-      } else if (Platform.isAndroid) {
-        sequenceNumber = await provisioner.sequenceNumber;
-      }
+      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisioner);
       final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
           await widget.node.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
       final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
