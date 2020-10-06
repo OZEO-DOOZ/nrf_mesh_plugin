@@ -25,7 +25,7 @@ class ModelData {
 class ElementData {
   final int key;
   final int address;
-  final name;
+  final String name;
   final int locationDescriptor;
   final List<ModelData> models;
 
