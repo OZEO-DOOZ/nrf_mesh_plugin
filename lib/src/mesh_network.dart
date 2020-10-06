@@ -80,12 +80,6 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
 
   @override
-  Future<List<ElementData>> elementsForGroup(int id) async {
-    final result = await _methodChannel.invokeMethod('getElementsForGroup') as List;
-    return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
-  }
-
-  @override
   Future<int> getSequenceNumber(int address) =>
       _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
 
