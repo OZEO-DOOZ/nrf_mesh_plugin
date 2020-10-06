@@ -271,16 +271,12 @@ private extension DoozMeshManagerApi {
                 let _address = _args["address"] as? Int16,
                 let _elementAddress = _args["elementAddress"] as? Int16,
                 let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
-                let _modelId = _args["modelIdentifier"] as? UInt32,
-                
-                // Required (not existing yet)
-                let _nodeAddress = _args["nodeAddress"] as? Int16{
-                
+                let _modelId = _args["modelIdentifier"] as? UInt32{
                 
                 if
                     let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
                     
-                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _nodeAddress)),
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _address)),
                     let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
                     let model = element.model(withModelId: _modelId){
                     
