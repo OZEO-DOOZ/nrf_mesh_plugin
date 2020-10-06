@@ -241,13 +241,13 @@ private extension DoozMeshManagerApi {
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
                 let _isOn = _args["value"] as? Bool,
-                let _meshNetworkManager = self.meshNetworkManager,
-                let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+                let _keyIndex = _args["keyIndex"] as? Int16,
+                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(_keyIndex)]{
                 
                 let message = GenericOnOffSet(_isOn)
                 
                 do{
-                    _ = try _meshNetworkManager.send(
+                    _ = try meshNetworkManager?.send(
                         message,
                         to: MeshAddress(Address(bitPattern: _address)),
                         using: _appKey
