@@ -175,8 +175,8 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       onDeviceReadySubscription.cancel(),
       onDataReceivedSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
-      onDataSentSubscription?.cancel(),
-      bleMeshManager?.callbacks?.dispose(),
+      if (Platform.isAndroid) onDataSentSubscription?.cancel(),
+      if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
     ]));
   }
 }
