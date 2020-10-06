@@ -13,6 +13,7 @@ ConfigModelPublicationStatus _$ConfigModelPublicationStatusFromJson(
   return _ConfigModelPublicationStatus.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigModelPublicationStatusTearOff {
   const _$ConfigModelPublicationStatusTearOff();
 
@@ -43,11 +44,18 @@ class _$ConfigModelPublicationStatusTearOff {
       isSuccessful,
     );
   }
+
+// ignore: unused_element
+  ConfigModelPublicationStatus fromJson(Map<String, Object> json) {
+    return ConfigModelPublicationStatus.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigModelPublicationStatus = _$ConfigModelPublicationStatusTearOff();
 
+/// @nodoc
 mixin _$ConfigModelPublicationStatus {
   int get elementAddress;
   int get publishAddress;
@@ -66,6 +74,7 @@ mixin _$ConfigModelPublicationStatus {
       get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigModelPublicationStatusCopyWith<$Res> {
   factory $ConfigModelPublicationStatusCopyWith(
           ConfigModelPublicationStatus value,
@@ -85,6 +94,7 @@ abstract class $ConfigModelPublicationStatusCopyWith<$Res> {
       bool isSuccessful});
 }
 
+/// @nodoc
 class _$ConfigModelPublicationStatusCopyWithImpl<$Res>
     implements $ConfigModelPublicationStatusCopyWith<$Res> {
   _$ConfigModelPublicationStatusCopyWithImpl(this._value, this._then);
@@ -141,6 +151,7 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigModelPublicationStatusCopyWith<$Res>
     implements $ConfigModelPublicationStatusCopyWith<$Res> {
   factory _$ConfigModelPublicationStatusCopyWith(
@@ -162,6 +173,7 @@ abstract class _$ConfigModelPublicationStatusCopyWith<$Res>
       bool isSuccessful});
 }
 
+/// @nodoc
 class __$ConfigModelPublicationStatusCopyWithImpl<$Res>
     extends _$ConfigModelPublicationStatusCopyWithImpl<$Res>
     implements _$ConfigModelPublicationStatusCopyWith<$Res> {
@@ -217,6 +229,8 @@ class __$ConfigModelPublicationStatusCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
   const _$_ConfigModelPublicationStatus(
       this.elementAddress,

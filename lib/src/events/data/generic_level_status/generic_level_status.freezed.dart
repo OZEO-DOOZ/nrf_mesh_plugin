@@ -13,6 +13,7 @@ GenericLevelStatusData _$GenericLevelStatusDataFromJson(
   return _GenericLevelStatusData.fromJson(json);
 }
 
+/// @nodoc
 class _$GenericLevelStatusDataTearOff {
   const _$GenericLevelStatusDataTearOff();
 
@@ -26,11 +27,18 @@ class _$GenericLevelStatusDataTearOff {
       destination,
     );
   }
+
+// ignore: unused_element
+  GenericLevelStatusData fromJson(Map<String, Object> json) {
+    return GenericLevelStatusData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $GenericLevelStatusData = _$GenericLevelStatusDataTearOff();
 
+/// @nodoc
 mixin _$GenericLevelStatusData {
   int get level;
   @nullable
@@ -42,6 +50,7 @@ mixin _$GenericLevelStatusData {
   $GenericLevelStatusDataCopyWith<GenericLevelStatusData> get copyWith;
 }
 
+/// @nodoc
 abstract class $GenericLevelStatusDataCopyWith<$Res> {
   factory $GenericLevelStatusDataCopyWith(GenericLevelStatusData value,
           $Res Function(GenericLevelStatusData) then) =
@@ -50,6 +59,7 @@ abstract class $GenericLevelStatusDataCopyWith<$Res> {
       {int level, @nullable int targetLevel, int source, int destination});
 }
 
+/// @nodoc
 class _$GenericLevelStatusDataCopyWithImpl<$Res>
     implements $GenericLevelStatusDataCopyWith<$Res> {
   _$GenericLevelStatusDataCopyWithImpl(this._value, this._then);
@@ -76,6 +86,7 @@ class _$GenericLevelStatusDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$GenericLevelStatusDataCopyWith<$Res>
     implements $GenericLevelStatusDataCopyWith<$Res> {
   factory _$GenericLevelStatusDataCopyWith(_GenericLevelStatusData value,
@@ -86,6 +97,7 @@ abstract class _$GenericLevelStatusDataCopyWith<$Res>
       {int level, @nullable int targetLevel, int source, int destination});
 }
 
+/// @nodoc
 class __$GenericLevelStatusDataCopyWithImpl<$Res>
     extends _$GenericLevelStatusDataCopyWithImpl<$Res>
     implements _$GenericLevelStatusDataCopyWith<$Res> {
@@ -113,6 +125,8 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_GenericLevelStatusData implements _GenericLevelStatusData {
   const _$_GenericLevelStatusData(
       this.level, @nullable this.targetLevel, this.source, this.destination)

@@ -24,7 +24,7 @@ class _GroupState extends State<Group> {
         if (isOpen) {
           print('load elements');
           widget.meshNetwork
-              .elementsForGroup(widget.groupData.id)
+              .elementsForGroup(widget.groupData.address)
               .then((value) => setState(() => elements = value));
         }
       },
