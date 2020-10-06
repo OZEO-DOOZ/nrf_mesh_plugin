@@ -77,7 +77,6 @@ class _ModuleState extends State<Module> {
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
     final _nodes = await widget.meshManagerApi.meshNetwork.nodes;
-
     final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
     final provisioner = _nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
     if (provisioner == null) {
@@ -85,7 +84,7 @@ class _ModuleState extends State<Module> {
       return;
     }
 
-    currentNode = provisionedNode;
+    currentNode = _nodes.firstWhere((element) => element.uuid != provisionerUuid, orElse: () => null);
     if (currentNode == null) {
       print('node mesh not connected');
       return;
@@ -111,20 +110,25 @@ class _ModuleState extends State<Module> {
     final target = 0;
     //  check if the board need to be configured
 
-    var sequenceNumber;
+    int sequenceNumber;
     if (Platform.isIOS) {
-      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await (provisioner.unicastAddress));
+      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
     } else if (Platform.isAndroid) {
       sequenceNumber = await provisioner.sequenceNumber;
     }
 
     final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
         await currentNode.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
-    print(getBoardTypeStatus);
+    print('getBoardTypeStatus $getBoardTypeStatus');
     final boardType = BoardData.decode(getBoardTypeStatus.level);
     if (boardType.payload == 0xA) {
       print('it\'s a Doobl V board');
       print('setup sortie ${target + 1} to be a dimmer');
+      if (Platform.isIOS) {
+        sequenceNumber = await widget.meshManagerApi.getSequenceNumber(await provisioner.unicastAddress);
+      } else if (Platform.isAndroid) {
+        sequenceNumber = await provisioner.sequenceNumber;
+      }
       final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
           await currentNode.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
       final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
