@@ -391,6 +391,9 @@ class MeshManagerApi {
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
+  Future<int> getSequenceNumber(int address) =>
+      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+
   String _digits(int val, int digits) {
     var hi = 1 << (digits * 4);
     return (hi | (val & (hi - 1))).toRadixString(16).substring(1);

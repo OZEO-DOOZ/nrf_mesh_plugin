@@ -15,7 +15,7 @@ public protocol DoozTransmitterDelegate{
 class DoozTransmitter: Transmitter{
     
     public var doozDelegate: DoozGattBearerDelegate?
-
+    
     func send(_ data: Data, ofType type: PduType) throws {
         // Add the pdu type to the data before sending it via flutter_blue
         var packet = Data([type.rawValue])

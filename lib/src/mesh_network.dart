@@ -45,6 +45,12 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
 
+  @override
+  Future<List<ElementData>> elementsForGroup(int id) async {
+    final result = await _methodChannel.invokeMethod('getElementsForGroup', {'id': id}) as List;
+    return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
+  }
+
   String get id => _id;
 
   @override

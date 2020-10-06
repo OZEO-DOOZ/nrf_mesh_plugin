@@ -35,14 +35,14 @@ private extension DoozMeshNetwork {
             name: FlutterChannels.DoozMeshNetwork.getEventChannelName(networkId: network.id),
             binaryMessenger: messenger
         )
-            .setStreamHandler(self)
+        .setStreamHandler(self)
         
         FlutterMethodChannel(
             name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: network.id),
             binaryMessenger: messenger
         )
-            .setMethodCallHandler { (call, result) in
-                self._handleMethodCall(call, result: result)
+        .setMethodCallHandler { (call, result) in
+            self._handleMethodCall(call, result: result)
         }
         
     }
@@ -81,7 +81,7 @@ private extension DoozMeshNetwork {
             break
             
         case .nodes:
-
+            
             if
                 let _messenger = self.messenger,
                 let _meshNetwork = self.meshNetwork {
@@ -94,9 +94,12 @@ private extension DoozMeshNetwork {
                 })
                 
                 result(nodes)
-                   
+                
             }
             
+            break
+        case .selectedProvisionerUuid:
+            result(meshNetwork?.localProvisioner?.uuid.uuidString)
             break
         }
     }

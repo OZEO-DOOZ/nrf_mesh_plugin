@@ -67,6 +67,11 @@ private extension DoozMeshManagerApi {
         // Then, leave 10 seconds for until the incomplete message times out.
         _meshNetworkManager.acknowledgmentMessageTimeout = 40.0
         
+        _meshNetworkManager.delegate = self
+        
+        self.doozTransmitter = DoozTransmitter()
+        doozTransmitter?.doozDelegate = self
+        _meshNetworkManager.transmitter = doozTransmitter
     }
     
     func _initChannels(messenger: FlutterBinaryMessenger){
@@ -75,15 +80,15 @@ private extension DoozMeshManagerApi {
             name: FlutterChannels.MeshManagerApi.getEventChannelName(),
             binaryMessenger: messenger
         )
-            .setStreamHandler(self)
+        .setStreamHandler(self)
         
         FlutterMethodChannel(
             name: FlutterChannels.MeshManagerApi.getMethodChannelName(),
             binaryMessenger: messenger
         )
-            .setMethodCallHandler({ (call, result) in
-                self._handleMethodCall(call, result: result)
-            })
+        .setMethodCallHandler({ (call, result) in
+            self._handleMethodCall(call, result: result)
+        })
         
     }
     
@@ -103,7 +108,7 @@ private extension DoozMeshManagerApi {
         }
         
         switch _method {
-            
+        
         case .loadMeshNetwork:
             _loadMeshNetwork()
             result(nil)
@@ -120,7 +125,7 @@ private extension DoozMeshManagerApi {
                 do{
                     try _deleteMeshNetworkFromDb(_id)
                 }catch{
-                    #warning("TODO: Manage errors on delete")
+                    #warning("TODO : manage errors")
                 }
                 
             }
@@ -169,7 +174,6 @@ private extension DoozMeshManagerApi {
             break
             
         case .setMtuSize:
-            
             if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
                 delegate?.mtuSize = _mtuSize
                 result(nil)
@@ -183,24 +187,43 @@ private extension DoozMeshManagerApi {
             result(nil)
             
         case .createMeshPduForConfigCompositionDataGet:
-            doozProvisioningManager?.createMeshPduForConfigCompositionDataGet()
+            if
+                let _args = call.arguments as? [String:Any],
+                let _dest = _args["dest"] as? Int16{
+                doozProvisioningManager?.createMeshPduForConfigCompositionDataGet(_dest)
+            }
+            
+            result(nil)
+            
+        case .createMeshPduForConfigAppKeyAdd:
+            if
+                let _args = call.arguments as? [String:Any],
+                let _dest = _args["dest"] as? Int16,
+                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys.first{
+                doozProvisioningManager?.createMeshPduForConfigAppKeyAdd(dest: _dest, appKey: _appKey)
+            }
             result(nil)
             
         case .sendGenericLevelSet:
+            
             if
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
                 let _level = _args["level"] as? Int16,
-                let _meshNetworkManager = self.meshNetworkManager,
-                let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+                let _keyIndex = _args["keyIndex"] as? Int16,
+                //                let _transitionStep = _args["transitionStep"] as? UInt8,
+                //                let _transitionResolution = _args["transitionResolution"] as? UInt8,
+                //                let stepResolution = StepResolution(rawValue: _transitionResolution),
+                //                let _delay = _args["delay"] as? Int16,
+                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(_keyIndex)]{
+                
+                // let transitionTime = TransitionTime(steps: _transitionStep, stepResolution: stepResolution)
                 
                 let message = GenericLevelSet(level: _level)
                 
-                self.doozTransmitter = DoozTransmitter()
-                _meshNetworkManager.transmitter = doozTransmitter
                 
                 do{
-                    _ = try _meshNetworkManager.send(
+                    _ = try meshNetworkManager?.send(
                         message,
                         to: MeshAddress(Address(bitPattern: _address)),
                         using: _appKey
@@ -223,9 +246,6 @@ private extension DoozMeshManagerApi {
                 
                 let message = GenericOnOffSet(_isOn)
                 
-                self.doozTransmitter = DoozTransmitter()
-                _meshNetworkManager.transmitter = doozTransmitter
-                
                 do{
                     _ = try _meshNetworkManager.send(
                         message,
@@ -242,72 +262,55 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
             
-//            func bindAppKey(to model: Model){
-//                  if let _meshNetworkManager = self.meshNetworkManager{
-//                      do{
-//                          print("📩 Sending message : ConfigModelAppBind")
-//
-//                          if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-//
-//                              guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
-//                                  return
-//                              }
-//
-//
-//                              _ = try _meshNetworkManager.send(message, to: model)
-//
-//                              print("💪 BIND APP KEY TO MODEL \(model)")
-//                          }
-//                      }catch{
-//                          print(error)
-//                      }
-//
-//                  }
-//              }
+            
             
         case .sendConfigModelAppBind:
             if
                 let _args = call.arguments as? [String:Any],
-                let nodeId = _args["nodeId"] as? UInt16,
-                let elementId = _args["elementId"] as? Int16,
-                let modelId = _args["modelId"] as? UInt16,
+                let nodeId = _args["nodeId"] as? Int16, // nodeId is an unicastAddress
+                let elementId = _args["elementId"] as? Int16, // elementId is an unicastAddress
+                let modelId = _args["modelId"] as? UInt32,
                 let appKeyIndex = _args["appKeyIndex"] as? Int16,
                 let _meshNetworkManager = self.meshNetworkManager{
                 
-                var _modelId = modelId
-                var _elementAddress = Address(bitPattern: elementId)
-                var _appKeyIndex = KeyIndex(bitPattern: appKeyIndex)
-                
-                let data =
-                    Data()
-                    + Data(bytes: &_elementAddress, count: MemoryLayout<UInt16>.size)
-                    + Data(bytes: &_appKeyIndex, count: MemoryLayout<UInt16>.size)
-                    + Data(bytes: &_modelId, count: MemoryLayout<UInt16>.size)
-                
-                self.doozTransmitter = DoozTransmitter()
-                _meshNetworkManager.transmitter = doozTransmitter
-                
-                _meshNetworkManager.delegate = self
                 do{
-                    if let configModelAppBind = ConfigModelAppBind(parameters: data){
-                        try _ = _meshNetworkManager.send(configModelAppBind, to: _elementAddress)
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: nodeId))
+                    let element = node?.element(withAddress: Address(bitPattern: elementId))
+                    let model = element?.model(withModelId: modelId)
+                    let appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(appKeyIndex)]
+                    
+                    if let _appKey = appKey, let _model = model{
+                        
+                        if let configModelAppBind = ConfigModelAppBind(applicationKey: _appKey, to: _model){
+                            try _ =  _meshNetworkManager.send(configModelAppBind, to: _model)
+                        }
                     }
+                    
                 }
                 catch{
                     print(error)
                 }
                 
-                
             }
             
             result(nil)
-            //            val nodeId = call.argument<Int>("nodeId")!!
-            //                           val elementId = call.argument<Int>("elementId")!!
-            //                           val modelId = call.argument<Int>("modelId")!!
-            //                           val appKeyIndex = call.argument<Int>("appKeyIndex")!!
-            //                           val configModelAppBind = ConfigModelAppBind(elementId, modelId, appKeyIndex)
-            //                           mMeshManagerApi.createMeshPdu(nodeId, configModelAppBind)
-            //                           result.success(null)
+            
+        case .getSequenceNumberForAddress:
+            if
+                let _meshNetworkManager = self.meshNetworkManager,
+                let _meshNetwork = _meshNetworkManager.meshNetwork,
+                let _args = call.arguments as? [String:Any],
+                let _nodeAddress = _args["address"] as? Int16,
+                let _node = _meshNetwork.node(withAddress: Address(bitPattern: _nodeAddress)),
+                _node.elementsCount > 0{
+                
+                let sequenceNumber = _meshNetworkManager.getSequenceNumber(ofLocalElement: _node.elements[0])
+                result(sequenceNumber)
+                
+            }else{
+                result(nil)
+            }
+            
         }
         
     }
@@ -316,7 +319,6 @@ private extension DoozMeshManagerApi {
 
 
 private extension DoozMeshManagerApi{
-    // Events native implementations
     
     func _loadMeshNetwork(){
         guard let _meshNetworkManager = self.meshNetworkManager else{
@@ -327,16 +329,19 @@ private extension DoozMeshManagerApi{
             
             if try _meshNetworkManager.load(){
                 // Mesh Network loaded from database
+                let element0 = Element(name: "Primary Element", location: .first, models: [
+                    // 4 generic models defined by Bluetooth SIG:
+                    Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
+                    Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
+                    Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
+                    Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
+                ])
+                
+                _meshNetworkManager.localElements = [element0]
             }else{
                 // No mesh network in database, we have to create one
-                print("✅ No Mesh Network in database, creating a new one...")
-                
                 let meshNetwork = try _generateMeshNetwork()
                 try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
-                
-                
-                print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
-                
             }
             
             delegate?.onNetworkLoaded(_meshNetworkManager.meshNetwork)
@@ -358,8 +363,6 @@ private extension DoozMeshManagerApi{
             if let data = json.data(using: .utf8){
                 let _network = try _meshNetworkManager.import(from: data)
                 
-                print("✅ Json imported")
-                
                 if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
                     doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
                 } else {
@@ -371,7 +374,7 @@ private extension DoozMeshManagerApi{
                         [
                             EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
                             EventSinkKeys.id.rawValue : _network.id
-                    ])
+                        ])
                 }
                 #warning("save in db after import successful")
                 //    delegate.onNetworkImported()
@@ -454,9 +457,10 @@ private extension DoozMeshManagerApi{
     }
     
     func _didDeliverData(data: Data){
+        
         guard
             let type = PduType(rawValue: UInt8(data[0])) else{
-                return
+            return
         }
         
         let packet = data.subdata(in: 1 ..< data.count)
@@ -473,6 +477,7 @@ private extension DoozMeshManagerApi{
             guard let _meshNetworkManager = self.meshNetworkManager else{
                 return
             }
+            
             _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
         }
         
@@ -502,8 +507,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
             let _network = network,
             let _messenger = self.messenger,
             let _eventSink = self.eventSink
-            else{
-                return
+        else{
+            return
         }
         
         if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
@@ -544,8 +549,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         guard
             let _network = network,
             let _eventSink = self.eventSink
-            else{
-                return
+        else{
+            return
         }
         
         doozMeshNetwork?.meshNetwork = _network
@@ -566,8 +571,8 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
             let _network = network,
             let _messenger = self.messenger,
             let _eventSink = self.eventSink
-            else{
-                return
+        else{
+            return
         }
         
         if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
@@ -622,15 +627,6 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         }
     }
     
-    func didFinishProvisioning() {
-        if let _eventSink = self.eventSink{
-            _eventSink(
-                [
-                    EventSinkKeys.eventName.rawValue : ProvisioningEvent.onConfigAppKeyStatus.rawValue
-            ])
-        }
-    }
-    
 }
 
 
@@ -639,15 +635,86 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
     func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
         print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
         
+        // Handle the message based on its type.
         switch message {
+        
+        case let status as ConfigModelAppStatus:
+            
+            if status.isSuccess {
+                let dict = [
+                    
+                    EventSinkKeys.eventName.rawValue: MessageEvent.onConfigModelAppStatus.rawValue,
+                    EventSinkKeys.message.elementAddress.rawValue: status.elementAddress,
+                    EventSinkKeys.message.modelId.rawValue: status.modelId,
+                    EventSinkKeys.message.appKeyIndex.rawValue: status.applicationKeyIndex,
+                    
+                ] as [String : Any]
+                
+                sendMessage(dict)
+            } else {
+                break
+            }
             
         case is ConfigCompositionDataStatus:
-            break
             
-        case is ConfigDefaultTtlStatus:
-            break
-        case is ConfigAppKeyStatus:
-            break
+            let dict = [
+                
+                EventSinkKeys.eventName.rawValue : MessageEvent.onConfigCompositionDataStatus.rawValue,
+                EventSinkKeys.source.rawValue : source,
+                EventSinkKeys.message.meshMessage.rawValue : [
+                    EventSinkKeys.message.source.rawValue : source,
+                    EventSinkKeys.message.destination.rawValue : destination
+                ]
+                
+            ] as [String : Any]
+            
+            sendMessage(dict)
+            
+        case let status as ConfigAppKeyStatus:
+            if status.isSuccess {
+                let dict = [
+                    
+                    EventSinkKeys.eventName.rawValue : MessageEvent.onConfigAppKeyStatus.rawValue,
+                    EventSinkKeys.source.rawValue : source,
+                    EventSinkKeys.message.meshMessage.rawValue : [
+                        EventSinkKeys.message.source.rawValue : source,
+                        EventSinkKeys.message.destination.rawValue : destination
+                    ]
+                    
+                ] as [String : Any]
+                
+                sendMessage(dict)
+            }else {
+                break
+            }
+            
+        case let status as GenericLevelStatus:
+            
+            let dict = [
+                
+                EventSinkKeys.eventName.rawValue : MessageEvent.onGenericLevelStatus.rawValue,
+                EventSinkKeys.level.rawValue : status.level,
+                EventSinkKeys.targetLevel.rawValue : status.targetLevel ?? 0,
+                EventSinkKeys.source.rawValue : source,
+                EventSinkKeys.message.destination.rawValue : destination
+                
+            ] as [String : Any]
+            
+            sendMessage(dict)
+            
+            
+        //        case let list as ConfigModelAppList:
+        //            break
+        //
+        //        case let list as ConfigModelSubscriptionList:
+        //            break
+        //
+        //        case let status as ConfigModelPublicationStatus:
+        //            break
+        //
+        //        case let status as ConfigModelSubscriptionStatus:
+        //            break
+        
         default:
             break
         }
@@ -662,4 +729,18 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
         print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
     }
     
+}
+
+extension DoozMeshManagerApi: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
+    func send(data: Data) {
+        
+        let dict = [
+            
+            EventSinkKeys.eventName.rawValue: MessageEvent.onMeshPduCreated.rawValue,
+            EventSinkKeys.pdu.rawValue: data
+        ] as [String : Any]
+        
+        sendMessage(dict)
+        
+    }
 }

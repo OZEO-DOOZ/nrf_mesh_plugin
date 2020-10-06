@@ -33,8 +33,8 @@ private extension DoozProvisionedDevice {
             name: FlutterChannels.DoozProvisionedMeshNode.getMethodChannelName(deviceUUID: uuid.uuidString),
             binaryMessenger: messenger
         )
-            .setMethodCallHandler { (call, result) in
-                self._handleMethodCall(call, result: result)
+        .setMethodCallHandler { (call, result) in
+            self._handleMethodCall(call, result: result)
         }
         
     }
@@ -53,7 +53,7 @@ private extension DoozProvisionedDevice {
         
         case .unicastAddress:
             result(node.unicastAddress)
-        
+            
         case .nodeName:
             if
                 let _args = call.arguments as? [String:Any],
@@ -64,12 +64,13 @@ private extension DoozProvisionedDevice {
             }
             result(nil)
             
+        case .name:
+            #warning("Wrong name here; returns 'iPhone de xxx'")
+            result(node.name)
+            
         case .elements:
-            #warning("address : unicastAddress ou Address(index) ?")
-            #warning("we dont have access to boundAppKey on iOS")
-            //in model : EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.
-                                  
-            var elements = node.elements.map { element in
+            
+            let elements = node.elements.map { element in
                 return [
                     EventSinkKeys.meshNode.elements.key.rawValue: element.index,
                     EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
@@ -80,19 +81,23 @@ private extension DoozProvisionedDevice {
                             EventSinkKeys.meshNode.elements.model.modelId.rawValue : model.modelIdentifier,
                             EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
                                 return sub.address
+                            },
+                            EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.boundApplicationKeys.map{ key in
+                                return key.index
                             }
                             
                         ]
-                      
+                        
                     })
                 ]
             }
-
+            
             result(elements)
             
         case .elementAt:
-            #warning("WIP")
             //node.element(withAddress: <#T##Address#>)
+            break
+                        
         }
         
     }

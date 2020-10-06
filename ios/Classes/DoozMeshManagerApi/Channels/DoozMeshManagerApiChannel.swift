@@ -18,10 +18,13 @@ enum DoozMeshManagerApiChannel: String{
     
     case provisioning
     
+    case createMeshPduForConfigAppKeyAdd
     case createMeshPduForConfigCompositionDataGet
     
     case sendConfigModelAppBind
     
     case sendGenericLevelSet
     case sendGenericOnOffSet
+    
+    case getSequenceNumberForAddress
 }

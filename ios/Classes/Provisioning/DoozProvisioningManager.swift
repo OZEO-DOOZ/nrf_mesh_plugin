@@ -10,7 +10,6 @@ import nRFMeshProvision
 
 protocol DoozProvisioningManagerDelegate{
     func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>)
-    func didFinishProvisioning()
     
     func sendMessage(_ msg: Dictionary<String, Any>)
 }
@@ -32,15 +31,11 @@ class DoozProvisioningManager: NSObject {
     private var provisioningBearer: DoozPBGattBearer?
     private var provisionedBearer: DoozGattBearer?
     
-    private var node: Node?
-    
     private var provisionedDevice: DoozProvisionedDevice?
-    private var doozTransmitter: DoozTransmitter?
     
     init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger, delegate: DoozProvisioningManagerDelegate) {
         super.init()
         self.meshNetworkManager = meshNetworkManager
-        meshNetworkManager.delegate = self
         self.delegate = delegate
         self.messenger = messenger
     }
@@ -86,8 +81,8 @@ class DoozProvisioningManager: NSObject {
         guard
             let _provisioningManager = self.provisioningManager,
             let _provisioningBearer = self.provisioningBearer
-            else{
-                return
+        else{
+            return
         }
         
         let packet = data.subdata(in: 1 ..< data.count)
@@ -100,61 +95,28 @@ class DoozProvisioningManager: NSObject {
         unprovisionedDevice = nil
     }
     
-    func createMeshPduForConfigCompositionDataGet(){
-        compositionDataGet()
-    }
-}
-
-private extension DoozProvisioningManager{
-    
-    func compositionDataGet(){
-        let message = ConfigCompositionDataGet()
-        
-        self.doozTransmitter = DoozTransmitter()
-        
-        if let _node = self.node,
-            let _meshNetworkManager = self.meshNetworkManager, let _doozTransmitter = self.doozTransmitter{
-            _meshNetworkManager.transmitter = _doozTransmitter
+    func createMeshPduForConfigCompositionDataGet(_ dest: Int16){
+        if
+            let _meshNetworkManager = self.meshNetworkManager,
+            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
             
-            _doozTransmitter.doozDelegate = self
+            let message = ConfigCompositionDataGet()
             
             do{
-                print("📩 Sending message : ConfigCompositionDataGet")
                 _ = try _meshNetworkManager.send(message, to: _node)
-                
             }catch{
                 print(error)
             }
-            
         }
     }
     
-    func getTtl(){
-        let message = ConfigDefaultTtlGet()
-        
-        if let _node = self.node,
-            let _meshNetworkManager = self.meshNetworkManager{
-                        
+    func createMeshPduForConfigAppKeyAdd(dest: Int16, appKey: ApplicationKey){
+        if
+            let _meshNetworkManager = self.meshNetworkManager,
+            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
+            let message = ConfigAppKeyAdd(applicationKey: appKey)
             do{
-                print("📩 Sending message : ConfigDefaultTtlGet")
                 _ = try _meshNetworkManager.send(message, to: _node)
-                
-            }catch{
-                print(error)
-            }
-            
-        }
-    }
-    
-    func sendAppKey(){
-        if let _meshNetworkManager = self.meshNetworkManager, let _node = self.node{
-            do{
-                print("📩 Sending message : ConfigAppKeyAdd")
-
-                if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-                    _ = try _meshNetworkManager.send(ConfigAppKeyAdd(applicationKey: _appKey), to: _node)
-                    print("💪 SEND APP KEY")
-                }
             }catch{
                 print(error)
             }
@@ -162,68 +124,7 @@ private extension DoozProvisioningManager{
         }
         
     }
-
 }
-
-
-extension DoozProvisioningManager: MeshNetworkDelegate{
-    
-//    func bindAppKey(to model: Model){
-//                      if let _meshNetworkManager = self.meshNetworkManager{
-//                          do{
-//                              print("📩 Sending message : ConfigModelAppBind")
-//
-//                              if let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
-//
-//                                  guard let message = ConfigModelAppBind(applicationKey: _appKey, to: model) else {
-//                                      return
-//                                  }
-//
-//
-//                                  _ = try _meshNetworkManager.send(message, to: model)
-//
-//                                  print("💪 BIND APP KEY TO MODEL \(model)")
-//                              }
-//                          }catch{
-//                              print(error)
-//                          }
-//
-//                      }
-//                  }
-        
-    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
-        print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
-        
-        switch message {
-            
-        case is ConfigCompositionDataStatus:
-            self.getTtl()
-            
-        case is ConfigDefaultTtlStatus:
-            self.sendAppKey()
-        case is ConfigAppKeyStatus:
-//            for element in self.node!.elements{
-//                           for model in element.models{
-//                               self.bindAppKey(to: model)
-//                           }
-//                       }
-            delegate?.didFinishProvisioning()
-        default:
-            break
-        }
-        
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
-        print("📣 didSendMessage : \(message) from \(localElement) to \(destination)")
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage, from localElement: Element, to destination: Address, error: Error) {
-        print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
-    }
-    
-}
-
 
 extension DoozProvisioningManager: ProvisioningDelegate{
     
@@ -241,7 +142,10 @@ extension DoozProvisioningManager: ProvisioningDelegate{
                 _bearer.close()
             }
             
-            if let _messenger = self.messenger, let _node = self.node{
+            if
+                let _messenger = self.messenger,
+                let _meshNetwork = meshNetworkManager?.meshNetwork,
+                let _node = _meshNetwork.node(for: unprovisionedDevice){
                 self.provisionedDevice = DoozProvisionedDevice(messenger: _messenger, node: _node)
             }
             
@@ -256,7 +160,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             EventSinkKeys.meshNode.meshNode.rawValue:[
                 EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
             ]
-            ] as [String : Any]
+        ] as [String : Any]
         
         delegate?.provisioningStateDidChange(device: unprovisionedDevice, state: state, eventSinkMessage: dict)
         
@@ -292,16 +196,14 @@ extension DoozProvisioningManager: BearerDelegate{
     
     func bearer(_ bearer: Bearer, didClose error: Error?) {
         guard let _provisioningManager = self.provisioningManager, case .complete = _provisioningManager.state else {
-            print("Device disconnected")
             return
         }
-        print("Provisioning complete")
-                
+        
+        // Provisioning is complete
         if let _meshNetworkManager = self.meshNetworkManager{
             if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
-                if let _meshNetwork = _meshNetworkManager.meshNetwork, let _node = _meshNetwork.node(for: _unprovisionedDevice){
+                if let _meshNetwork = _meshNetworkManager.meshNetwork {
                     _meshNetworkManager.localElements = []
-                    self.node = _node
                 }
             }else {
                 print("Mesh configuration could not be saved.")
@@ -318,7 +220,7 @@ private extension ProvisionigState{
     
     func eventName() -> String{
         switch self {
-            
+        
         case .complete:
             return ProvisioningEvent.onProvisioningCompleted.rawValue
         case .fail(_):
@@ -331,7 +233,7 @@ private extension ProvisionigState{
     
     func flutterState() -> String {
         switch self {
-            
+        
         case .capabilitiesReceived(_):
             return "PROVISIONING_CAPABILITIES"
         case .ready:
@@ -350,7 +252,7 @@ private extension ProvisionigState{
 
 extension DoozProvisioningManager: GattBearerDelegate{
     func bearerDidConnect(_ bearer: Bearer) {
-        print("✅ CONNECTED TO BEARER")
+        
     }
 }
 
@@ -366,7 +268,7 @@ extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDeleg
         guard let _provisioningBearer = self.provisioningBearer else{
             return
         }
-
+        
         let dict = [
             
             EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
@@ -374,7 +276,7 @@ extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDeleg
             EventSinkKeys.meshNode.meshNode.rawValue:[
                 EventSinkKeys.meshNode.uuid.rawValue: _provisioningBearer.identifier.uuidString
             ]
-            ] as [String : Any]
+        ] as [String : Any]
         
         delegate?.sendMessage(dict)
         
