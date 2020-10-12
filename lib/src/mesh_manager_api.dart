@@ -391,11 +391,11 @@ class MeshManagerApi {
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
-  Future<int> getSequenceNumber(int address) {
+  Future<int> getSequenceNumber(ProvisionedMeshNode node) async {
     if (Platform.isIOS) {
-      return _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
+      return _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': await node.unicastAddress});
     } else if (Platform.isAndroid) {
-      return _lastMeshNetwork.getSequenceNumber(address);
+      return node.sequenceNumber;
     }
     throw Exception('Platform not supported');
   }
