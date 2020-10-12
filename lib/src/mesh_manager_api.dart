@@ -272,10 +272,26 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<GenericOnOffStatusData> sendGenericOnOffSet(int address, bool value) async {
+  Future<GenericOnOffStatusData> sendGenericOnOffSet(
+    int address,
+    bool value,
+    int sequenceNumber, {
+    int keyIndex = 0,
+    int transitionStep,
+    int transitionResolution,
+    int delay,
+  }) async {
     final status = _onGenericOnOffStatusController.stream
         .firstWhere((element) => element.source == address && element.presentState == value, orElse: () => null);
-    await _methodChannel.invokeMethod('sendGenericOnOffSet', {'address': address, 'value': value});
+    await _methodChannel.invokeMethod('sendGenericOnOffSet', {
+      'address': address,
+      'value': value,
+      'sequenceNumber': sequenceNumber,
+      'keyIndex': keyIndex,
+      'transitionStep': transitionStep,
+      'transitionResolution': transitionResolution,
+      'delay': delay,
+    });
     return status;
   }
 
