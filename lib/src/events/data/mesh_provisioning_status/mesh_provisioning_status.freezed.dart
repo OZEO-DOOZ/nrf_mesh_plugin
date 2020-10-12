@@ -13,6 +13,7 @@ UnprovisionedMeshNodeData _$UnprovisionedMeshNodeDataFromJson(
   return _UnprovisionedMeshNodeData.fromJson(json);
 }
 
+/// @nodoc
 class _$UnprovisionedMeshNodeDataTearOff {
   const _$UnprovisionedMeshNodeDataTearOff();
 
@@ -25,11 +26,18 @@ class _$UnprovisionedMeshNodeDataTearOff {
       provisionerPublicKeyXY: provisionerPublicKeyXY,
     );
   }
+
+// ignore: unused_element
+  UnprovisionedMeshNodeData fromJson(Map<String, Object> json) {
+    return UnprovisionedMeshNodeData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $UnprovisionedMeshNodeData = _$UnprovisionedMeshNodeDataTearOff();
 
+/// @nodoc
 mixin _$UnprovisionedMeshNodeData {
   String get uuid;
   @nullable
@@ -39,6 +47,7 @@ mixin _$UnprovisionedMeshNodeData {
   $UnprovisionedMeshNodeDataCopyWith<UnprovisionedMeshNodeData> get copyWith;
 }
 
+/// @nodoc
 abstract class $UnprovisionedMeshNodeDataCopyWith<$Res> {
   factory $UnprovisionedMeshNodeDataCopyWith(UnprovisionedMeshNodeData value,
           $Res Function(UnprovisionedMeshNodeData) then) =
@@ -46,6 +55,7 @@ abstract class $UnprovisionedMeshNodeDataCopyWith<$Res> {
   $Res call({String uuid, @nullable List<int> provisionerPublicKeyXY});
 }
 
+/// @nodoc
 class _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
     implements $UnprovisionedMeshNodeDataCopyWith<$Res> {
   _$UnprovisionedMeshNodeDataCopyWithImpl(this._value, this._then);
@@ -68,6 +78,7 @@ class _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$UnprovisionedMeshNodeDataCopyWith<$Res>
     implements $UnprovisionedMeshNodeDataCopyWith<$Res> {
   factory _$UnprovisionedMeshNodeDataCopyWith(_UnprovisionedMeshNodeData value,
@@ -77,6 +88,7 @@ abstract class _$UnprovisionedMeshNodeDataCopyWith<$Res>
   $Res call({String uuid, @nullable List<int> provisionerPublicKeyXY});
 }
 
+/// @nodoc
 class __$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
     extends _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
     implements _$UnprovisionedMeshNodeDataCopyWith<$Res> {
@@ -103,6 +115,8 @@ class __$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_UnprovisionedMeshNodeData implements _UnprovisionedMeshNodeData {
   const _$_UnprovisionedMeshNodeData(
       {@required this.uuid, @nullable this.provisionerPublicKeyXY = const []})
@@ -174,6 +188,7 @@ ProvisionedMeshNodeData _$ProvisionedMeshNodeDataFromJson(
   return _ProvisionedMeshNodeData.fromJson(json);
 }
 
+/// @nodoc
 class _$ProvisionedMeshNodeDataTearOff {
   const _$ProvisionedMeshNodeDataTearOff();
 
@@ -183,11 +198,18 @@ class _$ProvisionedMeshNodeDataTearOff {
       uuid: uuid,
     );
   }
+
+// ignore: unused_element
+  ProvisionedMeshNodeData fromJson(Map<String, Object> json) {
+    return ProvisionedMeshNodeData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ProvisionedMeshNodeData = _$ProvisionedMeshNodeDataTearOff();
 
+/// @nodoc
 mixin _$ProvisionedMeshNodeData {
   String get uuid;
 
@@ -195,6 +217,7 @@ mixin _$ProvisionedMeshNodeData {
   $ProvisionedMeshNodeDataCopyWith<ProvisionedMeshNodeData> get copyWith;
 }
 
+/// @nodoc
 abstract class $ProvisionedMeshNodeDataCopyWith<$Res> {
   factory $ProvisionedMeshNodeDataCopyWith(ProvisionedMeshNodeData value,
           $Res Function(ProvisionedMeshNodeData) then) =
@@ -202,6 +225,7 @@ abstract class $ProvisionedMeshNodeDataCopyWith<$Res> {
   $Res call({String uuid});
 }
 
+/// @nodoc
 class _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
     implements $ProvisionedMeshNodeDataCopyWith<$Res> {
   _$ProvisionedMeshNodeDataCopyWithImpl(this._value, this._then);
@@ -220,6 +244,7 @@ class _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ProvisionedMeshNodeDataCopyWith<$Res>
     implements $ProvisionedMeshNodeDataCopyWith<$Res> {
   factory _$ProvisionedMeshNodeDataCopyWith(_ProvisionedMeshNodeData value,
@@ -229,6 +254,7 @@ abstract class _$ProvisionedMeshNodeDataCopyWith<$Res>
   $Res call({String uuid});
 }
 
+/// @nodoc
 class __$ProvisionedMeshNodeDataCopyWithImpl<$Res>
     extends _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
     implements _$ProvisionedMeshNodeDataCopyWith<$Res> {
@@ -251,6 +277,8 @@ class __$ProvisionedMeshNodeDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ProvisionedMeshNodeData implements _ProvisionedMeshNodeData {
   const _$_ProvisionedMeshNodeData({@required this.uuid})
       : assert(uuid != null);
@@ -307,6 +335,7 @@ MeshProvisioningStatusData _$MeshProvisioningStatusDataFromJson(
   return _MeshProvisioningStatusData.fromJson(json);
 }
 
+/// @nodoc
 class _$MeshProvisioningStatusDataTearOff {
   const _$MeshProvisioningStatusDataTearOff();
 
@@ -319,11 +348,18 @@ class _$MeshProvisioningStatusDataTearOff {
       meshNode,
     );
   }
+
+// ignore: unused_element
+  MeshProvisioningStatusData fromJson(Map<String, Object> json) {
+    return MeshProvisioningStatusData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $MeshProvisioningStatusData = _$MeshProvisioningStatusDataTearOff();
 
+/// @nodoc
 mixin _$MeshProvisioningStatusData {
   String get state;
   List<int> get data;
@@ -334,6 +370,7 @@ mixin _$MeshProvisioningStatusData {
   $MeshProvisioningStatusDataCopyWith<MeshProvisioningStatusData> get copyWith;
 }
 
+/// @nodoc
 abstract class $MeshProvisioningStatusDataCopyWith<$Res> {
   factory $MeshProvisioningStatusDataCopyWith(MeshProvisioningStatusData value,
           $Res Function(MeshProvisioningStatusData) then) =
@@ -346,6 +383,7 @@ abstract class $MeshProvisioningStatusDataCopyWith<$Res> {
   $UnprovisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
+/// @nodoc
 class _$MeshProvisioningStatusDataCopyWithImpl<$Res>
     implements $MeshProvisioningStatusDataCopyWith<$Res> {
   _$MeshProvisioningStatusDataCopyWithImpl(this._value, this._then);
@@ -380,6 +418,7 @@ class _$MeshProvisioningStatusDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$MeshProvisioningStatusDataCopyWith<$Res>
     implements $MeshProvisioningStatusDataCopyWith<$Res> {
   factory _$MeshProvisioningStatusDataCopyWith(
@@ -396,6 +435,7 @@ abstract class _$MeshProvisioningStatusDataCopyWith<$Res>
   $UnprovisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
+/// @nodoc
 class __$MeshProvisioningStatusDataCopyWithImpl<$Res>
     extends _$MeshProvisioningStatusDataCopyWithImpl<$Res>
     implements _$MeshProvisioningStatusDataCopyWith<$Res> {
@@ -424,6 +464,8 @@ class __$MeshProvisioningStatusDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
+
+/// @nodoc
 class _$_MeshProvisioningStatusData implements _MeshProvisioningStatusData {
   const _$_MeshProvisioningStatusData(
       this.state, this.data, @nullable this.meshNode)
@@ -503,6 +545,7 @@ MeshProvisioningCompletedData _$MeshProvisioningCompletedDataFromJson(
   return _MeshProvisioningCompletedData.fromJson(json);
 }
 
+/// @nodoc
 class _$MeshProvisioningCompletedDataTearOff {
   const _$MeshProvisioningCompletedDataTearOff();
 
@@ -515,11 +558,18 @@ class _$MeshProvisioningCompletedDataTearOff {
       meshNode,
     );
   }
+
+// ignore: unused_element
+  MeshProvisioningCompletedData fromJson(Map<String, Object> json) {
+    return MeshProvisioningCompletedData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $MeshProvisioningCompletedData = _$MeshProvisioningCompletedDataTearOff();
 
+/// @nodoc
 mixin _$MeshProvisioningCompletedData {
   String get state;
   List<int> get data;
@@ -531,6 +581,7 @@ mixin _$MeshProvisioningCompletedData {
       get copyWith;
 }
 
+/// @nodoc
 abstract class $MeshProvisioningCompletedDataCopyWith<$Res> {
   factory $MeshProvisioningCompletedDataCopyWith(
           MeshProvisioningCompletedData value,
@@ -544,6 +595,7 @@ abstract class $MeshProvisioningCompletedDataCopyWith<$Res> {
   $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
+/// @nodoc
 class _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
     implements $MeshProvisioningCompletedDataCopyWith<$Res> {
   _$MeshProvisioningCompletedDataCopyWithImpl(this._value, this._then);
@@ -578,6 +630,7 @@ class _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$MeshProvisioningCompletedDataCopyWith<$Res>
     implements $MeshProvisioningCompletedDataCopyWith<$Res> {
   factory _$MeshProvisioningCompletedDataCopyWith(
@@ -594,6 +647,7 @@ abstract class _$MeshProvisioningCompletedDataCopyWith<$Res>
   $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
+/// @nodoc
 class __$MeshProvisioningCompletedDataCopyWithImpl<$Res>
     extends _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
     implements _$MeshProvisioningCompletedDataCopyWith<$Res> {
@@ -623,6 +677,8 @@ class __$MeshProvisioningCompletedDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
+
+/// @nodoc
 class _$_MeshProvisioningCompletedData
     implements _MeshProvisioningCompletedData {
   const _$_MeshProvisioningCompletedData(
