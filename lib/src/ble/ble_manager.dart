@@ -62,11 +62,12 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       }
       await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     });
-    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     final service = await isRequiredServiceSupported(device);
     if (service == null) {
       throw Exception('Required service not found');
     }
+    isProvisioningCompleted = service?.uuid == meshProxyUuid;
+    await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
     if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
       _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     }
