@@ -90,7 +90,9 @@ private extension DoozMeshNetwork {
                 })
                 
                 let nodes = provisionedDevices.map({ device in
-                    return [EventSinkKeys.network.uuid.rawValue: device.node.uuid.uuidString]
+                    return [
+                        EventSinkKeys.network.uuid.rawValue: device.node.uuid.uuidString
+                    ]
                 })
                 
                 result(nodes)
