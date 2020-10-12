@@ -1,6 +1,6 @@
 import 'package:flutter_driver/flutter_driver.dart';
-import 'package:test/test.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:test/test.dart';
 
 void main() {
   FlutterDriver driver;
@@ -37,6 +37,16 @@ void main() {
     await driver.waitForAbsent(linearLoadingFinder);
   });
 
+  test('see node in meshNetwork', () async {
+    final homeItemFinder = find.text('Home');
+    await driver.tap(homeItemFinder);
+    final nodeFinder = find.byType('Node');
+    //expect 1
+    final loadItemFinder = find.text('Load MeshNetwork');
+    await driver.tap(loadItemFinder);
+    //expect 2
+  });
+
   test('connect to device', () async {
     final findFirstDevice = find.byValueKey('device-0');
     await driver.tap(findFirstDevice);
@@ -57,11 +67,13 @@ void main() {
   test('turn first light on', () async {
     final sendGenericLevelFinder = find.text('Send a generic level set');
     await driver.tap(sendGenericLevelFinder);
-    final elementAddressInput = find.byValueKey('module-send-generic-level-address');
+    final elementAddressInput =
+        find.byValueKey('module-send-generic-level-address');
     await driver.tap(elementAddressInput);
     await driver.enterText('3');
 
-    final elementValueInput = find.byValueKey('module-send-generic-level-value');
+    final elementValueInput =
+        find.byValueKey('module-send-generic-level-value');
     await driver.tap(elementValueInput);
     await driver.enterText('32767');
 
@@ -73,7 +85,8 @@ void main() {
   test('turn first light off', () async {
     final sendGenericOnOffFinder = find.text('Send a generic On Off set');
     await driver.tap(sendGenericOnOffFinder);
-    final elementAddressInput = find.byValueKey('module-send-generic-on-off-address');
+    final elementAddressInput =
+        find.byValueKey('module-send-generic-on-off-address');
     await driver.tap(elementAddressInput);
     await driver.enterText('3');
 
