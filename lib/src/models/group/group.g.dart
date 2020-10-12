@@ -8,7 +8,6 @@ part of 'group.dart';
 
 _$_GroupData _$_$_GroupDataFromJson(Map<String, dynamic> json) {
   return _$_GroupData(
-    json['id'] as int,
     json['name'] as String,
     json['address'] as int,
     json['addressLabel'] as String,
@@ -20,7 +19,6 @@ _$_GroupData _$_$_GroupDataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$_$_GroupDataToJson(_$_GroupData instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'name': instance.name,
       'address': instance.address,
       'addressLabel': instance.addressLabel,

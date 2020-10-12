@@ -65,7 +65,6 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val success = meshNetwork.addGroup(group)
                 result.success(mapOf(
                         "group" to mapOf(
-                                "id" to group.id,
                                 "name" to group.name,
                                 "address" to group.address,
                                 "addressLabel" to group.addressLabel?.toString(),
@@ -76,17 +75,9 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         "successfullyAdded" to success
                 ))
             }
-            "addGroup" -> {
-                val id = call.argument<Int>("id")!!
-                val group = meshNetwork.groups.first {
-                    it.id == id
-                }!!
-                result.success(meshNetwork.addGroup(group))
-            }
             "groups" -> {
                 result.success(meshNetwork.groups.map {
                             mapOf(
-                                    "id" to it.id,
                                     "name" to it.name,
                                     "address" to it.address,
                                     "addressLabel" to it.addressLabel?.toString(),
@@ -99,16 +90,16 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 )
             }
             "removeGroup" -> {
-                val id = call.argument<Int>("id")!!
+                val groupAddress = call.argument<Int>("groupAddress")!!
                 val group = meshNetwork.groups.first {
-                    it.id == id
+                    it.address == groupAddress
                 }!!
                 result.success(meshNetwork.removeGroup(group))
             }
             "getElementsForGroup" -> {
-                val id = call.argument<Int>("id")!!
+                val groupAddress = call.argument<Int>("groupAddress")!!
                 val group = meshNetwork.groups.first {
-                    it.id == id
+                    it.address == groupAddress
                 }!!
                 result.success(meshNetwork.getElements(group).map {element ->
                     mapOf(

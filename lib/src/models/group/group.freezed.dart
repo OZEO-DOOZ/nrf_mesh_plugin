@@ -12,20 +12,14 @@ GroupData _$GroupDataFromJson(Map<String, dynamic> json) {
   return _GroupData.fromJson(json);
 }
 
+/// @nodoc
 class _$GroupDataTearOff {
   const _$GroupDataTearOff();
 
 // ignore: unused_element
-  _GroupData call(
-      int id,
-      String name,
-      int address,
-      @nullable String addressLabel,
-      String meshUuid,
-      int parentAddress,
-      @nullable String parentAddressLabel) {
+  _GroupData call(String name, int address, @nullable String addressLabel,
+      String meshUuid, int parentAddress, @nullable String parentAddressLabel) {
     return _GroupData(
-      id,
       name,
       address,
       addressLabel,
@@ -34,13 +28,19 @@ class _$GroupDataTearOff {
       parentAddressLabel,
     );
   }
+
+// ignore: unused_element
+  GroupData fromJson(Map<String, Object> json) {
+    return GroupData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $GroupData = _$GroupDataTearOff();
 
+/// @nodoc
 mixin _$GroupData {
-  int get id;
   String get name;
   int get address;
   @nullable
@@ -54,12 +54,12 @@ mixin _$GroupData {
   $GroupDataCopyWith<GroupData> get copyWith;
 }
 
+/// @nodoc
 abstract class $GroupDataCopyWith<$Res> {
   factory $GroupDataCopyWith(GroupData value, $Res Function(GroupData) then) =
       _$GroupDataCopyWithImpl<$Res>;
   $Res call(
-      {int id,
-      String name,
+      {String name,
       int address,
       @nullable String addressLabel,
       String meshUuid,
@@ -67,6 +67,7 @@ abstract class $GroupDataCopyWith<$Res> {
       @nullable String parentAddressLabel});
 }
 
+/// @nodoc
 class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
   _$GroupDataCopyWithImpl(this._value, this._then);
 
@@ -76,7 +77,6 @@ class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
 
   @override
   $Res call({
-    Object id = freezed,
     Object name = freezed,
     Object address = freezed,
     Object addressLabel = freezed,
@@ -85,7 +85,6 @@ class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
     Object parentAddressLabel = freezed,
   }) {
     return _then(_value.copyWith(
-      id: id == freezed ? _value.id : id as int,
       name: name == freezed ? _value.name : name as String,
       address: address == freezed ? _value.address : address as int,
       addressLabel: addressLabel == freezed
@@ -102,14 +101,14 @@ class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
   }
 }
 
+/// @nodoc
 abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
   factory _$GroupDataCopyWith(
           _GroupData value, $Res Function(_GroupData) then) =
       __$GroupDataCopyWithImpl<$Res>;
   @override
   $Res call(
-      {int id,
-      String name,
+      {String name,
       int address,
       @nullable String addressLabel,
       String meshUuid,
@@ -117,6 +116,7 @@ abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
       @nullable String parentAddressLabel});
 }
 
+/// @nodoc
 class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
     implements _$GroupDataCopyWith<$Res> {
   __$GroupDataCopyWithImpl(_GroupData _value, $Res Function(_GroupData) _then)
@@ -127,7 +127,6 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object id = freezed,
     Object name = freezed,
     Object address = freezed,
     Object addressLabel = freezed,
@@ -136,7 +135,6 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
     Object parentAddressLabel = freezed,
   }) {
     return _then(_GroupData(
-      id == freezed ? _value.id : id as int,
       name == freezed ? _value.name : name as String,
       address == freezed ? _value.address : address as int,
       addressLabel == freezed ? _value.addressLabel : addressLabel as String,
@@ -150,17 +148,12 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_GroupData implements _GroupData {
-  const _$_GroupData(
-      this.id,
-      this.name,
-      this.address,
-      @nullable this.addressLabel,
-      this.meshUuid,
-      this.parentAddress,
-      @nullable this.parentAddressLabel)
-      : assert(id != null),
-        assert(name != null),
+  const _$_GroupData(this.name, this.address, @nullable this.addressLabel,
+      this.meshUuid, this.parentAddress, @nullable this.parentAddressLabel)
+      : assert(name != null),
         assert(address != null),
         assert(meshUuid != null),
         assert(parentAddress != null);
@@ -168,8 +161,6 @@ class _$_GroupData implements _GroupData {
   factory _$_GroupData.fromJson(Map<String, dynamic> json) =>
       _$_$_GroupDataFromJson(json);
 
-  @override
-  final int id;
   @override
   final String name;
   @override
@@ -187,15 +178,13 @@ class _$_GroupData implements _GroupData {
 
   @override
   String toString() {
-    return 'GroupData(id: $id, name: $name, address: $address, addressLabel: $addressLabel, meshUuid: $meshUuid, parentAddress: $parentAddress, parentAddressLabel: $parentAddressLabel)';
+    return 'GroupData(name: $name, address: $address, addressLabel: $addressLabel, meshUuid: $meshUuid, parentAddress: $parentAddress, parentAddressLabel: $parentAddressLabel)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _GroupData &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.name, name) ||
                 const DeepCollectionEquality().equals(other.name, name)) &&
             (identical(other.address, address) ||
@@ -218,7 +207,6 @@ class _$_GroupData implements _GroupData {
   @override
   int get hashCode =>
       runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(name) ^
       const DeepCollectionEquality().hash(address) ^
       const DeepCollectionEquality().hash(addressLabel) ^
@@ -238,7 +226,6 @@ class _$_GroupData implements _GroupData {
 
 abstract class _GroupData implements GroupData {
   const factory _GroupData(
-      int id,
       String name,
       int address,
       @nullable String addressLabel,
@@ -249,8 +236,6 @@ abstract class _GroupData implements GroupData {
   factory _GroupData.fromJson(Map<String, dynamic> json) =
       _$_GroupData.fromJson;
 
-  @override
-  int get id;
   @override
   String get name;
   @override

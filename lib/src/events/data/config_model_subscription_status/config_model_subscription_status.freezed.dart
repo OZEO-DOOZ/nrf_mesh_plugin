@@ -13,6 +13,7 @@ ConfigModelSubscriptionStatus _$ConfigModelSubscriptionStatusFromJson(
   return _ConfigModelSubscriptionStatus.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigModelSubscriptionStatusTearOff {
   const _$ConfigModelSubscriptionStatusTearOff();
 
@@ -33,11 +34,18 @@ class _$ConfigModelSubscriptionStatusTearOff {
       isSuccessful,
     );
   }
+
+// ignore: unused_element
+  ConfigModelSubscriptionStatus fromJson(Map<String, Object> json) {
+    return ConfigModelSubscriptionStatus.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigModelSubscriptionStatus = _$ConfigModelSubscriptionStatusTearOff();
 
+/// @nodoc
 mixin _$ConfigModelSubscriptionStatus {
   int get source;
   int get destination;
@@ -51,6 +59,7 @@ mixin _$ConfigModelSubscriptionStatus {
       get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigModelSubscriptionStatusCopyWith<$Res> {
   factory $ConfigModelSubscriptionStatusCopyWith(
           ConfigModelSubscriptionStatus value,
@@ -65,6 +74,7 @@ abstract class $ConfigModelSubscriptionStatusCopyWith<$Res> {
       bool isSuccessful});
 }
 
+/// @nodoc
 class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
     implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
   _$ConfigModelSubscriptionStatusCopyWithImpl(this._value, this._then);
@@ -101,6 +111,7 @@ class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res>
     implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
   factory _$ConfigModelSubscriptionStatusCopyWith(
@@ -117,6 +128,7 @@ abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res>
       bool isSuccessful});
 }
 
+/// @nodoc
 class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
     extends _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
     implements _$ConfigModelSubscriptionStatusCopyWith<$Res> {
@@ -154,6 +166,8 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ConfigModelSubscriptionStatus
     implements _ConfigModelSubscriptionStatus {
   const _$_ConfigModelSubscriptionStatus(

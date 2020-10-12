@@ -46,8 +46,8 @@ class MeshNetwork implements IMeshNetwork {
   Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
 
   @override
-  Future<List<ElementData>> elementsForGroup(int id) async {
-    final result = await _methodChannel.invokeMethod('getElementsForGroup', {'id': id}) as List;
+  Future<List<ElementData>> elementsForGroup(int groupAddress) async {
+    final result = await _methodChannel.invokeMethod('getElementsForGroup', {'groupAddress': groupAddress}) as List;
     return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
@@ -88,7 +88,8 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
 
   @override
-  Future<bool> removeGroup(int id) => _methodChannel.invokeMethod('removeGroup', {'id': id});
+  Future<bool> removeGroup(int groupAddress) =>
+      _methodChannel.invokeMethod('removeGroup', {'groupAddress': groupAddress});
 
   @override
   Future<String> selectedProvisionerUuid() => _methodChannel.invokeMethod('selectedProvisionerUuid');

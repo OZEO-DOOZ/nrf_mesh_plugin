@@ -13,6 +13,7 @@ ConfigAppKeyStatusData _$ConfigAppKeyStatusDataFromJson(
   return _ConfigAppKeyStatusData.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigAppKeyStatusDataTearOff {
   const _$ConfigAppKeyStatusDataTearOff();
 
@@ -22,11 +23,18 @@ class _$ConfigAppKeyStatusDataTearOff {
       source,
     );
   }
+
+// ignore: unused_element
+  ConfigAppKeyStatusData fromJson(Map<String, Object> json) {
+    return ConfigAppKeyStatusData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigAppKeyStatusData = _$ConfigAppKeyStatusDataTearOff();
 
+/// @nodoc
 mixin _$ConfigAppKeyStatusData {
   int get source;
 
@@ -34,6 +42,7 @@ mixin _$ConfigAppKeyStatusData {
   $ConfigAppKeyStatusDataCopyWith<ConfigAppKeyStatusData> get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigAppKeyStatusDataCopyWith<$Res> {
   factory $ConfigAppKeyStatusDataCopyWith(ConfigAppKeyStatusData value,
           $Res Function(ConfigAppKeyStatusData) then) =
@@ -41,6 +50,7 @@ abstract class $ConfigAppKeyStatusDataCopyWith<$Res> {
   $Res call({int source});
 }
 
+/// @nodoc
 class _$ConfigAppKeyStatusDataCopyWithImpl<$Res>
     implements $ConfigAppKeyStatusDataCopyWith<$Res> {
   _$ConfigAppKeyStatusDataCopyWithImpl(this._value, this._then);
@@ -59,6 +69,7 @@ class _$ConfigAppKeyStatusDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigAppKeyStatusDataCopyWith<$Res>
     implements $ConfigAppKeyStatusDataCopyWith<$Res> {
   factory _$ConfigAppKeyStatusDataCopyWith(_ConfigAppKeyStatusData value,
@@ -68,6 +79,7 @@ abstract class _$ConfigAppKeyStatusDataCopyWith<$Res>
   $Res call({int source});
 }
 
+/// @nodoc
 class __$ConfigAppKeyStatusDataCopyWithImpl<$Res>
     extends _$ConfigAppKeyStatusDataCopyWithImpl<$Res>
     implements _$ConfigAppKeyStatusDataCopyWith<$Res> {
@@ -89,6 +101,8 @@ class __$ConfigAppKeyStatusDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ConfigAppKeyStatusData implements _ConfigAppKeyStatusData {
   const _$_ConfigAppKeyStatusData(this.source) : assert(source != null);
 
@@ -143,6 +157,7 @@ ConfigAppKeyStatusMeshMessage _$ConfigAppKeyStatusMeshMessageFromJson(
   return _ConfigAppKeyStatusMeshMessage.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigAppKeyStatusMeshMessageTearOff {
   const _$ConfigAppKeyStatusMeshMessageTearOff();
 
@@ -153,11 +168,18 @@ class _$ConfigAppKeyStatusMeshMessageTearOff {
       destination,
     );
   }
+
+// ignore: unused_element
+  ConfigAppKeyStatusMeshMessage fromJson(Map<String, Object> json) {
+    return ConfigAppKeyStatusMeshMessage.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigAppKeyStatusMeshMessage = _$ConfigAppKeyStatusMeshMessageTearOff();
 
+/// @nodoc
 mixin _$ConfigAppKeyStatusMeshMessage {
   int get source;
   int get destination;
@@ -167,6 +189,7 @@ mixin _$ConfigAppKeyStatusMeshMessage {
       get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   factory $ConfigAppKeyStatusMeshMessageCopyWith(
           ConfigAppKeyStatusMeshMessage value,
@@ -175,6 +198,7 @@ abstract class $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   $Res call({int source, int destination});
 }
 
+/// @nodoc
 class _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
     implements $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   _$ConfigAppKeyStatusMeshMessageCopyWithImpl(this._value, this._then);
@@ -196,6 +220,7 @@ class _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigAppKeyStatusMeshMessageCopyWith<$Res>
     implements $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   factory _$ConfigAppKeyStatusMeshMessageCopyWith(
@@ -206,6 +231,7 @@ abstract class _$ConfigAppKeyStatusMeshMessageCopyWith<$Res>
   $Res call({int source, int destination});
 }
 
+/// @nodoc
 class __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
     extends _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
     implements _$ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
@@ -231,6 +257,8 @@ class __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ConfigAppKeyStatusMeshMessage
     implements _ConfigAppKeyStatusMeshMessage {
   const _$_ConfigAppKeyStatusMeshMessage(this.source, this.destination)

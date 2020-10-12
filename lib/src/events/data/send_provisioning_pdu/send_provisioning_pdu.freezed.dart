@@ -13,6 +13,7 @@ SendProvisioningPduData _$SendProvisioningPduDataFromJson(
   return _SendProvisioningPduData.fromJson(json);
 }
 
+/// @nodoc
 class _$SendProvisioningPduDataTearOff {
   const _$SendProvisioningPduDataTearOff();
 
@@ -23,11 +24,18 @@ class _$SendProvisioningPduDataTearOff {
       meshNode,
     );
   }
+
+// ignore: unused_element
+  SendProvisioningPduData fromJson(Map<String, Object> json) {
+    return SendProvisioningPduData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $SendProvisioningPduData = _$SendProvisioningPduDataTearOff();
 
+/// @nodoc
 mixin _$SendProvisioningPduData {
   List<int> get pdu;
   UnprovisionedMeshNode get meshNode;
@@ -36,6 +44,7 @@ mixin _$SendProvisioningPduData {
   $SendProvisioningPduDataCopyWith<SendProvisioningPduData> get copyWith;
 }
 
+/// @nodoc
 abstract class $SendProvisioningPduDataCopyWith<$Res> {
   factory $SendProvisioningPduDataCopyWith(SendProvisioningPduData value,
           $Res Function(SendProvisioningPduData) then) =
@@ -43,6 +52,7 @@ abstract class $SendProvisioningPduDataCopyWith<$Res> {
   $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
+/// @nodoc
 class _$SendProvisioningPduDataCopyWithImpl<$Res>
     implements $SendProvisioningPduDataCopyWith<$Res> {
   _$SendProvisioningPduDataCopyWithImpl(this._value, this._then);
@@ -65,6 +75,7 @@ class _$SendProvisioningPduDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$SendProvisioningPduDataCopyWith<$Res>
     implements $SendProvisioningPduDataCopyWith<$Res> {
   factory _$SendProvisioningPduDataCopyWith(_SendProvisioningPduData value,
@@ -74,6 +85,7 @@ abstract class _$SendProvisioningPduDataCopyWith<$Res>
   $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
+/// @nodoc
 class __$SendProvisioningPduDataCopyWithImpl<$Res>
     extends _$SendProvisioningPduDataCopyWithImpl<$Res>
     implements _$SendProvisioningPduDataCopyWith<$Res> {
@@ -98,6 +110,8 @@ class __$SendProvisioningPduDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
+
+/// @nodoc
 class _$_SendProvisioningPduData implements _SendProvisioningPduData {
   const _$_SendProvisioningPduData(this.pdu, this.meshNode)
       : assert(pdu != null),

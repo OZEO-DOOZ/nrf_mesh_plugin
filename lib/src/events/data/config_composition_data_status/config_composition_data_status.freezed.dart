@@ -13,6 +13,7 @@ ConfigCompositionDataStatusData _$ConfigCompositionDataStatusDataFromJson(
   return _ConfigCompositionDataStatusData.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigCompositionDataStatusDataTearOff {
   const _$ConfigCompositionDataStatusDataTearOff();
 
@@ -24,12 +25,19 @@ class _$ConfigCompositionDataStatusDataTearOff {
       meshMessage,
     );
   }
+
+// ignore: unused_element
+  ConfigCompositionDataStatusData fromJson(Map<String, Object> json) {
+    return ConfigCompositionDataStatusData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigCompositionDataStatusData =
     _$ConfigCompositionDataStatusDataTearOff();
 
+/// @nodoc
 mixin _$ConfigCompositionDataStatusData {
   int get source;
   ConfigCompositionDataStatusMeshMessage get meshMessage;
@@ -39,6 +47,7 @@ mixin _$ConfigCompositionDataStatusData {
       get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigCompositionDataStatusDataCopyWith<$Res> {
   factory $ConfigCompositionDataStatusDataCopyWith(
           ConfigCompositionDataStatusData value,
@@ -49,6 +58,7 @@ abstract class $ConfigCompositionDataStatusDataCopyWith<$Res> {
   $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> get meshMessage;
 }
 
+/// @nodoc
 class _$ConfigCompositionDataStatusDataCopyWithImpl<$Res>
     implements $ConfigCompositionDataStatusDataCopyWith<$Res> {
   _$ConfigCompositionDataStatusDataCopyWithImpl(this._value, this._then);
@@ -82,6 +92,7 @@ class _$ConfigCompositionDataStatusDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigCompositionDataStatusDataCopyWith<$Res>
     implements $ConfigCompositionDataStatusDataCopyWith<$Res> {
   factory _$ConfigCompositionDataStatusDataCopyWith(
@@ -95,6 +106,7 @@ abstract class _$ConfigCompositionDataStatusDataCopyWith<$Res>
   $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> get meshMessage;
 }
 
+/// @nodoc
 class __$ConfigCompositionDataStatusDataCopyWithImpl<$Res>
     extends _$ConfigCompositionDataStatusDataCopyWithImpl<$Res>
     implements _$ConfigCompositionDataStatusDataCopyWith<$Res> {
@@ -122,6 +134,8 @@ class __$ConfigCompositionDataStatusDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable(anyMap: true)
+
+/// @nodoc
 class _$_ConfigCompositionDataStatusData
     implements _ConfigCompositionDataStatusData {
   const _$_ConfigCompositionDataStatusData(this.source, this.meshMessage)
@@ -194,6 +208,7 @@ ConfigCompositionDataStatusMeshMessage
   return _ConfigCompositionDataStatusMeshMessage.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigCompositionDataStatusMeshMessageTearOff {
   const _$ConfigCompositionDataStatusMeshMessageTearOff();
 
@@ -206,12 +221,19 @@ class _$ConfigCompositionDataStatusMeshMessageTearOff {
       destination,
     );
   }
+
+// ignore: unused_element
+  ConfigCompositionDataStatusMeshMessage fromJson(Map<String, Object> json) {
+    return ConfigCompositionDataStatusMeshMessage.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigCompositionDataStatusMeshMessage =
     _$ConfigCompositionDataStatusMeshMessageTearOff();
 
+/// @nodoc
 mixin _$ConfigCompositionDataStatusMeshMessage {
   int get source;
   @nullable
@@ -223,6 +245,7 @@ mixin _$ConfigCompositionDataStatusMeshMessage {
       ConfigCompositionDataStatusMeshMessage> get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> {
   factory $ConfigCompositionDataStatusMeshMessageCopyWith(
           ConfigCompositionDataStatusMeshMessage value,
@@ -231,6 +254,7 @@ abstract class $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> {
   $Res call({int source, @nullable int aszmic, int destination});
 }
 
+/// @nodoc
 class _$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
     implements $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> {
   _$ConfigCompositionDataStatusMeshMessageCopyWithImpl(this._value, this._then);
@@ -254,6 +278,7 @@ class _$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigCompositionDataStatusMeshMessageCopyWith<$Res>
     implements $ConfigCompositionDataStatusMeshMessageCopyWith<$Res> {
   factory _$ConfigCompositionDataStatusMeshMessageCopyWith(
@@ -264,6 +289,7 @@ abstract class _$ConfigCompositionDataStatusMeshMessageCopyWith<$Res>
   $Res call({int source, @nullable int aszmic, int destination});
 }
 
+/// @nodoc
 class __$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
     extends _$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
     implements _$ConfigCompositionDataStatusMeshMessageCopyWith<$Res> {
@@ -292,6 +318,8 @@ class __$ConfigCompositionDataStatusMeshMessageCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ConfigCompositionDataStatusMeshMessage
     implements _ConfigCompositionDataStatusMeshMessage {
   const _$_ConfigCompositionDataStatusMeshMessage(

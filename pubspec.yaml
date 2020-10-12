@@ -11,22 +11,22 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_blue: ^0.7.2
-  json_annotation: ^3.0.1
-  file_picker: ^1.7.1
+  json_annotation: ^3.1.0
+  file_picker: ^2.0.6
   mobx: ^1.2.1
   flutter_mobx: ^1.1.0
-  freezed_annotation: ^0.11.0+1
+  freezed_annotation: ^0.12.0
   meta: ^1.1.8
   rxdart: ^0.24.1
-  pedantic: ^1.9.0
+  pedantic: ^1.9.2
   retry: ^3.0.0+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^1.10.1
+  build_runner: ^1.10.2
   json_serializable: ^3.3.0
-  freezed: ^0.11.5
+  freezed: ^0.12.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
