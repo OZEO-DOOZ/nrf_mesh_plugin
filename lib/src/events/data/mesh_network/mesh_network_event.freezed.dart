@@ -12,6 +12,7 @@ MeshNetworkEventData _$MeshNetworkEventDataFromJson(Map<String, dynamic> json) {
   return _MeshNetworkEventData.fromJson(json);
 }
 
+/// @nodoc
 class _$MeshNetworkEventDataTearOff {
   const _$MeshNetworkEventDataTearOff();
 
@@ -21,11 +22,18 @@ class _$MeshNetworkEventDataTearOff {
       id,
     );
   }
+
+// ignore: unused_element
+  MeshNetworkEventData fromJson(Map<String, Object> json) {
+    return MeshNetworkEventData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $MeshNetworkEventData = _$MeshNetworkEventDataTearOff();
 
+/// @nodoc
 mixin _$MeshNetworkEventData {
   String get id;
 
@@ -33,6 +41,7 @@ mixin _$MeshNetworkEventData {
   $MeshNetworkEventDataCopyWith<MeshNetworkEventData> get copyWith;
 }
 
+/// @nodoc
 abstract class $MeshNetworkEventDataCopyWith<$Res> {
   factory $MeshNetworkEventDataCopyWith(MeshNetworkEventData value,
           $Res Function(MeshNetworkEventData) then) =
@@ -40,6 +49,7 @@ abstract class $MeshNetworkEventDataCopyWith<$Res> {
   $Res call({String id});
 }
 
+/// @nodoc
 class _$MeshNetworkEventDataCopyWithImpl<$Res>
     implements $MeshNetworkEventDataCopyWith<$Res> {
   _$MeshNetworkEventDataCopyWithImpl(this._value, this._then);
@@ -58,6 +68,7 @@ class _$MeshNetworkEventDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$MeshNetworkEventDataCopyWith<$Res>
     implements $MeshNetworkEventDataCopyWith<$Res> {
   factory _$MeshNetworkEventDataCopyWith(_MeshNetworkEventData value,
@@ -67,6 +78,7 @@ abstract class _$MeshNetworkEventDataCopyWith<$Res>
   $Res call({String id});
 }
 
+/// @nodoc
 class __$MeshNetworkEventDataCopyWithImpl<$Res>
     extends _$MeshNetworkEventDataCopyWithImpl<$Res>
     implements _$MeshNetworkEventDataCopyWith<$Res> {
@@ -88,6 +100,8 @@ class __$MeshNetworkEventDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_MeshNetworkEventData implements _MeshNetworkEventData {
   const _$_MeshNetworkEventData(this.id) : assert(id != null);
 
@@ -142,6 +156,7 @@ MeshNetworkEventError _$MeshNetworkEventErrorFromJson(
   return _MeshNetworkEventError.fromJson(json);
 }
 
+/// @nodoc
 class _$MeshNetworkEventErrorTearOff {
   const _$MeshNetworkEventErrorTearOff();
 
@@ -151,11 +166,18 @@ class _$MeshNetworkEventErrorTearOff {
       error,
     );
   }
+
+// ignore: unused_element
+  MeshNetworkEventError fromJson(Map<String, Object> json) {
+    return MeshNetworkEventError.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $MeshNetworkEventError = _$MeshNetworkEventErrorTearOff();
 
+/// @nodoc
 mixin _$MeshNetworkEventError {
   String get error;
 
@@ -163,6 +185,7 @@ mixin _$MeshNetworkEventError {
   $MeshNetworkEventErrorCopyWith<MeshNetworkEventError> get copyWith;
 }
 
+/// @nodoc
 abstract class $MeshNetworkEventErrorCopyWith<$Res> {
   factory $MeshNetworkEventErrorCopyWith(MeshNetworkEventError value,
           $Res Function(MeshNetworkEventError) then) =
@@ -170,6 +193,7 @@ abstract class $MeshNetworkEventErrorCopyWith<$Res> {
   $Res call({String error});
 }
 
+/// @nodoc
 class _$MeshNetworkEventErrorCopyWithImpl<$Res>
     implements $MeshNetworkEventErrorCopyWith<$Res> {
   _$MeshNetworkEventErrorCopyWithImpl(this._value, this._then);
@@ -188,6 +212,7 @@ class _$MeshNetworkEventErrorCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$MeshNetworkEventErrorCopyWith<$Res>
     implements $MeshNetworkEventErrorCopyWith<$Res> {
   factory _$MeshNetworkEventErrorCopyWith(_MeshNetworkEventError value,
@@ -197,6 +222,7 @@ abstract class _$MeshNetworkEventErrorCopyWith<$Res>
   $Res call({String error});
 }
 
+/// @nodoc
 class __$MeshNetworkEventErrorCopyWithImpl<$Res>
     extends _$MeshNetworkEventErrorCopyWithImpl<$Res>
     implements _$MeshNetworkEventErrorCopyWith<$Res> {
@@ -218,6 +244,8 @@ class __$MeshNetworkEventErrorCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_MeshNetworkEventError implements _MeshNetworkEventError {
   const _$_MeshNetworkEventError(this.error) : assert(error != null);
 

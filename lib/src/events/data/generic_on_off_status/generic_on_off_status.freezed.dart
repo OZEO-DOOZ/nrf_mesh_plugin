@@ -13,6 +13,7 @@ GenericOnOffStatusData _$GenericOnOffStatusDataFromJson(
   return _GenericOnOffStatusData.fromJson(json);
 }
 
+/// @nodoc
 class _$GenericOnOffStatusDataTearOff {
   const _$GenericOnOffStatusDataTearOff();
 
@@ -27,11 +28,18 @@ class _$GenericOnOffStatusDataTearOff {
       transitionSteps,
     );
   }
+
+// ignore: unused_element
+  GenericOnOffStatusData fromJson(Map<String, Object> json) {
+    return GenericOnOffStatusData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $GenericOnOffStatusData = _$GenericOnOffStatusDataTearOff();
 
+/// @nodoc
 mixin _$GenericOnOffStatusData {
   int get source;
   bool get presentState;
@@ -43,6 +51,7 @@ mixin _$GenericOnOffStatusData {
   $GenericOnOffStatusDataCopyWith<GenericOnOffStatusData> get copyWith;
 }
 
+/// @nodoc
 abstract class $GenericOnOffStatusDataCopyWith<$Res> {
   factory $GenericOnOffStatusDataCopyWith(GenericOnOffStatusData value,
           $Res Function(GenericOnOffStatusData) then) =
@@ -55,6 +64,7 @@ abstract class $GenericOnOffStatusDataCopyWith<$Res> {
       int transitionSteps});
 }
 
+/// @nodoc
 class _$GenericOnOffStatusDataCopyWithImpl<$Res>
     implements $GenericOnOffStatusDataCopyWith<$Res> {
   _$GenericOnOffStatusDataCopyWithImpl(this._value, this._then);
@@ -87,6 +97,7 @@ class _$GenericOnOffStatusDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$GenericOnOffStatusDataCopyWith<$Res>
     implements $GenericOnOffStatusDataCopyWith<$Res> {
   factory _$GenericOnOffStatusDataCopyWith(_GenericOnOffStatusData value,
@@ -101,6 +112,7 @@ abstract class _$GenericOnOffStatusDataCopyWith<$Res>
       int transitionSteps});
 }
 
+/// @nodoc
 class __$GenericOnOffStatusDataCopyWithImpl<$Res>
     extends _$GenericOnOffStatusDataCopyWithImpl<$Res>
     implements _$GenericOnOffStatusDataCopyWith<$Res> {
@@ -134,6 +146,8 @@ class __$GenericOnOffStatusDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
   const _$_GenericOnOffStatusData(this.source, this.presentState,
       this.targetState, this.transitionResolution, this.transitionSteps)

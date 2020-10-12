@@ -13,6 +13,7 @@ ConfigModelAppStatusData _$ConfigModelAppStatusDataFromJson(
   return _ConfigModelAppStatusData.fromJson(json);
 }
 
+/// @nodoc
 class _$ConfigModelAppStatusDataTearOff {
   const _$ConfigModelAppStatusDataTearOff();
 
@@ -25,11 +26,18 @@ class _$ConfigModelAppStatusDataTearOff {
       appKeyIndex,
     );
   }
+
+// ignore: unused_element
+  ConfigModelAppStatusData fromJson(Map<String, Object> json) {
+    return ConfigModelAppStatusData.fromJson(json);
+  }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $ConfigModelAppStatusData = _$ConfigModelAppStatusDataTearOff();
 
+/// @nodoc
 mixin _$ConfigModelAppStatusData {
   int get elementAddress;
   int get modelId;
@@ -39,6 +47,7 @@ mixin _$ConfigModelAppStatusData {
   $ConfigModelAppStatusDataCopyWith<ConfigModelAppStatusData> get copyWith;
 }
 
+/// @nodoc
 abstract class $ConfigModelAppStatusDataCopyWith<$Res> {
   factory $ConfigModelAppStatusDataCopyWith(ConfigModelAppStatusData value,
           $Res Function(ConfigModelAppStatusData) then) =
@@ -46,6 +55,7 @@ abstract class $ConfigModelAppStatusDataCopyWith<$Res> {
   $Res call({int elementAddress, int modelId, int appKeyIndex});
 }
 
+/// @nodoc
 class _$ConfigModelAppStatusDataCopyWithImpl<$Res>
     implements $ConfigModelAppStatusDataCopyWith<$Res> {
   _$ConfigModelAppStatusDataCopyWithImpl(this._value, this._then);
@@ -71,6 +81,7 @@ class _$ConfigModelAppStatusDataCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 abstract class _$ConfigModelAppStatusDataCopyWith<$Res>
     implements $ConfigModelAppStatusDataCopyWith<$Res> {
   factory _$ConfigModelAppStatusDataCopyWith(_ConfigModelAppStatusData value,
@@ -80,6 +91,7 @@ abstract class _$ConfigModelAppStatusDataCopyWith<$Res>
   $Res call({int elementAddress, int modelId, int appKeyIndex});
 }
 
+/// @nodoc
 class __$ConfigModelAppStatusDataCopyWithImpl<$Res>
     extends _$ConfigModelAppStatusDataCopyWithImpl<$Res>
     implements _$ConfigModelAppStatusDataCopyWith<$Res> {
@@ -106,6 +118,8 @@ class __$ConfigModelAppStatusDataCopyWithImpl<$Res>
 }
 
 @JsonSerializable()
+
+/// @nodoc
 class _$_ConfigModelAppStatusData implements _ConfigModelAppStatusData {
   const _$_ConfigModelAppStatusData(
       this.elementAddress, this.modelId, this.appKeyIndex)
