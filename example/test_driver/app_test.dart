@@ -45,7 +45,7 @@ void main() {
   }, timeout: Timeout(Duration(minutes: 5)));
 
   test('open node page to configure and go back', () async {
-    final firstNodeFinder = find.text('My Node');
+    final firstNodeFinder = find.byValueKey('node-0');
     await driver.tap(firstNodeFinder);
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
