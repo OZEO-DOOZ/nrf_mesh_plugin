@@ -30,22 +30,28 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
         ),
         Checkbox(
           key: ValueKey('module-send-generic-on-off-value'),
-          value: false,
+          value: onOff,
           onChanged: (value) {
-            onOff = value;
+            setState(() {
+              onOff = value;
+            });
           },
         ),
         RaisedButton(
           child: Text('Send on off'),
           onPressed: () async {
             print('send level $onOff to $selectedElementAddress');
-            final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+            final provisionerUuid = await widget.meshManagerApi.meshNetwork
+                .selectedProvisionerUuid();
             final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-            final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
-            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
-            final status =
-                await widget.meshManagerApi.sendGenericOnOffSet(selectedElementAddress, onOff, sequenceNumber);
+            final provisionedNode = nodes.firstWhere(
+                (element) => element.uuid == provisionerUuid,
+                orElse: () => null);
+            final sequenceNumber =
+                await widget.meshManagerApi.getSequenceNumber(provisionedNode);
+            final status = await widget.meshManagerApi.sendGenericOnOffSet(
+                selectedElementAddress, onOff, sequenceNumber);
             print(status);
           },
         )
