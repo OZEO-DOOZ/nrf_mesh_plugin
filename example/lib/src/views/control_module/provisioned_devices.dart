@@ -57,15 +57,16 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
             child: ListView(
               padding: EdgeInsets.all(8),
               children: [
-                for (final device in _devices)
+                for (var i = 0; i < _devices.length; i++)
                   Device(
-                    device: device,
+                    key: ValueKey('device-$i'),
+                    device: _devices.elementAt(i),
                     onTap: () async {
                       await _stopScan();
                       await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return Module(device: device, meshManagerApi: _meshManagerApi);
+                            return Module(device: _devices.elementAt(i), meshManagerApi: _meshManagerApi);
                           },
                         ),
                       );

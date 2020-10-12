@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh_example/src/global.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 import 'package:pedantic/pedantic.dart';
 
@@ -128,8 +127,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
-
-        provisionedNode = node;
       }));
       await showDialog(
         context: context,

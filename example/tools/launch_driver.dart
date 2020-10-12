@@ -8,6 +8,7 @@ void main(List<String> arguments) async {
     if (!Platform.environment.containsKey('ANDROID_SDK_ROOT')) {
       throw 'Please setup ANDROID_SDK_ROOT env variable';
     }
+    await Process.run('flutter', ['install', '--uninstall-only']);
 
     print('building app');
     await Process.run(

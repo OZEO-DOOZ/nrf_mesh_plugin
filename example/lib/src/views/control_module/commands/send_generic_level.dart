@@ -4,7 +4,7 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 class SendGenericLevel extends StatefulWidget {
   final MeshManagerApi meshManagerApi;
 
-  const SendGenericLevel(this.meshManagerApi) : super();
+  const SendGenericLevel({Key key, this.meshManagerApi}) : super(key: key);
 
   @override
   _SendGenericLevelState createState() => _SendGenericLevelState();
@@ -18,15 +18,18 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      key: ValueKey('module-send-generic-level-form'),
       title: Text('Send a generic level set'),
       children: <Widget>[
         TextField(
+          key: ValueKey('module-send-generic-level-address'),
           decoration: InputDecoration(hintText: 'Element Address'),
           onChanged: (text) {
             selectedElementAddress = int.parse(text);
           },
         ),
         TextField(
+          key: ValueKey('module-send-generic-level-value'),
           decoration: InputDecoration(hintText: 'Level Value'),
           onChanged: (text) {
             selectedLevel = int.parse(text);
@@ -40,9 +43,7 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
             final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
             final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
-            final provisionerAddress = await provisionedNode.unicastAddress;
-            // final sequenceNumber = await provisionedNode.sequenceNumber;
-            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionerAddress);
+            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
             final status =
                 await widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
             print(status);

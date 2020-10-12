@@ -25,7 +25,7 @@ Map<String, dynamic> _$ModelDataToJson(ModelData instance) => <String, dynamic>{
 ElementData _$ElementDataFromJson(Map json) {
   return ElementData(
     json['key'] as int,
-    json['name'],
+    json['name'] as String,
     json['address'] as int,
     json['locationDescriptor'] as int,
     (json['models'] as List)

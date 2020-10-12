@@ -8,8 +8,7 @@ import 'group.dart';
 class MeshNetworkWidget extends StatefulWidget {
   final MeshNetwork meshNetwork;
 
-  const MeshNetworkWidget({Key key, @required this.meshNetwork})
-      : super(key: key);
+  const MeshNetworkWidget({Key key, @required this.meshNetwork}) : super(key: key);
 
   @override
   _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
@@ -35,7 +34,6 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
       children: <Widget>[
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
         Text('Nodes: '),
-        ..._nodes.map((e) => Node(e)),
         if (_groups.isNotEmpty) ...[
           Text('Groups: '),
           ..._groups.map((e) => Group(e, widget.meshNetwork)),
