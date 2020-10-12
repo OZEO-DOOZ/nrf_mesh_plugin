@@ -299,6 +299,41 @@ private extension DoozMeshManagerApi {
             
             break
             
+        case .sendConfigModelSubscriptionDelete:
+            #warning("❌ TO TEST")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let _elementAddress = _args["elementAddress"] as? Int16,
+                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
+                let _modelId = _args["modelIdentifier"] as? UInt32{
+                
+                if
+                    let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
+                    
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _address)),
+                    let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
+                    let model = element.model(withModelId: _modelId){
+                    
+                    let message: ConfigMessage =
+                        ConfigModelSubscriptionDelete(group: group, from: model) ??
+                        ConfigModelSubscriptionVirtualAddressDelete(group: group, from: model)!
+                    
+                    do{
+                        _ = try meshNetworkManager?.send(message, to: model)
+                        result(true)
+                    }catch{
+                        print(error)
+                        result(nil)
+                    }
+                }
+                
+                
+            }
+            
+            
+            break
+            
         case .sendConfigModelAppBind:
             if
                 let _args = call.arguments as? [String:Any],
