@@ -117,7 +117,6 @@ private extension DoozMeshNetwork {
                     result(
                         [
                             "group" : [
-                                //"id"
                                 "name" : group.name,
                                 "address" : group.address,
                                 "addressLabel" : group.address.virtualLabel?.uuidString,
@@ -141,7 +140,6 @@ private extension DoozMeshNetwork {
 
             let groups = meshNetwork?.groups.map({ group in
                 return [
-                    // "id"
                     "name" : group.name,
                     "address" : group.address,
                     "addressLabel" : group.address.virtualLabel?.uuidString,
@@ -157,7 +155,7 @@ private extension DoozMeshNetwork {
             #warning("❌ TO TEST")
             if
                 let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
+                let _address = _args["groupAddress"] as? Int16,
                 let group = meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
                 
                 do{
