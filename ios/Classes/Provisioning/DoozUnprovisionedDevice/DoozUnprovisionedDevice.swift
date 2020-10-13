@@ -14,22 +14,20 @@ class DoozUnprovisionedDevice: NSObject{
     var unprovisionedDevice: UnprovisionedDevice?
     
     //MARK: Private properties
-    private var eventSink: FlutterEventSink?
     private var provisioningManager: ProvisioningManager?
     
     init(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice, provisioningManager: ProvisioningManager?) {
         super.init()
         self.unprovisionedDevice = unprovisionedDevice
         self.provisioningManager = provisioningManager
-        _initChannels(messenger: messenger, unprovisionedDevice: unprovisionedDevice)
+        _initChannel(messenger: messenger, unprovisionedDevice: unprovisionedDevice)
     }
-    
     
 }
 
 private extension DoozUnprovisionedDevice {
     
-    func _initChannels(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice){
+    func _initChannel(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice){
         
         FlutterMethodChannel(
             name: FlutterChannels.DoozUnprovisionedMeshNode.getMethodChannelName(deviceUUID: unprovisionedDevice.uuid.uuidString),
@@ -46,13 +44,18 @@ private extension DoozUnprovisionedDevice {
         
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
         
-        guard let _method = DoozUnprovisionedMeshNodeChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        let _method = DoozUnprovisionedMeshNodeChannel(call: call)
         
         switch _method {
         
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            default:
+                #warning("manage other errors")
+                print("❌ Plugin method - \(call.method) - isn't implemented")
+            }
         case .getNumberOfElements:
             
             var nbElements = 0
@@ -61,7 +64,7 @@ private extension DoozUnprovisionedDevice {
             }
             result(nbElements)
             break
-            
+
         }
     }
 }

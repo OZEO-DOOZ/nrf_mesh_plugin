@@ -8,10 +8,14 @@
 import UIKit
 import nRFMeshProvision
 
+enum DoozProvisioningManagerError: Error{
+    case provisioningManagerDoesNotExist
+}
+
+
 protocol DoozProvisioningManagerDelegate{
-    func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>)
-    
-    func sendMessage(_ msg: Dictionary<String, Any>)
+    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState)
+    func provisioningBearerSendMessage(data: Data, bearer: DoozPBGattBearer)
 }
 
 class DoozProvisioningManager: NSObject {
@@ -29,18 +33,16 @@ class DoozProvisioningManager: NSObject {
     private var unprovisionedDevice: UnprovisionedDevice?
     
     private var provisioningBearer: DoozPBGattBearer?
-    private var provisionedBearer: DoozGattBearer?
     
     private var provisionedDevice: DoozProvisionedDevice?
     
-    init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger, delegate: DoozProvisioningManagerDelegate) {
+    init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger) {
         super.init()
         self.meshNetworkManager = meshNetworkManager
-        self.delegate = delegate
         self.messenger = messenger
     }
     
-    func identifyNode(_ uuid: UUID){
+    func identifyNode(_ uuid: UUID) throws{
         do{
             
             self.provisioningBearer = DoozPBGattBearer(targetWithIdentifier: uuid)
@@ -57,24 +59,25 @@ class DoozProvisioningManager: NSObject {
             }
             
         }catch{
-            print(error)
+            throw(error)
         }
         
     }
     
-    func provision(){
-        if let _provisioningManager = self.provisioningManager{
-            do{
-                try _provisioningManager.provision(
-                    usingAlgorithm: .fipsP256EllipticCurve,
-                    publicKey: .noOobPublicKey,
-                    authenticationMethod: .noOob)
-                
-            }catch{
-                print(error)
-            }
-            
+    func provision() throws{
+        guard let _provisioningManager = self.provisioningManager else{
+            throw DoozProvisioningManagerError.provisioningManagerDoesNotExist
         }
+        
+        do{
+            try _provisioningManager.provision(
+                usingAlgorithm: .fipsP256EllipticCurve,
+                publicKey: .noOobPublicKey,
+                authenticationMethod: .noOob)
+        }catch{
+            throw(error)
+        }
+            
     }
     
     func didDeliverData(_ data: Data, ofType type: PduType){
@@ -153,17 +156,7 @@ extension DoozProvisioningManager: ProvisioningDelegate{
             break
         }
         
-        let dict = [
-            EventSinkKeys.eventName.rawValue : state.eventName(),
-            EventSinkKeys.state.rawValue : state.flutterState(),
-            EventSinkKeys.data.rawValue:[],
-            EventSinkKeys.meshNode.meshNode.rawValue:[
-                EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
-            ]
-        ] as [String : Any]
-        
-        delegate?.provisioningStateDidChange(device: unprovisionedDevice, state: state, eventSinkMessage: dict)
-        
+        delegate?.provisioningStateDidChange(unprovisionedDevice: unprovisionedDevice, state: state)
         
     }
     
@@ -216,39 +209,6 @@ extension DoozProvisioningManager: BearerDelegate{
     
 }
 
-private extension ProvisionigState{
-    
-    func eventName() -> String{
-        switch self {
-        
-        case .complete:
-            return ProvisioningEvent.onProvisioningCompleted.rawValue
-        case .fail(_):
-            return ProvisioningEvent.onProvisioningFailed.rawValue
-        default:
-            return ProvisioningEvent.onProvisioningStateChanged.rawValue
-            
-        }
-    }
-    
-    func flutterState() -> String {
-        switch self {
-        
-        case .capabilitiesReceived(_):
-            return "PROVISIONING_CAPABILITIES"
-        case .ready:
-            return "PROVISIONER_READY"
-        case .requestingCapabilities:
-            return "REQUESTING_CAPABILITIES"
-        case .provisioning:
-            return "PROVISIONING"
-        default:
-            return ""
-            
-        }
-    }
-    
-}
 
 extension DoozProvisioningManager: GattBearerDelegate{
     func bearerDidConnect(_ bearer: Bearer) {
@@ -262,23 +222,13 @@ extension DoozProvisioningManager: LoggerDelegate{
     }
 }
 
-extension DoozProvisioningManager: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
+extension DoozProvisioningManager: DoozPBGattBearerDelegate {
     func send(data: Data) {
         
         guard let _provisioningBearer = self.provisioningBearer else{
             return
         }
-        
-        let dict = [
-            
-            EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
-            EventSinkKeys.pdu.rawValue: data,
-            EventSinkKeys.meshNode.meshNode.rawValue:[
-                EventSinkKeys.meshNode.uuid.rawValue: _provisioningBearer.identifier.uuidString
-            ]
-        ] as [String : Any]
-        
-        delegate?.sendMessage(dict)
-        
+
+        delegate?.provisioningBearerSendMessage(data: data, bearer: _provisioningBearer)
     }
 }

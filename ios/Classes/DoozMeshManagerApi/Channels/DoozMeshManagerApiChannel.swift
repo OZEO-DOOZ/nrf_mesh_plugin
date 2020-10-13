@@ -5,28 +5,76 @@
 //  Created by Alexis Barat on 08/06/2020.
 //
 
-enum DoozMeshManagerApiChannel: String{
+enum DoozMeshManagerApiChannel {
+    
     case loadMeshNetwork
-    case importMeshNetworkJson
-    case deleteMeshNetworkFromDb
+    case importMeshNetworkJson(_ data: ImportMeshNetworkJsonArguments)
+    case deleteMeshNetworkFromDb(_ data: DeleteMeshNetworkFromDbArguments)
     case exportMeshNetwork
-    
-    case identifyNode
-    case handleNotifications
-    case setMtuSize
+    case identifyNode(_ data: IdentifyNodeArguments)
+    case handleNotifications(_ data: HandleNotificationsArguments)
+    case setMtuSize(_ data: MtuSizeArguments)
     case cleanProvisioningData
-    
     case provisioning
+    case createMeshPduForConfigCompositionDataGet(_ data: CreateMeshPduForConfigCompositionDataGetArguments)
+    case createMeshPduForConfigAppKeyAdd(_ data: CreateMeshPduForConfigAppKeyAddArguments)
+    case sendConfigModelAppBind(_ data: SendConfigModelAppBindArguments)
+    case sendGenericLevelSet(_ data: SendGenericLevelSetArguments)
+    case sendGenericOnOffSet(_ data: SendGenericOnOffSetArguments)
+    case sendConfigModelSubscriptionAdd(_ data: SendConfigModelSubscriptionAddArguments)
+    case sendConfigModelSubscriptionDelete(_ data: SendConfigModelSubscriptionDeleteArguments)
     
-    case createMeshPduForConfigAppKeyAdd
-    case createMeshPduForConfigCompositionDataGet
+    case getSequenceNumberForAddress(_ data: GetSequenceNumberForAddressArguments)
     
-    case sendConfigModelAppBind
+    case error(_ error: Error)
     
-    case sendGenericLevelSet
-    case sendGenericOnOffSet
-    case sendConfigModelSubscriptionAdd
-    case sendConfigModelSubscriptionDelete
+    init(call: FlutterMethodCall) {
+        let arguments = call.arguments as? FlutterCallArguments
+
+        do{
+            switch call.method {
+            case "loadMeshNetwork":
+                self = .loadMeshNetwork
+            case "importMeshNetworkJson":
+                self = .importMeshNetworkJson(try ImportMeshNetworkJsonArguments(arguments))
+            case "deleteMeshNetworkFromDb":
+                self = .deleteMeshNetworkFromDb(try DeleteMeshNetworkFromDbArguments(arguments))
+            case "exportMeshNetwork":
+                self = .exportMeshNetwork
+            case "identifyNode":
+                self = .identifyNode(try IdentifyNodeArguments(arguments))
+            case "handleNotifications":
+                self = .handleNotifications(try HandleNotificationsArguments(arguments))
+            case "setMtuSize":
+                self = .setMtuSize(try MtuSizeArguments(arguments))
+            case "cleanProvisioningData":
+                self = .cleanProvisioningData
+            case "provisioning":
+                self = .provisioning
+            case "createMeshPduForConfigCompositionDataGet":
+                self = .createMeshPduForConfigCompositionDataGet(try CreateMeshPduForConfigCompositionDataGetArguments(arguments))
+            case "createMeshPduForConfigAppKeyAdd":
+                self = .createMeshPduForConfigAppKeyAdd(try CreateMeshPduForConfigAppKeyAddArguments(arguments))
+            case "sendConfigModelAppBind":
+                self = .sendConfigModelAppBind(try SendConfigModelAppBindArguments(arguments))
+            case "sendGenericLevelSet":
+                self = .sendGenericLevelSet(try SendGenericLevelSetArguments(arguments))
+            case "sendGenericOnOffSet":
+                self = .sendGenericOnOffSet(try SendGenericOnOffSetArguments(arguments))
+            case "sendConfigModelSubscriptionAdd":
+                self = .sendConfigModelSubscriptionAdd(try SendConfigModelSubscriptionAddArguments(arguments))
+            case "sendConfigModelSubscriptionDelete":
+                self = .sendConfigModelSubscriptionDelete(try SendConfigModelSubscriptionDeleteArguments(arguments))
+            case "getSequenceNumberForAddress":
+                self = .getSequenceNumberForAddress(try GetSequenceNumberForAddressArguments(arguments))
+            
+            default:
+                self = .error(FlutterCallError.notImplemented)
+            }
+        }catch{
+            self = .error(error)
+        }
+        
+    }
     
-    case getSequenceNumberForAddress
 }

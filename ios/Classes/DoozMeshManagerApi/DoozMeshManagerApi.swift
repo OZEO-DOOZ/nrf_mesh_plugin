@@ -11,68 +11,52 @@ import nRFMeshProvision
 class DoozMeshManagerApi: NSObject{
     
     //MARK: Public properties
-    var meshNetworkManager: MeshNetworkManager?
+    var meshNetworkManager: MeshNetworkManager
     var delegate: DoozMeshManagerApiDelegate?
-    
+    var eventSink: FlutterEventSink?
     var mtuSize: Int = -1
     
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
-    private var eventSink: FlutterEventSink?
-    private var messenger: FlutterBinaryMessenger?
-    private var doozStorage: LocalStorage?
     
-    private var doozProvisioningManager: DoozProvisioningManager?
-    private var doozTransmitter: DoozTransmitter?
+    private let messenger: FlutterBinaryMessenger
+    private var doozStorage: LocalStorage
+    
+    private var doozProvisioningManager: DoozProvisioningManager
+    private var doozTransmitter: DoozTransmitter
     
     init(messenger: FlutterBinaryMessenger) {
+        self.messenger = messenger
+        self.doozTransmitter = DoozTransmitter()
+        self.doozStorage = LocalStorage(fileName: DoozStorage.fileName)
+        
+        self.meshNetworkManager = MeshNetworkManager(using: doozStorage)
+        self.meshNetworkManager.acknowledgmentTimerInterval = 0.150
+        self.meshNetworkManager.transmissionTimerInteral = 0.600
+        self.meshNetworkManager.incompleteMessageTimeout = 10.0
+        self.meshNetworkManager.retransmissionLimit = 2
+        self.meshNetworkManager.acknowledgmentMessageInterval = 4.2
+        self.meshNetworkManager.acknowledgmentMessageTimeout = 40.0
+        self.meshNetworkManager.transmitter = doozTransmitter
+        
+        self.doozProvisioningManager = DoozProvisioningManager(meshNetworkManager: meshNetworkManager, messenger: messenger)
+        
         super.init()
         
-        self.messenger = messenger
+        meshNetworkManager.logger = self
+        meshNetworkManager.delegate = self
+        doozTransmitter.doozDelegate = self
+        doozProvisioningManager.delegate = self
+        
         self.delegate = self
         
-        _initMeshNetworkManager()
         _initChannels(messenger: messenger)
-        _initDoozProvisioningManager()
     }
     
 }
 
 
 private extension DoozMeshManagerApi {
-    
-    func _initMeshNetworkManager(){
-        
-        self.doozStorage = LocalStorage(fileName: DoozStorage.fileName)
-        guard let _doozStorage = self.doozStorage else{
-            return
-        }
-        
-        meshNetworkManager = MeshNetworkManager(using: _doozStorage)
-        meshNetworkManager?.logger = self
-        
-        guard let _meshNetworkManager = self.meshNetworkManager else{
-            return
-        }
-        
-        _meshNetworkManager.acknowledgmentTimerInterval = 0.150
-        _meshNetworkManager.transmissionTimerInteral = 0.600
-        _meshNetworkManager.incompleteMessageTimeout = 10.0
-        _meshNetworkManager.retransmissionLimit = 2
-        _meshNetworkManager.acknowledgmentMessageInterval = 4.2
-        
-        // As the interval has been increased, the timeout can be adjusted.
-        // The acknowledged message will be repeated after 4.2 seconds,
-        // 12.6 seconds (4.2 + 4.2 * 2), and 29.4 seconds (4.2 + 4.2 * 2 + 4.2 * 4).
-        // Then, leave 10 seconds for until the incomplete message times out.
-        _meshNetworkManager.acknowledgmentMessageTimeout = 40.0
-        
-        _meshNetworkManager.delegate = self
-        
-        self.doozTransmitter = DoozTransmitter()
-        doozTransmitter?.doozDelegate = self
-        _meshNetworkManager.transmitter = doozTransmitter
-    }
     
     func _initChannels(messenger: FlutterBinaryMessenger){
         
@@ -92,292 +76,238 @@ private extension DoozMeshManagerApi {
         
     }
     
-    func _initDoozProvisioningManager(){
-        guard let _meshNetworkManager = self.meshNetworkManager, let _messenger = self.messenger else{
-            return
-        }
-        
-        doozProvisioningManager = DoozProvisioningManager(meshNetworkManager: _meshNetworkManager, messenger: _messenger, delegate: self)
-    }
-    
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        print("🥂 [DoozMeshManagerApi] Received flutter call : \(call.method)")
-        guard let _method = DoozMeshManagerApiChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
+        
+        let _method = DoozMeshManagerApiChannel(call: call)
         
         switch _method {
         
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            default:
+                #warning("manage other errors")
+                print("❌ Plugin method - \(call.method) - isn't implemented")
+            }
+        
         case .loadMeshNetwork:
+            #warning("Move loadMeshNetwork catch() logic here")
             _loadMeshNetwork()
             result(nil)
-            break
-        case .importMeshNetworkJson:
-            if let _args = call.arguments as? [String:Any], let _json = _args["json"] as? String{
-                _importMeshNetworkJson(_json)
+            
+        case .importMeshNetworkJson(let data):
+            do{
+                try _importMeshNetworkJson(data.json)
+                result(nil)
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
             }
-            result(nil)
-            break
-        case .deleteMeshNetworkFromDb:
-            if let _args = call.arguments as? [String:Any], let _id = _args["id"] as? String{
-                
-                do{
-                    try _deleteMeshNetworkFromDb(_id)
-                }catch{
-                    #warning("TODO : manage errors")
-                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
-                }
-                
+            
+            
+        case .deleteMeshNetworkFromDb(let data):
+            
+            do{
+                try _deleteMeshNetworkFromDb(data.id)
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
             }
-            break
+            
         case .exportMeshNetwork:
             if let json = _exportMeshNetwork(){
                 result(json)
             }
             break
-        case .identifyNode:
-            
-            if
-                let _doozProvisioningManager = self.doozProvisioningManager,
-                let _args = call.arguments as? [String:Any],
-                let _strServiceUUID = _args["serviceUuid"] as? String,
-                let _serviceUUID = UUID(uuidString: _strServiceUUID)
-            {
-                _doozProvisioningManager.identifyNode(_serviceUUID)
+        case .identifyNode(var data):
+            do{
+                try doozProvisioningManager.identifyNode(data.uuid)
+                result(nil)
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
             }
-            
-            result(nil)
-            
-            break
             
         case .provisioning:
-            if let _doozProvisioningManager = self.doozProvisioningManager{
-                _doozProvisioningManager.provision()
-            }
-            
-            
-            result(nil)
-            
-            break
-            
-        case .handleNotifications:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _pdu = _args["pdu"] as? FlutterStandardTypedData
-            {
-                self._didDeliverData(data: _pdu.data)
-                
-            }
-            
-            result(nil)
-            
-            break
-            
-        case .setMtuSize:
-            if let _args = call.arguments as? [String:Any], let _mtuSize = _args["mtuSize"] as? Int{
-                delegate?.mtuSize = _mtuSize
+            do{
+                try doozProvisioningManager.provision()
                 result(nil)
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
             }
-            break
+            
+        case .handleNotifications(let data):
+            
+            _didDeliverData(data: data.pdu.data)
+            result(nil)
+        
+        case .setMtuSize(let data):
+            
+            delegate?.mtuSize = data.mtuSize
+            result(nil)
+            
         case .cleanProvisioningData:
-            if
-                let _doozProvisioningManager = self.doozProvisioningManager{
-                _doozProvisioningManager.cleanProvisioningData()
-            }
+            
+            doozProvisioningManager.cleanProvisioningData()
             result(nil)
             
-        case .createMeshPduForConfigCompositionDataGet:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _dest = _args["dest"] as? Int16{
-                doozProvisioningManager?.createMeshPduForConfigCompositionDataGet(_dest)
-            }
+        case .createMeshPduForConfigCompositionDataGet(let data):
             
+            doozProvisioningManager.createMeshPduForConfigCompositionDataGet(data.dest)
             result(nil)
             
-        case .createMeshPduForConfigAppKeyAdd:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _dest = _args["dest"] as? Int16,
-                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys.first{
-                doozProvisioningManager?.createMeshPduForConfigAppKeyAdd(dest: _dest, appKey: _appKey)
+        case .createMeshPduForConfigAppKeyAdd(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys.first else{
+                result(nil)
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
+                //result(FlutterMethodNotImplemented)
+                return
             }
+            
+            doozProvisioningManager.createMeshPduForConfigAppKeyAdd(dest: data.dest, appKey: appKey)
             result(nil)
             
-        case .sendGenericLevelSet:
+        case .sendGenericLevelSet(let data):
             #warning("TODO : add transitionTime and delay")
+            
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                result(nil)
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: T##String, message: <#T##String?#>, details: <#T##Any?#>)
+                //result(FlutterMethodNotImplemented)
+                return
+            }
+            
+            let message = GenericLevelSet(level: data.level)
+            do{
+                
+                _ = try meshNetworkManager.send(
+                    message,
+                    to: MeshAddress(Address(bitPattern: data.address)),
+                    using: appKey
+                )
+                
+                result(nil)
+                
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
+                print(error)
+            }
+            
+            
+        case .sendGenericOnOffSet(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                result(nil)
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: T##String, message: <#T##String?#>, details: <#T##Any?#>)
+                //result(FlutterMethodNotImplemented)
+                return
+            }
+            
+            
+            let message = GenericOnOffSet(data.value)
+            
+            do{
+                _ = try meshNetworkManager.send(
+                    message,
+                    to: MeshAddress(Address(bitPattern: data.address)),
+                    using: appKey
+                )
+                result(nil)
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
+                print(error)
+            }
+            
+        case .sendConfigModelSubscriptionAdd(let data):
+            #warning("❌ TO TEST")
+            
             if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
-                let _level = _args["level"] as? Int16,
-                let _keyIndex = _args["keyIndex"] as? Int16,
-                //                let _transitionStep = _args["transitionStep"] as? UInt8,
-                //                let _transitionResolution = _args["transitionResolution"] as? UInt8,
-                //                let stepResolution = StepResolution(rawValue: _transitionResolution),
-                //                let _delay = _args["delay"] as? Int16,
-                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(_keyIndex)]{
+                let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: data.subscriptionAddress))),
                 
-                // let transitionTime = TransitionTime(steps: _transitionStep, stepResolution: stepResolution)
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.address)),
+                let element = node.element(withAddress: Address(bitPattern: data.elementAddress)),
+                let model = element.model(withModelId: data.modelIdentifier){
                 
-                let message = GenericLevelSet(level: _level)
+                let message: ConfigMessage =
+                    ConfigModelSubscriptionAdd(group: group, to: model) ??
+                    ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
                 
                 do{
-                    _ = try meshNetworkManager?.send(
-                        message,
-                        to: MeshAddress(Address(bitPattern: _address)),
-                        using: _appKey
-                    )
+                    _ = try meshNetworkManager.send(message, to: model)
+                    result(true)
                 }catch{
                     #warning("TODO : manage errors")
                     //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
+                    result(nil)
                 }
-                
             }
             
-            result(nil)
-        case .sendGenericOnOffSet:
+        case .sendConfigModelSubscriptionDelete(let data):
+            #warning("❌ TO TEST")
+            
             if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
-                let _isOn = _args["value"] as? Bool,
-                let _keyIndex = _args["keyIndex"] as? Int16,
-                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(_keyIndex)]{
+                let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: data.subscriptionAddress))),
                 
-                let message = GenericOnOffSet(_isOn)
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.address)),
+                let element = node.element(withAddress: Address(bitPattern: data.elementAddress)),
+                let model = element.model(withModelId: data.modelIdentifier){
+                
+                let message: ConfigMessage =
+                    ConfigModelSubscriptionDelete(group: group, from: model) ??
+                    ConfigModelSubscriptionVirtualAddressDelete(group: group, from: model)!
                 
                 do{
-                    _ = try meshNetworkManager?.send(
-                        message,
-                        to: MeshAddress(Address(bitPattern: _address)),
-                        using: _appKey
-                    )
+                    _ = try meshNetworkManager.send(message, to: model)
+                    result(true)
                 }catch{
                     #warning("TODO : manage errors")
                     //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
+                    result(nil)
                 }
-                
             }
             
-            result(nil)
-            break
-            
-        case .sendConfigModelSubscriptionAdd:
-            #warning("❌ TO TEST")
-            if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
-                let _elementAddress = _args["elementAddress"] as? Int16,
-                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
-                let _modelId = _args["modelIdentifier"] as? UInt32{
+        case .sendConfigModelAppBind(let data):
+            do{
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.nodeId))
+                let element = node?.element(withAddress: Address(bitPattern: data.elementId))
+                let model = element?.model(withModelId: data.modelId)
+                let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.appKeyIndex)]
                 
-                if
-                    let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
+                if let _appKey = appKey, let _model = model{
                     
-                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _address)),
-                    let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
-                    let model = element.model(withModelId: _modelId){
-                    
-                    let message: ConfigMessage =
-                        ConfigModelSubscriptionAdd(group: group, to: model) ??
-                        ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
-                    
-                    do{
-                        _ = try meshNetworkManager?.send(message, to: model)
-                        result(true)
-                    }catch{
-                        print(error)
+                    if let configModelAppBind = ConfigModelAppBind(applicationKey: _appKey, to: _model){
+                        try _ =  meshNetworkManager.send(configModelAppBind, to: _model)
                         result(nil)
                     }
                 }
                 
-                
+            }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
+                print(error)
             }
             
-            
-            break
-            
-        case .sendConfigModelSubscriptionDelete:
-            #warning("❌ TO TEST")
+        case .getSequenceNumberForAddress(let data):
+            #warning("check if only one node ?")
             if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
-                let _elementAddress = _args["elementAddress"] as? Int16,
-                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
-                let _modelId = _args["modelIdentifier"] as? UInt32{
-                
-                if
-                    let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
-                    
-                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _address)),
-                    let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
-                    let model = element.model(withModelId: _modelId){
-                    
-                    let message: ConfigMessage =
-                        ConfigModelSubscriptionDelete(group: group, from: model) ??
-                        ConfigModelSubscriptionVirtualAddressDelete(group: group, from: model)!
-                    
-                    do{
-                        _ = try meshNetworkManager?.send(message, to: model)
-                        result(true)
-                    }catch{
-                        print(error)
-                        result(nil)
-                    }
-                }
-                
-                
-            }
-            
-            
-            break
-            
-        case .sendConfigModelAppBind:
-            if
-                let _args = call.arguments as? [String:Any],
-                let nodeId = _args["nodeId"] as? Int16, // nodeId is an unicastAddress
-                let elementId = _args["elementId"] as? Int16, // elementId is an unicastAddress
-                let modelId = _args["modelId"] as? UInt32,
-                let appKeyIndex = _args["appKeyIndex"] as? Int16,
-                let _meshNetworkManager = self.meshNetworkManager{
-                
-                do{
-                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: nodeId))
-                    let element = node?.element(withAddress: Address(bitPattern: elementId))
-                    let model = element?.model(withModelId: modelId)
-                    let appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(appKeyIndex)]
-                    
-                    if let _appKey = appKey, let _model = model{
-                        
-                        if let configModelAppBind = ConfigModelAppBind(applicationKey: _appKey, to: _model){
-                            try _ =  _meshNetworkManager.send(configModelAppBind, to: _model)
-                        }
-                    }
-                    
-                }
-                catch{
-                    print(error)
-                }
-                
-            }
-            
-            result(nil)
-            
-        case .getSequenceNumberForAddress:
-            if
-                let _meshNetworkManager = self.meshNetworkManager,
-                let _meshNetwork = _meshNetworkManager.meshNetwork,
-                let _args = call.arguments as? [String:Any],
-                let _nodeAddress = _args["address"] as? Int16,
-                let _node = _meshNetwork.node(withAddress: Address(bitPattern: _nodeAddress)),
+                let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(bitPattern: data.address)),
                 _node.elementsCount > 0{
                 
-                let sequenceNumber = _meshNetworkManager.getSequenceNumber(ofLocalElement: _node.elements[0])
+                let sequenceNumber = meshNetworkManager.getSequenceNumber(ofLocalElement: _node.elements[0])
                 result(sequenceNumber)
                 
             }else{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                 result(nil)
             }
             
@@ -391,13 +321,10 @@ private extension DoozMeshManagerApi {
 private extension DoozMeshManagerApi{
     
     func _loadMeshNetwork(){
-        guard let _meshNetworkManager = self.meshNetworkManager else{
-            return
-        }
         
         do{
             
-            if try _meshNetworkManager.load(){
+            if try meshNetworkManager.load(){
                 // Mesh Network loaded from database
                 let element0 = Element(name: "Primary Element", location: .first, models: [
                     // 4 generic models defined by Bluetooth SIG:
@@ -407,14 +334,19 @@ private extension DoozMeshManagerApi{
                     Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
                 ])
                 
-                _meshNetworkManager.localElements = [element0]
+                meshNetworkManager.localElements = [element0]
             }else{
                 // No mesh network in database, we have to create one
                 let meshNetwork = try _generateMeshNetwork()
                 try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
             }
             
-            delegate?.onNetworkLoaded(_meshNetworkManager.meshNetwork)
+            guard let _network = meshNetworkManager.meshNetwork else{
+                delegate?.onNetworkLoadFailed(DoozMeshManagerApiError.errorLoadingMeshNetwork)
+                return
+            }
+            
+            delegate?.onNetworkLoaded(_network)
             
         }catch{
             delegate?.onNetworkLoadFailed(error)
@@ -423,50 +355,39 @@ private extension DoozMeshManagerApi{
     }
     
     
-    func _importMeshNetworkJson(_ json: String){
-        
-        guard let _messenger = self.messenger, let _meshNetworkManager = self.meshNetworkManager else{
-            return
-        }
+    func _importMeshNetworkJson(_ json: String) throws{
         
         do{
             if let data = json.data(using: .utf8){
-                let _network = try _meshNetworkManager.import(from: data)
+                let _network = try meshNetworkManager.import(from: data)
                 
-                if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
-                    doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+                if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
+                    doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
                 } else {
                     doozMeshNetwork?.meshNetwork = _network
                 }
                 
-                if let _eventSink = self.eventSink{
-                    _eventSink(
-                        [
-                            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                            EventSinkKeys.id.rawValue : _network.id
-                        ])
-                }
+                let message: FlutterMessage =
+                    [
+                        EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                        EventSinkKeys.id.rawValue : _network.id
+                    ]
+                _sendFlutterMessage(message)
+                
                 #warning("save in db after import successful")
                 //    delegate.onNetworkImported()
             }
             
         }catch{
             print("❌ Error importing json : \(error.localizedDescription)")
-            // delegate.onNetworkImportFailed()
+            throw(error)
         }
     }
     
     func _deleteMeshNetworkFromDb(_ id: String) throws{
         
-        // We have to implement the reset / delete logic on plugin side.
-        // See https://github.com/NordicSemiconductor/IOS-nRF-Mesh-Library/issues/279
-        
-        guard let _doozStorage = self.doozStorage else{
-            throw DoozMeshManagerApiError.doozStorageNotFound
-        }
-        
         do{
-            try _doozStorage.delete()
+            try doozStorage.delete()
         }catch{
             throw error
         }
@@ -475,11 +396,7 @@ private extension DoozMeshManagerApi{
     
     func _exportMeshNetwork() -> String?{
         
-        guard let _meshNetworkManager = self.meshNetworkManager else{
-            return nil
-        }
-        
-        let data = _meshNetworkManager.export()
+        let data = meshNetworkManager.export()
         let str = String(decoding: data, as: UTF8.self)
         
         if str != ""{
@@ -492,24 +409,20 @@ private extension DoozMeshManagerApi{
     
     func _generateMeshNetwork() throws -> MeshNetwork{
         
-        guard let _meshNetworkManager = self.meshNetworkManager else{
-            throw DoozMeshManagerApiError.meshManagerApiNotInitialized
-        }
-        
         let meshUUID = UUID().uuidString
         let provisioner = Provisioner(name: UIDevice.current.name,
                                       allocatedUnicastRange: [AddressRange(0x0001...0x199A)],
                                       allocatedGroupRange:   [AddressRange(0xC000...0xCC9A)],
                                       allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
         
-        let meshNetwork = _meshNetworkManager.createNewMeshNetwork(withName: meshUUID, by: provisioner)
-        _ = _meshNetworkManager.save()
+        let meshNetwork = meshNetworkManager.createNewMeshNetwork(withName: meshUUID, by: provisioner)
+        _ = meshNetworkManager.save()
         
         return meshNetwork
     }
     
     func _resetMeshNetwork(){
-        guard let _meshNetwork = self.meshNetworkManager?.meshNetwork else{
+        guard let _meshNetwork = meshNetworkManager.meshNetwork else{
             return
         }
         
@@ -537,18 +450,10 @@ private extension DoozMeshManagerApi{
         
         switch type {
         case .provisioningPdu:
-            guard let _doozProvisioningManager = self.doozProvisioningManager else{
-                return
-            }
-            
-            _doozProvisioningManager.didDeliverData(data, ofType: type)
+            doozProvisioningManager.didDeliverData(data, ofType: type)
             
         default:
-            guard let _meshNetworkManager = self.meshNetworkManager else{
-                return
-            }
-            
-            _meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
+            meshNetworkManager.bearerDidDeliverData(packet, ofType: type)
         }
         
     }
@@ -569,248 +474,118 @@ extension DoozMeshManagerApi: FlutterStreamHandler{
 
 extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
-    
-    func onNetworkLoaded(_ network: MeshNetwork?) {
-        print("✅ Mesh Network loaded from database")
+    func onNetworkLoaded(_ network: MeshNetwork) {
         
-        guard
-            let _network = network,
-            let _messenger = self.messenger,
-            let _eventSink = self.eventSink
-        else{
-            return
-        }
-        
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
-            doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: network)
         } else {
-            doozMeshNetwork?.meshNetwork = _network
+            doozMeshNetwork?.meshNetwork = network
         }
         
-        _eventSink(
+        let message: FlutterMessage =
             [
                 EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
-                EventSinkKeys.id.rawValue : _network.id
+                EventSinkKeys.id.rawValue : network.id
             ]
-        )
+        _sendFlutterMessage(message)
         
     }
     
     func onNetworkLoadFailed(_ error: Error) {
-        print("❌ Error loading Mesh Network : \(error.localizedDescription)")
         
-        guard let _eventSink = self.eventSink else{
-            return
-        }
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
+            EventSinkKeys.error.rawValue : error
+        ]
         
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
-                EventSinkKeys.error.rawValue : error
-            ]
-        )
+        _sendFlutterMessage(message)
         
     }
     
-    func onNetworkUpdated(_ network: MeshNetwork?) {
+    func onNetworkUpdated(_ network: MeshNetwork) {
+                
+        doozMeshNetwork?.meshNetwork = network
         
-        print("✅ Mesh Network updated")
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
+            EventSinkKeys.id.rawValue : network.id
+        ]
         
-        guard
-            let _network = network,
-            let _eventSink = self.eventSink
-        else{
-            return
-        }
-        
-        doozMeshNetwork?.meshNetwork = _network
-        
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
-                EventSinkKeys.id.rawValue : _network.id
-            ]
-        )
+        _sendFlutterMessage(message)
     }
     
-    func onNetworkImported(_ network: MeshNetwork?) {
-        
-        print("✅ Mesh Network imported")
-        
-        guard
-            let _network = network,
-            let _messenger = self.messenger,
-            let _eventSink = self.eventSink
-        else{
-            return
-        }
-        
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
-            doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+    func onNetworkImported(_ network: MeshNetwork) {
+                
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: network)
         } else {
-            doozMeshNetwork?.meshNetwork = _network
+            doozMeshNetwork?.meshNetwork = network
         }
         
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                EventSinkKeys.id.rawValue : _network.id
-            ]
-        )
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+            EventSinkKeys.id.rawValue : network.id
+        ]
+        
+        _sendFlutterMessage(message)
         
     }
     
     func onNetworkImportFailed(_ error: Error) {
-        print("❌ Error importing Mesh Network : \(error.localizedDescription)")
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
+            EventSinkKeys.error.rawValue : error
+        ] 
         
-        guard let _eventSink = self.eventSink else{
-            return
-        }
-        
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
-                EventSinkKeys.error.rawValue : error
-            ]
-        )
+        _sendFlutterMessage(message)
     }
-    
     
 }
 
-extension DoozMeshManagerApi: LoggerDelegate{
-    func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
-        print("[\(String(describing: self.classForCoder))] \(message)")
-    }
-}
 
 extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
-    func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>){
-        if let _eventSink = self.eventSink{
-            _eventSink(eventSinkMessage)
-        }
+    func provisioningBearerSendMessage(data: Data, bearer: DoozPBGattBearer) {
+        
+        let message: FlutterMessage = [
+            
+            EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
+            EventSinkKeys.pdu.rawValue: data,
+            EventSinkKeys.meshNode.meshNode.rawValue:[
+                EventSinkKeys.meshNode.uuid.rawValue: bearer.identifier.uuidString
+            ]
+        ]
+        
+        _sendFlutterMessage(message)
+        
     }
     
-    func sendMessage(_ msg: Dictionary<String, Any>) {
-        if let _eventSink = self.eventSink{
-            _eventSink(msg)
-        }
+    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState) {
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : state.eventName(),
+            EventSinkKeys.state.rawValue : state.flutterState(),
+            EventSinkKeys.data.rawValue:[],
+            EventSinkKeys.meshNode.meshNode.rawValue:[
+                EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
+            ]
+        ]
+        
+        _sendFlutterMessage(message)
     }
     
 }
 
 
-extension DoozMeshManagerApi: MeshNetworkDelegate{
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, didReceiveMessage message: MeshMessage, sentFrom source: Address, to destination: Address) {
-        print("📣 didReceiveMessage : \(message) from \(source) to \(destination)")
-        
-        // Handle the message based on its type.
-        switch message {
-        
-        case let status as ConfigModelAppStatus:
-            
-            if status.isSuccess {
-                let dict = [
-                    
-                    EventSinkKeys.eventName.rawValue: MessageEvent.onConfigModelAppStatus.rawValue,
-                    EventSinkKeys.message.elementAddress.rawValue: status.elementAddress,
-                    EventSinkKeys.message.modelId.rawValue: status.modelId,
-                    EventSinkKeys.message.appKeyIndex.rawValue: status.applicationKeyIndex,
-                    
-                ] as [String : Any]
-                
-                sendMessage(dict)
-            } else {
-                break
-            }
-            
-        case is ConfigCompositionDataStatus:
-            
-            let dict = [
-                
-                EventSinkKeys.eventName.rawValue : MessageEvent.onConfigCompositionDataStatus.rawValue,
-                EventSinkKeys.source.rawValue : source,
-                EventSinkKeys.message.meshMessage.rawValue : [
-                    EventSinkKeys.message.source.rawValue : source,
-                    EventSinkKeys.message.destination.rawValue : destination
-                ]
-                
-            ] as [String : Any]
-            
-            sendMessage(dict)
-            
-        case let status as ConfigAppKeyStatus:
-            if status.isSuccess {
-                let dict = [
-                    
-                    EventSinkKeys.eventName.rawValue : MessageEvent.onConfigAppKeyStatus.rawValue,
-                    EventSinkKeys.source.rawValue : source,
-                    EventSinkKeys.message.meshMessage.rawValue : [
-                        EventSinkKeys.message.source.rawValue : source,
-                        EventSinkKeys.message.destination.rawValue : destination
-                    ]
-                    
-                ] as [String : Any]
-                
-                sendMessage(dict)
-            }else {
-                break
-            }
-            
-        case let status as GenericLevelStatus:
-            
-            let dict = [
-                
-                EventSinkKeys.eventName.rawValue : MessageEvent.onGenericLevelStatus.rawValue,
-                EventSinkKeys.level.rawValue : status.level,
-                EventSinkKeys.targetLevel.rawValue : status.targetLevel ?? 0,
-                EventSinkKeys.source.rawValue : source,
-                EventSinkKeys.message.destination.rawValue : destination
-                
-            ] as [String : Any]
-            
-            sendMessage(dict)
-            
-            
-        //        case let list as ConfigModelAppList:
-        //            break
-        //
-        //        case let list as ConfigModelSubscriptionList:
-        //            break
-        //
-        //        case let status as ConfigModelPublicationStatus:
-        //            break
-        //
-        //        case let status as ConfigModelSubscriptionStatus:
-        //            break
-        
-        default:
-            break
-        }
-        
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, didSendMessage message: MeshMessage, from localElement: Element, to destination: Address) {
-        print("📣 didSendMessage : \(message) from \(localElement) to \(destination)")
-    }
-    
-    func meshNetworkManager(_ manager: MeshNetworkManager, failedToSendMessage message: MeshMessage, from localElement: Element, to destination: Address, error: Error) {
-        print("📣 failedToSendMessage : \(message) from \(localElement) to \(destination) : \(error)")
-    }
-    
-}
 
 extension DoozMeshManagerApi: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
     func send(data: Data) {
         
-        let dict = [
-            
+        let message: FlutterMessage = [
             EventSinkKeys.eventName.rawValue: MessageEvent.onMeshPduCreated.rawValue,
             EventSinkKeys.pdu.rawValue: data
-        ] as [String : Any]
+        ]
         
-        sendMessage(dict)
+        _sendFlutterMessage(message)
         
     }
 }
+

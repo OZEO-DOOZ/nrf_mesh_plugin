@@ -11,17 +11,20 @@ import nRFMeshProvision
 class DoozMeshNetwork: NSObject{
     
     //MARK: Public properties
-    var meshNetwork: MeshNetwork?
+    #warning("make meshNetwork private ?")
+    var meshNetwork: MeshNetwork
+    
     
     //MARK: Private properties
-    private var eventSink: FlutterEventSink?
-    private var messenger: FlutterBinaryMessenger?
+    private let messenger: FlutterBinaryMessenger
     
     init(messenger: FlutterBinaryMessenger, network: MeshNetwork) {
-        super.init()
         self.meshNetwork = network
         self.messenger = messenger
-        _initChannels(messenger: messenger, network: network)
+        
+        super.init()
+        
+        _initChannel(messenger: messenger, networkId: network.id)
     }
     
     
@@ -29,16 +32,10 @@ class DoozMeshNetwork: NSObject{
 
 private extension DoozMeshNetwork {
     
-    func _initChannels(messenger: FlutterBinaryMessenger, network: MeshNetwork){
-        
-        FlutterEventChannel(
-            name: FlutterChannels.DoozMeshNetwork.getEventChannelName(networkId: network.id),
-            binaryMessenger: messenger
-        )
-        .setStreamHandler(self)
+    func _initChannel(messenger: FlutterBinaryMessenger, networkId: String) {
         
         FlutterMethodChannel(
-            name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: network.id),
+            name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: networkId),
             binaryMessenger: messenger
         )
         .setMethodCallHandler { (call, result) in
@@ -49,15 +46,19 @@ private extension DoozMeshNetwork {
     
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
-        
-        guard let _method = DoozMeshNetworkChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        let _method = DoozMeshNetworkChannel(call: call)
         
         switch _method {
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            default:
+                #warning("manage other errors")
+                print("❌ Plugin method - \(call.method) - isn't implemented")
+            }
+            
         case .getId:
             result(_getId())
             break
@@ -68,7 +69,7 @@ private extension DoozMeshNetwork {
             
             var maxAddress = 0
             
-            if let _allocatedUnicastRanges = meshNetwork?.localProvisioner?.allocatedUnicastRange{
+            if let _allocatedUnicastRanges = meshNetwork.localProvisioner?.allocatedUnicastRange{
                 for addressRange in _allocatedUnicastRanges {
                     if (maxAddress < addressRange.highAddress) {
                         maxAddress = Int(addressRange.highAddress)
@@ -82,39 +83,34 @@ private extension DoozMeshNetwork {
             
         case .nodes:
             
-            if
-                let _messenger = self.messenger,
-                let _meshNetwork = self.meshNetwork {
-                let provisionedDevices = _meshNetwork.nodes.map({ node  in
-                    return DoozProvisionedDevice(messenger: _messenger, node: node)
-                })
-                
-                let nodes = provisionedDevices.map({ device in
-                    return [
-                        EventSinkKeys.network.uuid.rawValue: device.node.uuid.uuidString
-                    ]
-                })
-                
-                result(nodes)
-                
-            }
+            
+            let provisionedDevices = meshNetwork.nodes.map({ node  in
+                return DoozProvisionedDevice(messenger: messenger, node: node)
+            })
+            
+            let nodes = provisionedDevices.map({ device in
+                return [
+                    EventSinkKeys.network.uuid.rawValue: device.node.uuid.uuidString
+                ]
+            })
+            
+            result(nodes)
             
             break
+            
         case .selectedProvisionerUuid:
-            result(meshNetwork?.localProvisioner?.uuid.uuidString)
+            result(meshNetwork.localProvisioner?.uuid.uuidString)
             break
             
-        case .addGroupWithName:
+        case .addGroupWithName(let data):
             #warning("❌ TO TEST")
             if
-                let provisioner = meshNetwork?.localProvisioner,
-                let address = meshNetwork?.nextAvailableGroupAddress(for: provisioner),
-                let _args = call.arguments as? [String:Any],
-                let _name = _args["name"] as? String {
+                let provisioner = meshNetwork.localProvisioner,
+                let address = meshNetwork.nextAvailableGroupAddress(for: provisioner){
                 
                 do{
-                    let group = try Group(name: _name, address: address)
-                    try meshNetwork?.add(group: group)
+                    let group = try Group(name: data.name, address: address)
+                    try meshNetwork.add(group: group)
                     
                     result(
                         [
@@ -139,8 +135,8 @@ private extension DoozMeshNetwork {
             
         case .groups:
             #warning("❌ TO TEST")
-
-            let groups = meshNetwork?.groups.map({ group in
+            
+            let groups = meshNetwork.groups.map({ group in
                 return [
                     "name" : group.name,
                     "address" : group.address,
@@ -153,15 +149,12 @@ private extension DoozMeshNetwork {
             
             result(groups)
             
-        case .removeGroup:
+        case .removeGroup(let data):
             #warning("❌ TO TEST")
-            if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["groupAddress"] as? Int16,
-                let group = meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress))) {
                 
                 do{
-                    try meshNetwork?.remove(group: group)
+                    try meshNetwork.remove(group: group)
                     result(true)
                 }
                 catch{
@@ -172,46 +165,34 @@ private extension DoozMeshNetwork {
             }else{
                 result(false)
             }
-            
-            break
-            
-        case .getElementsForGroup:
+                        
+        case .getElementsForGroup(let data):
             #warning("❌ TO TEST")
-            if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
-                let group = meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
-                                
-                if let models = meshNetwork?.models(subscribedTo: group){
-                    
-                    let elements = models.compactMap { model in
-                        return model.parentElement
-                    }
-                    
-                    let mappedElements = elements.map { element in
-                        return [
-                            "name" : element.name,
-                            "address" : element.unicastAddress,
-                            "locationDescriptor" : element.location,
-                            "models" : models.filter({$0.parentElement == element}).map({ m in
-                                return [
-                                    "subscribedAddresses" : m.subscriptions.map({ s in
-                                        return s.address
-                                    }),
-                                    "boundAppKey" : m.boundApplicationKeys.map{ key in
-                                        return key.index
-                                    }
-                                ]
-                            })
-                        ]
-                    }
-                    
-                    result(mappedElements)
-
-                }else{
-                    result(nil)
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.address))){
+                let models = meshNetwork.models(subscribedTo: group)
+                let elements = models.compactMap { model in
+                    return model.parentElement
                 }
                 
+                let mappedElements = elements.map { element in
+                    return [
+                        "name" : element.name,
+                        "address" : element.unicastAddress,
+                        "locationDescriptor" : element.location,
+                        "models" : models.filter({$0.parentElement == element}).map({ m in
+                            return [
+                                "subscribedAddresses" : m.subscriptions.map({ s in
+                                    return s.address
+                                }),
+                                "boundAppKey" : m.boundApplicationKeys.map{ key in
+                                    return key.index
+                                }
+                            ]
+                        })
+                    ]
+                }
+                
+                result(mappedElements)
             }else{
                 result(false)
             }
@@ -222,24 +203,11 @@ private extension DoozMeshNetwork {
 private extension DoozMeshNetwork{
     
     func _getMeshNetworkName() -> String?{
-        return meshNetwork?.meshName
+        return meshNetwork.meshName
     }
     
     func _getId() -> String?{
-        return meshNetwork?.id
-    }
-    
-}
-
-extension DoozMeshNetwork: FlutterStreamHandler{
-    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        self.eventSink = events
-        return nil
-    }
-    
-    func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        self.eventSink = nil
-        return nil
+        return meshNetwork.id
     }
     
 }
