@@ -30,14 +30,16 @@ void main() {
     await driver.waitForAbsent(circularLoadingFinder);
   }, timeout: Timeout(Duration(minutes: 5)));
 
-  test('see node in meshNetwork', () async {
+  test('see new node in meshNetwork', () async {
     final homeItemFinder = find.text('Home');
     await driver.tap(homeItemFinder);
-    final nodeFinder = find.byType('Node');
-    //expect 1
     final loadItemFinder = find.text('Load MeshNetwork');
     await driver.tap(loadItemFinder);
-    //expect 2
+    final provisionnerWidget = find.byValueKey('node-0');
+    await driver.waitFor(provisionnerWidget);
+    final newNodeWidget = find.byValueKey('node-1');
+    await driver.waitFor(newNodeWidget);
+
   });
 
   test('go to control page', () async {
