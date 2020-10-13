@@ -17,8 +17,5 @@ class UnprovisionedMeshNode {
 
   Future<int> getNumberOfElements() => _methodChannel.invokeMethod('getNumberOfElements');
 
-  Future<void> setUnicastAddress(int unicastAddress) =>
-      _methodChannel.invokeMethod('setUnicastAddress', {'unicastAddress': unicastAddress});
-
   Map<String, dynamic> toJson() => _$UnprovisionedMeshNodeToJson(this);
 }

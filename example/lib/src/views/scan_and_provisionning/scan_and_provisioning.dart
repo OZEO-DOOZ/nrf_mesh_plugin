@@ -123,10 +123,16 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       } else if (Platform.isIOS) {
         deviceUUID = device.id.id.toString();
       }
-      final provisionedMeshNodeF = provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID);
+      final provisionedMeshNodeF =
+          provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID).timeout(Duration(minutes: 1));
+      final scaffoldState = Scaffold.of(context);
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
+        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
+      }).catchError((_) {
+        Navigator.of(context).pop();
+        scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
       }));
       await showDialog(
         context: context,

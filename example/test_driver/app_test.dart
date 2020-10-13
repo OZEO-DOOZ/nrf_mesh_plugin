@@ -39,6 +39,7 @@ void main() {
     await driver.waitFor(provisionnerWidget);
     final newNodeWidget = find.byValueKey('node-1');
     await driver.waitFor(newNodeWidget);
+
   });
 
   test('go to control page', () async {
@@ -60,7 +61,9 @@ void main() {
     await driver.tap(firstNodeFinder);
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
-
+    final configureAsDimmer = find.text('Configure as light dimmer');
+    await driver.tap(configureAsDimmer);
+    await driver.waitFor(find.text('Board successfully configured'));
     final backPage = await find.pageBack();
     await driver.tap(backPage);
   }, timeout: Timeout(Duration(minutes: 1)));
@@ -68,31 +71,25 @@ void main() {
   test('turn first light on', () async {
     final sendGenericLevelFinder = find.text('Send a generic level set');
     await driver.tap(sendGenericLevelFinder);
-    final elementAddressInput =
-        find.byValueKey('module-send-generic-level-address');
+    final elementAddressInput = find.byValueKey('module-send-generic-level-address');
     await driver.tap(elementAddressInput);
     await driver.enterText('3');
 
-    final elementValueInput =
-        find.byValueKey('module-send-generic-level-value');
+    final elementValueInput = find.byValueKey('module-send-generic-level-value');
     await driver.tap(elementValueInput);
     await driver.enterText('32767');
 
     await driver.tap(find.text('Send level'));
-
-    await Future.delayed(Duration(seconds: 10));
+    await driver.waitFor(find.text('OK'));
   }, timeout: Timeout(Duration(minutes: 1)));
 
   test('turn first light off', () async {
     final sendGenericOnOffFinder = find.text('Send a generic On Off set');
     await driver.tap(sendGenericOnOffFinder);
-    final elementAddressInput =
-        find.byValueKey('module-send-generic-on-off-address');
+    final elementAddressInput = find.byValueKey('module-send-generic-on-off-address');
     await driver.tap(elementAddressInput);
     await driver.enterText('3');
-
     await driver.tap(find.text('Send on off'));
-
-    await Future.delayed(Duration(seconds: 10));
+    await driver.waitFor(find.text('OK'));
   }, timeout: Timeout(Duration(minutes: 1)));
 }
