@@ -8,6 +8,7 @@
 enum DoozMeshManagerApiError: Error{
     case meshManagerApiNotInitialized
     case doozStorageNotFound
+    case errorLoadingMeshNetwork
     
     public var errorDescription: String? {
         switch self {
@@ -15,6 +16,8 @@ enum DoozMeshManagerApiError: Error{
             return "MeshManagerApi has not been initialized"
         case .doozStorageNotFound:
             return "DoozStorage file not found"
+        case .errorLoadingMeshNetwork:
+            return "Mesh network load failed"
         }
     }
 }

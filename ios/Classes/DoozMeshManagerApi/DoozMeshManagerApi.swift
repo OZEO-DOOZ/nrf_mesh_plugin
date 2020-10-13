@@ -415,7 +415,12 @@ private extension DoozMeshManagerApi{
                 try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
             }
             
-            delegate?.onNetworkLoaded(_meshNetworkManager.meshNetwork)
+            guard let _network = _meshNetworkManager.meshNetwork else{
+                delegate?.onNetworkLoadFailed(DoozMeshManagerApiError.errorLoadingMeshNetwork)
+                return
+            }
+            
+            delegate?.onNetworkLoaded(_network)
             
         }catch{
             delegate?.onNetworkLoadFailed(error)
@@ -440,13 +445,13 @@ private extension DoozMeshManagerApi{
                     doozMeshNetwork?.meshNetwork = _network
                 }
                 
-                if let _eventSink = self.eventSink{
-                    _eventSink(
-                        [
-                            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                            EventSinkKeys.id.rawValue : _network.id
-                        ])
-                }
+                let message: FlutterMessage =
+                    [
+                        EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+                        EventSinkKeys.id.rawValue : _network.id
+                    ]
+                _sendFlutterMessage(message)
+                
                 #warning("save in db after import successful")
                 //    delegate.onNetworkImported()
             }
@@ -570,131 +575,115 @@ extension DoozMeshManagerApi: FlutterStreamHandler{
 
 extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
-    
-    func onNetworkLoaded(_ network: MeshNetwork?) {
+    func onNetworkLoaded(_ network: MeshNetwork) {
         print("✅ Mesh Network loaded from database")
         
-        guard
-            let _network = network,
-            let _eventSink = self.eventSink
-        else{
-            return
-        }
-        
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
-            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: network)
         } else {
-            doozMeshNetwork?.meshNetwork = _network
+            doozMeshNetwork?.meshNetwork = network
         }
         
-        _eventSink(
+        let message: FlutterMessage =
             [
                 EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
-                EventSinkKeys.id.rawValue : _network.id
+                EventSinkKeys.id.rawValue : network.id
             ]
-        )
+        _sendFlutterMessage(message)
         
     }
     
     func onNetworkLoadFailed(_ error: Error) {
         print("❌ Error loading Mesh Network : \(error.localizedDescription)")
         
-        guard let _eventSink = self.eventSink else{
-            return
-        }
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
+            EventSinkKeys.error.rawValue : error
+        ]
         
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoadFailed.rawValue,
-                EventSinkKeys.error.rawValue : error
-            ]
-        )
+        _sendFlutterMessage(message)
         
     }
     
-    func onNetworkUpdated(_ network: MeshNetwork?) {
+    func onNetworkUpdated(_ network: MeshNetwork) {
         
         print("✅ Mesh Network updated")
         
-        guard
-            let _network = network,
-            let _eventSink = self.eventSink
-        else{
-            return
-        }
+        doozMeshNetwork?.meshNetwork = network
         
-        doozMeshNetwork?.meshNetwork = _network
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
+            EventSinkKeys.id.rawValue : network.id
+        ]
         
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
-                EventSinkKeys.id.rawValue : _network.id
-            ]
-        )
+        _sendFlutterMessage(message)
     }
     
-    func onNetworkImported(_ network: MeshNetwork?) {
+    func onNetworkImported(_ network: MeshNetwork) {
         
         print("✅ Mesh Network imported")
-        
-        guard
-            let _network = network,
-            let _eventSink = self.eventSink
-        else{
-            return
-        }
-        
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
-            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
+                
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: network)
         } else {
-            doozMeshNetwork?.meshNetwork = _network
+            doozMeshNetwork?.meshNetwork = network
         }
         
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
-                EventSinkKeys.id.rawValue : _network.id
-            ]
-        )
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
+            EventSinkKeys.id.rawValue : network.id
+        ]
+        
+        _sendFlutterMessage(message)
+        
         
     }
     
     func onNetworkImportFailed(_ error: Error) {
         print("❌ Error importing Mesh Network : \(error.localizedDescription)")
         
-        guard let _eventSink = self.eventSink else{
-            return
-        }
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
+            EventSinkKeys.error.rawValue : error
+        ] 
         
-        _eventSink(
-            [
-                EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImportFailed.rawValue,
-                EventSinkKeys.error.rawValue : error
-            ]
-        )
+        _sendFlutterMessage(message)
     }
     
     
 }
 
-extension DoozMeshManagerApi: LoggerDelegate{
-    func log(message: String, ofCategory category: LogCategory, withLevel level: LogLevel) {
-        print("[\(String(describing: self.classForCoder))] \(message)")
-    }
-}
 
 extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
-    func provisioningStateDidChange(device: UnprovisionedDevice, state: ProvisionigState, eventSinkMessage: Dictionary<String, Any>){
-        if let _eventSink = self.eventSink{
-            _eventSink(eventSinkMessage)
-        }
+    func provisioningBearerSendMessage(data: Data, bearer: DoozPBGattBearer) {
+        
+        let message: FlutterMessage = [
+            
+            EventSinkKeys.eventName.rawValue: ProvisioningEvent.sendProvisioningPdu.rawValue,
+            EventSinkKeys.pdu.rawValue: data,
+            EventSinkKeys.meshNode.meshNode.rawValue:[
+                EventSinkKeys.meshNode.uuid.rawValue: bearer.identifier.uuidString
+            ]
+        ]
+        
+        _sendFlutterMessage(message)
+ 
     }
     
-    func sendMessage(_ msg: Dictionary<String, Any>) {
-        if let _eventSink = self.eventSink{
-            _eventSink(msg)
-        }
+    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState) {
+        let message: FlutterMessage = [
+            EventSinkKeys.eventName.rawValue : state.eventName(),
+            EventSinkKeys.state.rawValue : state.flutterState(),
+            EventSinkKeys.data.rawValue:[],
+            EventSinkKeys.meshNode.meshNode.rawValue:[
+                EventSinkKeys.meshNode.uuid.rawValue:unprovisionedDevice.uuid.uuidString
+            ]
+        ]
+        
+        _sendFlutterMessage(message)
     }
+
+    
     
 }
 
@@ -710,23 +699,24 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
         case let status as ConfigModelAppStatus:
             
             if status.isSuccess {
-                let dict = [
+                let message: FlutterMessage = [
                     
                     EventSinkKeys.eventName.rawValue: MessageEvent.onConfigModelAppStatus.rawValue,
                     EventSinkKeys.message.elementAddress.rawValue: status.elementAddress,
                     EventSinkKeys.message.modelId.rawValue: status.modelId,
                     EventSinkKeys.message.appKeyIndex.rawValue: status.applicationKeyIndex,
                     
-                ] as [String : Any]
+                ]
                 
-                sendMessage(dict)
+                _sendFlutterMessage(message)
+                
             } else {
                 break
             }
             
         case is ConfigCompositionDataStatus:
             
-            let dict = [
+            let message: FlutterMessage = [
                 
                 EventSinkKeys.eventName.rawValue : MessageEvent.onConfigCompositionDataStatus.rawValue,
                 EventSinkKeys.source.rawValue : source,
@@ -735,13 +725,13 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                     EventSinkKeys.message.destination.rawValue : destination
                 ]
                 
-            ] as [String : Any]
+            ]
             
-            sendMessage(dict)
+            _sendFlutterMessage(message)
             
         case let status as ConfigAppKeyStatus:
             if status.isSuccess {
-                let dict = [
+                let message: FlutterMessage = [
                     
                     EventSinkKeys.eventName.rawValue : MessageEvent.onConfigAppKeyStatus.rawValue,
                     EventSinkKeys.source.rawValue : source,
@@ -750,16 +740,16 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                         EventSinkKeys.message.destination.rawValue : destination
                     ]
                     
-                ] as [String : Any]
+                ]
                 
-                sendMessage(dict)
+                _sendFlutterMessage(message)
             }else {
                 break
             }
             
         case let status as GenericLevelStatus:
             
-            let dict = [
+            let message: FlutterMessage = [
                 
                 EventSinkKeys.eventName.rawValue : MessageEvent.onGenericLevelStatus.rawValue,
                 EventSinkKeys.level.rawValue : status.level,
@@ -767,9 +757,9 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                 EventSinkKeys.source.rawValue : source,
                 EventSinkKeys.message.destination.rawValue : destination
                 
-            ] as [String : Any]
+            ]
             
-            sendMessage(dict)
+            _sendFlutterMessage(message)
             
             
         //        case let list as ConfigModelAppList:
@@ -803,13 +793,28 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
 extension DoozMeshManagerApi: DoozPBGattBearerDelegate, DoozGattBearerDelegate, DoozTransmitterDelegate{
     func send(data: Data) {
         
-        let dict = [
+        let dict: [String : Any] = [
             
             EventSinkKeys.eventName.rawValue: MessageEvent.onMeshPduCreated.rawValue,
             EventSinkKeys.pdu.rawValue: data
-        ] as [String : Any]
+        ]
         
-        sendMessage(dict)
+        _sendFlutterMessage(dict)
         
     }
 }
+
+// MARK: FlutterMessages 
+
+private extension DoozMeshManagerApi {
+    typealias FlutterMessage = [String : Any]
+
+    func _sendFlutterMessage(_ message: FlutterMessage) {
+        guard let _eventSink = self.eventSink else {
+            return
+        }
+        
+        _eventSink(message)
+    }
+}
+
