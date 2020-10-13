@@ -18,8 +18,12 @@ class _$GenericOnOffStatusDataTearOff {
   const _$GenericOnOffStatusDataTearOff();
 
 // ignore: unused_element
-  _GenericOnOffStatusData call(int source, bool presentState, bool targetState,
-      int transitionResolution, int transitionSteps) {
+  _GenericOnOffStatusData call(
+      int source,
+      bool presentState,
+      @nullable bool targetState,
+      int transitionResolution,
+      int transitionSteps) {
     return _GenericOnOffStatusData(
       source,
       presentState,
@@ -43,6 +47,7 @@ const $GenericOnOffStatusData = _$GenericOnOffStatusDataTearOff();
 mixin _$GenericOnOffStatusData {
   int get source;
   bool get presentState;
+  @nullable
   bool get targetState;
   int get transitionResolution;
   int get transitionSteps;
@@ -59,7 +64,7 @@ abstract class $GenericOnOffStatusDataCopyWith<$Res> {
   $Res call(
       {int source,
       bool presentState,
-      bool targetState,
+      @nullable bool targetState,
       int transitionResolution,
       int transitionSteps});
 }
@@ -107,7 +112,7 @@ abstract class _$GenericOnOffStatusDataCopyWith<$Res>
   $Res call(
       {int source,
       bool presentState,
-      bool targetState,
+      @nullable bool targetState,
       int transitionResolution,
       int transitionSteps});
 }
@@ -149,11 +154,14 @@ class __$GenericOnOffStatusDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
-  const _$_GenericOnOffStatusData(this.source, this.presentState,
-      this.targetState, this.transitionResolution, this.transitionSteps)
+  const _$_GenericOnOffStatusData(
+      this.source,
+      this.presentState,
+      @nullable this.targetState,
+      this.transitionResolution,
+      this.transitionSteps)
       : assert(source != null),
         assert(presentState != null),
-        assert(targetState != null),
         assert(transitionResolution != null),
         assert(transitionSteps != null);
 
@@ -165,6 +173,7 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
   @override
   final bool presentState;
   @override
+  @nullable
   final bool targetState;
   @override
   final int transitionResolution;
@@ -220,7 +229,7 @@ abstract class _GenericOnOffStatusData implements GenericOnOffStatusData {
   const factory _GenericOnOffStatusData(
       int source,
       bool presentState,
-      bool targetState,
+      @nullable bool targetState,
       int transitionResolution,
       int transitionSteps) = _$_GenericOnOffStatusData;
 
@@ -232,6 +241,7 @@ abstract class _GenericOnOffStatusData implements GenericOnOffStatusData {
   @override
   bool get presentState;
   @override
+  @nullable
   bool get targetState;
   @override
   int get transitionResolution;

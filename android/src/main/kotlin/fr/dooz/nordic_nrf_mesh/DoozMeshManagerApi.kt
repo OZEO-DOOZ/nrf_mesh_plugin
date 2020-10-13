@@ -139,13 +139,17 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val address = call.argument<Int>("address")!!
                 val value = call.argument<Boolean>("value")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val transitionStep = call.argument<Int>("transitionStep")
+                val transitionResolution = call.argument<Int>("transitionResolution")
+                val delay = call.argument<Int>("delay")
                 val meshMessage: MeshMessage = GenericOnOffSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         value,
-                        mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address),
-                        null,
-                        null,
-                        null
+                        sequenceNumber,
+                        transitionStep,
+                        transitionResolution,
+                        delay
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
