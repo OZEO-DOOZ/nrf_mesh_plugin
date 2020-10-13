@@ -16,7 +16,6 @@ class DoozMeshNetwork: NSObject{
     
     
     //MARK: Private properties
-    private var eventSink: FlutterEventSink?
     private let messenger: FlutterBinaryMessenger
     
     init(messenger: FlutterBinaryMessenger, network: MeshNetwork) {
@@ -25,7 +24,7 @@ class DoozMeshNetwork: NSObject{
         
         super.init()
         
-        _initChannels(messenger: messenger, network: network)
+        _initChannel(messenger: messenger, networkId: network.id)
     }
     
     
@@ -33,16 +32,10 @@ class DoozMeshNetwork: NSObject{
 
 private extension DoozMeshNetwork {
     
-    func _initChannels(messenger: FlutterBinaryMessenger, network: MeshNetwork) {
-        
-        FlutterEventChannel(
-            name: FlutterChannels.DoozMeshNetwork.getEventChannelName(networkId: network.id),
-            binaryMessenger: messenger
-        )
-        .setStreamHandler(self)
+    func _initChannel(messenger: FlutterBinaryMessenger, networkId: String) {
         
         FlutterMethodChannel(
-            name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: network.id),
+            name: FlutterChannels.DoozMeshNetwork.getMethodChannelName(networkId: networkId),
             binaryMessenger: messenger
         )
         .setMethodCallHandler { (call, result) in
@@ -226,19 +219,6 @@ private extension DoozMeshNetwork{
     
     func _getId() -> String?{
         return meshNetwork.id
-    }
-    
-}
-
-extension DoozMeshNetwork: FlutterStreamHandler{
-    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        self.eventSink = events
-        return nil
-    }
-    
-    func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        self.eventSink = nil
-        return nil
     }
     
 }

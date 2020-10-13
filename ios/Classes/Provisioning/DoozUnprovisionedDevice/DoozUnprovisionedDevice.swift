@@ -20,7 +20,7 @@ class DoozUnprovisionedDevice: NSObject{
         super.init()
         self.unprovisionedDevice = unprovisionedDevice
         self.provisioningManager = provisioningManager
-        _initChannels(messenger: messenger, unprovisionedDevice: unprovisionedDevice)
+        _initChannel(messenger: messenger, unprovisionedDevice: unprovisionedDevice)
     }
     
     
@@ -28,7 +28,7 @@ class DoozUnprovisionedDevice: NSObject{
 
 private extension DoozUnprovisionedDevice {
     
-    func _initChannels(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice){
+    func _initChannel(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice){
         
         FlutterMethodChannel(
             name: FlutterChannels.DoozUnprovisionedMeshNode.getMethodChannelName(deviceUUID: unprovisionedDevice.uuid.uuidString),
