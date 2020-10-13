@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
@@ -38,15 +40,21 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
         RaisedButton(
           child: Text('Send level'),
           onPressed: () async {
+            final scaffoldState = Scaffold.of(context);
             print('send level $selectedLevel to $selectedElementAddress');
             final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
             final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
             final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
             final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
-            final status =
-                await widget.meshManagerApi.sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber);
-            print(status);
+            try {
+              await widget.meshManagerApi
+                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber)
+                  .timeout(Duration(seconds: 40));
+              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+            } on TimeoutException catch (_) {
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+            }
           },
         )
       ],

@@ -40,19 +40,21 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
         RaisedButton(
           child: Text('Send on off'),
           onPressed: () async {
+            final scaffoldState = Scaffold.of(context);
             print('send level $onOff to $selectedElementAddress');
-            final provisionerUuid = await widget.meshManagerApi.meshNetwork
-                .selectedProvisionerUuid();
+            final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
             final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-            final provisionedNode = nodes.firstWhere(
-                (element) => element.uuid == provisionerUuid,
-                orElse: () => null);
-            final sequenceNumber =
-                await widget.meshManagerApi.getSequenceNumber(provisionedNode);
-            final status = await widget.meshManagerApi.sendGenericOnOffSet(
-                selectedElementAddress, onOff, sequenceNumber);
-            print(status);
+            final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
+            try {
+              await widget.meshManagerApi
+                  .sendGenericOnOffSet(selectedElementAddress, onOff, sequenceNumber)
+                  .timeout(Duration(seconds: 40));
+              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+            } catch (_) {
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+            }
           },
         )
       ],
