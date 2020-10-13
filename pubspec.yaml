@@ -13,8 +13,6 @@ dependencies:
   flutter_blue: ^0.7.2
   json_annotation: ^3.1.0
   file_picker: ^2.0.6
-  mobx: ^1.2.1
-  flutter_mobx: ^1.1.0
   freezed_annotation: ^0.12.0
   meta: ^1.1.8
   rxdart: ^0.24.1
