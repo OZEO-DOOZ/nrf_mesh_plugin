@@ -161,18 +161,8 @@ private extension DoozMeshManagerApi {
             
         case .handleNotifications(let data):
             
-            #warning("❌ Tests required !")
-            _didDeliverData(data: data.pdu)
+            _didDeliverData(data: data.pdu.data)
             result(nil)
-            
-        // Old implementation in case this is not working with FlutterCallArguments
-        //            if
-        //                let _args = call.arguments as? [String:Any],
-        //                let _pdu = _args["pdu"] as? FlutterStandardTypedData
-        //            {
-        //                self._didDeliverData(data: _pdu.data)
-        //
-        //            }
         
         case .setMtuSize(let data):
             

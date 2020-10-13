@@ -90,7 +90,7 @@ enum FlutterCallError: Error{
 }
 
 // MARK: Base protocol for arguments
-protocol BaseFlutterArguments: Codable{
+protocol BaseFlutterArguments: Decodable{
     init(_ arguments: FlutterCallArguments?) throws
 }
 
@@ -133,9 +133,27 @@ struct MtuSizeArguments: BaseFlutterArguments {
 }
 
 // MARK: HandleNotificationsArguments
-struct HandleNotificationsArguments: BaseFlutterArguments {
+struct HandleNotificationsArguments {
     let mtu: Int
-    let pdu: Data
+    let pdu: FlutterStandardTypedData
+    
+    init(_ arguments: FlutterCallArguments?) throws {
+        guard let _arguments = arguments else{
+            throw FlutterCallError.missingArguments
+        }
+        
+        guard
+            let pdu = _arguments["pdu"] as? FlutterStandardTypedData,
+            let mtu = _arguments["mtu"] as? Int
+        else{
+            throw FlutterCallError.errorDecoding
+        }
+            
+        self.mtu = mtu
+        self.pdu = pdu
+        
+    }
+
 }
 
 // MARK: CreateMeshPduForConfigCompositionDataGetArguments
