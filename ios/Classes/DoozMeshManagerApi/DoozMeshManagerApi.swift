@@ -263,6 +263,8 @@ private extension DoozMeshManagerApi {
                     _ = try meshNetworkManager?.send(message, to: model)
                     result(true)
                 }catch{
+                    #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
                     result(nil)
                 }
@@ -286,6 +288,8 @@ private extension DoozMeshManagerApi {
                     _ = try meshNetworkManager?.send(message, to: model)
                     result(true)
                 }catch{
+                    #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
                     result(nil)
                 }
@@ -307,6 +311,8 @@ private extension DoozMeshManagerApi {
                 }
                 
             }catch{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                 print(error)
             }
             
@@ -320,6 +326,8 @@ private extension DoozMeshManagerApi {
                 result(sequenceNumber)
                 
             }else{
+                #warning("TODO : manage errors")
+                //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                 result(nil)
             }
             
