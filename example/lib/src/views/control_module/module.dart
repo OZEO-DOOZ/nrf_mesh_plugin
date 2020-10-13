@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_generic_on_off.dart';
 
 import 'commands/send_create_group_with_name.dart';
 import 'commands/send_delete_group.dart';
@@ -86,6 +87,7 @@ class _ModuleState extends State<Module> {
             ),
           Divider(),
           SendGenericLevel(meshManagerApi: widget.meshManagerApi),
+          SendGenericOnOff(meshManagerApi: widget.meshManagerApi),
           SendConfigModelSubscriptionAdd(widget.meshManagerApi),
           SendGroups(widget.meshManagerApi),
           SendGetElementsForGroup(widget.meshManagerApi),
