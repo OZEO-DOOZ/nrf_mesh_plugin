@@ -65,7 +65,6 @@ private extension DoozProvisionedDevice {
             result(nil)
             
         case .name:
-            #warning("Wrong name here; returns 'iPhone de xxx'")
             result(node.name)
             
         case .elements:

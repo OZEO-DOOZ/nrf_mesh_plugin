@@ -68,7 +68,7 @@ class _ModuleState extends State<Module> {
                       return Node(
                         meshManagerApi: widget.meshManagerApi,
                         node: nodes[i],
-                        name: nodesName[i],
+                        name: nodes[i].uuid,
                       );
                     },
                   ),
@@ -78,7 +78,8 @@ class _ModuleState extends State<Module> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Container(
-                    child: Text(nodesName[i]),
+                    key: ValueKey('node-$i'),
+                    child: Text(nodes[i].uuid),
                   ),
                 ),
               ),

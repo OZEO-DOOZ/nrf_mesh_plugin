@@ -126,6 +126,7 @@ private extension DoozMeshManagerApi {
                     try _deleteMeshNetworkFromDb(_id)
                 }catch{
                     #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                 }
                 
             }
@@ -205,7 +206,7 @@ private extension DoozMeshManagerApi {
             result(nil)
             
         case .sendGenericLevelSet:
-            
+            #warning("TODO : add transitionTime and delay")
             if
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
@@ -221,7 +222,6 @@ private extension DoozMeshManagerApi {
                 
                 let message = GenericLevelSet(level: _level)
                 
-                
                 do{
                     _ = try meshNetworkManager?.send(
                         message,
@@ -230,6 +230,7 @@ private extension DoozMeshManagerApi {
                     )
                 }catch{
                     #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
                 }
                 
@@ -241,19 +242,20 @@ private extension DoozMeshManagerApi {
                 let _args = call.arguments as? [String:Any],
                 let _address = _args["address"] as? Int16,
                 let _isOn = _args["value"] as? Bool,
-                let _meshNetworkManager = self.meshNetworkManager,
-                let _appKey = _meshNetworkManager.meshNetwork?.applicationKeys.first{
+                let _keyIndex = _args["keyIndex"] as? Int16,
+                let _appKey = meshNetworkManager?.meshNetwork?.applicationKeys[KeyIndex(_keyIndex)]{
                 
                 let message = GenericOnOffSet(_isOn)
                 
                 do{
-                    _ = try _meshNetworkManager.send(
+                    _ = try meshNetworkManager?.send(
                         message,
                         to: MeshAddress(Address(bitPattern: _address)),
                         using: _appKey
                     )
                 }catch{
                     #warning("TODO : manage errors")
+                    //throw FlutterError(code: <#T##String#>, message: <#T##String?#>, details: <#T##Any?#>)
                     print(error)
                 }
                 
@@ -262,7 +264,75 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
             
+        case .sendConfigModelSubscriptionAdd:
+            #warning("❌ TO TEST")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let _elementAddress = _args["elementAddress"] as? Int16,
+                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
+                let _modelId = _args["modelIdentifier"] as? UInt32{
+                
+                if
+                    let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
+                    
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _address)),
+                    let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
+                    let model = element.model(withModelId: _modelId){
+                    
+                    let message: ConfigMessage =
+                        ConfigModelSubscriptionAdd(group: group, to: model) ??
+                        ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
+                    
+                    do{
+                        _ = try meshNetworkManager?.send(message, to: model)
+                        result(true)
+                    }catch{
+                        print(error)
+                        result(nil)
+                    }
+                }
+                
+                
+            }
             
+            
+            break
+            
+        case .sendConfigModelSubscriptionDelete:
+            #warning("❌ TO TEST")
+            if
+                let _args = call.arguments as? [String:Any],
+                let _address = _args["address"] as? Int16,
+                let _elementAddress = _args["elementAddress"] as? Int16,
+                let _subscriptionAddress = _args["subscriptionAddress"] as? Int16,
+                let _modelId = _args["modelIdentifier"] as? UInt32{
+                
+                if
+                    let group = meshNetworkManager?.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: _subscriptionAddress))),
+                    
+                    let node = meshNetworkManager?.meshNetwork?.node(withAddress: Address(bitPattern: _address)),
+                    let element = node.element(withAddress: Address(bitPattern: _elementAddress)),
+                    let model = element.model(withModelId: _modelId){
+                    
+                    let message: ConfigMessage =
+                        ConfigModelSubscriptionDelete(group: group, from: model) ??
+                        ConfigModelSubscriptionVirtualAddressDelete(group: group, from: model)!
+                    
+                    do{
+                        _ = try meshNetworkManager?.send(message, to: model)
+                        result(true)
+                    }catch{
+                        print(error)
+                        result(nil)
+                    }
+                }
+                
+                
+            }
+            
+            
+            break
             
         case .sendConfigModelAppBind:
             if

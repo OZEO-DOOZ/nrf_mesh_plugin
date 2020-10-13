@@ -14,7 +14,7 @@ class Device extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: EdgeInsets.all(8),
-          child: Text(device.id.id),
+          child: Text(device.name),
         ),
       ),
     );
