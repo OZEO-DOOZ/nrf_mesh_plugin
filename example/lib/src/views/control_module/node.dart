@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
@@ -30,32 +32,6 @@ class _NodeState extends State<Node> {
     nodeAddress = await widget.node.unicastAddress;
     elements = await widget.node.elements;
 
-    //
-    //  ALL THE CODE UNDER THIS COMMENT IS SPECIFIC FOR DOOZ
-    //
-    final target = 0;
-    //  check if the board need to be configured
-    final provisioner = (await widget.meshManagerApi.meshNetwork.nodes).first;
-
-    var sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisioner);
-
-    final getBoardTypeStatus = await widget.meshManagerApi.sendGenericLevelSet(
-        await widget.node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber);
-    print('getBoardTypeStatus $getBoardTypeStatus');
-    final boardType = BoardData.decode(getBoardTypeStatus.level);
-    if (boardType.payload == 0xA) {
-      print('it\'s a Doobl V board');
-      print('setup sortie ${target + 1} to be a dimmer');
-      sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisioner);
-      final setupDimmerStatus = await widget.meshManagerApi.sendGenericLevelSet(
-          await widget.node.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber);
-      final dimmerBoardData = BoardData.decode(setupDimmerStatus.level);
-      print(dimmerBoardData);
-    }
-    //
-    //  END OF SPECIFIC CODE FOR DOOZ
-    //
-
     setState(() {
       isLoading = false;
     });
@@ -85,6 +61,11 @@ class _NodeState extends State<Node> {
               ],
             ),
           ],
+          Divider(),
+          ConfigureAsLightDimmer(
+            meshManagerApi: widget.meshManagerApi,
+            node: widget.node,
+          ),
         ],
       );
     }
@@ -94,6 +75,64 @@ class _NodeState extends State<Node> {
         title: Text(widget.name),
       ),
       body: body,
+    );
+  }
+}
+
+class ConfigureAsLightDimmer extends StatelessWidget {
+  final MeshManagerApi meshManagerApi;
+  final ProvisionedMeshNode node;
+
+  const ConfigureAsLightDimmer({Key key, this.meshManagerApi, this.node}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ConfigureAs(
+      text: 'Configure as light dimmer',
+      onPressed: () async {
+        final scaffoldState = Scaffold.of(context);
+        final target = 0;
+        final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
+        var sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
+        try {
+          final getBoardTypeStatus = await meshManagerApi
+              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber)
+              .timeout(Duration(seconds: 40));
+          final boardType = BoardData.decode(getBoardTypeStatus.level);
+          if (boardType.payload == 0xA) {
+            sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
+            final setupDimmerStatus = await meshManagerApi
+                .sendGenericLevelSet(
+                    await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber)
+                .timeout(Duration(seconds: 40));
+            BoardData.decode(setupDimmerStatus.level);
+            scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
+          } else {
+            scaffoldState.showSnackBar(
+                SnackBar(content: Text('Board type ${boardType.payload} not supported as dimmer (for now)')));
+          }
+        } on TimeoutException catch (_) {
+          scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+        }
+      },
+    );
+  }
+}
+
+class ConfigureAs extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String text;
+
+  const ConfigureAs({Key key, this.onPressed, this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: RaisedButton(
+        onPressed: onPressed,
+        child: Text(text),
+      ),
     );
   }
 }

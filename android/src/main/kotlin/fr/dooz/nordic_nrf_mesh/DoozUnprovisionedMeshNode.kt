@@ -15,10 +15,6 @@ class DoozUnprovisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: 
             "getNumberOfElements" -> {
                 result.success(meshNode.numberOfElements)
             }
-            "setUnicastAddress" -> {
-                meshNode.unicastAddress = call.argument<Int>("unicastAddress")!!
-                result.success(null)
-            }
             else -> {
                 result.notImplemented()
             }

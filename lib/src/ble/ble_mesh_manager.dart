@@ -160,22 +160,26 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         return;
       }
       if (_meshProxyDataInCharacteristic.properties.writeWithoutResponse) {
-        await retry(
-          () => _meshProxyDataInCharacteristic.write(data, withoutResponse: true),
-          retryIf: (e) => e is PlatformException,
-        );
-        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+        try {
+          await retry(
+            () => _meshProxyDataInCharacteristic.write(data, withoutResponse: true),
+            retryIf: (e) => e is PlatformException,
+          );
+          callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+        } catch (_) {}
       }
     } else {
       if (_meshProvisioningDataInCharacteristic == null) {
         return;
       }
       if (_meshProvisioningDataInCharacteristic.properties.writeWithoutResponse) {
-        await retry(
-          () => _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true),
-          retryIf: (e) => e is PlatformException,
-        );
-        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+        try {
+          await retry(
+            () => _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true),
+            retryIf: (e) => e is PlatformException,
+          );
+          callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+        } catch (_) {}
       }
     }
   }
