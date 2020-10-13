@@ -8,6 +8,11 @@
 import UIKit
 import nRFMeshProvision
 
+enum DoozProvisioningManagerError: Error{
+    case provisioningManagerDoesNotExist
+}
+
+
 protocol DoozProvisioningManagerDelegate{
     func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState)
     func provisioningBearerSendMessage(data: Data, bearer: DoozPBGattBearer)
@@ -38,7 +43,7 @@ class DoozProvisioningManager: NSObject {
         self.messenger = messenger
     }
     
-    func identifyNode(_ uuid: UUID){
+    func identifyNode(_ uuid: UUID) throws{
         do{
             
             self.provisioningBearer = DoozPBGattBearer(targetWithIdentifier: uuid)
@@ -55,24 +60,25 @@ class DoozProvisioningManager: NSObject {
             }
             
         }catch{
-            print(error)
+            throw(error)
         }
         
     }
     
-    func provision(){
-        if let _provisioningManager = self.provisioningManager{
-            do{
-                try _provisioningManager.provision(
-                    usingAlgorithm: .fipsP256EllipticCurve,
-                    publicKey: .noOobPublicKey,
-                    authenticationMethod: .noOob)
-                
-            }catch{
-                print(error)
-            }
-            
+    func provision() throws{
+        guard let _provisioningManager = self.provisioningManager else{
+            throw DoozProvisioningManagerError.provisioningManagerDoesNotExist
         }
+        
+        do{
+            try _provisioningManager.provision(
+                usingAlgorithm: .fipsP256EllipticCurve,
+                publicKey: .noOobPublicKey,
+                authenticationMethod: .noOob)
+        }catch{
+            throw(error)
+        }
+            
     }
     
     func didDeliverData(_ data: Data, ofType type: PduType){
