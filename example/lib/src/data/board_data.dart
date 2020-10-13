@@ -14,7 +14,7 @@ class BoardData {
         payload = 0x1;
   BoardData.lightOnOffOutput(this.targetIo)
       : offset = 0x1,
-        payload = 0x0;
+        payload = 0;
   BoardData.shutterOutput(this.targetIo)
       : offset = 0x1,
         payload = 0x3;
@@ -24,7 +24,7 @@ class BoardData {
         payload = 0;
   BoardData.lightPushInput(this.targetIo)
       : offset = 0x2,
-        payload = 0x001;
+        payload = 0x1;
   BoardData.lightNoneInput(this.targetIo)
       : offset = 0x2,
         payload = 0x1ff;
@@ -35,14 +35,14 @@ class BoardData {
 
   BoardData.power(this.targetIo)
       : offset = 0x03,
-        payload = 0x0;
+        payload = 0;
 
   factory BoardData.decode(int level) {
     final payload = (level & 0x1FF).toString();
     final offset = ((level >> 9) & 0x1F).toString();
     var io = (level >> (9 + 5)) & 0x3;
     if (level < 0) {
-      io = io | 0x02;
+      io = io | 0x2;
     }
     return BoardData(io, int.tryParse(offset), int.tryParse(payload));
   }

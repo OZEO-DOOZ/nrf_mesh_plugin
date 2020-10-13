@@ -35,30 +35,35 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
           key: ValueKey('module-send-generic-level-value'),
           decoration: InputDecoration(hintText: 'Level Value'),
           onChanged: (text) {
-            selectedLevel = int.parse(text);
+            setState(() {
+              selectedLevel = int.tryParse(text);
+            });
           },
         ),
         RaisedButton(
           child: Text('Send level'),
-          onPressed: () async {
-            final scaffoldState = Scaffold.of(context);
-            print('send level $selectedLevel to $selectedElementAddress');
-            final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
-            final nodes = await widget.meshManagerApi.meshNetwork.nodes;
+          onPressed: selectedLevel != null
+              ? () async {
+                  final scaffoldState = Scaffold.of(context);
+                  print('send level $selectedLevel to $selectedElementAddress');
+                  final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+                  final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-            final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
-            final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
-            try {
-              await widget.meshManagerApi
-                  .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber)
-                  .timeout(Duration(seconds: 40));
-              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
-            } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
-            } on PlatformException catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
-            }
-          },
+                  final provisionedNode =
+                      nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+                  final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
+                  try {
+                    await widget.meshManagerApi
+                        .sendGenericLevelSet(selectedElementAddress, selectedLevel, sequenceNumber)
+                        .timeout(Duration(seconds: 40));
+                    scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+                  } on TimeoutException catch (_) {
+                    scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+                  } on PlatformException catch (e) {
+                    scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+                  }
+                }
+              : null,
         )
       ],
     );
