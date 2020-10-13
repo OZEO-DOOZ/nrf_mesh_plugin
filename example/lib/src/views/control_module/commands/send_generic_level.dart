@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 class SendGenericLevel extends StatefulWidget {
@@ -54,6 +55,8 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
               scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
               scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+            } on PlatformException catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
             }
           },
         )
