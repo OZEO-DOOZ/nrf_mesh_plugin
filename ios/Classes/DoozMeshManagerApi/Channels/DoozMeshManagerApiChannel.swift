@@ -5,8 +5,6 @@
 //  Created by Alexis Barat on 08/06/2020.
 //
 
-typealias FlutterCallArguments = [String : Any]
-
 enum DoozMeshManagerApiChannel {
     
     case loadMeshNetwork

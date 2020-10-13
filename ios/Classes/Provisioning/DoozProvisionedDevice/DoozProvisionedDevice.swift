@@ -40,24 +40,25 @@ private extension DoozProvisionedDevice {
         
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
         
-        guard let _method = DoozProvisionedMeshNodeChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        let _method = DoozProvisionedMeshNodeChannel(call: call)
         
         switch _method {
         
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            default:
+                #warning("manage other errors")
+                print("❌ Plugin method - \(call.method) - isn't implemented")
+            }
+            
         case .unicastAddress:
             result(node.unicastAddress)
             
-        case .nodeName:
-            if
-                let _args = call.arguments as? [String:Any],
-                let _name = _args["name"] as? String {
+        case .nodeName(let data):
                 
-                node.name = _name
-                
-            }
+            node.name = data.name
             result(nil)
             
         case .name:

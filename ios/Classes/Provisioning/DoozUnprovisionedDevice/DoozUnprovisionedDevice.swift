@@ -23,7 +23,6 @@ class DoozUnprovisionedDevice: NSObject{
         _initChannel(messenger: messenger, unprovisionedDevice: unprovisionedDevice)
     }
     
-    
 }
 
 private extension DoozUnprovisionedDevice {
@@ -45,13 +44,18 @@ private extension DoozUnprovisionedDevice {
         
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
         
-        guard let _method = DoozUnprovisionedMeshNodeChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        let _method = DoozUnprovisionedMeshNodeChannel(call: call)
         
         switch _method {
         
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            default:
+                #warning("manage other errors")
+                print("❌ Plugin method - \(call.method) - isn't implemented")
+            }
         case .getNumberOfElements:
             
             var nbElements = 0
@@ -60,7 +64,7 @@ private extension DoozUnprovisionedDevice {
             }
             result(nbElements)
             break
-            
+
         }
     }
 }

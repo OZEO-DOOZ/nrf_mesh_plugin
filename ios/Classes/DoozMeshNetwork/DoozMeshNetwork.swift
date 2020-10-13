@@ -46,15 +46,19 @@ private extension DoozMeshNetwork {
     
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
-        
-        guard let _method = DoozMeshNetworkChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        let _method = DoozMeshNetworkChannel(call: call)
         
         switch _method {
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            default:
+                #warning("manage other errors")
+                print("❌ Plugin method - \(call.method) - isn't implemented")
+            }
+            
         case .getId:
             result(_getId())
             break
@@ -91,23 +95,21 @@ private extension DoozMeshNetwork {
             })
             
             result(nodes)
-                    
+            
             break
             
         case .selectedProvisionerUuid:
             result(meshNetwork.localProvisioner?.uuid.uuidString)
             break
             
-        case .addGroupWithName:
+        case .addGroupWithName(let data):
             #warning("❌ TO TEST")
             if
                 let provisioner = meshNetwork.localProvisioner,
-                let address = meshNetwork.nextAvailableGroupAddress(for: provisioner),
-                let _args = call.arguments as? [String:Any],
-                let _name = _args["name"] as? String {
+                let address = meshNetwork.nextAvailableGroupAddress(for: provisioner){
                 
                 do{
-                    let group = try Group(name: _name, address: address)
+                    let group = try Group(name: data.name, address: address)
                     try meshNetwork.add(group: group)
                     
                     result(
@@ -133,7 +135,7 @@ private extension DoozMeshNetwork {
             
         case .groups:
             #warning("❌ TO TEST")
-
+            
             let groups = meshNetwork.groups.map({ group in
                 return [
                     "name" : group.name,
@@ -147,12 +149,9 @@ private extension DoozMeshNetwork {
             
             result(groups)
             
-        case .removeGroup:
+        case .removeGroup(let data):
             #warning("❌ TO TEST")
-            if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["groupAddress"] as? Int16,
-                let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress))) {
                 
                 do{
                     try meshNetwork.remove(group: group)
@@ -166,18 +165,11 @@ private extension DoozMeshNetwork {
             }else{
                 result(false)
             }
-            
-            break
-            
-        case .getElementsForGroup:
+                        
+        case .getElementsForGroup(let data):
             #warning("❌ TO TEST")
-            if
-                let _args = call.arguments as? [String:Any],
-                let _address = _args["address"] as? Int16,
-                let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: _address))) {
-                                
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.address))){
                 let models = meshNetwork.models(subscribedTo: group)
-                    
                 let elements = models.compactMap { model in
                     return model.parentElement
                 }
@@ -201,9 +193,6 @@ private extension DoozMeshNetwork {
                 }
                 
                 result(mappedElements)
-
-                
-                
             }else{
                 result(false)
             }

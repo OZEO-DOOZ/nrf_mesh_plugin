@@ -36,10 +36,9 @@ class DoozProvisioningManager: NSObject {
     
     private var provisionedDevice: DoozProvisionedDevice?
     
-    init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger, delegate: DoozProvisioningManagerDelegate) {
+    init(meshNetworkManager: MeshNetworkManager, messenger: FlutterBinaryMessenger) {
         super.init()
         self.meshNetworkManager = meshNetworkManager
-        self.delegate = delegate
         self.messenger = messenger
     }
     
