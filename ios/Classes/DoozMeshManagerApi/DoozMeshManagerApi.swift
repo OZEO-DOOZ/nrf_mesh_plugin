@@ -19,16 +19,17 @@ class DoozMeshManagerApi: NSObject{
     //MARK: Private properties
     private var doozMeshNetwork: DoozMeshNetwork?
     private var eventSink: FlutterEventSink?
-    private var messenger: FlutterBinaryMessenger?
+    private let messenger: FlutterBinaryMessenger
     private var doozStorage: LocalStorage?
     
     private var doozProvisioningManager: DoozProvisioningManager?
     private var doozTransmitter: DoozTransmitter?
     
     init(messenger: FlutterBinaryMessenger) {
+        self.messenger = messenger
+        
         super.init()
         
-        self.messenger = messenger
         self.delegate = self
         
         _initMeshNetworkManager()
@@ -93,11 +94,11 @@ private extension DoozMeshManagerApi {
     }
     
     func _initDoozProvisioningManager(){
-        guard let _meshNetworkManager = self.meshNetworkManager, let _messenger = self.messenger else{
+        guard let _meshNetworkManager = self.meshNetworkManager else{
             return
         }
         
-        doozProvisioningManager = DoozProvisioningManager(meshNetworkManager: _meshNetworkManager, messenger: _messenger, delegate: self)
+        doozProvisioningManager = DoozProvisioningManager(meshNetworkManager: _meshNetworkManager, messenger: messenger, delegate: self)
     }
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -425,7 +426,7 @@ private extension DoozMeshManagerApi{
     
     func _importMeshNetworkJson(_ json: String){
         
-        guard let _messenger = self.messenger, let _meshNetworkManager = self.meshNetworkManager else{
+        guard let _meshNetworkManager = self.meshNetworkManager else{
             return
         }
         
@@ -433,8 +434,8 @@ private extension DoozMeshManagerApi{
             if let data = json.data(using: .utf8){
                 let _network = try _meshNetworkManager.import(from: data)
                 
-                if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
-                    doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+                if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
+                    doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
                 } else {
                     doozMeshNetwork?.meshNetwork = _network
                 }
@@ -575,14 +576,13 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         guard
             let _network = network,
-            let _messenger = self.messenger,
             let _eventSink = self.eventSink
         else{
             return
         }
         
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
-            doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
         } else {
             doozMeshNetwork?.meshNetwork = _network
         }
@@ -639,14 +639,13 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         guard
             let _network = network,
-            let _messenger = self.messenger,
             let _eventSink = self.eventSink
         else{
             return
         }
         
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork?.id != _network.id) {
-            doozMeshNetwork = DoozMeshNetwork(messenger: _messenger, network: _network)
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
+            doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
         } else {
             doozMeshNetwork?.meshNetwork = _network
         }

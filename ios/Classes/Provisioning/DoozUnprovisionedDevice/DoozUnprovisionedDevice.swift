@@ -14,7 +14,6 @@ class DoozUnprovisionedDevice: NSObject{
     var unprovisionedDevice: UnprovisionedDevice?
     
     //MARK: Private properties
-    private var eventSink: FlutterEventSink?
     private var provisioningManager: ProvisioningManager?
     
     init(messenger: FlutterBinaryMessenger, unprovisionedDevice: UnprovisionedDevice, provisioningManager: ProvisioningManager?) {

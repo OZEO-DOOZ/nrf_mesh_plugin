@@ -13,10 +13,6 @@ class DoozProvisionedDevice: NSObject{
     //MARK: Public properties
     public var node: Node
     
-    //MARK: Private properties
-    private var eventSink: FlutterEventSink?
-    
-    
     init(messenger: FlutterBinaryMessenger, node: Node){
         self.node = node
         super.init()
