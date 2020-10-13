@@ -34,8 +34,11 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
     return Column(
       children: <Widget>[
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
-        Text('Nodes: '),
-        ..._nodes.map((e) => Node(e, widget.meshNetwork)),
+        if (_nodes.isNotEmpty) ...[
+          Text('Nodes: '),
+          ..._nodes.map(
+              (e) => Node(e, widget.meshNetwork, "node-${_nodes.indexOf(e)}")),
+        ],
         if (_groups.isNotEmpty) ...[
           Text('Groups: '),
           ..._groups.map((e) => Group(e, widget.meshNetwork)),
