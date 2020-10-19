@@ -1,4 +1,4 @@
-#Plugin channels
+# Plugin channels
 
 This document lists the channels used by the plugin, as well as their respective methods and errors
 
