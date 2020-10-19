@@ -30,7 +30,7 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
         
         switch _method {
         case .getPlatformVersion:
-            let systemVersion = "iOS " + UIDevice.current.systemVersion
+            let systemVersion = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
             result(systemVersion)
             break
         case .createMeshManagerApi:

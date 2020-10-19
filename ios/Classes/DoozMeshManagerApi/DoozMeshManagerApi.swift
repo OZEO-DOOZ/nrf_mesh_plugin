@@ -397,6 +397,8 @@ private extension DoozMeshManagerApi{
     
     func _exportMeshNetwork() -> String?{
         
+        #warning("implement error management")
+        
         let data = meshNetworkManager.export()
         let str = String(decoding: data, as: UTF8.self)
         

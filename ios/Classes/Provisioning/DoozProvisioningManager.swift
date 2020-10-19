@@ -12,7 +12,6 @@ enum DoozProvisioningManagerError: Error{
     case provisioningManagerDoesNotExist
 }
 
-
 protocol DoozProvisioningManagerDelegate{
     func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState)
     func provisioningBearerSendMessage(data: Data, bearer: DoozPBGattBearer)
