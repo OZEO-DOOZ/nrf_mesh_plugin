@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 class SendDeleteGroup extends StatefulWidget {
@@ -27,8 +30,15 @@ class _SendDeleteGroupState extends State<SendDeleteGroup> {
         RaisedButton(
           child: Text('Send delete group'),
           onPressed: () async {
-            final status = await widget.meshManagerApi.meshNetwork.removeGroup(_id);
-            print(status);
+            final scaffoldState = Scaffold.of(context);
+            try {
+              await widget.meshManagerApi.meshNetwork.removeGroup(_id).timeout(Duration(seconds: 40));
+              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+            } on TimeoutException catch (_) {
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+            } on PlatformException catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+            }
           },
         )
       ],
