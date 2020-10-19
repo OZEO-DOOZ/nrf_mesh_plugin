@@ -13,7 +13,7 @@ The methods that requires parameters can throw two more errors:
 `errorDecoding`
     
 
-##PluginMethodChannel
+## PluginMethodChannel
 ### ✅ getPlatformVersion
 
 ```
@@ -38,7 +38,7 @@ Is there a possible failure here ?
 
 
 
-##DoozMeshManagerApiChannel
+## DoozMeshManagerApiChannel
 
 ### ✅ loadMeshNetwork
 
