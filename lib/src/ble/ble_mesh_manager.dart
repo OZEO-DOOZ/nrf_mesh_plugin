@@ -162,7 +162,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       if (_meshProxyDataInCharacteristic.properties.writeWithoutResponse) {
         try {
           await retry(
-            () => _meshProxyDataInCharacteristic.write(data, withoutResponse: true),
+            () async => await _meshProxyDataInCharacteristic.write(data, withoutResponse: true),
             retryIf: (e) => e is PlatformException,
           );
           callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
@@ -175,7 +175,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       if (_meshProvisioningDataInCharacteristic.properties.writeWithoutResponse) {
         try {
           await retry(
-            () => _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true),
+            () async => await _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true),
             retryIf: (e) => e is PlatformException,
           );
           callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
