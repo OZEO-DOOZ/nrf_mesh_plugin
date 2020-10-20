@@ -1,5 +1,7 @@
 package fr.dooz.nordic_nrf_mesh
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
@@ -22,26 +24,32 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         } else {
             doozMeshNetwork?.meshNetwork = meshNetwork
         }
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkImported",
-                "id" to meshNetwork.id
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "onNetworkImported",
+                    "id" to meshNetwork.id
+            ))
+        }
     }
 
     override fun onNetworkLoadFailed(error: String?) {
         Log.d(this.javaClass.name, "onNetworkLoadFailed")
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkLoadFailed",
-                "error" to error
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "onNetworkLoadFailed",
+                    "error" to error
+            ))
+        }
     }
 
     override fun onMeshPduCreated(pdu: ByteArray?) {
         Log.d(this.javaClass.name, "onMeshPduCreated")
-        eventSink?.success(mapOf(
-                "eventName" to "onMeshPduCreated",
-                "pdu" to pdu
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "onMeshPduCreated",
+                    "pdu" to pdu
+            ))
+        }
     }
 
     override fun getMtu(): Int {
@@ -51,10 +59,12 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
 
     override fun onNetworkImportFailed(error: String?) {
         Log.d(this.javaClass.name, "onNetworkImportFailed")
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkImportFailed",
-                "error" to error
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "onNetworkImportFailed",
+                    "error" to error
+            ))
+        }
     }
 
     override fun onNetworkLoaded(meshNetwork: MeshNetwork?) {
@@ -67,10 +77,12 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         } else {
             doozMeshNetwork!!.meshNetwork = meshNetwork
         }
-        eventSink!!.success(mapOf(
-                "eventName" to "onNetworkLoaded",
-                "id" to meshNetwork.id
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "onNetworkLoaded",
+                    "id" to meshNetwork.id
+            ))
+        }
     }
 
     override fun onNetworkUpdated(meshNetwork: MeshNetwork?) {
@@ -79,20 +91,24 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
             return
         }
         doozMeshNetwork?.meshNetwork = meshNetwork
-        eventSink?.success(mapOf(
-                "eventName" to "onNetworkUpdated",
-                "id" to meshNetwork.id
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "onNetworkUpdated",
+                    "id" to meshNetwork.id
+            ))
+        }
     }
 
     override fun sendProvisioningPdu(meshNode: UnprovisionedMeshNode?, pdu: ByteArray?) {
         Log.d(this.javaClass.name, "sendProvisioningPdu")
-        eventSink?.success(mapOf(
-                "eventName" to "sendProvisioningPdu",
-                "pdu" to pdu,
-                "meshNode" to mapOf(
-                        "uuid" to meshNode!!.deviceUuid!!.toString()
-                )
-        ))
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.success(mapOf(
+                    "eventName" to "sendProvisioningPdu",
+                    "pdu" to pdu,
+                    "meshNode" to mapOf(
+                            "uuid" to meshNode!!.deviceUuid!!.toString()
+                    )
+            ))
+        }
     }
 }
