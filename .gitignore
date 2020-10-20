@@ -5,3 +5,4 @@
 .pub/
 
 build/
+example/android/app/google-services.json

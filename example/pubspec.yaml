@@ -1,6 +1,6 @@
 name: nordic_nrf_mesh_example
 description: Demonstrates how to use the nordic_nrf_mesh plugin.
-version: 1.0.0
+version: 1.0.1
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
 
   flutter_blue: ^0.7.2
+  firebase_core: ^0.5.0+1
+  firebase_crashlytics: ^0.2.1+1
 
   nordic_nrf_mesh:
     path: ../
