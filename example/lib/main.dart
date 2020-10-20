@@ -8,6 +8,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:nordic_nrf_mesh_example/src/app.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
   if (kDebugMode) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
   }
@@ -21,6 +25,5 @@ void main() async {
     );
   }).sendPort);
 
-  await Firebase.initializeApp();
   runApp(MyApp());
 }
