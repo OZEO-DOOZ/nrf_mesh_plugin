@@ -18,7 +18,7 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: 'echo "$ANDROID_GOOGLE_CONFIG" > example/android/app/google-services.json'
+      - run: 'echo "$ANDROID_GOOGLE_CONFIG" > example/android/app/src/main/google-services.json'
         shell: bash
         env:
           ANDROID_GOOGLE_CONFIG: ${{secrets.GOOGLE_SERVICES}}
@@ -55,6 +55,8 @@ jobs:
           IOS_GOOGLE_CONFIG: ${{secrets.IOS_GOOGLE_CONFIG}}
       - name: "Get dependencies"
         run: flutter packages get
+        working-directory: example
+      - run: pod repo update
         working-directory: example
       - name: Build ipa
         run: |
