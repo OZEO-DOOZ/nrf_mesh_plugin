@@ -132,7 +132,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
       }).catchError((_) {
         Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning failed')));
       }));
       await showDialog(
         context: context,

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 class SendConfigModelSubscriptionAdd extends StatefulWidget {
@@ -7,12 +10,10 @@ class SendConfigModelSubscriptionAdd extends StatefulWidget {
   const SendConfigModelSubscriptionAdd(this.meshManagerApi) : super();
 
   @override
-  _SendConfigModelSubscriptionAddState createState() =>
-      _SendConfigModelSubscriptionAddState();
+  _SendConfigModelSubscriptionAddState createState() => _SendConfigModelSubscriptionAddState();
 }
 
-class _SendConfigModelSubscriptionAddState
-    extends State<SendConfigModelSubscriptionAdd> {
+class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscriptionAdd> {
   int selectedElementAddress;
   int selectedModelType;
   int selectedSubscriptionAddress;
@@ -50,13 +51,20 @@ class _SendConfigModelSubscriptionAddState
         RaisedButton(
           child: Text('Send level'),
           onPressed: () async {
-            final status = await widget.meshManagerApi
-                .sendConfigModelSubscriptionAdd(
-                    selectedAddress,
-                    selectedElementAddress,
-                    selectedSubscriptionAddress,
-                    selectedModelType);
-            print(status);
+            final scaffoldState = Scaffold.of(context);
+            try {
+              await widget.meshManagerApi
+                  .sendConfigModelSubscriptionAdd(
+                      selectedAddress, selectedElementAddress, selectedSubscriptionAddress, selectedModelType)
+                  .timeout(Duration(seconds: 40));
+              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+            } on TimeoutException catch (_) {
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+            } on PlatformException catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+            } catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+            }
           },
         )
       ],
