@@ -391,6 +391,8 @@ Errors :
 
 This method returns nothing
 
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
+
 #### Parameters
 
 ```
@@ -407,11 +409,11 @@ Format :
 
 ```
 { 
-	eventName: onConfigCompositionDataStatus
-	source: $source
+	eventName: "onConfigCompositionDataStatus"
+	source: UInt16
 	message: {
-		source: $source
-		destination: $destination
+		source: UInt16
+		destination: UInt16
 	}
 }
 ```
@@ -420,6 +422,8 @@ Format :
 ### ✅ createMeshPduForConfigAppKeyAdd(_ data: CreateMeshPduForConfigAppKeyAddArguments)
 
 This method returns nothing
+
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
 
 #### Parameters
 
@@ -431,22 +435,26 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `ConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onConfigAppKeyStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onConfigModelAppStatus
-	elementAddress: $elementAddress
-	modelId: $modelId
-	appKeyIndex: $appKeyIndex
+	eventName: "onConfigAppKeyStatus"
+	source: UInt16
+	message: {
+		source: UInt16
+		destination: UInt16
+	}
 }
 ```
 
 ### ✅ sendConfigModelAppBind(_ data: SendConfigModelAppBindArguments)
 
 This method returns nothing
+
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
 
 #### Parameters
 
@@ -461,22 +469,24 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `ConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onConfigModelAppStatus
-	elementAddress: $elementAddress
-	modelId: $modelId
-	appKeyIndex: $appKeyIndex
+	eventName: "onConfigModelAppStatus"
+	elementAddress: UInt16
+	modelId: UInt16
+	appKeyIndex: UInt16
 }
 ```
 
 ### ✅ sendGenericLevelSet(_ data: SendGenericLevelSetArguments)
 
 This method returns nothing
+
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
 
 #### Parameters
 
@@ -490,22 +500,28 @@ This method returns nothing
     
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `ConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onGenericLevelStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onConfigModelAppStatus
-	elementAddress: $elementAddress
-	modelId: $modelId
-	appKeyIndex: $appKeyIndex
+	eventName: "onGenericLevelStatus"
+	level: Int16
+	targetLevel: Int16 // default is 0 ❌
+	source: UInt16
+	destination: UInt16
 }
 ```
+
+🚧🚧🚧 Standardize source + destination with key "message: {source:destination:}" as in other messages callbacks ? 🚧🚧🚧
+
 
 ### ✅ sendGenericOnOffSet(_ data: SendGenericOnOffSetArguments)
 
 This method returns nothing
+
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
 
 #### Parameters
 
@@ -519,16 +535,16 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `ConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onGenericOnOffStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onConfigModelAppStatus
-	elementAddress: $elementAddress
-	modelId: $modelId
-	appKeyIndex: $appKeyIndex
+	eventName: "onConfigModelAppStatus"
+	elementAddress: UInt16
+	modelId: UInt16
+	appKeyIndex: UInt16
 }
 ```
 
@@ -536,6 +552,8 @@ Format :
 
 This method returns nothing
 
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
+
 #### Parameters
 
 ```
@@ -549,16 +567,16 @@ This method returns nothing
     
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `ConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onConfigModelSubscriptionStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onConfigModelAppStatus
-	elementAddress: $elementAddress
-	modelId: $modelId
-	appKeyIndex: $appKeyIndex
+	eventName: "onConfigModelAppStatus"
+	elementAddress: UInt16
+	modelId: UInt16
+	appKeyIndex: UInt16
 }
 ```
 
@@ -566,6 +584,8 @@ Format :
 
 This method returns nothing
 
+🚧🚧🚧 Standardize name "create" vs "send" between different messages methods ? 🚧🚧🚧
+
 #### Parameters
 
 ```
@@ -579,16 +599,16 @@ This method returns nothing
     
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `ConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onConfigModelSubscriptionStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onConfigModelAppStatus
-	elementAddress: $elementAddress
-	modelId: $modelId
-	appKeyIndex: $appKeyIndex
+	eventName: "onConfigModelAppStatus"
+	elementAddress: UInt16
+	modelId: UInt16
+	appKeyIndex: UInt16
 }
 ```
 
@@ -622,28 +642,268 @@ Errors on arguments:
 
 ## DoozMeshNetworkChannel
 ### ✅ getId
+
+```
+await meshManagerApi.meshNetwork.id;
+```
+
+Returns meshNetwork.id as String or null ❌
+
+No errors thrown
+
 ### ✅ getMeshNetworkName
+
+```
+await meshManagerApi.meshNetwork.name;
+```
+
+Returns meshNetwork.name as String or null ❌
+
+No errors thrown
+
 ### ✅ highestAllocatableAddress
+
+```
+await meshManagerApi.meshNetwork.highestAllocatableAddress;
+```
+
+Returns the highestAllocatableAddress as Int. Default is 0. ❌
+
+No errors thrown
+
 ### ✅ nodes
+```
+await meshManagerApi.meshNetwork.nodes;
+```
+
+Returns an array of provisioned nodes uuid
+
+Format :
+
+```
+[
+	{ 
+		uuid: String
+	},
+	{
+		...
+	}
+]
+```
+
+EventSinkKeys.network.uuid.rawValue: device.node.uuid.uuidString
+
+No errors thrown
+
 ### ✅ selectedProvisionerUuid
+
+```
+await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
+```
+
+Returns meshNetwork.localProvisioner.uuid.uuidString as String or null ❌
+
+No errors thrown
+
 ### ✅ addGroupWithName(_ data: AddGroupWithNameArguments)
+
+```
+await widget.meshManagerApi.meshNetwork.addGroupWithName(name)
+```
+
+Adds a new Group to the network.
+
+#### Parameters
+```
+{ 
+	name: String 
+}
+```
+
+Returns the newly added group infos
+
+Format :
+
+```
+{
+	group: {
+		name: String,
+		address: UInt16,
+		addressLabel: String,
+		parentAddress: UInt16,
+		parentAddressLabel: String
+	},
+	successfullyAdded: Bool
+
+}
+```
+
+Errors:
+	
+	throw MeshNetworkError.groupAlreadyExists
+
 ### ✅ groups
+
+```
+await meshManagerApi.meshNetwork.groups;
+```
+
+Returns an array of the meshNetwork groups infos
+
+Format :
+
+```
+[
+	group: {
+		name: String,
+		address: UInt16,
+		addressLabel: String,
+		parentAddress: UInt16,
+		parentAddressLabel: String
+	},
+	{
+		...
+	}
+]
+```
+
+No errors thrown
+
 ### ✅ removeGroup(_ data: RemoveGroupArguments)
+
+Remove the Group from the network.
+
+```
+await widget.meshManagerApi.meshNetwork.removeGroup(parameters)
+```
+
+Returns a boolean (true if removed, false otherwise)
+
+
+#### Parameters
+```
+{ 
+	groupAddress: Int16
+}
+```
+
+Errors:
+
+> throw MeshNetworkError.groupInUse
+> group does not exist 🚧 Not implemented 🚧
+
 ### ✅ getElementsForGroup(_ data: GetElementsForGroupArguments)
 
 
+```
+await meshNetwork.elementsForGroup(parameters)
+```
+
+Returns an array of the designated group elements infos
+
+
+#### Parameters
+```
+{ 
+	address: Int16
+}
+```
+🚧🚧🚧 Standardize key between getElementsForGroup and removeGroup (address vs groupAddress) 🚧🚧🚧
+
+Errors:
+
+> throw MeshNetworkError.groupInUse
+> group does not exist 🚧 Not implemented, that's a possibility 🚧
 
 
 ## DoozProvisionedMeshNodeChannel
+
 ### ✅ unicastAddress
+```
+await node.unicastAddress;
+```
+
+Returns the unicastAddress of the node as UInt16
+
+No errors thrown
+
 ### ✅ nodeName(_ data: NodeNameArguments)
+
+Set the name of a node
+
+```
+await node.nodeName(parameters);
+```
+
+#### Parameters
+```
+{ 
+	address: Int16
+}
+```
+
+Returns nothing
+
+No errors thrown
+
+🚧🚧🚧 We should return a boolean indicating if the method succeed or failed (can we know it ?) 🚧🚧🚧
+
 ### ✅ name
+```
+await node.name;
+```
+
+Returns the name of the node as String ❌ default is null
+
+No errors thrown 
+
 ### ✅ elements
+
+```
+await node.elements;
+```
+
+Returns an array of the node's elements infos
+
+Format :
+
+```
+[
+	key: UInt8, // Numeric order of the Element within this Node.
+   	address: UInt16,
+   	locationDescriptor: UInt16,
+	models: [
+		key: UInt8,
+		modelId: UInt16,
+		subscribedAddresses: [
+			UInt16,
+			...
+		],
+		boundAppKey: [
+			UInt8,
+			...
+		]
+	],
+	...   
+]
+```
+
+No errors thrown
+
 ### ✅ elementAt
 
+🚧 Not implemented 🚧
+
+
 ## DoozUnprovisionedMeshNodeChannel
+
 ### ✅ getNumberOfElements
 
+```
+await unprovisionedMeshNode.getNumberOfElements();
+```
+
+Returns the number of elements of this unprovisionedDevice as UInt8
 
 
 # onMeshPduCreated
