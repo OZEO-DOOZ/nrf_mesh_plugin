@@ -1,0 +1,70 @@
+name: Flutter CD for internal
+on:
+  push:
+    branches:
+      - internal
+
+jobs:
+  deploy_android:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: 'echo "$ANDROID_GOOGLE_CONFIG" > example/android/app/google-services.json'
+        shell: bash
+        env:
+          ANDROID_GOOGLE_CONFIG: ${{secrets.GOOGLE_SERVICES}}
+      - name: "Get dependencies"
+        run: flutter packages get
+        working-directory: example
+      - name: Build apk
+        run: flutter build apk --debug
+        working-directory: example
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: appdistribution:distribute example/build/app/outputs/apk/debug/app-debug.apk --app 1:177831021709:android:f251d9de53ceb3dcfaa6c4 --groups "internal"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  deploy_ios:
+    name: Build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "stable"
+      - run: 'echo "$IOS_GOOGLE_CONFIG" > example/ios/GoogleService-Info.plist'
+        shell: bash
+        env:
+          IOS_GOOGLE_CONFIG: ${{secrets.IOS_GOOGLE_CONFIG}}
+      - name: "Get dependencies"
+        run: flutter packages get
+        working-directory: example
+      - name: Build ipa
+        run: |
+          flutter build ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -sdk iphoneos -configuration Release archive -archivePath $PWD/build/Runner.xcarchive
+          xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist exportOptions.plist -exportPath $PWD/build/Runner.ipa
+        working-directory: example
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: appdistribution:distribute example/build/Runner.ipa --app 1:177831021709:ios:3348b16038eaacbafaa6c4 --groups "internal"
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
