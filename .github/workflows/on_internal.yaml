@@ -18,17 +18,20 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: 'echo "$ANDROID_GOOGLE_CONFIG" > android/app/google-services.json'
+      - run: 'echo "$ANDROID_GOOGLE_CONFIG" > example/android/app/google-services.json'
         shell: bash
         env:
           ANDROID_GOOGLE_CONFIG: ${{secrets.GOOGLE_SERVICES}}
       - name: "Get dependencies"
         run: flutter packages get
+        working-directory: example
       - name: Build apk
         run: flutter build apk --debug
+        working-directory: example
+
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: appdistribution:distribute build/app/outputs/apk/debug/app-debug.apk --app 1:177831021709:android:f251d9de53ceb3dcfaa6c4 --groups "internal"
+          args: appdistribution:distribute example/build/app/outputs/apk/debug/app-debug.apk --app 1:177831021709:android:f251d9de53ceb3dcfaa6c4 --groups "internal"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
