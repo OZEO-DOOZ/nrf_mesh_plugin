@@ -40,6 +40,8 @@ class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
               scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
               scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+            } catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
             }
           },
         )
