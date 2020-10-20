@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 class SendGetElementsForGroup extends StatefulWidget {
@@ -7,8 +10,7 @@ class SendGetElementsForGroup extends StatefulWidget {
   const SendGetElementsForGroup(this.meshManagerApi) : super();
 
   @override
-  _SendGetElementsForGroupState createState() =>
-      _SendGetElementsForGroupState();
+  _SendGetElementsForGroupState createState() => _SendGetElementsForGroupState();
 }
 
 class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
@@ -28,9 +30,19 @@ class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
         RaisedButton(
           child: Text('Send get elements for group'),
           onPressed: () async {
-            final status =
-                await widget.meshManagerApi.meshNetwork.elementsForGroup(_id);
-            print(status);
+            final scaffoldState = Scaffold.of(context);
+            try {
+              final result =
+                  await widget.meshManagerApi.meshNetwork.elementsForGroup(_id).timeout(Duration(seconds: 40));
+              print(result);
+              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+            } on TimeoutException catch (_) {
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+            } on PlatformException catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+            } catch (e) {
+              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+            }
           },
         )
       ],
