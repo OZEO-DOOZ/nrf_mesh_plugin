@@ -292,6 +292,7 @@ This method returns nothing
 }
 ```
 
+🚧 Useless on iOS ? To verify 🚧
 
 ### ✅ cleanProvisioningData
 
@@ -398,40 +399,24 @@ This method returns nothing
 }
 ```
 
-[Listen to `onMeshPduCreated` for getting asynchrone result](#onMeshPduCreated)
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `onConfigCompositionDataStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigCompositionDataStatus
+	source: $source
+	message: {
+		source: $source
+		destination: $destination
+	}
 }
 ```
 
-Possible errors :
-
-
-+ All the bearer.send errors
-
-        guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
-            print("Error: Mesh Network not created")
-            throw MeshNetworkError.noNetwork
-        }
-        guard let localNode = meshNetwork.localProvisioner?.node,
-              let source = localElement ?? localNode.elements.first else {
-            print("Error: Local Provisioner has no Unicast Address assigned")
-            throw AccessError.invalidSource
-        }
-        guard source.parentNode == localNode else {
-            print("Error: The Element does not belong to the local Node")
-            throw AccessError.invalidElement
-        }
-        guard initialTtl == nil || initialTtl == 0 || (2...127).contains(initialTtl!) else {
-            print("Error: TTL value \(initialTtl!) is invalid")
-            throw AccessError.invalidTtl
-        }
-        
+            
 ### ✅ createMeshPduForConfigAppKeyAdd(_ data: CreateMeshPduForConfigAppKeyAddArguments)
 
 This method returns nothing
@@ -444,14 +429,18 @@ This method returns nothing
 }
 ```
 
-##### Listen to `onMeshPduCreated` for getting asynchrone result
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `ConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigModelAppStatus
+	elementAddress: $elementAddress
+	modelId: $modelId
+	appKeyIndex: $appKeyIndex
 }
 ```
 
@@ -470,17 +459,21 @@ This method returns nothing
 }
 ```
 
-    
-##### Listen to `onMeshPduCreated` for getting asynchrone result
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `ConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigModelAppStatus
+	elementAddress: $elementAddress
+	modelId: $modelId
+	appKeyIndex: $appKeyIndex
 }
 ```
+
 ### ✅ sendGenericLevelSet(_ data: SendGenericLevelSetArguments)
 
 This method returns nothing
@@ -494,18 +487,22 @@ This method returns nothing
 	keyIndex: Int16
 }
 ```
-
     
-##### Listen to `onMeshPduCreated` for getting asynchrone result
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `ConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigModelAppStatus
+	elementAddress: $elementAddress
+	modelId: $modelId
+	appKeyIndex: $appKeyIndex
 }
 ```
+
 ### ✅ sendGenericOnOffSet(_ data: SendGenericOnOffSetArguments)
 
 This method returns nothing
@@ -519,17 +516,22 @@ This method returns nothing
 	keyIndex: Int16
 }
 ```
-    
-##### Listen to `onMeshPduCreated` for getting asynchrone result
+
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `ConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigModelAppStatus
+	elementAddress: $elementAddress
+	modelId: $modelId
+	appKeyIndex: $appKeyIndex
 }
 ```
+
 ### ✅ sendConfigModelSubscriptionAdd(_ data: SendConfigModelSubscriptionAddArguments)
 
 This method returns nothing
@@ -545,16 +547,21 @@ This method returns nothing
 }
 ```
     
-##### Listen to `onMeshPduCreated` for getting asynchrone result
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `ConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigModelAppStatus
+	elementAddress: $elementAddress
+	modelId: $modelId
+	appKeyIndex: $appKeyIndex
 }
 ```
+
 ### ✅ sendConfigModelSubscriptionDelete(_ data: SendConfigModelSubscriptionDeleteArguments)
 
 This method returns nothing
@@ -570,14 +577,18 @@ This method returns nothing
 }
 ```
     
-##### Listen to `onMeshPduCreated` for getting asynchrone result
+[Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
+
+##### Listen to `ConfigModelAppStatus` for getting asynchrone result
 
 Format :
 
 ```
 { 
-	eventName: onMeshPduCreated
-	pdu: $data
+	eventName: onConfigModelAppStatus
+	elementAddress: $elementAddress
+	modelId: $modelId
+	appKeyIndex: $appKeyIndex
 }
 ```
 
@@ -592,8 +603,22 @@ Returns sequence number of the element with specified address
 	address: Int16
 }
 ```
+
+Errors :
+
+network does not exist
+node with specified address does not exist
      
 ### ✅ error(_ error: Error)
+
+If method isn't implemented in native part
+
+    notImplemented
+    
+Errors on arguments:
+
+    missingArguments
+    errorDecoding
 
 ## DoozMeshNetworkChannel
 ### ✅ getId
@@ -632,10 +657,20 @@ Format :
 }
 ```
 
+Response : 
+
+	bleMeshManager.callbacks.onDataReceived(mtu, pdu)
+> This call is dispatched to handleNotification for native processing
+
+> The native part is responding through the methods calls respective response (onConfigModelAppStatus / onConfigCompositionDataStatus etc...)
+
+> See each method documentation for information about the response event name.
+	
+
 Possible errors :
 
 
-+ All the bearer.send errors
++ All the errors priori to bearer.send :
 
         guard let networkManager = networkManager, let meshNetwork = meshNetwork else {
             print("Error: Mesh Network not created")
