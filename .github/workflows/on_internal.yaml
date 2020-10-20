@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy_android:
-    name: Build
+    name: Build Android
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -37,7 +37,7 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
   deploy_ios:
-    name: Build
+    name: Build iOS
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
