@@ -36,8 +36,10 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        checkReleaseBuilds false
+        abortOnError false
     }
-
+    
     defaultConfig {
         applicationId "fr.dooz.nordic_nrf_mesh_example"
         minSdkVersion 19
