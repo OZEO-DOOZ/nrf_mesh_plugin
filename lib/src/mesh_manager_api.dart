@@ -286,11 +286,10 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<void> sendMeshPduForConfigCompositionDataGet(int dest) =>
-      _methodChannel.invokeMethod('sendMeshPduForConfigCompositionDataGet', {'dest': dest});
+  Future<void> sendConfigCompositionDataGet(int dest) =>
+      _methodChannel.invokeMethod('sendConfigCompositionDataGet', {'dest': dest});
 
-  Future<void> sendMeshPduForConfigAppKeyAdd(int dest) =>
-      _methodChannel.invokeMethod('sendMeshPduForConfigAppKeyAdd', {'dest': dest});
+  Future<void> sendConfigAppKeyAdd(int dest) => _methodChannel.invokeMethod('sendConfigAppKeyAdd', {'dest': dest});
 
   Future<ConfigModelAppStatusData> sendConfigModelAppBind(int nodeId, int elementId, int modelId,
       {int appKeyIndex = 0}) async {
