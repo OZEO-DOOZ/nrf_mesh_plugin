@@ -228,11 +228,11 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.startProvisioning(unprovisionedMeshNode.meshNode)
                 result.success(null)
             }
-            "createMeshPduForConfigCompositionDataGet" -> {
+            "sendMeshPduForConfigCompositionDataGet" -> {
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, ConfigCompositionDataGet())
                 result.success(null)
             }
-            "createMeshPduForConfigAppKeyAdd" -> {
+            "sendMeshPduForConfigAppKeyAdd" -> {
                 val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
                 val configAppKeyAdd = ConfigAppKeyAdd(currentMeshNetwork.netKeys[0], currentMeshNetwork.appKeys[0])
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, configAppKeyAdd)

@@ -27,9 +27,6 @@ class MeshManagerApi {
   final _onNetworkImportedController = StreamController<MeshNetwork>.broadcast();
   final _onNetworkUpdatedController = StreamController<MeshNetwork>.broadcast();
 
-  final _onNetworkLoadFailedController = StreamController<MeshNetworkEventError>.broadcast();
-  final _onNetworkImportFailedController = StreamController<MeshNetworkEventError>.broadcast();
-
   final _onMeshPduCreatedController = StreamController<List<int>>.broadcast();
   final _sendProvisioningPduController = StreamController<SendProvisioningPduData>.broadcast();
 
@@ -82,9 +79,9 @@ class MeshManagerApi {
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.updated).listen(_onNetworkUpdatedController.add);
 
     _onNetworkLoadFailedSubscription =
-        _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed).listen(_onNetworkLoadFailedController.add);
+        _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed).listen(_onNetworkLoadedStreamController.addError);
     _onNetworkImportFailedSubscripiton =
-        _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportFailedController.add);
+        _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportedController.addError);
 
     _onMeshPduCreatedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.meshPduCreated.value)
@@ -149,10 +146,6 @@ class MeshManagerApi {
 
   Stream<IMeshNetwork> get onNetworkUpdated => _onNetworkUpdatedController.stream;
 
-  Stream<MeshNetworkEventError> get onNetworkLoadFailed => _onNetworkLoadFailedController.stream;
-
-  Stream<MeshNetworkEventError> get onNetworkImportFailed => _onNetworkImportFailedController.stream;
-
   Stream<List<int>> get onMeshPduCreated => _onMeshPduCreatedController.stream;
 
   Stream<SendProvisioningPduData> get sendProvisioningPdu => _sendProvisioningPduController.stream;
@@ -204,8 +197,6 @@ class MeshManagerApi {
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
-        _onNetworkLoadFailedController.close(),
-        _onNetworkImportFailedController.close(),
         _sendProvisioningPduController.close(),
         _onMeshPduCreatedController.close(),
         _onProvisioningStateChangedController.close(),
@@ -295,11 +286,11 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<void> createMeshPduForConfigCompositionDataGet(int dest) =>
-      _methodChannel.invokeMethod('createMeshPduForConfigCompositionDataGet', {'dest': dest});
+  Future<void> sendMeshPduForConfigCompositionDataGet(int dest) =>
+      _methodChannel.invokeMethod('sendMeshPduForConfigCompositionDataGet', {'dest': dest});
 
-  Future<void> createMeshPduForConfigAppKeyAdd(int dest) =>
-      _methodChannel.invokeMethod('createMeshPduForConfigAppKeyAdd', {'dest': dest});
+  Future<void> sendMeshPduForConfigAppKeyAdd(int dest) =>
+      _methodChannel.invokeMethod('sendMeshPduForConfigAppKeyAdd', {'dest': dest});
 
   Future<ConfigModelAppStatusData> sendConfigModelAppBind(int nodeId, int elementId, int modelId,
       {int appKeyIndex = 0}) async {

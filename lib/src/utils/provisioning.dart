@@ -111,7 +111,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       } else if (bleMeshManager.isProvisioningCompleted) {
         events?._provisioningReconnectController?.add(null);
         final unicast = await provisionedMeshNode.unicastAddress;
-        await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
+        await meshManagerApi.sendMeshPduForConfigCompositionDataGet(unicast);
       }
     }
   });
@@ -119,7 +119,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
     if (Platform.isIOS && bleMeshManager.isProvisioningCompleted) {
       final unicast = await provisionedMeshNode.unicastAddress;
-      await meshManagerApi.createMeshPduForConfigCompositionDataGet(unicast);
+      await meshManagerApi.sendMeshPduForConfigCompositionDataGet(unicast);
     } else {
       await meshManagerApi.identifyNode(serviceDataUuid);
     }
@@ -143,7 +143,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController?.add(null);
-    await meshManagerApi.createMeshPduForConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
+    await meshManagerApi.sendMeshPduForConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
   final onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
     events?._onConfigAppKeyStatusController?.add(null);
