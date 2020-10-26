@@ -73,6 +73,10 @@ Format :
 
 + loading fails
 + add appKey fails (when generating)
+	+ MeshNetworkError.invalidKey
+   	+ MeshNetworkError.noNetworkKey
+	+ MeshNetworkError.keyIndexOutOfRange
+
 + saving network fails (when generating)
 + network is null after loading or generating (should not happen)
 
@@ -954,3 +958,140 @@ Possible errors :
             print("Error: TTL value \(initialTtl!) is invalid")
             throw AccessError.invalidTtl
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+
+
+# iOS Errors
+
+## MeshNetworkError
+	public enum MeshNetworkError: Error {
+	    /// Thrown when any allocated range of the new Provisioner overlaps
+	    /// with existing one.
+	    case overlappingProvisionerRanges
+	    /// Thrown when trying to add a Provisioner that is already a part
+	    /// of another mesh network.
+	    case provisionerUsedInAnotherNetwork
+	    /// Thrown when a new Provisioner has the same UUID as one node that
+	    /// is already in the mesh network.
+	    case nodeAlreadyExist
+	    /// Thrown when a node cannot be added due to lack of available
+	    /// addresses in Provisioner's range.
+	    case noAddressAvailable
+	    /// Thrown when the address cannot be assigne as it is being used by
+	    /// another node.
+	    case addressNotAvailable
+	    /// Thrown when the address is of a wrong type.
+	    case invalidAddress
+	    /// Thrown when a node cannot be added due to its address not being
+	    /// inside Provisioner's unicast address range.
+	    case addressNotInAllocatedRange
+	    /// Thrown when the requested Provisioner is not in the Mesh Network.
+	    case provisionerNotInNetwork
+	    /// Thrown when the range to be allocated is of invalid type.
+	    case invalidRange
+	    /// Thrown when the provided key is not 128-bit long.
+	    case invalidKey
+	    /// Thrown when trying to remove a key that is being used by some node.
+	    case keyInUse
+	    /// Thrown when a new Group is being added with the same address as one
+	    /// that is already in the network.
+	    case groupAlreadyExists
+	    /// Throw when trying to remove a Group that is either a parent of another
+	    /// Group, or set as publication or subcription address for any Model.
+	    case groupInUse
+	    /// Thrown when the given Key Index is not valid.
+	    case keyIndexOutOfRange
+	    /// Thrown when Network Key is required to continue with the operation.
+	    case noNetworkKey
+	    /// Thrown when Application Key is required to continue with the operation.
+	    case noApplicationKey
+	    /// Thrown when trying to send a mesh message before setting up the mesh network.
+	    case noNetwork
+	}
+
+## MeshMessageError
+	public enum MeshMessageError: Error {
+	    case invalidAddress
+	    case invalidPdu
+	    case invalidOpCode
+	}
+
+## LowerTransportError
+	public enum LowerTransportError: Error {
+	    /// The segmented message has not been acknowledged before the timeout occurred.
+	    case timeout
+	    /// The target device is busy at the moment and could not accept the message.
+	    case busy
+	    /// Thrown internally when a possible replay attack was detected.
+	    /// This error is not propagated to higher levels, the packet is
+	    /// being discarded.
+	    case replayAttack
+	}
+	
+## GattBearerError
+	public enum GattBearerError: Error {
+	    /// The connected device does not have services required
+	    /// by the Bearer.
+	    case deviceNotSupported
+	}
+
+## BearerError
+	public enum BearerError: Error {
+	    /// Thrown when the Central Manager is not in ON state.
+	    case centralManagerNotPoweredOn
+	    /// Thrown when the given PDU type is not supported
+	    /// by the Bearer.
+	    case pduTypeNotSupported
+	    /// Thrown when the Bearer is not ready to send data.
+	    case bearerClosed
+	}
+
+## AccessError
+	public enum AccessError: Error {
+	    /// Error thrown when the local Provisioner does not have
+	    /// a Unicast Address specified and is not able to send
+	    /// requested message.
+	    case invalidSource
+	    /// Thrown when trying to send a message using an Element
+	    /// that does not belong to the local Provisioner's Node.
+	    case invalidElement
+	    /// Throwm when the given TTL is not valid. Valid TTL must
+	    /// be 0 or in range 2...127.
+	    case invalidTtl
+	    /// Thrown when the destination Address is not known and the
+	    /// library cannot determine the Network Key to use.
+	    case invalidDestination
+	    /// Thrown when trying to send a message from a Model that
+	    /// does not have any Application Key bound to it.
+	    case modelNotBoundToAppKey
+	    /// Error thrown when the Provisioner is trying to delete
+	    /// the last Network Key from the Node.
+	    case cannotDelete
+	    /// Thrown, when the acknowledgment has not been received until
+	    /// the time run out.
+	    case timeout
+	}
+	
+## Custom errors
+	enum FlutterCallError: Error{
+	    case missingArguments
+	    case notImplemented
+	    case errorDecoding
+	}
+	
+	enum DoozMeshManagerApiError: Error{
+	    case errorLoadingMeshNetwork
+	    case errorSavingMeshNetwork
+	}
+	
