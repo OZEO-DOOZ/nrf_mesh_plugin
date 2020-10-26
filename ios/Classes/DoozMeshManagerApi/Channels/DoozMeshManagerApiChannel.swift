@@ -16,8 +16,8 @@ enum DoozMeshManagerApiChannel {
     case setMtuSize(_ data: MtuSizeArguments)
     case cleanProvisioningData
     case provisioning
-    case createMeshPduForConfigCompositionDataGet(_ data: CreateMeshPduForConfigCompositionDataGetArguments)
-    case createMeshPduForConfigAppKeyAdd(_ data: CreateMeshPduForConfigAppKeyAddArguments)
+    case sendConfigCompositionDataGet(_ data: SendConfigCompositionDataGetArguments)
+    case sendConfigAppKeyAdd(_ data: SendConfigAppKeyAddArguments)
     case sendConfigModelAppBind(_ data: SendConfigModelAppBindArguments)
     case sendGenericLevelSet(_ data: SendGenericLevelSetArguments)
     case sendGenericOnOffSet(_ data: SendGenericOnOffSetArguments)
@@ -51,10 +51,10 @@ enum DoozMeshManagerApiChannel {
                 self = .cleanProvisioningData
             case "provisioning":
                 self = .provisioning
-            case "createMeshPduForConfigCompositionDataGet":
-                self = .createMeshPduForConfigCompositionDataGet(try CreateMeshPduForConfigCompositionDataGetArguments(arguments))
-            case "createMeshPduForConfigAppKeyAdd":
-                self = .createMeshPduForConfigAppKeyAdd(try CreateMeshPduForConfigAppKeyAddArguments(arguments))
+            case "sendConfigCompositionDataGet":
+                self = .sendConfigCompositionDataGet(try SendConfigCompositionDataGetArguments(arguments))
+            case "sendConfigAppKeyAdd":
+                self = .sendConfigAppKeyAdd(try SendConfigAppKeyAddArguments(arguments))
             case "sendConfigModelAppBind":
                 self = .sendConfigModelAppBind(try SendConfigModelAppBindArguments(arguments))
             case "sendGenericLevelSet":

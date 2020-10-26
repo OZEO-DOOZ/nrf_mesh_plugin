@@ -5,6 +5,6 @@
 //  Created by Alexis Barat on 13/10/2020.
 //
 
-struct CreateMeshPduForConfigCompositionDataGetArguments: BaseFlutterArguments {
+struct SendConfigCompositionDataGetArguments: BaseFlutterArguments {
     let dest: Int16
 }

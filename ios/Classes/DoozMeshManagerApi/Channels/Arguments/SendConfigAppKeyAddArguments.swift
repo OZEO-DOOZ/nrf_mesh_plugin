@@ -5,6 +5,6 @@
 //  Created by Alexis Barat on 13/10/2020.
 //
 
-struct CreateMeshPduForConfigAppKeyAddArguments: BaseFlutterArguments {
+struct SendConfigAppKeyAddArguments: BaseFlutterArguments {
     let dest: Int16
 }

@@ -98,7 +98,7 @@ class DoozProvisioningManager: NSObject {
         unprovisionedDevice = nil
     }
     
-    func createMeshPduForConfigCompositionDataGet(_ dest: Int16){
+    func sendConfigCompositionDataGet(_ dest: Int16){
         if
             let _meshNetworkManager = self.meshNetworkManager,
             let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
@@ -113,7 +113,7 @@ class DoozProvisioningManager: NSObject {
         }
     }
     
-    func createMeshPduForConfigAppKeyAdd(dest: Int16, appKey: ApplicationKey){
+    func sendConfigAppKeyAdd(dest: Int16, appKey: ApplicationKey){
         if
             let _meshNetworkManager = self.meshNetworkManager,
             let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
