@@ -3,7 +3,7 @@
 This document lists the channels used by the plugin, as well as their respective methods and errors
 
 ## Generic errors
-All methods can throw a `notImplemented` error if the plugin doesn't listen to it.
+All methods can throw a `notImplemented` error if the native plugin doesn't listen to it.
 
 The methods that requires parameters can throw two more errors:
 
@@ -14,7 +14,7 @@ The methods that requires parameters can throw two more errors:
     
 
 ## PluginMethodChannel
-### ✅ getPlatformVersion
+### getPlatformVersion
 
 ```
 await widget.nordicNrfMesh.platformVersion;
@@ -22,7 +22,9 @@ await widget.nordicNrfMesh.platformVersion;
 
 This method returns a string e.g. `"iOS 11.0"`
 
-### ✅ createMeshManagerApi
+
+
+### createMeshManagerApi
 
 ```
 widget.nordicNrfMesh.meshManagerApi;

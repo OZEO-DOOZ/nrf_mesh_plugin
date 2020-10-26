@@ -1,35 +1,35 @@
 PODS:
-  - DKImagePickerController/Core (4.3.2):
+  - DKImagePickerController/Core (4.3.1):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
-  - DKImagePickerController/ImageDataManager (4.3.2)
-  - DKImagePickerController/PhotoGallery (4.3.2):
+  - DKImagePickerController/ImageDataManager (4.3.1)
+  - DKImagePickerController/PhotoGallery (4.3.1):
     - DKImagePickerController/Core
     - DKPhotoGallery
-  - DKImagePickerController/Resource (4.3.2)
-  - DKPhotoGallery (0.0.17):
-    - DKPhotoGallery/Core (= 0.0.17)
-    - DKPhotoGallery/Model (= 0.0.17)
-    - DKPhotoGallery/Preview (= 0.0.17)
-    - DKPhotoGallery/Resource (= 0.0.17)
+  - DKImagePickerController/Resource (4.3.1)
+  - DKPhotoGallery (0.0.15):
+    - DKPhotoGallery/Core (= 0.0.15)
+    - DKPhotoGallery/Model (= 0.0.15)
+    - DKPhotoGallery/Preview (= 0.0.15)
+    - DKPhotoGallery/Resource (= 0.0.15)
     - SDWebImage
-    - SwiftyGif
-  - DKPhotoGallery/Core (0.0.17):
+    - SDWebImageFLPlugin
+  - DKPhotoGallery/Core (0.0.15):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Preview
     - SDWebImage
-    - SwiftyGif
-  - DKPhotoGallery/Model (0.0.17):
+    - SDWebImageFLPlugin
+  - DKPhotoGallery/Model (0.0.15):
     - SDWebImage
-    - SwiftyGif
-  - DKPhotoGallery/Preview (0.0.17):
+    - SDWebImageFLPlugin
+  - DKPhotoGallery/Preview (0.0.15):
     - DKPhotoGallery/Model
     - DKPhotoGallery/Resource
     - SDWebImage
-    - SwiftyGif
-  - DKPhotoGallery/Resource (0.0.17):
+    - SDWebImageFLPlugin
+  - DKPhotoGallery/Resource (0.0.15):
     - SDWebImage
-    - SwiftyGif
+    - SDWebImageFLPlugin
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
@@ -70,6 +70,7 @@ PODS:
     - GoogleUtilities/Environment (~> 6.6)
     - GoogleUtilities/UserDefaults (~> 6.6)
     - PromisesObjC (~> 1.2)
+  - FLAnimatedImage (1.0.12)
   - Flutter (1.0.0)
   - flutter_blue (0.0.1):
     - Flutter
@@ -102,10 +103,12 @@ PODS:
   - OpenSSL-Universal/Static (1.0.2.19)
   - PromisesObjC (1.2.11)
   - Protobuf (3.11.4)
-  - SDWebImage (5.9.3):
-    - SDWebImage/Core (= 5.9.3)
-  - SDWebImage/Core (5.9.3)
-  - SwiftyGif (5.3.0)
+  - SDWebImage (5.8.0):
+    - SDWebImage/Core (= 5.8.0)
+  - SDWebImage/Core (5.8.0)
+  - SDWebImageFLPlugin (0.4.0):
+    - FLAnimatedImage (>= 1.0.11)
+    - SDWebImage/Core (~> 5.6)
 
 DEPENDENCIES:
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
@@ -126,6 +129,7 @@ SPEC REPOS:
     - FirebaseCoreDiagnosticsInterop
     - FirebaseCrashlytics
     - FirebaseInstallations
+    - FLAnimatedImage
     - GoogleDataTransport
     - GoogleDataTransportCCTSupport
     - GoogleUtilities
@@ -135,7 +139,7 @@ SPEC REPOS:
     - PromisesObjC
     - Protobuf
     - SDWebImage
-    - SwiftyGif
+    - SDWebImageFLPlugin
 
 EXTERNAL SOURCES:
   file_picker:
@@ -152,8 +156,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/nordic_nrf_mesh/ios"
 
 SPEC CHECKSUMS:
-  DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
-  DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
+  DKImagePickerController: f3d397887f38b98276a506b02ed9c167425f7cf3
+  DKPhotoGallery: e880aef16c108333240e1e7327896f2ea380f4f0
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
   Firebase: 7cf5f9c67f03cb3b606d1d6535286e1080e57eb6
   firebase_core: 00e54a4744164a6b5a250b96dd1ad5afaba7a342
@@ -164,6 +168,7 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
   FirebaseCrashlytics: a87cce5746d3335995bd18b1b60d073cd05a6920
   FirebaseInstallations: 6f5f680e65dc374397a483c32d1799ba822a395b
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_blue: eeb381dc4727a0954dede73515f683865494b370
   GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
@@ -175,9 +180,9 @@ SPEC CHECKSUMS:
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Protobuf: 176220c526ad8bd09ab1fb40a978eac3fef665f7
-  SDWebImage: a31ee8e90a97303529e03fb0c333eae0eacb88e9
-  SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
+  SDWebImage: 84000f962cbfa70c07f19d2234cbfcf5d779b5dc
+  SDWebImageFLPlugin: 6c2295fb1242d44467c6c87dc5db6b0a13228fd8
 
-PODFILE CHECKSUM: b890177c4eecacd91dfc665e542f37470c552fc7
+PODFILE CHECKSUM: 1d62be80675f50e63eb2f851d55ee75f09951c1b
 
 COCOAPODS: 1.9.3
