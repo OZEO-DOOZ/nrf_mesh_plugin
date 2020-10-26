@@ -93,9 +93,14 @@ private extension DoozMeshManagerApi {
             }
         
         case .loadMeshNetwork:
-            #warning("Move loadMeshNetwork catch() logic here")
-            _loadMeshNetwork()
-            result(nil)
+            do {
+                let network = try _loadMeshNetwork()
+                delegate?.onNetworkLoaded(network)
+                result(nil)
+            }catch {
+                delegate?.onNetworkLoadFailed(error)
+            }
+            
             
         case .importMeshNetworkJson(let data):
             do{
@@ -320,37 +325,27 @@ private extension DoozMeshManagerApi {
 
 private extension DoozMeshManagerApi{
     
-    func _loadMeshNetwork(){
+    func _loadMeshNetwork() throws -> MeshNetwork {
         
         do{
             
             if try meshNetworkManager.load(){
                 // Mesh Network loaded from database
-                let element0 = Element(name: "Primary Element", location: .first, models: [
-                    // 4 generic models defined by Bluetooth SIG:
-                    Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-                    Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-                    Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-                    Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate()),
-                ])
-                
-                meshNetworkManager.localElements = [element0]
             }else{
                 // No mesh network in database, we have to create one
-                let meshNetwork = try _generateMeshNetwork()
+                let meshNetwork = _generateMeshNetwork()
                 try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
                 _ = meshNetworkManager.save()
             }
             
             guard let _network = meshNetworkManager.meshNetwork else{
-                delegate?.onNetworkLoadFailed(DoozMeshManagerApiError.errorLoadingMeshNetwork)
-                return
+                throw(DoozMeshManagerApiError.errorLoadingMeshNetwork)
             }
             
-            delegate?.onNetworkLoaded(_network)
+            return _network
             
         }catch{
-            delegate?.onNetworkLoadFailed(error)
+            throw(error)
         }
         
     }
@@ -410,7 +405,7 @@ private extension DoozMeshManagerApi{
         
     }
     
-    func _generateMeshNetwork() throws -> MeshNetwork{
+    func _generateMeshNetwork() -> MeshNetwork{
         
         let meshUUID = UUID().uuidString
         let provisioner = Provisioner(name: UIDevice.current.name,
@@ -419,7 +414,6 @@ private extension DoozMeshManagerApi{
                                       allocatedSceneRange:   [SceneRange(0x0001...0x3333)])
         
         let meshNetwork = meshNetworkManager.createNewMeshNetwork(withName: meshUUID, by: provisioner)
-        _ = meshNetworkManager.save()
         
         return meshNetwork
     }
@@ -432,7 +426,7 @@ private extension DoozMeshManagerApi{
         // Delete the existing network in local database and recreate a new / empty Mesh Network
         do{
             try _deleteMeshNetworkFromDb(_meshNetwork.id)
-            let meshNetwork = try _generateMeshNetwork()
+            let meshNetwork = _generateMeshNetwork()
             
             print("✅ Mesh Network successfully generated with name : \(meshNetwork.meshName)")
             

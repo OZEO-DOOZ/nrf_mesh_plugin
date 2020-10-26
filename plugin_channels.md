@@ -27,22 +27,16 @@ This method returns a string e.g. `"iOS 11.0"`
 ### createMeshManagerApi
 
 ```
-widget.nordicNrfMesh.meshManagerApi;
+await widget.nordicNrfMesh.meshManagerApi;
 ```
 
 This method returns nothing, no errors is thrown
-
-🚧🚧🚧 
-
-Is there a possible failure here ? 
-
-🚧🚧🚧
 
 
 
 ## DoozMeshManagerApiChannel
 
-### ✅ loadMeshNetwork
+### loadMeshNetwork
 
 Loads the Mesh Network configuration from the storage.
 
@@ -75,7 +69,16 @@ Format :
 }
 ```
 
-Possible errors :
+###### Possible errors :
+
++ loading fails
++ add appKey fails (when generating)
++ saving network fails (when generating)
++ network is null after loading or generating (should not happen)
+
+
+
+
 
 	case dataCorrupted(DecodingError.Context)
 An indication that the data is corrupted or otherwise invalid.

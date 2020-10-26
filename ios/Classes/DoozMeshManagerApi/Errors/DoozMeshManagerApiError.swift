@@ -7,11 +7,14 @@
 
 enum DoozMeshManagerApiError: Error{
     case errorLoadingMeshNetwork
+    case errorSavingMeshNetwork
     
     public var errorDescription: String? {
         switch self {
         case .errorLoadingMeshNetwork:
             return "Mesh network load failed"
+        case .errorSavingMeshNetwork:
+            return "Mesh network save failed"
         }
     }
 }
