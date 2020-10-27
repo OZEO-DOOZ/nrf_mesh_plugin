@@ -221,10 +221,6 @@ class ProvisioningDialog extends StatelessWidget {
                   Column(
                     children: [
                       ProvisioningState(
-                        text: 'onProvisioningInvitation',
-                        stream: provisioningEvent.onProvisioningInvitation.map((event) => true),
-                      ),
-                      ProvisioningState(
                         text: 'onProvisioningCapabilities',
                         stream: provisioningEvent.onProvisioningCapabilities.map((event) => true),
                       ),
