@@ -70,6 +70,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       completer.completeError(Exception('Didn\'t find module'));
       return;
     }
+    events?._provisioningReconnectController?.add(null);
     await bleMeshManager.connect(scanResult.device);
     provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
@@ -109,7 +110,6 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       if (!bleMeshManager.isProvisioningCompleted) {
         events?._provisioningInvitationController?.add(null);
       } else if (bleMeshManager.isProvisioningCompleted) {
-        events?._provisioningReconnectController?.add(null);
         final unicast = await provisionedMeshNode.unicastAddress;
         await meshManagerApi.sendConfigCompositionDataGet(unicast);
       }
