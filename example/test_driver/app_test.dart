@@ -39,7 +39,6 @@ void main() {
     await driver.waitFor(provisionnerWidget);
     final newNodeWidget = find.byValueKey('node-1');
     await driver.waitFor(newNodeWidget);
-
   });
 
   test('go to control page', () async {
@@ -61,7 +60,7 @@ void main() {
     await driver.tap(firstNodeFinder);
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
-    final configureAsDimmer = find.text('Configure as light dimmer');
+    final configureAsDimmer = find.text('Configure ouput as light dimmer');
     await driver.tap(configureAsDimmer);
     await driver.waitFor(find.text('Board successfully configured'));
     final backPage = await find.pageBack();
