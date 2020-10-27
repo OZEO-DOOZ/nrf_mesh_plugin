@@ -343,15 +343,15 @@ class MeshManagerApi {
   Future<ConfigModelPublicationStatus> sendConfigModelPublicationSet(
     int elementAddress,
     int publishAddress,
-    int appKeyIndex,
-    bool credentialFlag,
-    int publishTtl,
-    int publicationSteps,
-    int publicationResolution,
-    int retransmitCount,
-    int retransmitIntervalSteps,
-    int modelIdentifier,
-  ) async {
+    int modelIdentifier, {
+    int appKeyIndex = 0,
+    bool credentialFlag = false,
+    int publishTtl = 15,
+    int publicationSteps = 0,
+    int publicationResolution = 100,
+    int retransmitCount = 0,
+    int retransmitIntervalSteps = 0,
+  }) async {
     final status = _onConfigModelPublicationStatusController.stream.firstWhere(
         (element) =>
             element.elementAddress == elementAddress &&
