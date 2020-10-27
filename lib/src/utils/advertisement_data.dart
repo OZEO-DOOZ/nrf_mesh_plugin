@@ -7,7 +7,7 @@ List<int> _maskAddress(final List<int> address) => [
     ];
 
 List<int> _macAddressBytesFromAdvertisementData(final List<int> advertisementData) =>
-    advertisementData.reversed.toList().sublist(4, 10);
+    advertisementData.sublist(2).reversed.toList().sublist(2, 8);
 
 /// Check if the [address] correspond to the one in [advertisementData]
 bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
