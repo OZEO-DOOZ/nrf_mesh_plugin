@@ -130,7 +130,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         device,
         deviceUUID,
         events: provisioningEvent,
-      ).timeout(Duration(minutes: 1));
+      ).timeout(Duration(minutes: 5));
       final scaffoldState = Scaffold.of(context);
 
       unawaited(provisionedMeshNodeF.then((node) async {
