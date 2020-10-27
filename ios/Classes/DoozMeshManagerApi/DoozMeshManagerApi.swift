@@ -339,6 +339,7 @@ private extension DoozMeshManagerApi{
                 // No mesh network in database, we have to create one
                 let meshNetwork = try _generateMeshNetwork()
                 try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
+                _ = meshNetworkManager.save()
             }
             
             guard let _network = meshNetworkManager.meshNetwork else{
