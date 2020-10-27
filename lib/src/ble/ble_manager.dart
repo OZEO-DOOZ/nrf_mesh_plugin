@@ -48,7 +48,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
       _callbacks.onDeviceConnectingController.add(device);
     }
-    await device.connect(autoConnect: false, timeout: Duration(seconds: 30));
+    await device.connect(autoConnect: false, timeout: Duration(minutes: 1));
     _connected = true;
     if (!_callbacks.onDeviceConnectedController.isClosed && _callbacks.onDeviceConnectedController.hasListener) {
       _callbacks.onDeviceConnectedController.add(device);
