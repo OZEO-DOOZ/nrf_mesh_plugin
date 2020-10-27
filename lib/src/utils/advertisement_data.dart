@@ -16,7 +16,7 @@ bool addressIsInAdvertisementData(final List<int> address, final List<int> adver
 
 /// Generate all the possible addresses from the [advertisementData]
 Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) async* {
-  final broadcastMac = advertisementData.reversed.toList().sublist(4, 10);
+  final broadcastMac = _macAddressBytesFromAdvertisementData(advertisementData);
   final targetMac = broadcastMac;
   for (var i = 0; i < 4; i++) {
     for (var j = 0; j < 4; j++) {
