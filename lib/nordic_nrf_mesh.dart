@@ -10,3 +10,4 @@ export 'src/ble/ble_manager_callbacks.dart';
 export 'src/ble/ble_mesh_manager.dart';
 export 'src/ble/ble_mesh_manager_callbacks.dart';
 export 'src/utils/provisioning.dart';
+export 'src/utils/advertisement_data.dart';
