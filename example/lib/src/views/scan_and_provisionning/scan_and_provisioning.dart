@@ -123,8 +123,14 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       } else if (Platform.isIOS) {
         deviceUUID = device.id.id.toString();
       }
-      final provisionedMeshNodeF =
-          provisioning(_meshManagerApi, BleMeshManager(), device, deviceUUID).timeout(Duration(minutes: 1));
+      final provisioningEvent = ProvisioningEvent();
+      final provisionedMeshNodeF = provisioning(
+        _meshManagerApi,
+        BleMeshManager(),
+        device,
+        deviceUUID,
+        events: provisioningEvent,
+      ).timeout(Duration(minutes: 1));
       final scaffoldState = Scaffold.of(context);
 
       unawaited(provisionedMeshNodeF.then((node) async {
@@ -137,23 +143,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       await showDialog(
         context: context,
         barrierDismissible: false,
-        child: Center(
-          child: Card(
-            margin: EdgeInsets.all(8),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Provisioning in progress, please wait'),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        child: ProvisioningDialog(
+          provisioningEvent: provisioningEvent,
         ),
       );
       unawaited(_scanUnprovisionned());
@@ -203,6 +194,91 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
             ),
         ],
       ),
+    );
+  }
+}
+
+class ProvisioningDialog extends StatelessWidget {
+  final ProvisioningEvent provisioningEvent;
+
+  const ProvisioningDialog({Key key, @required this.provisioningEvent}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        margin: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            LinearProgressIndicator(),
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Text('Steps :'),
+                  Column(
+                    children: [
+                      ProvisioningState(
+                        text: 'onProvisioningInvitation',
+                        stream: provisioningEvent.onProvisioningInvitation.map((event) => true),
+                      ),
+                      ProvisioningState(
+                        text: 'onProvisioningCapabilities',
+                        stream: provisioningEvent.onProvisioningCapabilities.map((event) => true),
+                      ),
+                      ProvisioningState(
+                        text: 'onProvisioning',
+                        stream: provisioningEvent.onProvisioning.map((event) => true),
+                      ),
+                      ProvisioningState(
+                        text: 'onProvisioningReconnect',
+                        stream: provisioningEvent.onProvisioningReconnect.map((event) => true),
+                      ),
+                      ProvisioningState(
+                        text: 'onConfigCompositionDataStatus',
+                        stream: provisioningEvent.onConfigCompositionDataStatus.map((event) => true),
+                      ),
+                      ProvisioningState(
+                        text: 'onConfigAppKeyStatus',
+                        stream: provisioningEvent.onConfigAppKeyStatus.map((event) => true),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProvisioningState extends StatelessWidget {
+  final Stream<bool> stream;
+  final String text;
+
+  const ProvisioningState({Key key, @required this.stream, @required this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      initialData: false,
+      stream: stream,
+      builder: (context, snapshot) {
+        return Row(
+          children: [
+            Text(text),
+            Spacer(),
+            Checkbox(
+              value: snapshot.data,
+              onChanged: null,
+            ),
+          ],
+        );
+      },
     );
   }
 }
