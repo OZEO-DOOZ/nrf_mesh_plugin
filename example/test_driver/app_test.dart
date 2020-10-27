@@ -60,7 +60,7 @@ void main() {
     await driver.tap(firstNodeFinder);
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
-    final configureAsDimmer = find.text('Configure ouput as light dimmer');
+    final configureAsDimmer = find.text('Configure output as light dimmer');
     await driver.tap(configureAsDimmer);
     await driver.waitFor(find.text('Board successfully configured'));
     final backPage = await find.pageBack();
