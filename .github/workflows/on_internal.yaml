@@ -31,7 +31,7 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: appdistribution:distribute example/build/app/outputs/apk/debug/app-debug.apk --app 1:177831021709:android:f251d9de53ceb3dcfaa6c4 --groups "internal"
+          args: appdistribution:distribute example/build/app/outputs/apk/debug/app-debug.apk --app 1:177831021709:android:f251d9de53ceb3dcfaa6c4 --groups "android-testers"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
   # deploy_ios:

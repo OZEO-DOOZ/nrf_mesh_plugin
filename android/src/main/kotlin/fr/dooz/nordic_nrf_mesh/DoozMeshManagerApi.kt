@@ -10,20 +10,19 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshManagerApi
 import no.nordicsemi.android.mesh.MeshNetwork
-import no.nordicsemi.android.mesh.Provisioner
 import no.nordicsemi.android.mesh.transport.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
-    var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
+    private var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
     private var eventSink :EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
-    val doozMeshManagerCallbacks: DoozMeshManagerCallbacks
-    val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
-    var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
-    val unprovisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
+    private val doozMeshManagerCallbacks: DoozMeshManagerCallbacks
+    private val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
+    private var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
+    private val unProvisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
 
     init {
@@ -31,7 +30,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
-        doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(binaryMessenger, eventSink, unprovisionedMeshNodes, this)
+        doozMeshProvisioningStatusCallbacks = DoozMeshProvisioningStatusCallbacks(binaryMessenger, eventSink, unProvisionedMeshNodes, this)
         doozMeshStatusCallbacks = DoozMeshStatusCallbacks(eventSink)
 
         mMeshManagerApi.setMeshManagerCallbacks(doozMeshManagerCallbacks)
@@ -105,7 +104,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
             "identifyNode" -> {
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
-                result.success(null);
+                result.success(null)
             }
             "sendConfigModelAppBind" -> {
                 val nodeId = call.argument<Int>("nodeId")!!
@@ -200,11 +199,11 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "getDeviceUuid" -> {
-                val serviceData = call.argument<ByteArray>("serviceData")!!;
-                result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString());
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString())
             }
             "handleNotifications" -> {
-                val pdu = call.argument<ByteArray>("pdu")!!;
+                val pdu = call.argument<ByteArray>("pdu")!!
                 handleNotifications(call.argument<Int>("mtu")!!, pdu)
                 result.success(null)
             }
@@ -214,25 +213,25 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "cleanProvisioningData" -> {
-                unprovisionedMeshNodes.clear()
+                unProvisionedMeshNodes.clear()
                 currentProvisionedMeshNode = null
                 result.success(null)
             }
             "provisioning" -> {
-                val uuid = UUID.fromString(call.argument("uuid")!!);
-                val unprovisionedMeshNode = unprovisionedMeshNodes.firstOrNull() { it.meshNode.deviceUuid == uuid }
-                if (unprovisionedMeshNode == null) {
-                    result.error("NOT_FOUND", "MeshNode with uuid ${uuid.toString()} doesn't exist", null)
+                val uuid = UUID.fromString(call.argument("uuid")!!)
+                val unProvisionedMeshNode = unProvisionedMeshNodes.firstOrNull { it.meshNode.deviceUuid == uuid }
+                if (unProvisionedMeshNode == null) {
+                    result.error("NOT_FOUND", "MeshNode with uuid $uuid doesn't exist", null)
                     return
                 }
-                mMeshManagerApi.startProvisioning(unprovisionedMeshNode.meshNode)
+                mMeshManagerApi.startProvisioning(unProvisionedMeshNode.meshNode)
                 result.success(null)
             }
-            "createMeshPduForConfigCompositionDataGet" -> {
+            "sendConfigCompositionDataGet" -> {
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, ConfigCompositionDataGet())
                 result.success(null)
             }
-            "createMeshPduForConfigAppKeyAdd" -> {
+            "sendConfigAppKeyAdd" -> {
                 val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
                 val configAppKeyAdd = ConfigAppKeyAdd(currentMeshNetwork.netKeys[0], currentMeshNetwork.appKeys[0])
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, configAppKeyAdd)

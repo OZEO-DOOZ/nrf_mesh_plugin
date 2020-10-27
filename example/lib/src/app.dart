@@ -49,15 +49,15 @@ class _MyAppState extends State<MyApp> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text('Home'),
+              label: 'Home',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bluetooth_searching),
-              title: Text('Provisioning'),
+              label: 'Provisioning',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.videogame_asset),
-              title: Text('Control'),
+              label: 'Control',
             ),
           ],
         ),

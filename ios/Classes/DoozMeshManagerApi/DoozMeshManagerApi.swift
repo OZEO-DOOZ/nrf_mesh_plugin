@@ -154,12 +154,12 @@ private extension DoozMeshManagerApi {
             doozProvisioningManager.cleanProvisioningData()
             result(nil)
             
-        case .createMeshPduForConfigCompositionDataGet(let data):
+        case .sendConfigCompositionDataGet(let data):
             
-            doozProvisioningManager.createMeshPduForConfigCompositionDataGet(data.dest)
+            doozProvisioningManager.sendConfigCompositionDataGet(data.dest)
             result(nil)
             
-        case .createMeshPduForConfigAppKeyAdd(let data):
+        case .sendConfigAppKeyAdd(let data):
             guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys.first else{
                 result(nil)
                 #warning("TODO : manage errors")
@@ -168,7 +168,7 @@ private extension DoozMeshManagerApi {
                 return
             }
             
-            doozProvisioningManager.createMeshPduForConfigAppKeyAdd(dest: data.dest, appKey: appKey)
+            doozProvisioningManager.sendConfigAppKeyAdd(dest: data.dest, appKey: appKey)
             result(nil)
             
         case .sendGenericLevelSet(let data):
