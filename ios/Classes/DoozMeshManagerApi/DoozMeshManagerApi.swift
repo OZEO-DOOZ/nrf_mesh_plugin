@@ -215,13 +215,11 @@ private extension DoozMeshManagerApi {
             
         case .sendGenericOnOffSet(let data):
             guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
-                result(nil)
-                #warning("TODO : manage errors")
-                //throw FlutterError(code: T##String, message: <#T##String?#>, details: <#T##Any?#>)
-                //result(FlutterMethodNotImplemented)
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
                 return
             }
-            
             
             let message = GenericOnOffSet(data.value)
             

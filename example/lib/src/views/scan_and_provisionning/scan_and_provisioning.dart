@@ -112,6 +112,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       return;
     }
     isProvisioning = true;
+
+    final scaffoldState = Scaffold.of(context);
+
     try {
       // Android is sending the mac Adress of the device, but Apple generates
       // an UUID specific by smartphone.
@@ -133,7 +136,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
             events: provisioningEvent,
           )
           .timeout(Duration(minutes: 1));
-      final scaffoldState = Scaffold.of(context);
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
@@ -152,6 +154,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);
+      scaffoldState.showSnackBar(SnackBar(content: Text('Caught error: $e')));
     } finally {
       isProvisioning = false;
     }
