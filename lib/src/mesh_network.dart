@@ -9,17 +9,11 @@ abstract class IMeshNetwork {
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
 
-  @Deprecated('Please use addGroupWithName instead')
-  Future<bool> addGroup(int id);
-
   Future<GroupData> addGroupWithName(String name);
 
   Future<void> assignUnicastAddress(int unicastAddress);
 
   Future<List<ElementData>> elementsForGroup(int id);
-
-  @Deprecated('Please use getSequenceNumber from MeshManagerApi else it will only work on android')
-  Future<int> getSequenceNumber(int address);
 
   Future<int> nextAvailableUnicastAddress(int elementSize);
 
@@ -64,9 +58,6 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<bool> addGroup(int id) => _methodChannel.invokeMethod('addGroup', {'id': id});
-
-  @override
   Future<GroupData> addGroupWithName(String name) async {
     final result = await _methodChannel.invokeMethod<Map>('addGroupWithName', {'name': name});
     if (result['successfullyAdded'] == false) {
@@ -78,10 +69,6 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<void> assignUnicastAddress(int unicastAddress) =>
       _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
-
-  @override
-  Future<int> getSequenceNumber(int address) =>
-      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
 
   @override
   Future<int> nextAvailableUnicastAddress(int elementSize) =>
