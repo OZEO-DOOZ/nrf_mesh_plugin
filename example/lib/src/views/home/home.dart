@@ -94,6 +94,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldState = Scaffold.of(context);
     if (_meshManagerApi == null) {
       return CircularProgressIndicator();
     }
@@ -116,13 +117,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         RaisedButton(
           child: Text('Load MeshNetwork'),
           onPressed: () async {
-            try {
-              _meshNetwork = await _meshManagerApi.loadMeshNetwork();
-            } catch (err) {
-              final scaffoldState = Scaffold.of(context);
-              scaffoldState.showSnackBar(SnackBar(content: Text('Caught error: $err')));
-              //print('Caught error: $err');
-            }
+            _meshNetwork = await _meshManagerApi.loadMeshNetwork();
 
             widget.onNewMeshNetwork(_meshNetwork);
           },
@@ -140,11 +135,15 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
           child: Text('Reset MeshNetwork'),
           onPressed: _meshNetwork != null
               ? () async {
-                  await _meshManagerApi.resetMeshNetwork();
-                  setState(() {
-                    _meshNetwork = null;
-                  });
-                  widget.onNewMeshNetwork(_meshNetwork);
+                  try {
+                    await _meshManagerApi.resetMeshNetwork();
+                    setState(() {
+                      _meshNetwork = null;
+                    });
+                    widget.onNewMeshNetwork(_meshNetwork);
+                  } catch (err) {
+                    scaffoldState.showSnackBar(SnackBar(content: Text('Caught error: $err')));
+                  }
                 }
               : null,
         )

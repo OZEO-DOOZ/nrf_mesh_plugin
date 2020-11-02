@@ -128,8 +128,14 @@ private extension DoozMeshManagerApi {
             result(json)
             break
         case .resetMeshNetwork:
-            _resetMeshNetwork()
-            result(nil)
+            do {
+                try _resetMeshNetwork()
+                result(nil)
+            }catch{
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+           
             break
         case .identifyNode(var data):
             do{
@@ -396,18 +402,17 @@ private extension DoozMeshManagerApi{
         return meshNetwork
     }
     
-    func _resetMeshNetwork(){
+    /// Delete the existing network in local database and recreate a new / empty Mesh Network
+    func _resetMeshNetwork() throws{
         guard let _meshNetwork = meshNetworkManager.meshNetwork else{
             return
         }
         
-        // Delete the existing network in local database and recreate a new / empty Mesh Network
         do{
             try _deleteMeshNetworkFromDb(_meshNetwork.id)
-            let meshNetwork = _generateMeshNetwork()
-            
+            let _ = _generateMeshNetwork()
         }catch{
-            print("❌ Error creating Mesh Network : \(error.localizedDescription)")
+            throw(error)
         }
         
     }
