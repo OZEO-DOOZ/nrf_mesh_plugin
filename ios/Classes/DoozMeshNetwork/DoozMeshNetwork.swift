@@ -11,9 +11,7 @@ import nRFMeshProvision
 class DoozMeshNetwork: NSObject{
     
     //MARK: Public properties
-    #warning("make meshNetwork private ?")
     var meshNetwork: MeshNetwork
-    
     
     //MARK: Private properties
     private let messenger: FlutterBinaryMessenger
@@ -54,9 +52,13 @@ private extension DoozMeshNetwork {
             switch error {
             case FlutterCallError.notImplemented:
                 result(FlutterMethodNotImplemented)
+            case FlutterCallError.missingArguments:
+                result(FlutterError(code: "missingArguments", message: "The provided arguments does not match required", details: nil))
+            case FlutterCallError.errorDecoding:
+                result(FlutterError(code: "errorDecoding", message: "An error occured attempting to decode arguments", details: nil))
             default:
-                #warning("manage other errors")
-                print("❌ Plugin method - \(call.method) - isn't implemented")
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             
         case .getId:
@@ -83,7 +85,6 @@ private extension DoozMeshNetwork {
             
         case .nodes:
             
-            
             let provisionedDevices = meshNetwork.nodes.map({ node  in
                 return DoozProvisionedDevice(messenger: messenger, node: node)
             })
@@ -103,7 +104,6 @@ private extension DoozMeshNetwork {
             break
             
         case .addGroupWithName(let data):
-            #warning("❌ TO TEST")
             if
                 let provisioner = meshNetwork.localProvisioner,
                 let address = meshNetwork.nextAvailableGroupAddress(for: provisioner){
@@ -117,40 +117,37 @@ private extension DoozMeshNetwork {
                             "group" : [
                                 "name" : group.name,
                                 "address" : group.address,
-                                "addressLabel" : group.address.virtualLabel?.uuidString,
+                                "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
                                 //"meshUuid" : group.
-                                "parentAddress" : group.parent?.address,
-                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString
+                                "parentAddress" : group.parent?.address ?? "",
+                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
                             ],
                             "successfullyAdded" : true
                             
                         ]
                     )
                 }catch{
-                    #warning("TODO : manage errors")
-                    print(error)
+                    let nsError = error as NSError
+                    result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
                 }
                 
             }
             
         case .groups:
-            #warning("❌ TO TEST")
-            
             let groups = meshNetwork.groups.map({ group in
                 return [
                     "name" : group.name,
                     "address" : group.address,
-                    "addressLabel" : group.address.virtualLabel?.uuidString,
+                    "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
                     //"meshUuid" : group.
-                    "parentAddress" : group.parent?.address,
-                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString
+                    "parentAddress" : group.parent?.address ?? "",
+                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
                 ]
             })
             
             result(groups)
             
         case .removeGroup(let data):
-            #warning("❌ TO TEST")
             if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress))) {
                 
                 do{
@@ -158,8 +155,8 @@ private extension DoozMeshNetwork {
                     result(true)
                 }
                 catch{
-                    print(error)
-                    result(false)
+                    let nsError = error as NSError
+                    result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
                 }
                 
             }else{
@@ -167,7 +164,6 @@ private extension DoozMeshNetwork {
             }
                         
         case .getElementsForGroup(let data):
-            #warning("❌ TO TEST")
             if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.address))){
                 let models = meshNetwork.models(subscribedTo: group)
                 let elements = models.compactMap { model in
@@ -176,7 +172,7 @@ private extension DoozMeshNetwork {
                 
                 let mappedElements = elements.map { element in
                     return [
-                        "name" : element.name,
+                        "name" : element.name ?? "",
                         "address" : element.unicastAddress,
                         "locationDescriptor" : element.location,
                         "models" : models.filter({$0.parentElement == element}).map({ m in
