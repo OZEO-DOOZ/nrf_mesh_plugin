@@ -94,9 +94,12 @@ private extension DoozMeshManagerApi {
         
         case .loadMeshNetwork:
             do {
-                let network = try _loadMeshNetwork()
-                delegate?.onNetworkLoaded(network)
-                result(nil)
+                let error = AccessError.invalidElement
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: error.localizedDescription, details: nil))
+//                let network = try _loadMeshNetwork()
+//                delegate?.onNetworkLoaded(network)
+//                result(nil)
             }catch {
                 delegate?.onNetworkLoadFailed(error)
             }

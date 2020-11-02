@@ -213,8 +213,12 @@ class MeshManagerApi {
 
   Future<IMeshNetwork> loadMeshNetwork() async {
     final future = _onNetworkLoadedStreamController.stream.first;
-    await _methodChannel.invokeMethod('loadMeshNetwork');
-    return future;
+    try {
+      await _methodChannel.invokeMethod('loadMeshNetwork');
+      return future;
+    } on PlatformException {
+      rethrow;
+    }
   }
 
   Future<IMeshNetwork> importMeshNetworkJson(final String json) async {

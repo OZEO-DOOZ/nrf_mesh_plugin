@@ -116,7 +116,14 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         RaisedButton(
           child: Text('Load MeshNetwork'),
           onPressed: () async {
-            _meshNetwork = await _meshManagerApi.loadMeshNetwork();
+            try {
+              _meshNetwork = await _meshManagerApi.loadMeshNetwork();
+            } catch (err) {
+              final scaffoldState = Scaffold.of(context);
+              scaffoldState.showSnackBar(SnackBar(content: Text('Caught error: $err')));
+              //print('Caught error: $err');
+            }
+
             widget.onNewMeshNetwork(_meshNetwork);
           },
         ),
