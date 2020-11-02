@@ -35,9 +35,15 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
             switch error {
             case FlutterCallError.notImplemented:
                 result(FlutterMethodNotImplemented)
+            case FlutterCallError.missingArguments:
+                result(FlutterError(code: "missingArguments", message: "The provided arguments does not match required", details: nil))
+            case FlutterCallError.errorDecoding:
+                result(FlutterError(code: "errorDecoding", message: "An error occured attempting to decode arguments", details: nil))
             default:
-                #warning("manage other errors")
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
+            break
         case .getPlatformVersion:
             let systemVersion = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
             result(systemVersion)

@@ -96,6 +96,7 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
         
+            break
         case .loadMeshNetwork:
             do {
                 let network = try _loadMeshNetwork()

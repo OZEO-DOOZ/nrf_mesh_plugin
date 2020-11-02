@@ -61,6 +61,7 @@ private extension DoozMeshNetwork {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             
+            break
         case .getId:
             result(_getId())
             break
@@ -118,7 +119,6 @@ private extension DoozMeshNetwork {
                                 "name" : group.name,
                                 "address" : group.address,
                                 "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
-                                //"meshUuid" : group.
                                 "parentAddress" : group.parent?.address ?? "",
                                 "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
                             ],
@@ -139,7 +139,6 @@ private extension DoozMeshNetwork {
                     "name" : group.name,
                     "address" : group.address,
                     "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
-                    //"meshUuid" : group.
                     "parentAddress" : group.parent?.address ?? "",
                     "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
                 ]
