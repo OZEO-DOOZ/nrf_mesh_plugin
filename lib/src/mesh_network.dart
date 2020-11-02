@@ -8,6 +8,7 @@ abstract class IMeshNetwork {
   Future<int> get highestAllocatableAddress;
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
+  String get id;
 
   Future<GroupData> addGroupWithName(String name);
 
@@ -18,7 +19,10 @@ abstract class IMeshNetwork {
   Future<int> nextAvailableUnicastAddress(int elementSize);
 
   Future<bool> removeGroup(int id);
+
   Future<String> selectedProvisionerUuid();
+
+  Future<void> selectProvisioner(int provisionerIndex);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -45,6 +49,7 @@ class MeshNetwork implements IMeshNetwork {
     return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
+  @override
   String get id => _id;
 
   @override
@@ -53,7 +58,6 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
-    //  skip 1 is to skip the provisionner since it's not a provisioned mesh node
     return _nodes.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
   }
 
@@ -83,4 +87,8 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   String toString() => 'MeshNetwork{ $_id }';
+
+  @override
+  Future<void> selectProvisioner(int provisionerIndex) =>
+      _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
 }
