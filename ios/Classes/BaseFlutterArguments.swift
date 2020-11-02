@@ -10,8 +10,8 @@ import Foundation
 typealias FlutterCallArguments = [String : Any]
 
 enum FlutterCallError: Error{
-    case missingArguments
     case notImplemented
+    case missingArguments
     case errorDecoding
 }
 

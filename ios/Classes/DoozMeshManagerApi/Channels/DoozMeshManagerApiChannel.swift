@@ -11,6 +11,7 @@ enum DoozMeshManagerApiChannel {
     case importMeshNetworkJson(_ data: ImportMeshNetworkJsonArguments)
     case deleteMeshNetworkFromDb(_ data: DeleteMeshNetworkFromDbArguments)
     case exportMeshNetwork
+    case resetMeshNetwork
     case identifyNode(_ data: IdentifyNodeArguments)
     case handleNotifications(_ data: HandleNotificationsArguments)
     case setMtuSize(_ data: MtuSizeArguments)
@@ -23,7 +24,6 @@ enum DoozMeshManagerApiChannel {
     case sendGenericOnOffSet(_ data: SendGenericOnOffSetArguments)
     case sendConfigModelSubscriptionAdd(_ data: SendConfigModelSubscriptionAddArguments)
     case sendConfigModelSubscriptionDelete(_ data: SendConfigModelSubscriptionDeleteArguments)
-    
     case getSequenceNumberForAddress(_ data: GetSequenceNumberForAddressArguments)
     
     case error(_ error: Error)
@@ -41,6 +41,8 @@ enum DoozMeshManagerApiChannel {
                 self = .deleteMeshNetworkFromDb(try DeleteMeshNetworkFromDbArguments(arguments))
             case "exportMeshNetwork":
                 self = .exportMeshNetwork
+            case "resetMeshNetwork":
+                self = .resetMeshNetwork
             case "identifyNode":
                 self = .identifyNode(try IdentifyNodeArguments(arguments))
             case "handleNotifications":
