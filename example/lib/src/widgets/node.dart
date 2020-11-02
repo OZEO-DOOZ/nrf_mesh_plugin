@@ -4,7 +4,7 @@ import 'package:nordic_nrf_mesh_example/src/views/control_module/mesh_element.da
 
 class Node extends StatefulWidget {
   final ProvisionedMeshNode node;
-  final MeshNetwork meshNetwork;
+  final IMeshNetwork meshNetwork;
   final String testKey; // For flutter driver tests
   const Node(this.node, this.meshNetwork, this.testKey) : super();
 

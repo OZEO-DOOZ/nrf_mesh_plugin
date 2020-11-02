@@ -15,7 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  MeshNetwork _meshNetwork;
+  IMeshNetwork _meshNetwork;
 
   @override
   Widget build(BuildContext context) {

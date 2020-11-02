@@ -6,7 +6,7 @@ import 'group.dart';
 import 'node.dart';
 
 class MeshNetworkWidget extends StatefulWidget {
-  final MeshNetwork meshNetwork;
+  final IMeshNetwork meshNetwork;
 
   const MeshNetworkWidget({Key key, @required this.meshNetwork}) : super(key: key);
 
