@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 void main() {
-  const channel = MethodChannel('nordic_nrf_mesh');
+  const channel = MethodChannel('fr.dooz.nordic_nrf_mesh/methods');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
