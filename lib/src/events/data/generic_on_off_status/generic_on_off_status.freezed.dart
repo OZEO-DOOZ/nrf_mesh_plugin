@@ -8,8 +8,7 @@ part of 'generic_on_off_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-GenericOnOffStatusData _$GenericOnOffStatusDataFromJson(
-    Map<String, dynamic> json) {
+GenericOnOffStatusData _$GenericOnOffStatusDataFromJson(Map<String, dynamic> json) {
   return _GenericOnOffStatusData.fromJson(json);
 }
 
@@ -19,11 +18,7 @@ class _$GenericOnOffStatusDataTearOff {
 
 // ignore: unused_element
   _GenericOnOffStatusData call(
-      int source,
-      bool presentState,
-      @nullable bool targetState,
-      int transitionResolution,
-      int transitionSteps) {
+      int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps) {
     return _GenericOnOffStatusData(
       source,
       presentState,
@@ -58,20 +53,13 @@ mixin _$GenericOnOffStatusData {
 
 /// @nodoc
 abstract class $GenericOnOffStatusDataCopyWith<$Res> {
-  factory $GenericOnOffStatusDataCopyWith(GenericOnOffStatusData value,
-          $Res Function(GenericOnOffStatusData) then) =
+  factory $GenericOnOffStatusDataCopyWith(GenericOnOffStatusData value, $Res Function(GenericOnOffStatusData) then) =
       _$GenericOnOffStatusDataCopyWithImpl<$Res>;
-  $Res call(
-      {int source,
-      bool presentState,
-      @nullable bool targetState,
-      int transitionResolution,
-      int transitionSteps});
+  $Res call({int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps});
 }
 
 /// @nodoc
-class _$GenericOnOffStatusDataCopyWithImpl<$Res>
-    implements $GenericOnOffStatusDataCopyWith<$Res> {
+class _$GenericOnOffStatusDataCopyWithImpl<$Res> implements $GenericOnOffStatusDataCopyWith<$Res> {
   _$GenericOnOffStatusDataCopyWithImpl(this._value, this._then);
 
   final GenericOnOffStatusData _value;
@@ -88,41 +76,26 @@ class _$GenericOnOffStatusDataCopyWithImpl<$Res>
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
-      presentState:
-          presentState == freezed ? _value.presentState : presentState as bool,
-      targetState:
-          targetState == freezed ? _value.targetState : targetState as bool,
-      transitionResolution: transitionResolution == freezed
-          ? _value.transitionResolution
-          : transitionResolution as int,
-      transitionSteps: transitionSteps == freezed
-          ? _value.transitionSteps
-          : transitionSteps as int,
+      presentState: presentState == freezed ? _value.presentState : presentState as bool,
+      targetState: targetState == freezed ? _value.targetState : targetState as bool,
+      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$GenericOnOffStatusDataCopyWith<$Res>
-    implements $GenericOnOffStatusDataCopyWith<$Res> {
-  factory _$GenericOnOffStatusDataCopyWith(_GenericOnOffStatusData value,
-          $Res Function(_GenericOnOffStatusData) then) =
+abstract class _$GenericOnOffStatusDataCopyWith<$Res> implements $GenericOnOffStatusDataCopyWith<$Res> {
+  factory _$GenericOnOffStatusDataCopyWith(_GenericOnOffStatusData value, $Res Function(_GenericOnOffStatusData) then) =
       __$GenericOnOffStatusDataCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {int source,
-      bool presentState,
-      @nullable bool targetState,
-      int transitionResolution,
-      int transitionSteps});
+  $Res call({int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps});
 }
 
 /// @nodoc
-class __$GenericOnOffStatusDataCopyWithImpl<$Res>
-    extends _$GenericOnOffStatusDataCopyWithImpl<$Res>
+class __$GenericOnOffStatusDataCopyWithImpl<$Res> extends _$GenericOnOffStatusDataCopyWithImpl<$Res>
     implements _$GenericOnOffStatusDataCopyWith<$Res> {
-  __$GenericOnOffStatusDataCopyWithImpl(_GenericOnOffStatusData _value,
-      $Res Function(_GenericOnOffStatusData) _then)
+  __$GenericOnOffStatusDataCopyWithImpl(_GenericOnOffStatusData _value, $Res Function(_GenericOnOffStatusData) _then)
       : super(_value, (v) => _then(v as _GenericOnOffStatusData));
 
   @override
@@ -140,12 +113,8 @@ class __$GenericOnOffStatusDataCopyWithImpl<$Res>
       source == freezed ? _value.source : source as int,
       presentState == freezed ? _value.presentState : presentState as bool,
       targetState == freezed ? _value.targetState : targetState as bool,
-      transitionResolution == freezed
-          ? _value.transitionResolution
-          : transitionResolution as int,
-      transitionSteps == freezed
-          ? _value.transitionSteps
-          : transitionSteps as int,
+      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
     ));
   }
 }
@@ -155,18 +124,13 @@ class __$GenericOnOffStatusDataCopyWithImpl<$Res>
 /// @nodoc
 class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
   const _$_GenericOnOffStatusData(
-      this.source,
-      this.presentState,
-      @nullable this.targetState,
-      this.transitionResolution,
-      this.transitionSteps)
+      this.source, this.presentState, @nullable this.targetState, this.transitionResolution, this.transitionSteps)
       : assert(source != null),
         assert(presentState != null),
         assert(transitionResolution != null),
         assert(transitionSteps != null);
 
-  factory _$_GenericOnOffStatusData.fromJson(Map<String, dynamic> json) =>
-      _$_$_GenericOnOffStatusDataFromJson(json);
+  factory _$_GenericOnOffStatusData.fromJson(Map<String, dynamic> json) => _$_$_GenericOnOffStatusDataFromJson(json);
 
   @override
   final int source;
@@ -189,20 +153,15 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _GenericOnOffStatusData &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.presentState, presentState) ||
-                const DeepCollectionEquality()
-                    .equals(other.presentState, presentState)) &&
+                const DeepCollectionEquality().equals(other.presentState, presentState)) &&
             (identical(other.targetState, targetState) ||
-                const DeepCollectionEquality()
-                    .equals(other.targetState, targetState)) &&
+                const DeepCollectionEquality().equals(other.targetState, targetState)) &&
             (identical(other.transitionResolution, transitionResolution) ||
-                const DeepCollectionEquality().equals(
-                    other.transitionResolution, transitionResolution)) &&
+                const DeepCollectionEquality().equals(other.transitionResolution, transitionResolution)) &&
             (identical(other.transitionSteps, transitionSteps) ||
-                const DeepCollectionEquality()
-                    .equals(other.transitionSteps, transitionSteps)));
+                const DeepCollectionEquality().equals(other.transitionSteps, transitionSteps)));
   }
 
   @override
@@ -216,8 +175,7 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
 
   @override
   _$GenericOnOffStatusDataCopyWith<_GenericOnOffStatusData> get copyWith =>
-      __$GenericOnOffStatusDataCopyWithImpl<_GenericOnOffStatusData>(
-          this, _$identity);
+      __$GenericOnOffStatusDataCopyWithImpl<_GenericOnOffStatusData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -227,14 +185,10 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
 
 abstract class _GenericOnOffStatusData implements GenericOnOffStatusData {
   const factory _GenericOnOffStatusData(
-      int source,
-      bool presentState,
-      @nullable bool targetState,
-      int transitionResolution,
-      int transitionSteps) = _$_GenericOnOffStatusData;
+          int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps) =
+      _$_GenericOnOffStatusData;
 
-  factory _GenericOnOffStatusData.fromJson(Map<String, dynamic> json) =
-      _$_GenericOnOffStatusData.fromJson;
+  factory _GenericOnOffStatusData.fromJson(Map<String, dynamic> json) = _$_GenericOnOffStatusData.fromJson;
 
   @override
   int get source;

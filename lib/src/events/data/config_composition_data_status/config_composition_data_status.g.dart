@@ -6,29 +6,25 @@ part of 'config_composition_data_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigCompositionDataStatusData _$_$_ConfigCompositionDataStatusDataFromJson(
-    Map json) {
+_$_ConfigCompositionDataStatusData _$_$_ConfigCompositionDataStatusDataFromJson(Map json) {
   return _$_ConfigCompositionDataStatusData(
     json['source'] as int,
     json['meshMessage'] == null
         ? null
-        : ConfigCompositionDataStatusMeshMessage.fromJson(
-            (json['meshMessage'] as Map)?.map(
+        : ConfigCompositionDataStatusMeshMessage.fromJson((json['meshMessage'] as Map)?.map(
             (k, e) => MapEntry(k as String, e),
           )),
   );
 }
 
-Map<String, dynamic> _$_$_ConfigCompositionDataStatusDataToJson(
-        _$_ConfigCompositionDataStatusData instance) =>
+Map<String, dynamic> _$_$_ConfigCompositionDataStatusDataToJson(_$_ConfigCompositionDataStatusData instance) =>
     <String, dynamic>{
       'source': instance.source,
       'meshMessage': instance.meshMessage,
     };
 
-_$_ConfigCompositionDataStatusMeshMessage
-    _$_$_ConfigCompositionDataStatusMeshMessageFromJson(
-        Map<String, dynamic> json) {
+_$_ConfigCompositionDataStatusMeshMessage _$_$_ConfigCompositionDataStatusMeshMessageFromJson(
+    Map<String, dynamic> json) {
   return _$_ConfigCompositionDataStatusMeshMessage(
     json['source'] as int,
     json['aszmic'] as int,
