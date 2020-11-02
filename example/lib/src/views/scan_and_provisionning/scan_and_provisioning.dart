@@ -124,13 +124,15 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         deviceUUID = device.id.id.toString();
       }
       final provisioningEvent = ProvisioningEvent();
-      final provisionedMeshNodeF = provisioning(
-        _meshManagerApi,
-        BleMeshManager(),
-        device,
-        deviceUUID,
-        events: provisioningEvent,
-      ).timeout(Duration(minutes: 1));
+      final provisionedMeshNodeF = widget.nordicNrfMesh
+          .provisioning(
+            _meshManagerApi,
+            BleMeshManager(),
+            device,
+            deviceUUID,
+            events: provisioningEvent,
+          )
+          .timeout(Duration(minutes: 1));
       final scaffoldState = Scaffold.of(context);
 
       unawaited(provisionedMeshNodeF.then((node) async {
