@@ -16,6 +16,7 @@ enum DoozMeshNetworkChannel {
     case groups
     case removeGroup(_ data: RemoveGroupArguments)
     case getElementsForGroup(_ data: GetElementsForGroupArguments)
+    case selectProvisioner(_ data: SelectProvisionerArguments)
     
     case error(_ error: Error)
     
@@ -42,7 +43,8 @@ enum DoozMeshNetworkChannel {
                 self = .removeGroup(try RemoveGroupArguments(arguments))
             case "getElementsForGroup":
                 self = .getElementsForGroup(try GetElementsForGroupArguments(arguments))
-            
+            case "selectProvisioner":
+                self = .selectProvisioner(try SelectProvisionerArguments(arguments))
             default:
                 self = .error(FlutterCallError.notImplemented)
             }

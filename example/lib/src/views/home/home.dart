@@ -15,7 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  MeshNetwork _meshNetwork;
+  IMeshNetwork _meshNetwork;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class _PlatformVersion extends State<PlatformVersion> {
 
 class MeshManagerApiWidget extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
-  final ValueChanged<MeshNetwork> onNewMeshNetwork;
+  final ValueChanged<IMeshNetwork> onNewMeshNetwork;
 
   const MeshManagerApiWidget({Key key, @required this.nordicNrfMesh, @required this.onNewMeshNetwork})
       : super(key: key);
@@ -84,7 +84,7 @@ class MeshManagerApiWidget extends StatefulWidget {
 
 class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   MeshManagerApi _meshManagerApi;
-  MeshNetwork _meshNetwork;
+  IMeshNetwork _meshNetwork;
 
   @override
   void initState() {
