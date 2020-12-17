@@ -9,6 +9,7 @@ abstract class IMeshNetwork {
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
   String get id;
+  Future<List<String>> get provisionersUUIDList;
 
   Future<GroupData> addGroupWithName(String name);
 
@@ -91,4 +92,7 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<void> selectProvisioner(int provisionerIndex) =>
       _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
+
+  @override
+  Future<List<String>> get provisionersUUIDList => _methodChannel.invokeMethod('getProvisionersUUID');
 }

@@ -1,45 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="nordic_nrf_mesh.dart" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lib/nordic_nrf_mesh.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.dart" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+  <component name="ChangeListManager">
+    <list default="true" id="97d6b2ca-c57b-44ce-9eec-8f28c03ff437" name="Default Changelist" comment="get provisioner list of UUIDs">
+      <change afterPath="$PROJECT_DIR$/android/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/fr/dooz/nordic_nrf_mesh/DoozMeshNetwork.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/fr/dooz/nordic_nrf_mesh/DoozMeshNetwork.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/mesh_network.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/mesh_network.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nordic_nrf_mesh.iml" beforeDir="false" afterPath="$PROJECT_DIR$/nordic_nrf_mesh.iml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ToolWindowManager">
-    <editor active="true" />
-    <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-    </layout>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <option name="show-excluded-files" value="false" />
-      </pane>
-    </panes>
+  <component name="ProjectId" id="1lVsWVRlLofc5mtGUQbT0wVihwb" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="dart.analysis.tool.window.force.activate" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="97d6b2ca-c57b-44ce-9eec-8f28c03ff437" name="Default Changelist" comment="" />
+      <created>1607693625012</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1607693625012</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="get provisioner list of UUIDs" />
+    <option name="LAST_COMMIT_MESSAGE" value="get provisioner list of UUIDs" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1498" y="145" key="CommitChangelistDialog2" timestamp="1608200199101">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state x="1498" y="145" key="CommitChangelistDialog2/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608200199101" />
+    <state x="1440" y="188" key="DiffContextDialog" timestamp="1608199685644">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state x="1440" y="188" key="DiffContextDialog/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608199685644" />
+    <state width="921" height="206" key="GridCell.Tab.0.bottom" timestamp="1608200199148">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state width="921" height="206" key="GridCell.Tab.0.bottom/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608200199148" />
+    <state width="921" height="206" key="GridCell.Tab.0.center" timestamp="1608200199146">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state width="921" height="206" key="GridCell.Tab.0.center/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608200199146" />
+    <state width="921" height="206" key="GridCell.Tab.0.left" timestamp="1608200199145">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state width="921" height="206" key="GridCell.Tab.0.left/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608200199145" />
+    <state width="921" height="206" key="GridCell.Tab.0.right" timestamp="1608200199146">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state width="921" height="206" key="GridCell.Tab.0.right/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608200199146" />
+    <state x="2575" y="307" width="615" height="490" key="find.popup" timestamp="1608051049671">
+      <screen x="1440" y="25" width="1920" height="1055" />
+    </state>
+    <state x="2575" y="307" width="615" height="490" key="find.popup/0.25.1440.875/1440.25.1920.1055@1440.25.1920.1055" timestamp="1608051049671" />
   </component>
 </project>
