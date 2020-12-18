@@ -7,7 +7,8 @@ class BleManagerCallbacksDiscoveredServices {
   final BluetoothService service;
   final bool optionalServicesFound;
 
-  const BleManagerCallbacksDiscoveredServices(this.device, this.service, this.optionalServicesFound);
+  const BleManagerCallbacksDiscoveredServices(
+      this.device, this.service, this.optionalServicesFound);
 }
 
 class BleManagerCallbacksError {
@@ -20,21 +21,27 @@ class BleManagerCallbacksError {
 
 abstract class BleManagerCallbacks {
   final onDeviceConnectingController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceConnecting => onDeviceConnectingController.stream;
+  Stream<BluetoothDevice> get onDeviceConnecting =>
+      onDeviceConnectingController.stream;
 
   final onDeviceConnectedController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceConnected => onDeviceConnectedController.stream;
+  Stream<BluetoothDevice> get onDeviceConnected =>
+      onDeviceConnectedController.stream;
 
   final onDeviceDisconnectingController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
+  Stream<BluetoothDevice> get onDeviceDisconnecting =>
+      onDeviceDisconnectingController.stream;
 
   final onDeviceDisconnectedController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
+  Stream<BluetoothDevice> get onDeviceDisconnected =>
+      onDeviceDisconnectedController.stream;
 
   // Stream<BluetoothDevice> onLinkLossOccurred;
 
-  final onServicesDiscoveredController = StreamController<BleManagerCallbacksDiscoveredServices>();
-  Stream<BleManagerCallbacksDiscoveredServices> get onServicesDiscovered => onServicesDiscoveredController.stream;
+  final onServicesDiscoveredController =
+      StreamController<BleManagerCallbacksDiscoveredServices>();
+  Stream<BleManagerCallbacksDiscoveredServices> get onServicesDiscovered =>
+      onServicesDiscoveredController.stream;
 
   final onDeviceReadyController = StreamController<BluetoothDevice>();
   Stream<BluetoothDevice> get onDeviceReady => onDeviceReadyController.stream;

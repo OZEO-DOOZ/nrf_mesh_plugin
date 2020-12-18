@@ -8,7 +8,8 @@ import 'node.dart';
 class MeshNetworkWidget extends StatefulWidget {
   final IMeshNetwork meshNetwork;
 
-  const MeshNetworkWidget({Key key, @required this.meshNetwork}) : super(key: key);
+  const MeshNetworkWidget({Key key, @required this.meshNetwork})
+      : super(key: key);
 
   @override
   _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
@@ -35,7 +36,8 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
         if (_nodes.isNotEmpty) ...[
           Text('Nodes: '),
-          ..._nodes.map((e) => Node(e, widget.meshNetwork, 'node-${_nodes.indexOf(e)}')),
+          ..._nodes.map(
+              (e) => Node(e, widget.meshNetwork, 'node-${_nodes.indexOf(e)}')),
         ],
         if (_groups.isNotEmpty) ...[
           Text('Groups: '),

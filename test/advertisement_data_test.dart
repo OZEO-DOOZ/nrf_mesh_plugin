@@ -18,7 +18,9 @@ void main() {
     for (final key in data.keys) {
       final rawData = Uuid().parse(data[key]);
       expect(
-        addressIsInAdvertisementData(key.split(':').map((e) => int.parse(e, radix: 16)).toList(), rawData),
+        addressIsInAdvertisementData(
+            key.split(':').map((e) => int.parse(e, radix: 16)).toList(),
+            rawData),
         isTrue,
         reason: '$key is not in $rawData',
       );

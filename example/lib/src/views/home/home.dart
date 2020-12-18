@@ -35,7 +35,10 @@ class _HomeState extends State<Home> {
             },
           ),
           Divider(),
-          if (_meshNetwork != null) MeshNetworkWidget(meshNetwork: _meshNetwork) else Text('No meshNetwork loaded'),
+          if (_meshNetwork != null)
+            MeshNetworkWidget(meshNetwork: _meshNetwork)
+          else
+            Text('No meshNetwork loaded'),
         ],
       ),
     );
@@ -75,7 +78,8 @@ class MeshManagerApiWidget extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
   final ValueChanged<IMeshNetwork> onNewMeshNetwork;
 
-  const MeshManagerApiWidget({Key key, @required this.nordicNrfMesh, @required this.onNewMeshNetwork})
+  const MeshManagerApiWidget(
+      {Key key, @required this.nordicNrfMesh, @required this.onNewMeshNetwork})
       : super(key: key);
 
   @override
@@ -89,7 +93,8 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   @override
   void initState() {
     super.initState();
-    widget.nordicNrfMesh.meshManagerApi.then((value) => setState(() => _meshManagerApi = value));
+    widget.nordicNrfMesh.meshManagerApi
+        .then((value) => setState(() => _meshManagerApi = value));
   }
 
   @override
@@ -103,7 +108,8 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         RaisedButton(
           child: Text('import MeshNetwork Json'),
           onPressed: () async {
-            final filePath = await FilePicker.platform.pickFiles(type: FileType.any);
+            final filePath =
+                await FilePicker.platform.pickFiles(type: FileType.any);
             if (filePath == null) return;
             final file = await File(filePath.paths.first);
             if (file == null) return;
@@ -125,14 +131,14 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
           onPressed: () async {
             final provUUIDs = await _meshNetwork.provisionersUUIDList;
             debugPrint('${provUUIDs.elementAt(0)}');
-
           },
         ),
         RaisedButton(
           child: Text('Export MeshNetwork'),
           onPressed: _meshNetwork != null
               ? () async {
-                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
+                  final meshNetworkJson =
+                      await _meshManagerApi.exportMeshNetwork();
                   debugPrint(meshNetworkJson);
                 }
               : null,

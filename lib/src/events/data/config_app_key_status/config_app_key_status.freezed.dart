@@ -8,7 +8,8 @@ part of 'config_app_key_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-ConfigAppKeyStatusData _$ConfigAppKeyStatusDataFromJson(Map<String, dynamic> json) {
+ConfigAppKeyStatusData _$ConfigAppKeyStatusDataFromJson(
+    Map<String, dynamic> json) {
   return _ConfigAppKeyStatusData.fromJson(json);
 }
 
@@ -43,13 +44,15 @@ mixin _$ConfigAppKeyStatusData {
 
 /// @nodoc
 abstract class $ConfigAppKeyStatusDataCopyWith<$Res> {
-  factory $ConfigAppKeyStatusDataCopyWith(ConfigAppKeyStatusData value, $Res Function(ConfigAppKeyStatusData) then) =
+  factory $ConfigAppKeyStatusDataCopyWith(ConfigAppKeyStatusData value,
+          $Res Function(ConfigAppKeyStatusData) then) =
       _$ConfigAppKeyStatusDataCopyWithImpl<$Res>;
   $Res call({int source});
 }
 
 /// @nodoc
-class _$ConfigAppKeyStatusDataCopyWithImpl<$Res> implements $ConfigAppKeyStatusDataCopyWith<$Res> {
+class _$ConfigAppKeyStatusDataCopyWithImpl<$Res>
+    implements $ConfigAppKeyStatusDataCopyWith<$Res> {
   _$ConfigAppKeyStatusDataCopyWithImpl(this._value, this._then);
 
   final ConfigAppKeyStatusData _value;
@@ -67,17 +70,21 @@ class _$ConfigAppKeyStatusDataCopyWithImpl<$Res> implements $ConfigAppKeyStatusD
 }
 
 /// @nodoc
-abstract class _$ConfigAppKeyStatusDataCopyWith<$Res> implements $ConfigAppKeyStatusDataCopyWith<$Res> {
-  factory _$ConfigAppKeyStatusDataCopyWith(_ConfigAppKeyStatusData value, $Res Function(_ConfigAppKeyStatusData) then) =
+abstract class _$ConfigAppKeyStatusDataCopyWith<$Res>
+    implements $ConfigAppKeyStatusDataCopyWith<$Res> {
+  factory _$ConfigAppKeyStatusDataCopyWith(_ConfigAppKeyStatusData value,
+          $Res Function(_ConfigAppKeyStatusData) then) =
       __$ConfigAppKeyStatusDataCopyWithImpl<$Res>;
   @override
   $Res call({int source});
 }
 
 /// @nodoc
-class __$ConfigAppKeyStatusDataCopyWithImpl<$Res> extends _$ConfigAppKeyStatusDataCopyWithImpl<$Res>
+class __$ConfigAppKeyStatusDataCopyWithImpl<$Res>
+    extends _$ConfigAppKeyStatusDataCopyWithImpl<$Res>
     implements _$ConfigAppKeyStatusDataCopyWith<$Res> {
-  __$ConfigAppKeyStatusDataCopyWithImpl(_ConfigAppKeyStatusData _value, $Res Function(_ConfigAppKeyStatusData) _then)
+  __$ConfigAppKeyStatusDataCopyWithImpl(_ConfigAppKeyStatusData _value,
+      $Res Function(_ConfigAppKeyStatusData) _then)
       : super(_value, (v) => _then(v as _ConfigAppKeyStatusData));
 
   @override
@@ -99,7 +106,8 @@ class __$ConfigAppKeyStatusDataCopyWithImpl<$Res> extends _$ConfigAppKeyStatusDa
 class _$_ConfigAppKeyStatusData implements _ConfigAppKeyStatusData {
   const _$_ConfigAppKeyStatusData(this.source) : assert(source != null);
 
-  factory _$_ConfigAppKeyStatusData.fromJson(Map<String, dynamic> json) => _$_$_ConfigAppKeyStatusDataFromJson(json);
+  factory _$_ConfigAppKeyStatusData.fromJson(Map<String, dynamic> json) =>
+      _$_$_ConfigAppKeyStatusDataFromJson(json);
 
   @override
   final int source;
@@ -113,15 +121,18 @@ class _$_ConfigAppKeyStatusData implements _ConfigAppKeyStatusData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ConfigAppKeyStatusData &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)));
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode ^ const DeepCollectionEquality().hash(source);
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(source);
 
   @override
   _$ConfigAppKeyStatusDataCopyWith<_ConfigAppKeyStatusData> get copyWith =>
-      __$ConfigAppKeyStatusDataCopyWithImpl<_ConfigAppKeyStatusData>(this, _$identity);
+      __$ConfigAppKeyStatusDataCopyWithImpl<_ConfigAppKeyStatusData>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -132,7 +143,8 @@ class _$_ConfigAppKeyStatusData implements _ConfigAppKeyStatusData {
 abstract class _ConfigAppKeyStatusData implements ConfigAppKeyStatusData {
   const factory _ConfigAppKeyStatusData(int source) = _$_ConfigAppKeyStatusData;
 
-  factory _ConfigAppKeyStatusData.fromJson(Map<String, dynamic> json) = _$_ConfigAppKeyStatusData.fromJson;
+  factory _ConfigAppKeyStatusData.fromJson(Map<String, dynamic> json) =
+      _$_ConfigAppKeyStatusData.fromJson;
 
   @override
   int get source;
@@ -140,7 +152,8 @@ abstract class _ConfigAppKeyStatusData implements ConfigAppKeyStatusData {
   _$ConfigAppKeyStatusDataCopyWith<_ConfigAppKeyStatusData> get copyWith;
 }
 
-ConfigAppKeyStatusMeshMessage _$ConfigAppKeyStatusMeshMessageFromJson(Map<String, dynamic> json) {
+ConfigAppKeyStatusMeshMessage _$ConfigAppKeyStatusMeshMessageFromJson(
+    Map<String, dynamic> json) {
   return _ConfigAppKeyStatusMeshMessage.fromJson(json);
 }
 
@@ -172,19 +185,22 @@ mixin _$ConfigAppKeyStatusMeshMessage {
   int get destination;
 
   Map<String, dynamic> toJson();
-  $ConfigAppKeyStatusMeshMessageCopyWith<ConfigAppKeyStatusMeshMessage> get copyWith;
+  $ConfigAppKeyStatusMeshMessageCopyWith<ConfigAppKeyStatusMeshMessage>
+      get copyWith;
 }
 
 /// @nodoc
 abstract class $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   factory $ConfigAppKeyStatusMeshMessageCopyWith(
-          ConfigAppKeyStatusMeshMessage value, $Res Function(ConfigAppKeyStatusMeshMessage) then) =
+          ConfigAppKeyStatusMeshMessage value,
+          $Res Function(ConfigAppKeyStatusMeshMessage) then) =
       _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>;
   $Res call({int source, int destination});
 }
 
 /// @nodoc
-class _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res> implements $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
+class _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
+    implements $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   _$ConfigAppKeyStatusMeshMessageCopyWithImpl(this._value, this._then);
 
   final ConfigAppKeyStatusMeshMessage _value;
@@ -198,29 +214,35 @@ class _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res> implements $ConfigAppKey
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      destination:
+          destination == freezed ? _value.destination : destination as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$ConfigAppKeyStatusMeshMessageCopyWith<$Res> implements $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
+abstract class _$ConfigAppKeyStatusMeshMessageCopyWith<$Res>
+    implements $ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   factory _$ConfigAppKeyStatusMeshMessageCopyWith(
-          _ConfigAppKeyStatusMeshMessage value, $Res Function(_ConfigAppKeyStatusMeshMessage) then) =
+          _ConfigAppKeyStatusMeshMessage value,
+          $Res Function(_ConfigAppKeyStatusMeshMessage) then) =
       __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>;
   @override
   $Res call({int source, int destination});
 }
 
 /// @nodoc
-class __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res> extends _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
+class __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
+    extends _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res>
     implements _$ConfigAppKeyStatusMeshMessageCopyWith<$Res> {
   __$ConfigAppKeyStatusMeshMessageCopyWithImpl(
-      _ConfigAppKeyStatusMeshMessage _value, $Res Function(_ConfigAppKeyStatusMeshMessage) _then)
+      _ConfigAppKeyStatusMeshMessage _value,
+      $Res Function(_ConfigAppKeyStatusMeshMessage) _then)
       : super(_value, (v) => _then(v as _ConfigAppKeyStatusMeshMessage));
 
   @override
-  _ConfigAppKeyStatusMeshMessage get _value => super._value as _ConfigAppKeyStatusMeshMessage;
+  _ConfigAppKeyStatusMeshMessage get _value =>
+      super._value as _ConfigAppKeyStatusMeshMessage;
 
   @override
   $Res call({
@@ -237,12 +259,14 @@ class __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res> extends _$ConfigAppKeyS
 @JsonSerializable()
 
 /// @nodoc
-class _$_ConfigAppKeyStatusMeshMessage implements _ConfigAppKeyStatusMeshMessage {
+class _$_ConfigAppKeyStatusMeshMessage
+    implements _ConfigAppKeyStatusMeshMessage {
   const _$_ConfigAppKeyStatusMeshMessage(this.source, this.destination)
       : assert(source != null),
         assert(destination != null);
 
-  factory _$_ConfigAppKeyStatusMeshMessage.fromJson(Map<String, dynamic> json) =>
+  factory _$_ConfigAppKeyStatusMeshMessage.fromJson(
+          Map<String, dynamic> json) =>
       _$_$_ConfigAppKeyStatusMeshMessageFromJson(json);
 
   @override
@@ -259,9 +283,11 @@ class _$_ConfigAppKeyStatusMeshMessage implements _ConfigAppKeyStatusMeshMessage
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ConfigAppKeyStatusMeshMessage &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality().equals(other.destination, destination)));
+                const DeepCollectionEquality()
+                    .equals(other.destination, destination)));
   }
 
   @override
@@ -271,8 +297,9 @@ class _$_ConfigAppKeyStatusMeshMessage implements _ConfigAppKeyStatusMeshMessage
       const DeepCollectionEquality().hash(destination);
 
   @override
-  _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage> get copyWith =>
-      __$ConfigAppKeyStatusMeshMessageCopyWithImpl<_ConfigAppKeyStatusMeshMessage>(this, _$identity);
+  _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage>
+      get copyWith => __$ConfigAppKeyStatusMeshMessageCopyWithImpl<
+          _ConfigAppKeyStatusMeshMessage>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -280,8 +307,10 @@ class _$_ConfigAppKeyStatusMeshMessage implements _ConfigAppKeyStatusMeshMessage
   }
 }
 
-abstract class _ConfigAppKeyStatusMeshMessage implements ConfigAppKeyStatusMeshMessage {
-  const factory _ConfigAppKeyStatusMeshMessage(int source, int destination) = _$_ConfigAppKeyStatusMeshMessage;
+abstract class _ConfigAppKeyStatusMeshMessage
+    implements ConfigAppKeyStatusMeshMessage {
+  const factory _ConfigAppKeyStatusMeshMessage(int source, int destination) =
+      _$_ConfigAppKeyStatusMeshMessage;
 
   factory _ConfigAppKeyStatusMeshMessage.fromJson(Map<String, dynamic> json) =
       _$_ConfigAppKeyStatusMeshMessage.fromJson;
@@ -291,5 +320,6 @@ abstract class _ConfigAppKeyStatusMeshMessage implements ConfigAppKeyStatusMeshM
   @override
   int get destination;
   @override
-  _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage> get copyWith;
+  _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage>
+      get copyWith;
 }
