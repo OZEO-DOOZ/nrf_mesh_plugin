@@ -50,9 +50,7 @@ class BoardData {
   int toByte() {
     int buff;
     int outLevel;
-    buff = ((targetIo & 0x3) << (9 + 5)) |
-        ((offset & 0x1f) << (9)) |
-        (payload & 0x1FF);
+    buff = ((targetIo & 0x3) << (9 + 5)) | ((offset & 0x1f) << (9)) | (payload & 0x1FF);
     buff = buff.toUnsigned(16);
     if (buff & (1 << 15) != 0) {
       buff = ~buff ^ 0x01;
@@ -64,6 +62,5 @@ class BoardData {
   }
 
   @override
-  String toString() =>
-      'targetIo: $targetIo, offset: $offset, payload: $payload';
+  String toString() => 'targetIo: $targetIo, offset: $offset, payload: $payload';
 }

@@ -7,8 +7,7 @@ class MeshManagerApiEvent {
   int get hashCode => value.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      other is MeshManagerApiEvent && other.value == value;
+  bool operator ==(Object other) => other is MeshManagerApiEvent && other.value == value;
 
   @override
   String toString() => value;
@@ -21,29 +20,18 @@ class MeshManagerApiEvent {
   static const importFailed = MeshManagerApiEvent._('onNetworkImportFailed');
 
   static const meshPduCreated = MeshManagerApiEvent._('onMeshPduCreated');
-  static const sendProvisioningPdu =
-      MeshManagerApiEvent._('sendProvisioningPdu');
+  static const sendProvisioningPdu = MeshManagerApiEvent._('sendProvisioningPdu');
 
-  static const provisioningStateChanged =
-      MeshManagerApiEvent._('onProvisioningStateChanged');
-  static const provisioningFailed =
-      MeshManagerApiEvent._('onProvisioningFailed');
-  static const provisioningCompleted =
-      MeshManagerApiEvent._('onProvisioningCompleted');
+  static const provisioningStateChanged = MeshManagerApiEvent._('onProvisioningStateChanged');
+  static const provisioningFailed = MeshManagerApiEvent._('onProvisioningFailed');
+  static const provisioningCompleted = MeshManagerApiEvent._('onProvisioningCompleted');
 
-  static const configCompositionDataStatus =
-      MeshManagerApiEvent._('onConfigCompositionDataStatus');
-  static const configAppKeyStatus =
-      MeshManagerApiEvent._('onConfigAppKeyStatus');
-  static const genericLevelStatus =
-      MeshManagerApiEvent._('onGenericLevelStatus');
-  static const genericOnOffStatus =
-      MeshManagerApiEvent._('onGenericOnOffStatus');
+  static const configCompositionDataStatus = MeshManagerApiEvent._('onConfigCompositionDataStatus');
+  static const configAppKeyStatus = MeshManagerApiEvent._('onConfigAppKeyStatus');
+  static const genericLevelStatus = MeshManagerApiEvent._('onGenericLevelStatus');
+  static const genericOnOffStatus = MeshManagerApiEvent._('onGenericOnOffStatus');
 
-  static const configModelAppStatus =
-      MeshManagerApiEvent._('onConfigModelAppStatus');
-  static const configModelSubscriptionStatus =
-      MeshManagerApiEvent._('onConfigModelSubscriptionStatus');
-  static const configModelPublicationStatus =
-      MeshManagerApiEvent._('onConfigModelPublicationStatus');
+  static const configModelAppStatus = MeshManagerApiEvent._('onConfigModelAppStatus');
+  static const configModelSubscriptionStatus = MeshManagerApiEvent._('onConfigModelSubscriptionStatus');
+  static const configModelPublicationStatus = MeshManagerApiEvent._('onConfigModelPublicationStatus');
 }

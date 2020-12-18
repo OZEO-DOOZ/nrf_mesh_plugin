@@ -15,8 +15,7 @@ final meshProxyDataOut = Guid('00002ADE-0000-1000-8000-00805F9B34FB');
 final meshProvisioningUuid = Guid('00001827-0000-1000-8000-00805F9B34FB');
 final meshProvisioningDataIn = Guid('00002ADB-0000-1000-8000-00805F9B34FB');
 final meshProvisioningDataOut = Guid('00002ADC-0000-1000-8000-00805F9B34FB');
-final clientCharacteristicConfigDescriptorUuid =
-    Guid('00002902-0000-1000-8000-00805f9b34fb');
+final clientCharacteristicConfigDescriptorUuid = Guid('00002902-0000-1000-8000-00805f9b34fb');
 final enableNotificationValue = [0x01, 0x00];
 
 abstract class BleManager<E extends BleManagerCallbacks> {
@@ -44,17 +43,14 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   Future<void> connect(final BluetoothDevice device) async {
     if (_callbacks == null) {
-      throw Exception(
-          'You have to set callbacks using callbacks(E callbacks) before connecting');
+      throw Exception('You have to set callbacks using callbacks(E callbacks) before connecting');
     }
-    if (!_callbacks.onServicesDiscoveredController.isClosed &&
-        _callbacks.onServicesDiscoveredController.hasListener) {
+    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
       _callbacks.onDeviceConnectingController.add(device);
     }
     await device.connect(autoConnect: false, timeout: Duration(seconds: 30));
     _connected = true;
-    if (!_callbacks.onDeviceConnectedController.isClosed &&
-        _callbacks.onDeviceConnectedController.hasListener) {
+    if (!_callbacks.onDeviceConnectedController.isClosed && _callbacks.onDeviceConnectedController.hasListener) {
       _callbacks.onDeviceConnectedController.add(device);
     }
     _device = device;
@@ -71,12 +67,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       throw Exception('Required service not found');
     }
     isProvisioningCompleted = service?.uuid == meshProxyUuid;
-    await _callbacks
-        .sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
-    if (!_callbacks.onServicesDiscoveredController.isClosed &&
-        _callbacks.onServicesDiscoveredController.hasListener) {
-      _callbacks.onServicesDiscoveredController
-          .add(BleManagerCallbacksDiscoveredServices(device, service, false));
+    await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
+    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
+      _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     }
     await initGatt(device);
     final fMtuChanged = device.mtu.skip(1).first;
@@ -84,15 +77,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       await device.requestMtu(517);
       await fMtuChanged;
     }
-    if (!_callbacks.onDeviceReadyController.isClosed &&
-        _callbacks.onDeviceReadyController.hasListener) {
+    if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
       _callbacks.onDeviceReadyController.add(device);
     }
   }
 
   @visibleForOverriding
-  Future<BluetoothService> isRequiredServiceSupported(
-      final BluetoothDevice device);
+  Future<BluetoothService> isRequiredServiceSupported(final BluetoothDevice device);
 
   @visibleForOverriding
   Future<void> initGatt(final BluetoothDevice device);
@@ -104,8 +95,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     }
     await _device.disconnect();
     _connected = false;
-    if (!_callbacks.onDeviceDisconnectedController.isClosed &&
-        _callbacks.onDeviceDisconnectedController.hasListener) {
+    if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
       _callbacks.onDeviceDisconnectedController.add(_device);
     }
     unawaited(_mtuSizeSubscription.cancel());
