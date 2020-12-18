@@ -9,7 +9,7 @@ abstract class IMeshNetwork {
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
   String get id;
-  Future<List<dynamic>> get provisionersUUIDList;
+  Future<List<String>> get provisionersUUIDList;
 
   Future<GroupData> addGroupWithName(String name);
 
@@ -94,5 +94,8 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
 
   @override
-  Future<List<dynamic>> get provisionersUUIDList => _methodChannel.invokeMethod('getProvisionersUUID');
+  Future<List<String>> get provisionersUUIDList async {
+    final result = await _methodChannel.invokeMethod<List>('getProvisionersUUID');
+    return result.cast<String>();
+  }
 }
