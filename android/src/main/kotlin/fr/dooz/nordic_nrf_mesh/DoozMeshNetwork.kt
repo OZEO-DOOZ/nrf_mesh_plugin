@@ -7,6 +7,7 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.MeshNetwork
+import no.nordicsemi.android.mesh.Provisioner
 import java.lang.IllegalArgumentException
 
 class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
@@ -54,6 +55,11 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 } catch (e: IllegalArgumentException) {
                     result.error("ASSIGN_UNICAST_ADDRESS", "Failed to assign unicast address", e)
                 }
+            }
+            "selectProvisioner" -> {
+                val provisionerIndex = call.argument<Int>("provisionerIndex")!!
+                meshNetwork.selectProvisioner(meshNetwork.provisioners[provisionerIndex])
+                result.success(null);
             }
             "getSequenceNumberForAddress" -> {
                 val address = call.argument<Int>("address")!!
@@ -127,6 +133,12 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                     )
                 }
                 result.success(nodes)
+            }
+            "getProvisionersUUID" -> {
+                val provisionersUUID = meshNetwork.provisioners.map { provisioner ->
+                    provisioner.provisionerUuid
+                }
+                result.success(provisionersUUID)
             }
             "selectedProvisionerUuid" -> {
                 result.success(meshNetwork.selectedProvisioner.provisionerUuid)

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/utils/advertisement_data.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {

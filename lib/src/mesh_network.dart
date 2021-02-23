@@ -8,9 +8,8 @@ abstract class IMeshNetwork {
   Future<int> get highestAllocatableAddress;
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
-
-  @Deprecated('Please use addGroupWithName instead')
-  Future<bool> addGroup(int id);
+  String get id;
+  Future<List<String>> get provisionersUUIDList;
 
   Future<GroupData> addGroupWithName(String name);
 
@@ -18,13 +17,13 @@ abstract class IMeshNetwork {
 
   Future<List<ElementData>> elementsForGroup(int id);
 
-  @Deprecated('Please use getSequenceNumber from MeshManagerApi else it will only work on android')
-  Future<int> getSequenceNumber(int address);
-
   Future<int> nextAvailableUnicastAddress(int elementSize);
 
   Future<bool> removeGroup(int id);
+
   Future<String> selectedProvisionerUuid();
+
+  Future<void> selectProvisioner(int provisionerIndex);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -51,6 +50,7 @@ class MeshNetwork implements IMeshNetwork {
     return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
+  @override
   String get id => _id;
 
   @override
@@ -59,12 +59,8 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
-    //  skip 1 is to skip the provisionner since it's not a provisioned mesh node
     return _nodes.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
   }
-
-  @override
-  Future<bool> addGroup(int id) => _methodChannel.invokeMethod('addGroup', {'id': id});
 
   @override
   Future<GroupData> addGroupWithName(String name) async {
@@ -80,10 +76,6 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
 
   @override
-  Future<int> getSequenceNumber(int address) =>
-      _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': address});
-
-  @override
   Future<int> nextAvailableUnicastAddress(int elementSize) =>
       _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
 
@@ -96,4 +88,14 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   String toString() => 'MeshNetwork{ $_id }';
+
+  @override
+  Future<void> selectProvisioner(int provisionerIndex) =>
+      _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
+
+  @override
+  Future<List<String>> get provisionersUUIDList async {
+    final result = await _methodChannel.invokeMethod<List>('getProvisionersUUID');
+    return result.cast<String>();
+  }
 }

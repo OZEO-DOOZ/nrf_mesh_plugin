@@ -1,6 +1,6 @@
 name: nordic_nrf_mesh_example
 description: Demonstrates how to use the nordic_nrf_mesh plugin.
-version: 1.0.1
+version: 1.0.2
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 

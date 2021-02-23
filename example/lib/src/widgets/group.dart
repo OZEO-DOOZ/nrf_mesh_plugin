@@ -5,7 +5,7 @@ import 'package:nordic_nrf_mesh_example/src/views/control_module/mesh_element.da
 
 class Group extends StatefulWidget {
   final GroupData groupData;
-  final MeshNetwork meshNetwork;
+  final IMeshNetwork meshNetwork;
   const Group(this.groupData, this.meshNetwork) : super();
 
   @override
