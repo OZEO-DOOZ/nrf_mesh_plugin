@@ -1,0 +1,4 @@
+[submodule "Android-nRF-Mesh-Library-1"]
+	path = Android-nRF-Mesh-Library-1
+	url = https://github.com/OZEO-DOOZ/Android-nRF-Mesh-Library-1.git
+	branch = master
