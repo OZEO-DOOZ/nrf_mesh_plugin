@@ -7,3 +7,5 @@
 build/
 example/android/app/google-services.json
 .fvm
+
+/.idea/

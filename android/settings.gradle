@@ -1,1 +1,3 @@
 rootProject.name = 'nordic_nrf_mesh'
+include ':mesh'
+project(':mesh').projectDir = file('../Android-nRF-Mesh-Library-1/mesh')
