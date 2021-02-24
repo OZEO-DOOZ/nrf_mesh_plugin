@@ -1,5 +1,6 @@
 include ':app'
-
+include ':mesh'
+project(':mesh').projectDir = file('../../Android-nRF-Mesh-Library-1/mesh')
 def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
 
 def plugins = new Properties()
