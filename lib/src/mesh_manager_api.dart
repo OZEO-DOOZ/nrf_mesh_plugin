@@ -308,6 +308,51 @@ class MeshManagerApi {
     return status;
   }
 
+  Future<MagicLevelSetStatusData> sendV2MagicLevelSet(
+      int address,
+      int io,
+      int index,
+      int value,
+      int correlation,
+      int sequenceNumber, {
+        int keyIndex = 0,
+      }) async {
+    final status =
+    _onV2MagicLevelSetStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('sendV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'value': value,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+      'sequenceNumber': sequenceNumber,
+    });
+    return status;
+  }
+
+  Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
+      int address,
+      int io,
+      int index,
+      int value,
+      int correlation,
+      int sequenceNumber, {
+        int keyIndex = 0,
+      }) async {
+    final status =
+    _onV2MagicLevelGetStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('getV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+      'sequenceNumber': sequenceNumber,
+    });
+    return status;
+  }
+
   Future<void> sendConfigCompositionDataGet(int dest) =>
       _methodChannel.invokeMethod('sendConfigCompositionDataGet', {'dest': dest});
 
