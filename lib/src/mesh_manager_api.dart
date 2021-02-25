@@ -394,6 +394,18 @@ class MeshManagerApi {
 
   Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
 
+  /// Will try to unprovision the specified [ProvisionedMeshNode].
+  ///
+  /// Returns true if the action was successfully sent to Nordic's ADK, false otherwise
+  /// Throws an method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
+  Future<bool> unprovision(ProvisionedMeshNode meshNode) async {
+    if (Platform.isAndroid) {
+      return _methodChannel.invokeMethod('deprovision', {'unicastAddress': await meshNode.unicastAddress});
+    } else {
+      throw Exception('Platform not supported');
+    }
+  }
+
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 

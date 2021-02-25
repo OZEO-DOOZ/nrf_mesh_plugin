@@ -25,8 +25,10 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     private val unProvisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
 
+    private val TAG: String = this.javaClass.name
+
     init {
-        EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
+        EventChannel(binaryMessenger, "$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
@@ -66,7 +68,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     }
 
     override fun onListen(arguments: Any?, events: EventSink?) {
-        Log.d(this.javaClass.name, "onListen $arguments $events")
+        Log.d(TAG, "onListen $arguments $events")
         this.eventSink = events
         doozMeshManagerCallbacks.eventSink = eventSink
         doozMeshProvisioningStatusCallbacks.eventSink = eventSink
@@ -178,7 +180,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val appKeyIndex = call.argument<Int>("appKeyIndex")!!
                 val credentialFlag = call.argument<Boolean>("credentialFlag")!!
                 val publishTtl = call.argument<Int>("publishTtl")!!
-                val publicationSteps  = call.argument<Int>("publicationSteps")!!
+                val publicationSteps = call.argument<Int>("publicationSteps")!!
                 val publicationResolution = call.argument<Int>("publicationResolution")!!
                 val retransmitCount = call.argument<Int>("retransmitCount")!!
                 val retransmitIntervalSteps = call.argument<Int>("retransmitIntervalSteps")!!
@@ -226,6 +228,23 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 }
                 mMeshManagerApi.startProvisioning(unProvisionedMeshNode.meshNode)
                 result.success(null)
+            }
+            "deprovision" -> {
+                Log.d(TAG, "should unprovision")
+                try {
+                    val unicastAddress = call.argument<Int>("unicastAddress")!!
+                    val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                    val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(unicastAddress)
+                    if(pNode == null){
+                        result.error("NOT_FOUND", "MeshNode with unicastAddress $unicastAddress doesn't exist", null)
+                    } else{
+                    val configNodeReset = ConfigNodeReset()
+                    mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)}
+                } catch (ex: Exception) {
+                    Log.e(TAG, ex.message)
+                    result.success(false)
+                }
+                result.success(true)
             }
             "sendConfigCompositionDataGet" -> {
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, ConfigCompositionDataGet())
