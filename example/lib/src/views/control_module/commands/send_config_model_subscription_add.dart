@@ -10,12 +10,10 @@ class SendConfigModelSubscriptionAdd extends StatefulWidget {
   const SendConfigModelSubscriptionAdd(this.meshManagerApi) : super();
 
   @override
-  _SendConfigModelSubscriptionAddState createState() =>
-      _SendConfigModelSubscriptionAddState();
+  _SendConfigModelSubscriptionAddState createState() => _SendConfigModelSubscriptionAddState();
 }
 
-class _SendConfigModelSubscriptionAddState
-    extends State<SendConfigModelSubscriptionAdd> {
+class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscriptionAdd> {
   int selectedElementAddress;
   int selectedModelType;
   int selectedSubscriptionAddress;
@@ -57,15 +55,11 @@ class _SendConfigModelSubscriptionAddState
             try {
               await widget.meshManagerApi
                   .sendConfigModelSubscriptionAdd(
-                      selectedAddress,
-                      selectedElementAddress,
-                      selectedSubscriptionAddress,
-                      selectedModelType)
+                      selectedAddress, selectedElementAddress, selectedSubscriptionAddress, selectedModelType)
                   .timeout(Duration(seconds: 40));
               scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(
-                  SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
               scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
             } catch (e) {

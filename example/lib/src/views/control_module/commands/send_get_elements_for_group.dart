@@ -10,8 +10,7 @@ class SendGetElementsForGroup extends StatefulWidget {
   const SendGetElementsForGroup(this.meshManagerApi) : super();
 
   @override
-  _SendGetElementsForGroupState createState() =>
-      _SendGetElementsForGroupState();
+  _SendGetElementsForGroupState createState() => _SendGetElementsForGroupState();
 }
 
 class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
@@ -33,14 +32,12 @@ class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
           onPressed: () async {
             final scaffoldState = Scaffold.of(context);
             try {
-              final result = await widget.meshManagerApi.meshNetwork
-                  .elementsForGroup(_id)
-                  .timeout(Duration(seconds: 40));
+              final result =
+                  await widget.meshManagerApi.meshNetwork.elementsForGroup(_id).timeout(Duration(seconds: 40));
               print(result);
               scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(
-                  SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
               scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
             } catch (e) {

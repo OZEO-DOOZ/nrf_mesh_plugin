@@ -70,13 +70,11 @@ void main() {
   test('turn first light on', () async {
     final sendGenericLevelFinder = find.text('Send a generic level set');
     await driver.tap(sendGenericLevelFinder);
-    final elementAddressInput =
-        find.byValueKey('module-send-generic-level-address');
+    final elementAddressInput = find.byValueKey('module-send-generic-level-address');
     await driver.tap(elementAddressInput);
     await driver.enterText('3');
 
-    final elementValueInput =
-        find.byValueKey('module-send-generic-level-value');
+    final elementValueInput = find.byValueKey('module-send-generic-level-value');
     await driver.tap(elementValueInput);
     await driver.enterText('32767');
 
@@ -87,8 +85,7 @@ void main() {
   test('turn first light off', () async {
     final sendGenericOnOffFinder = find.text('Send a generic On Off set');
     await driver.tap(sendGenericOnOffFinder);
-    final elementAddressInput =
-        find.byValueKey('module-send-generic-on-off-address');
+    final elementAddressInput = find.byValueKey('module-send-generic-on-off-address');
     await driver.tap(elementAddressInput);
     await driver.enterText('3');
     await driver.tap(find.text('Send on off'));

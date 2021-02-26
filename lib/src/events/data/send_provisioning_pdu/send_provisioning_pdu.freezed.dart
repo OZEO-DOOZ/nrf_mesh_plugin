@@ -8,8 +8,7 @@ part of 'send_provisioning_pdu.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-SendProvisioningPduData _$SendProvisioningPduDataFromJson(
-    Map<String, dynamic> json) {
+SendProvisioningPduData _$SendProvisioningPduDataFromJson(Map<String, dynamic> json) {
   return _SendProvisioningPduData.fromJson(json);
 }
 
@@ -46,15 +45,13 @@ mixin _$SendProvisioningPduData {
 
 /// @nodoc
 abstract class $SendProvisioningPduDataCopyWith<$Res> {
-  factory $SendProvisioningPduDataCopyWith(SendProvisioningPduData value,
-          $Res Function(SendProvisioningPduData) then) =
+  factory $SendProvisioningPduDataCopyWith(SendProvisioningPduData value, $Res Function(SendProvisioningPduData) then) =
       _$SendProvisioningPduDataCopyWithImpl<$Res>;
   $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
 /// @nodoc
-class _$SendProvisioningPduDataCopyWithImpl<$Res>
-    implements $SendProvisioningPduDataCopyWith<$Res> {
+class _$SendProvisioningPduDataCopyWithImpl<$Res> implements $SendProvisioningPduDataCopyWith<$Res> {
   _$SendProvisioningPduDataCopyWithImpl(this._value, this._then);
 
   final SendProvisioningPduData _value;
@@ -68,34 +65,28 @@ class _$SendProvisioningPduDataCopyWithImpl<$Res>
   }) {
     return _then(_value.copyWith(
       pdu: pdu == freezed ? _value.pdu : pdu as List<int>,
-      meshNode: meshNode == freezed
-          ? _value.meshNode
-          : meshNode as UnprovisionedMeshNode,
+      meshNode: meshNode == freezed ? _value.meshNode : meshNode as UnprovisionedMeshNode,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$SendProvisioningPduDataCopyWith<$Res>
-    implements $SendProvisioningPduDataCopyWith<$Res> {
-  factory _$SendProvisioningPduDataCopyWith(_SendProvisioningPduData value,
-          $Res Function(_SendProvisioningPduData) then) =
+abstract class _$SendProvisioningPduDataCopyWith<$Res> implements $SendProvisioningPduDataCopyWith<$Res> {
+  factory _$SendProvisioningPduDataCopyWith(
+          _SendProvisioningPduData value, $Res Function(_SendProvisioningPduData) then) =
       __$SendProvisioningPduDataCopyWithImpl<$Res>;
   @override
   $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
 /// @nodoc
-class __$SendProvisioningPduDataCopyWithImpl<$Res>
-    extends _$SendProvisioningPduDataCopyWithImpl<$Res>
+class __$SendProvisioningPduDataCopyWithImpl<$Res> extends _$SendProvisioningPduDataCopyWithImpl<$Res>
     implements _$SendProvisioningPduDataCopyWith<$Res> {
-  __$SendProvisioningPduDataCopyWithImpl(_SendProvisioningPduData _value,
-      $Res Function(_SendProvisioningPduData) _then)
+  __$SendProvisioningPduDataCopyWithImpl(_SendProvisioningPduData _value, $Res Function(_SendProvisioningPduData) _then)
       : super(_value, (v) => _then(v as _SendProvisioningPduData));
 
   @override
-  _SendProvisioningPduData get _value =>
-      super._value as _SendProvisioningPduData;
+  _SendProvisioningPduData get _value => super._value as _SendProvisioningPduData;
 
   @override
   $Res call({
@@ -117,8 +108,7 @@ class _$_SendProvisioningPduData implements _SendProvisioningPduData {
       : assert(pdu != null),
         assert(meshNode != null);
 
-  factory _$_SendProvisioningPduData.fromJson(Map<String, dynamic> json) =>
-      _$_$_SendProvisioningPduDataFromJson(json);
+  factory _$_SendProvisioningPduData.fromJson(Map<String, dynamic> json) => _$_$_SendProvisioningPduDataFromJson(json);
 
   @override
   final List<int> pdu;
@@ -134,23 +124,17 @@ class _$_SendProvisioningPduData implements _SendProvisioningPduData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _SendProvisioningPduData &&
-            (identical(other.pdu, pdu) ||
-                const DeepCollectionEquality().equals(other.pdu, pdu)) &&
-            (identical(other.meshNode, meshNode) ||
-                const DeepCollectionEquality()
-                    .equals(other.meshNode, meshNode)));
+            (identical(other.pdu, pdu) || const DeepCollectionEquality().equals(other.pdu, pdu)) &&
+            (identical(other.meshNode, meshNode) || const DeepCollectionEquality().equals(other.meshNode, meshNode)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(pdu) ^
-      const DeepCollectionEquality().hash(meshNode);
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(pdu) ^ const DeepCollectionEquality().hash(meshNode);
 
   @override
   _$SendProvisioningPduDataCopyWith<_SendProvisioningPduData> get copyWith =>
-      __$SendProvisioningPduDataCopyWithImpl<_SendProvisioningPduData>(
-          this, _$identity);
+      __$SendProvisioningPduDataCopyWithImpl<_SendProvisioningPduData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -159,12 +143,9 @@ class _$_SendProvisioningPduData implements _SendProvisioningPduData {
 }
 
 abstract class _SendProvisioningPduData implements SendProvisioningPduData {
-  const factory _SendProvisioningPduData(
-          List<int> pdu, UnprovisionedMeshNode meshNode) =
-      _$_SendProvisioningPduData;
+  const factory _SendProvisioningPduData(List<int> pdu, UnprovisionedMeshNode meshNode) = _$_SendProvisioningPduData;
 
-  factory _SendProvisioningPduData.fromJson(Map<String, dynamic> json) =
-      _$_SendProvisioningPduData.fromJson;
+  factory _SendProvisioningPduData.fromJson(Map<String, dynamic> json) = _$_SendProvisioningPduData.fromJson;
 
   @override
   List<int> get pdu;

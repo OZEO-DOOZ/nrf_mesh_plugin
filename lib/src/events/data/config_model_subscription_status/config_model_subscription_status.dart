@@ -4,8 +4,7 @@ part 'config_model_subscription_status.freezed.dart';
 part 'config_model_subscription_status.g.dart';
 
 @freezed
-abstract class ConfigModelSubscriptionStatus
-    with _$ConfigModelSubscriptionStatus {
+abstract class ConfigModelSubscriptionStatus with _$ConfigModelSubscriptionStatus {
   const factory ConfigModelSubscriptionStatus(
     int source,
     int destination,

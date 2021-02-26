@@ -29,11 +29,9 @@ class ElementData {
   final int locationDescriptor;
   final List<ModelData> models;
 
-  ElementData(
-      this.key, this.name, this.address, this.locationDescriptor, this.models);
+  ElementData(this.key, this.name, this.address, this.locationDescriptor, this.models);
 
-  factory ElementData.fromJson(Map json) =>
-      _$ElementDataFromJson(json.cast<String, dynamic>());
+  factory ElementData.fromJson(Map json) => _$ElementDataFromJson(json.cast<String, dynamic>());
 
   Map<String, dynamic> toJson() => _$ElementDataToJson(this);
 
@@ -45,18 +43,13 @@ class ProvisionedMeshNode {
   final MethodChannel _methodChannel;
   final String uuid;
 
-  ProvisionedMeshNode(this.uuid)
-      : _methodChannel =
-            MethodChannel('$namespace/provisioned_mesh_node/${uuid}/methods');
+  ProvisionedMeshNode(this.uuid) : _methodChannel = MethodChannel('$namespace/provisioned_mesh_node/${uuid}/methods');
 
-  Future<int> get unicastAddress =>
-      _methodChannel.invokeMethod('unicastAddress');
+  Future<int> get unicastAddress => _methodChannel.invokeMethod('unicastAddress');
 
-  Future<int> get sequenceNumber =>
-      _methodChannel.invokeMethod('getSequenceNumber');
+  Future<int> get sequenceNumber => _methodChannel.invokeMethod('getSequenceNumber');
 
-  Future<void> nodeName(String name) =>
-      _methodChannel.invokeMethod('nodeName', {'name': name});
+  Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
 
   Future<String> get name => _methodChannel.invokeMethod('name');
 

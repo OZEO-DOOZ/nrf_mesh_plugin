@@ -8,8 +8,7 @@ part of 'mesh_provisioning_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-UnprovisionedMeshNodeData _$UnprovisionedMeshNodeDataFromJson(
-    Map<String, dynamic> json) {
+UnprovisionedMeshNodeData _$UnprovisionedMeshNodeDataFromJson(Map<String, dynamic> json) {
   return _UnprovisionedMeshNodeData.fromJson(json);
 }
 
@@ -18,9 +17,7 @@ class _$UnprovisionedMeshNodeDataTearOff {
   const _$UnprovisionedMeshNodeDataTearOff();
 
 // ignore: unused_element
-  _UnprovisionedMeshNodeData call(
-      {@required String uuid,
-      @nullable List<int> provisionerPublicKeyXY = const []}) {
+  _UnprovisionedMeshNodeData call({@required String uuid, @nullable List<int> provisionerPublicKeyXY = const []}) {
     return _UnprovisionedMeshNodeData(
       uuid: uuid,
       provisionerPublicKeyXY: provisionerPublicKeyXY,
@@ -49,15 +46,14 @@ mixin _$UnprovisionedMeshNodeData {
 
 /// @nodoc
 abstract class $UnprovisionedMeshNodeDataCopyWith<$Res> {
-  factory $UnprovisionedMeshNodeDataCopyWith(UnprovisionedMeshNodeData value,
-          $Res Function(UnprovisionedMeshNodeData) then) =
+  factory $UnprovisionedMeshNodeDataCopyWith(
+          UnprovisionedMeshNodeData value, $Res Function(UnprovisionedMeshNodeData) then) =
       _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>;
   $Res call({String uuid, @nullable List<int> provisionerPublicKeyXY});
 }
 
 /// @nodoc
-class _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
-    implements $UnprovisionedMeshNodeDataCopyWith<$Res> {
+class _$UnprovisionedMeshNodeDataCopyWithImpl<$Res> implements $UnprovisionedMeshNodeDataCopyWith<$Res> {
   _$UnprovisionedMeshNodeDataCopyWithImpl(this._value, this._then);
 
   final UnprovisionedMeshNodeData _value;
@@ -71,34 +67,30 @@ class _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
   }) {
     return _then(_value.copyWith(
       uuid: uuid == freezed ? _value.uuid : uuid as String,
-      provisionerPublicKeyXY: provisionerPublicKeyXY == freezed
-          ? _value.provisionerPublicKeyXY
-          : provisionerPublicKeyXY as List<int>,
+      provisionerPublicKeyXY:
+          provisionerPublicKeyXY == freezed ? _value.provisionerPublicKeyXY : provisionerPublicKeyXY as List<int>,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$UnprovisionedMeshNodeDataCopyWith<$Res>
-    implements $UnprovisionedMeshNodeDataCopyWith<$Res> {
-  factory _$UnprovisionedMeshNodeDataCopyWith(_UnprovisionedMeshNodeData value,
-          $Res Function(_UnprovisionedMeshNodeData) then) =
+abstract class _$UnprovisionedMeshNodeDataCopyWith<$Res> implements $UnprovisionedMeshNodeDataCopyWith<$Res> {
+  factory _$UnprovisionedMeshNodeDataCopyWith(
+          _UnprovisionedMeshNodeData value, $Res Function(_UnprovisionedMeshNodeData) then) =
       __$UnprovisionedMeshNodeDataCopyWithImpl<$Res>;
   @override
   $Res call({String uuid, @nullable List<int> provisionerPublicKeyXY});
 }
 
 /// @nodoc
-class __$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
-    extends _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
+class __$UnprovisionedMeshNodeDataCopyWithImpl<$Res> extends _$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
     implements _$UnprovisionedMeshNodeDataCopyWith<$Res> {
-  __$UnprovisionedMeshNodeDataCopyWithImpl(_UnprovisionedMeshNodeData _value,
-      $Res Function(_UnprovisionedMeshNodeData) _then)
+  __$UnprovisionedMeshNodeDataCopyWithImpl(
+      _UnprovisionedMeshNodeData _value, $Res Function(_UnprovisionedMeshNodeData) _then)
       : super(_value, (v) => _then(v as _UnprovisionedMeshNodeData));
 
   @override
-  _UnprovisionedMeshNodeData get _value =>
-      super._value as _UnprovisionedMeshNodeData;
+  _UnprovisionedMeshNodeData get _value => super._value as _UnprovisionedMeshNodeData;
 
   @override
   $Res call({
@@ -107,9 +99,8 @@ class __$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
   }) {
     return _then(_UnprovisionedMeshNodeData(
       uuid: uuid == freezed ? _value.uuid : uuid as String,
-      provisionerPublicKeyXY: provisionerPublicKeyXY == freezed
-          ? _value.provisionerPublicKeyXY
-          : provisionerPublicKeyXY as List<int>,
+      provisionerPublicKeyXY:
+          provisionerPublicKeyXY == freezed ? _value.provisionerPublicKeyXY : provisionerPublicKeyXY as List<int>,
     ));
   }
 }
@@ -118,8 +109,7 @@ class __$UnprovisionedMeshNodeDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_UnprovisionedMeshNodeData implements _UnprovisionedMeshNodeData {
-  const _$_UnprovisionedMeshNodeData(
-      {@required this.uuid, @nullable this.provisionerPublicKeyXY = const []})
+  const _$_UnprovisionedMeshNodeData({@required this.uuid, @nullable this.provisionerPublicKeyXY = const []})
       : assert(uuid != null);
 
   factory _$_UnprovisionedMeshNodeData.fromJson(Map<String, dynamic> json) =>
@@ -141,11 +131,9 @@ class _$_UnprovisionedMeshNodeData implements _UnprovisionedMeshNodeData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _UnprovisionedMeshNodeData &&
-            (identical(other.uuid, uuid) ||
-                const DeepCollectionEquality().equals(other.uuid, uuid)) &&
+            (identical(other.uuid, uuid) || const DeepCollectionEquality().equals(other.uuid, uuid)) &&
             (identical(other.provisionerPublicKeyXY, provisionerPublicKeyXY) ||
-                const DeepCollectionEquality().equals(
-                    other.provisionerPublicKeyXY, provisionerPublicKeyXY)));
+                const DeepCollectionEquality().equals(other.provisionerPublicKeyXY, provisionerPublicKeyXY)));
   }
 
   @override
@@ -155,10 +143,8 @@ class _$_UnprovisionedMeshNodeData implements _UnprovisionedMeshNodeData {
       const DeepCollectionEquality().hash(provisionerPublicKeyXY);
 
   @override
-  _$UnprovisionedMeshNodeDataCopyWith<_UnprovisionedMeshNodeData>
-      get copyWith =>
-          __$UnprovisionedMeshNodeDataCopyWithImpl<_UnprovisionedMeshNodeData>(
-              this, _$identity);
+  _$UnprovisionedMeshNodeDataCopyWith<_UnprovisionedMeshNodeData> get copyWith =>
+      __$UnprovisionedMeshNodeDataCopyWithImpl<_UnprovisionedMeshNodeData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -167,12 +153,10 @@ class _$_UnprovisionedMeshNodeData implements _UnprovisionedMeshNodeData {
 }
 
 abstract class _UnprovisionedMeshNodeData implements UnprovisionedMeshNodeData {
-  const factory _UnprovisionedMeshNodeData(
-          {@required String uuid, @nullable List<int> provisionerPublicKeyXY}) =
+  const factory _UnprovisionedMeshNodeData({@required String uuid, @nullable List<int> provisionerPublicKeyXY}) =
       _$_UnprovisionedMeshNodeData;
 
-  factory _UnprovisionedMeshNodeData.fromJson(Map<String, dynamic> json) =
-      _$_UnprovisionedMeshNodeData.fromJson;
+  factory _UnprovisionedMeshNodeData.fromJson(Map<String, dynamic> json) = _$_UnprovisionedMeshNodeData.fromJson;
 
   @override
   String get uuid;
@@ -183,8 +167,7 @@ abstract class _UnprovisionedMeshNodeData implements UnprovisionedMeshNodeData {
   _$UnprovisionedMeshNodeDataCopyWith<_UnprovisionedMeshNodeData> get copyWith;
 }
 
-ProvisionedMeshNodeData _$ProvisionedMeshNodeDataFromJson(
-    Map<String, dynamic> json) {
+ProvisionedMeshNodeData _$ProvisionedMeshNodeDataFromJson(Map<String, dynamic> json) {
   return _ProvisionedMeshNodeData.fromJson(json);
 }
 
@@ -219,15 +202,13 @@ mixin _$ProvisionedMeshNodeData {
 
 /// @nodoc
 abstract class $ProvisionedMeshNodeDataCopyWith<$Res> {
-  factory $ProvisionedMeshNodeDataCopyWith(ProvisionedMeshNodeData value,
-          $Res Function(ProvisionedMeshNodeData) then) =
+  factory $ProvisionedMeshNodeDataCopyWith(ProvisionedMeshNodeData value, $Res Function(ProvisionedMeshNodeData) then) =
       _$ProvisionedMeshNodeDataCopyWithImpl<$Res>;
   $Res call({String uuid});
 }
 
 /// @nodoc
-class _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
-    implements $ProvisionedMeshNodeDataCopyWith<$Res> {
+class _$ProvisionedMeshNodeDataCopyWithImpl<$Res> implements $ProvisionedMeshNodeDataCopyWith<$Res> {
   _$ProvisionedMeshNodeDataCopyWithImpl(this._value, this._then);
 
   final ProvisionedMeshNodeData _value;
@@ -245,26 +226,22 @@ class _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$ProvisionedMeshNodeDataCopyWith<$Res>
-    implements $ProvisionedMeshNodeDataCopyWith<$Res> {
-  factory _$ProvisionedMeshNodeDataCopyWith(_ProvisionedMeshNodeData value,
-          $Res Function(_ProvisionedMeshNodeData) then) =
+abstract class _$ProvisionedMeshNodeDataCopyWith<$Res> implements $ProvisionedMeshNodeDataCopyWith<$Res> {
+  factory _$ProvisionedMeshNodeDataCopyWith(
+          _ProvisionedMeshNodeData value, $Res Function(_ProvisionedMeshNodeData) then) =
       __$ProvisionedMeshNodeDataCopyWithImpl<$Res>;
   @override
   $Res call({String uuid});
 }
 
 /// @nodoc
-class __$ProvisionedMeshNodeDataCopyWithImpl<$Res>
-    extends _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
+class __$ProvisionedMeshNodeDataCopyWithImpl<$Res> extends _$ProvisionedMeshNodeDataCopyWithImpl<$Res>
     implements _$ProvisionedMeshNodeDataCopyWith<$Res> {
-  __$ProvisionedMeshNodeDataCopyWithImpl(_ProvisionedMeshNodeData _value,
-      $Res Function(_ProvisionedMeshNodeData) _then)
+  __$ProvisionedMeshNodeDataCopyWithImpl(_ProvisionedMeshNodeData _value, $Res Function(_ProvisionedMeshNodeData) _then)
       : super(_value, (v) => _then(v as _ProvisionedMeshNodeData));
 
   @override
-  _ProvisionedMeshNodeData get _value =>
-      super._value as _ProvisionedMeshNodeData;
+  _ProvisionedMeshNodeData get _value => super._value as _ProvisionedMeshNodeData;
 
   @override
   $Res call({
@@ -280,11 +257,9 @@ class __$ProvisionedMeshNodeDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_ProvisionedMeshNodeData implements _ProvisionedMeshNodeData {
-  const _$_ProvisionedMeshNodeData({@required this.uuid})
-      : assert(uuid != null);
+  const _$_ProvisionedMeshNodeData({@required this.uuid}) : assert(uuid != null);
 
-  factory _$_ProvisionedMeshNodeData.fromJson(Map<String, dynamic> json) =>
-      _$_$_ProvisionedMeshNodeDataFromJson(json);
+  factory _$_ProvisionedMeshNodeData.fromJson(Map<String, dynamic> json) => _$_$_ProvisionedMeshNodeDataFromJson(json);
 
   @override
   final String uuid;
@@ -298,18 +273,15 @@ class _$_ProvisionedMeshNodeData implements _ProvisionedMeshNodeData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ProvisionedMeshNodeData &&
-            (identical(other.uuid, uuid) ||
-                const DeepCollectionEquality().equals(other.uuid, uuid)));
+            (identical(other.uuid, uuid) || const DeepCollectionEquality().equals(other.uuid, uuid)));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(uuid);
+  int get hashCode => runtimeType.hashCode ^ const DeepCollectionEquality().hash(uuid);
 
   @override
   _$ProvisionedMeshNodeDataCopyWith<_ProvisionedMeshNodeData> get copyWith =>
-      __$ProvisionedMeshNodeDataCopyWithImpl<_ProvisionedMeshNodeData>(
-          this, _$identity);
+      __$ProvisionedMeshNodeDataCopyWithImpl<_ProvisionedMeshNodeData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -318,11 +290,9 @@ class _$_ProvisionedMeshNodeData implements _ProvisionedMeshNodeData {
 }
 
 abstract class _ProvisionedMeshNodeData implements ProvisionedMeshNodeData {
-  const factory _ProvisionedMeshNodeData({@required String uuid}) =
-      _$_ProvisionedMeshNodeData;
+  const factory _ProvisionedMeshNodeData({@required String uuid}) = _$_ProvisionedMeshNodeData;
 
-  factory _ProvisionedMeshNodeData.fromJson(Map<String, dynamic> json) =
-      _$_ProvisionedMeshNodeData.fromJson;
+  factory _ProvisionedMeshNodeData.fromJson(Map<String, dynamic> json) = _$_ProvisionedMeshNodeData.fromJson;
 
   @override
   String get uuid;
@@ -330,8 +300,7 @@ abstract class _ProvisionedMeshNodeData implements ProvisionedMeshNodeData {
   _$ProvisionedMeshNodeDataCopyWith<_ProvisionedMeshNodeData> get copyWith;
 }
 
-MeshProvisioningStatusData _$MeshProvisioningStatusDataFromJson(
-    Map<String, dynamic> json) {
+MeshProvisioningStatusData _$MeshProvisioningStatusDataFromJson(Map<String, dynamic> json) {
   return _MeshProvisioningStatusData.fromJson(json);
 }
 
@@ -340,8 +309,7 @@ class _$MeshProvisioningStatusDataTearOff {
   const _$MeshProvisioningStatusDataTearOff();
 
 // ignore: unused_element
-  _MeshProvisioningStatusData call(String state, List<int> data,
-      @nullable UnprovisionedMeshNodeData meshNode) {
+  _MeshProvisioningStatusData call(String state, List<int> data, @nullable UnprovisionedMeshNodeData meshNode) {
     return _MeshProvisioningStatusData(
       state,
       data,
@@ -372,20 +340,16 @@ mixin _$MeshProvisioningStatusData {
 
 /// @nodoc
 abstract class $MeshProvisioningStatusDataCopyWith<$Res> {
-  factory $MeshProvisioningStatusDataCopyWith(MeshProvisioningStatusData value,
-          $Res Function(MeshProvisioningStatusData) then) =
+  factory $MeshProvisioningStatusDataCopyWith(
+          MeshProvisioningStatusData value, $Res Function(MeshProvisioningStatusData) then) =
       _$MeshProvisioningStatusDataCopyWithImpl<$Res>;
-  $Res call(
-      {String state,
-      List<int> data,
-      @nullable UnprovisionedMeshNodeData meshNode});
+  $Res call({String state, List<int> data, @nullable UnprovisionedMeshNodeData meshNode});
 
   $UnprovisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
 /// @nodoc
-class _$MeshProvisioningStatusDataCopyWithImpl<$Res>
-    implements $MeshProvisioningStatusDataCopyWith<$Res> {
+class _$MeshProvisioningStatusDataCopyWithImpl<$Res> implements $MeshProvisioningStatusDataCopyWith<$Res> {
   _$MeshProvisioningStatusDataCopyWithImpl(this._value, this._then);
 
   final MeshProvisioningStatusData _value;
@@ -401,9 +365,7 @@ class _$MeshProvisioningStatusDataCopyWithImpl<$Res>
     return _then(_value.copyWith(
       state: state == freezed ? _value.state : state as String,
       data: data == freezed ? _value.data : data as List<int>,
-      meshNode: meshNode == freezed
-          ? _value.meshNode
-          : meshNode as UnprovisionedMeshNodeData,
+      meshNode: meshNode == freezed ? _value.meshNode : meshNode as UnprovisionedMeshNodeData,
     ));
   }
 
@@ -419,33 +381,26 @@ class _$MeshProvisioningStatusDataCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$MeshProvisioningStatusDataCopyWith<$Res>
-    implements $MeshProvisioningStatusDataCopyWith<$Res> {
+abstract class _$MeshProvisioningStatusDataCopyWith<$Res> implements $MeshProvisioningStatusDataCopyWith<$Res> {
   factory _$MeshProvisioningStatusDataCopyWith(
-          _MeshProvisioningStatusData value,
-          $Res Function(_MeshProvisioningStatusData) then) =
+          _MeshProvisioningStatusData value, $Res Function(_MeshProvisioningStatusData) then) =
       __$MeshProvisioningStatusDataCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {String state,
-      List<int> data,
-      @nullable UnprovisionedMeshNodeData meshNode});
+  $Res call({String state, List<int> data, @nullable UnprovisionedMeshNodeData meshNode});
 
   @override
   $UnprovisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
 /// @nodoc
-class __$MeshProvisioningStatusDataCopyWithImpl<$Res>
-    extends _$MeshProvisioningStatusDataCopyWithImpl<$Res>
+class __$MeshProvisioningStatusDataCopyWithImpl<$Res> extends _$MeshProvisioningStatusDataCopyWithImpl<$Res>
     implements _$MeshProvisioningStatusDataCopyWith<$Res> {
-  __$MeshProvisioningStatusDataCopyWithImpl(_MeshProvisioningStatusData _value,
-      $Res Function(_MeshProvisioningStatusData) _then)
+  __$MeshProvisioningStatusDataCopyWithImpl(
+      _MeshProvisioningStatusData _value, $Res Function(_MeshProvisioningStatusData) _then)
       : super(_value, (v) => _then(v as _MeshProvisioningStatusData));
 
   @override
-  _MeshProvisioningStatusData get _value =>
-      super._value as _MeshProvisioningStatusData;
+  _MeshProvisioningStatusData get _value => super._value as _MeshProvisioningStatusData;
 
   @override
   $Res call({
@@ -456,9 +411,7 @@ class __$MeshProvisioningStatusDataCopyWithImpl<$Res>
     return _then(_MeshProvisioningStatusData(
       state == freezed ? _value.state : state as String,
       data == freezed ? _value.data : data as List<int>,
-      meshNode == freezed
-          ? _value.meshNode
-          : meshNode as UnprovisionedMeshNodeData,
+      meshNode == freezed ? _value.meshNode : meshNode as UnprovisionedMeshNodeData,
     ));
   }
 }
@@ -467,8 +420,7 @@ class __$MeshProvisioningStatusDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_MeshProvisioningStatusData implements _MeshProvisioningStatusData {
-  const _$_MeshProvisioningStatusData(
-      this.state, this.data, @nullable this.meshNode)
+  const _$_MeshProvisioningStatusData(this.state, this.data, @nullable this.meshNode)
       : assert(state != null),
         assert(data != null);
 
@@ -492,13 +444,9 @@ class _$_MeshProvisioningStatusData implements _MeshProvisioningStatusData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _MeshProvisioningStatusData &&
-            (identical(other.state, state) ||
-                const DeepCollectionEquality().equals(other.state, state)) &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
-            (identical(other.meshNode, meshNode) ||
-                const DeepCollectionEquality()
-                    .equals(other.meshNode, meshNode)));
+            (identical(other.state, state) || const DeepCollectionEquality().equals(other.state, state)) &&
+            (identical(other.data, data) || const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.meshNode, meshNode) || const DeepCollectionEquality().equals(other.meshNode, meshNode)));
   }
 
   @override
@@ -509,9 +457,8 @@ class _$_MeshProvisioningStatusData implements _MeshProvisioningStatusData {
       const DeepCollectionEquality().hash(meshNode);
 
   @override
-  _$MeshProvisioningStatusDataCopyWith<_MeshProvisioningStatusData>
-      get copyWith => __$MeshProvisioningStatusDataCopyWithImpl<
-          _MeshProvisioningStatusData>(this, _$identity);
+  _$MeshProvisioningStatusDataCopyWith<_MeshProvisioningStatusData> get copyWith =>
+      __$MeshProvisioningStatusDataCopyWithImpl<_MeshProvisioningStatusData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -519,14 +466,11 @@ class _$_MeshProvisioningStatusData implements _MeshProvisioningStatusData {
   }
 }
 
-abstract class _MeshProvisioningStatusData
-    implements MeshProvisioningStatusData {
-  const factory _MeshProvisioningStatusData(String state, List<int> data,
-          @nullable UnprovisionedMeshNodeData meshNode) =
-      _$_MeshProvisioningStatusData;
+abstract class _MeshProvisioningStatusData implements MeshProvisioningStatusData {
+  const factory _MeshProvisioningStatusData(
+      String state, List<int> data, @nullable UnprovisionedMeshNodeData meshNode) = _$_MeshProvisioningStatusData;
 
-  factory _MeshProvisioningStatusData.fromJson(Map<String, dynamic> json) =
-      _$_MeshProvisioningStatusData.fromJson;
+  factory _MeshProvisioningStatusData.fromJson(Map<String, dynamic> json) = _$_MeshProvisioningStatusData.fromJson;
 
   @override
   String get state;
@@ -536,12 +480,10 @@ abstract class _MeshProvisioningStatusData
   @nullable
   UnprovisionedMeshNodeData get meshNode;
   @override
-  _$MeshProvisioningStatusDataCopyWith<_MeshProvisioningStatusData>
-      get copyWith;
+  _$MeshProvisioningStatusDataCopyWith<_MeshProvisioningStatusData> get copyWith;
 }
 
-MeshProvisioningCompletedData _$MeshProvisioningCompletedDataFromJson(
-    Map<String, dynamic> json) {
+MeshProvisioningCompletedData _$MeshProvisioningCompletedDataFromJson(Map<String, dynamic> json) {
   return _MeshProvisioningCompletedData.fromJson(json);
 }
 
@@ -550,8 +492,7 @@ class _$MeshProvisioningCompletedDataTearOff {
   const _$MeshProvisioningCompletedDataTearOff();
 
 // ignore: unused_element
-  _MeshProvisioningCompletedData call(String state, List<int> data,
-      @nullable ProvisionedMeshNodeData meshNode) {
+  _MeshProvisioningCompletedData call(String state, List<int> data, @nullable ProvisionedMeshNodeData meshNode) {
     return _MeshProvisioningCompletedData(
       state,
       data,
@@ -577,27 +518,21 @@ mixin _$MeshProvisioningCompletedData {
   ProvisionedMeshNodeData get meshNode;
 
   Map<String, dynamic> toJson();
-  $MeshProvisioningCompletedDataCopyWith<MeshProvisioningCompletedData>
-      get copyWith;
+  $MeshProvisioningCompletedDataCopyWith<MeshProvisioningCompletedData> get copyWith;
 }
 
 /// @nodoc
 abstract class $MeshProvisioningCompletedDataCopyWith<$Res> {
   factory $MeshProvisioningCompletedDataCopyWith(
-          MeshProvisioningCompletedData value,
-          $Res Function(MeshProvisioningCompletedData) then) =
+          MeshProvisioningCompletedData value, $Res Function(MeshProvisioningCompletedData) then) =
       _$MeshProvisioningCompletedDataCopyWithImpl<$Res>;
-  $Res call(
-      {String state,
-      List<int> data,
-      @nullable ProvisionedMeshNodeData meshNode});
+  $Res call({String state, List<int> data, @nullable ProvisionedMeshNodeData meshNode});
 
   $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
 /// @nodoc
-class _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
-    implements $MeshProvisioningCompletedDataCopyWith<$Res> {
+class _$MeshProvisioningCompletedDataCopyWithImpl<$Res> implements $MeshProvisioningCompletedDataCopyWith<$Res> {
   _$MeshProvisioningCompletedDataCopyWithImpl(this._value, this._then);
 
   final MeshProvisioningCompletedData _value;
@@ -613,9 +548,7 @@ class _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
     return _then(_value.copyWith(
       state: state == freezed ? _value.state : state as String,
       data: data == freezed ? _value.data : data as List<int>,
-      meshNode: meshNode == freezed
-          ? _value.meshNode
-          : meshNode as ProvisionedMeshNodeData,
+      meshNode: meshNode == freezed ? _value.meshNode : meshNode as ProvisionedMeshNodeData,
     ));
   }
 
@@ -631,34 +564,26 @@ class _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$MeshProvisioningCompletedDataCopyWith<$Res>
-    implements $MeshProvisioningCompletedDataCopyWith<$Res> {
+abstract class _$MeshProvisioningCompletedDataCopyWith<$Res> implements $MeshProvisioningCompletedDataCopyWith<$Res> {
   factory _$MeshProvisioningCompletedDataCopyWith(
-          _MeshProvisioningCompletedData value,
-          $Res Function(_MeshProvisioningCompletedData) then) =
+          _MeshProvisioningCompletedData value, $Res Function(_MeshProvisioningCompletedData) then) =
       __$MeshProvisioningCompletedDataCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {String state,
-      List<int> data,
-      @nullable ProvisionedMeshNodeData meshNode});
+  $Res call({String state, List<int> data, @nullable ProvisionedMeshNodeData meshNode});
 
   @override
   $ProvisionedMeshNodeDataCopyWith<$Res> get meshNode;
 }
 
 /// @nodoc
-class __$MeshProvisioningCompletedDataCopyWithImpl<$Res>
-    extends _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
+class __$MeshProvisioningCompletedDataCopyWithImpl<$Res> extends _$MeshProvisioningCompletedDataCopyWithImpl<$Res>
     implements _$MeshProvisioningCompletedDataCopyWith<$Res> {
   __$MeshProvisioningCompletedDataCopyWithImpl(
-      _MeshProvisioningCompletedData _value,
-      $Res Function(_MeshProvisioningCompletedData) _then)
+      _MeshProvisioningCompletedData _value, $Res Function(_MeshProvisioningCompletedData) _then)
       : super(_value, (v) => _then(v as _MeshProvisioningCompletedData));
 
   @override
-  _MeshProvisioningCompletedData get _value =>
-      super._value as _MeshProvisioningCompletedData;
+  _MeshProvisioningCompletedData get _value => super._value as _MeshProvisioningCompletedData;
 
   @override
   $Res call({
@@ -669,9 +594,7 @@ class __$MeshProvisioningCompletedDataCopyWithImpl<$Res>
     return _then(_MeshProvisioningCompletedData(
       state == freezed ? _value.state : state as String,
       data == freezed ? _value.data : data as List<int>,
-      meshNode == freezed
-          ? _value.meshNode
-          : meshNode as ProvisionedMeshNodeData,
+      meshNode == freezed ? _value.meshNode : meshNode as ProvisionedMeshNodeData,
     ));
   }
 }
@@ -679,15 +602,12 @@ class __$MeshProvisioningCompletedDataCopyWithImpl<$Res>
 @JsonSerializable(explicitToJson: true, anyMap: true)
 
 /// @nodoc
-class _$_MeshProvisioningCompletedData
-    implements _MeshProvisioningCompletedData {
-  const _$_MeshProvisioningCompletedData(
-      this.state, this.data, @nullable this.meshNode)
+class _$_MeshProvisioningCompletedData implements _MeshProvisioningCompletedData {
+  const _$_MeshProvisioningCompletedData(this.state, this.data, @nullable this.meshNode)
       : assert(state != null),
         assert(data != null);
 
-  factory _$_MeshProvisioningCompletedData.fromJson(
-          Map<String, dynamic> json) =>
+  factory _$_MeshProvisioningCompletedData.fromJson(Map<String, dynamic> json) =>
       _$_$_MeshProvisioningCompletedDataFromJson(json);
 
   @override
@@ -707,13 +627,9 @@ class _$_MeshProvisioningCompletedData
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _MeshProvisioningCompletedData &&
-            (identical(other.state, state) ||
-                const DeepCollectionEquality().equals(other.state, state)) &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
-            (identical(other.meshNode, meshNode) ||
-                const DeepCollectionEquality()
-                    .equals(other.meshNode, meshNode)));
+            (identical(other.state, state) || const DeepCollectionEquality().equals(other.state, state)) &&
+            (identical(other.data, data) || const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.meshNode, meshNode) || const DeepCollectionEquality().equals(other.meshNode, meshNode)));
   }
 
   @override
@@ -724,9 +640,8 @@ class _$_MeshProvisioningCompletedData
       const DeepCollectionEquality().hash(meshNode);
 
   @override
-  _$MeshProvisioningCompletedDataCopyWith<_MeshProvisioningCompletedData>
-      get copyWith => __$MeshProvisioningCompletedDataCopyWithImpl<
-          _MeshProvisioningCompletedData>(this, _$identity);
+  _$MeshProvisioningCompletedDataCopyWith<_MeshProvisioningCompletedData> get copyWith =>
+      __$MeshProvisioningCompletedDataCopyWithImpl<_MeshProvisioningCompletedData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -734,11 +649,9 @@ class _$_MeshProvisioningCompletedData
   }
 }
 
-abstract class _MeshProvisioningCompletedData
-    implements MeshProvisioningCompletedData {
-  const factory _MeshProvisioningCompletedData(String state, List<int> data,
-          @nullable ProvisionedMeshNodeData meshNode) =
-      _$_MeshProvisioningCompletedData;
+abstract class _MeshProvisioningCompletedData implements MeshProvisioningCompletedData {
+  const factory _MeshProvisioningCompletedData(
+      String state, List<int> data, @nullable ProvisionedMeshNodeData meshNode) = _$_MeshProvisioningCompletedData;
 
   factory _MeshProvisioningCompletedData.fromJson(Map<String, dynamic> json) =
       _$_MeshProvisioningCompletedData.fromJson;
@@ -751,6 +664,5 @@ abstract class _MeshProvisioningCompletedData
   @nullable
   ProvisionedMeshNodeData get meshNode;
   @override
-  _$MeshProvisioningCompletedDataCopyWith<_MeshProvisioningCompletedData>
-      get copyWith;
+  _$MeshProvisioningCompletedDataCopyWith<_MeshProvisioningCompletedData> get copyWith;
 }

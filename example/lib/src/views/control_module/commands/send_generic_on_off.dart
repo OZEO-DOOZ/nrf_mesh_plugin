@@ -48,31 +48,23 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
               ? () async {
                   final scaffoldState = Scaffold.of(context);
                   print('send level $onOff to $selectedElementAddress');
-                  final provisionerUuid = await widget
-                      .meshManagerApi.meshNetwork
-                      .selectedProvisionerUuid();
+                  final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
                   final nodes = await widget.meshManagerApi.meshNetwork.nodes;
 
-                  final provisionedNode = nodes.firstWhere(
-                      (element) => element.uuid == provisionerUuid,
-                      orElse: () => null);
-                  final sequenceNumber = await widget.meshManagerApi
-                      .getSequenceNumber(provisionedNode);
+                  final provisionedNode =
+                      nodes.firstWhere((element) => element.uuid == provisionerUuid, orElse: () => null);
+                  final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
                   try {
                     await widget.meshManagerApi
-                        .sendGenericOnOffSet(
-                            selectedElementAddress, onOff, sequenceNumber)
+                        .sendGenericOnOffSet(selectedElementAddress, onOff, sequenceNumber)
                         .timeout(Duration(seconds: 40));
                     scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
                   } on TimeoutException catch (_) {
-                    scaffoldState.showSnackBar(
-                        SnackBar(content: Text('Board didn\'t respond')));
+                    scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
                   } on PlatformException catch (e) {
-                    scaffoldState
-                        .showSnackBar(SnackBar(content: Text(e.message)));
+                    scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
                   } catch (e) {
-                    scaffoldState
-                        .showSnackBar(SnackBar(content: Text(e.toString())));
+                    scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
                   }
                 }
               : null,
