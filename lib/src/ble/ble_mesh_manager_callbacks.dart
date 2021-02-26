@@ -14,26 +14,36 @@ abstract class _BleMeshManagerCallbacksEvent {
   String toString() => '$device, $mtu, $pdu';
 }
 
-class BleMeshManagerCallbacksDataReceived extends _BleMeshManagerCallbacksEvent {
-  const BleMeshManagerCallbacksDataReceived(BluetoothDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
+class BleMeshManagerCallbacksDataReceived
+    extends _BleMeshManagerCallbacksEvent {
+  const BleMeshManagerCallbacksDataReceived(
+      BluetoothDevice device, int mtu, List<int> pdu)
+      : super(device, mtu, pdu);
 
   @override
-  String toString() => 'BleMeshManagerCallbacksDataReceived{ ${super.toString()} }';
+  String toString() =>
+      'BleMeshManagerCallbacksDataReceived{ ${super.toString()} }';
 }
 
 class BleMeshManagerCallbacksDataSent extends _BleMeshManagerCallbacksEvent {
-  const BleMeshManagerCallbacksDataSent(BluetoothDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
+  const BleMeshManagerCallbacksDataSent(
+      BluetoothDevice device, int mtu, List<int> pdu)
+      : super(device, mtu, pdu);
 
   @override
   String toString() => 'BleMeshManagerCallbacksDataSent{ ${super.toString()} }';
 }
 
 abstract class BleMeshManagerCallbacks extends BleManagerCallbacks {
-  final onDataReceivedController = StreamController<BleMeshManagerCallbacksDataReceived>();
-  Stream<BleMeshManagerCallbacksDataReceived> get onDataReceived => onDataReceivedController.stream;
+  final onDataReceivedController =
+      StreamController<BleMeshManagerCallbacksDataReceived>();
+  Stream<BleMeshManagerCallbacksDataReceived> get onDataReceived =>
+      onDataReceivedController.stream;
 
-  final onDataSentController = StreamController<BleMeshManagerCallbacksDataSent>();
-  Stream<BleMeshManagerCallbacksDataSent> get onDataSent => onDataSentController.stream;
+  final onDataSentController =
+      StreamController<BleMeshManagerCallbacksDataSent>();
+  Stream<BleMeshManagerCallbacksDataSent> get onDataSent =>
+      onDataSentController.stream;
 
   @override
   Future<void> dispose() => Future.wait([

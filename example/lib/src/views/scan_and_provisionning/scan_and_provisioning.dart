@@ -10,10 +10,12 @@ import 'package:pedantic/pedantic.dart';
 class ScanningAndProvisioning extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
 
-  const ScanningAndProvisioning({Key key, @required this.nordicNrfMesh}) : super(key: key);
+  const ScanningAndProvisioning({Key key, @required this.nordicNrfMesh})
+      : super(key: key);
 
   @override
-  _ScanningAndProvisioningState createState() => _ScanningAndProvisioningState();
+  _ScanningAndProvisioningState createState() =>
+      _ScanningAndProvisioningState();
 }
 
 class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
@@ -80,8 +82,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         meshProvisioningUuid,
       ],
     ).listen((scanResult) async {
-      _serviceData[scanResult.device.id.id] = Guid(_meshManagerApi
-          .getDeviceUuid(scanResult.advertisementData.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
+      _serviceData[scanResult.device.id.id] = Guid(
+          _meshManagerApi.getDeviceUuid(scanResult.advertisementData
+              .serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
       setState(() {
         _devices.add(scanResult.device);
       });
@@ -137,10 +140,12 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
+        scaffoldState
+            .showSnackBar(SnackBar(content: Text('Provisionning succeed')));
       }).catchError((_) {
         Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning failed')));
+        scaffoldState
+            .showSnackBar(SnackBar(content: Text('Provisionning failed')));
       }));
       await showDialog(
         context: context,
@@ -203,7 +208,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 class ProvisioningDialog extends StatelessWidget {
   final ProvisioningEvent provisioningEvent;
 
-  const ProvisioningDialog({Key key, @required this.provisioningEvent}) : super(key: key);
+  const ProvisioningDialog({Key key, @required this.provisioningEvent})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -224,23 +230,28 @@ class ProvisioningDialog extends StatelessWidget {
                     children: [
                       ProvisioningState(
                         text: 'onProvisioningCapabilities',
-                        stream: provisioningEvent.onProvisioningCapabilities.map((event) => true),
+                        stream: provisioningEvent.onProvisioningCapabilities
+                            .map((event) => true),
                       ),
                       ProvisioningState(
                         text: 'onProvisioning',
-                        stream: provisioningEvent.onProvisioning.map((event) => true),
+                        stream: provisioningEvent.onProvisioning
+                            .map((event) => true),
                       ),
                       ProvisioningState(
                         text: 'onProvisioningReconnect',
-                        stream: provisioningEvent.onProvisioningReconnect.map((event) => true),
+                        stream: provisioningEvent.onProvisioningReconnect
+                            .map((event) => true),
                       ),
                       ProvisioningState(
                         text: 'onConfigCompositionDataStatus',
-                        stream: provisioningEvent.onConfigCompositionDataStatus.map((event) => true),
+                        stream: provisioningEvent.onConfigCompositionDataStatus
+                            .map((event) => true),
                       ),
                       ProvisioningState(
                         text: 'onConfigAppKeyStatus',
-                        stream: provisioningEvent.onConfigAppKeyStatus.map((event) => true),
+                        stream: provisioningEvent.onConfigAppKeyStatus
+                            .map((event) => true),
                       ),
                     ],
                   )
@@ -258,7 +269,8 @@ class ProvisioningState extends StatelessWidget {
   final Stream<bool> stream;
   final String text;
 
-  const ProvisioningState({Key key, @required this.stream, @required this.text}) : super(key: key);
+  const ProvisioningState({Key key, @required this.stream, @required this.text})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

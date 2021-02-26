@@ -22,30 +22,47 @@ import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/mesh_network.dart';
 
 class MeshManagerApi {
-  final _methodChannel = const MethodChannel('$namespace/mesh_manager_api/methods');
-  final _eventChannel = const EventChannel('$namespace/mesh_manager_api/events');
+  final _methodChannel =
+      const MethodChannel('$namespace/mesh_manager_api/methods');
+  final _eventChannel =
+      const EventChannel('$namespace/mesh_manager_api/events');
 
-  final _onNetworkLoadedStreamController = StreamController<MeshNetwork>.broadcast();
-  final _onNetworkImportedController = StreamController<MeshNetwork>.broadcast();
+  final _onNetworkLoadedStreamController =
+      StreamController<MeshNetwork>.broadcast();
+  final _onNetworkImportedController =
+      StreamController<MeshNetwork>.broadcast();
   final _onNetworkUpdatedController = StreamController<MeshNetwork>.broadcast();
 
   final _onMeshPduCreatedController = StreamController<List<int>>.broadcast();
-  final _sendProvisioningPduController = StreamController<SendProvisioningPduData>.broadcast();
+  final _sendProvisioningPduController =
+      StreamController<SendProvisioningPduData>.broadcast();
 
-  final _onProvisioningStateChangedController = StreamController<MeshProvisioningStatusData>.broadcast();
-  final _onProvisioningFailedController = StreamController<MeshProvisioningStatusData>.broadcast();
-  final _onProvisioningCompletedController = StreamController<MeshProvisioningCompletedData>.broadcast();
+  final _onProvisioningStateChangedController =
+      StreamController<MeshProvisioningStatusData>.broadcast();
+  final _onProvisioningFailedController =
+      StreamController<MeshProvisioningStatusData>.broadcast();
+  final _onProvisioningCompletedController =
+      StreamController<MeshProvisioningCompletedData>.broadcast();
 
-  final _onConfigCompositionDataStatusController = StreamController<ConfigCompositionDataStatusData>.broadcast();
-  final _onConfigAppKeyStatusController = StreamController<ConfigAppKeyStatusData>.broadcast();
-  final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
-  final _onV2MagicLevelSetStatusController = StreamController<MagicLevelSetStatusData>.broadcast();
-  final _onV2MagicLevelGetStatusController = StreamController<MagicLevelGetStatusData>.broadcast();
+  final _onConfigCompositionDataStatusController =
+      StreamController<ConfigCompositionDataStatusData>.broadcast();
+  final _onConfigAppKeyStatusController =
+      StreamController<ConfigAppKeyStatusData>.broadcast();
+  final _onGenericLevelStatusController =
+      StreamController<GenericLevelStatusData>.broadcast();
+  final _onV2MagicLevelSetStatusController =
+      StreamController<MagicLevelSetStatusData>.broadcast();
+  final _onV2MagicLevelGetStatusController =
+      StreamController<MagicLevelGetStatusData>.broadcast();
 
-  final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
-  final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
-  final _onConfigModelSubscriptionStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
-  final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
+  final _onGenericOnOffStatusController =
+      StreamController<GenericOnOffStatusData>.broadcast();
+  final _onConfigModelAppStatusController =
+      StreamController<ConfigModelAppStatusData>.broadcast();
+  final _onConfigModelSubscriptionStatusController =
+      StreamController<ConfigModelSubscriptionStatus>.broadcast();
+  final _onConfigModelPublicationStatusController =
+      StreamController<ConfigModelPublicationStatus>.broadcast();
 
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
@@ -54,18 +71,27 @@ class MeshManagerApi {
   StreamSubscription<MeshNetworkEventError> _onNetworkImportFailedSubscripiton;
   StreamSubscription<List<int>> _onMeshPduCreatedSubscription;
   StreamSubscription<SendProvisioningPduData> _sendProvisioningPduSubscription;
-  StreamSubscription<MeshProvisioningStatusData> _onProvisioningStateChangedSubscription;
-  StreamSubscription<MeshProvisioningStatusData> _onProvisioningFailedSubscription;
-  StreamSubscription<MeshProvisioningCompletedData> _onProvisioningCompletedSubscription;
-  StreamSubscription<ConfigCompositionDataStatusData> _onConfigCompositionDataStatusSubscription;
+  StreamSubscription<MeshProvisioningStatusData>
+      _onProvisioningStateChangedSubscription;
+  StreamSubscription<MeshProvisioningStatusData>
+      _onProvisioningFailedSubscription;
+  StreamSubscription<MeshProvisioningCompletedData>
+      _onProvisioningCompletedSubscription;
+  StreamSubscription<ConfigCompositionDataStatusData>
+      _onConfigCompositionDataStatusSubscription;
   StreamSubscription<ConfigAppKeyStatusData> _onConfigAppKeyStatusSubscription;
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
-  StreamSubscription<MagicLevelSetStatusData> _onV2MagicLevelSetStatusSubscription;
-  StreamSubscription<MagicLevelGetStatusData> _onV2MagicLevelGetStatusSubscription;
-  StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
-  StreamSubscription<ConfigModelSubscriptionStatus> _onConfigModelSubscriptionStatusSubscription;
-  StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
+  StreamSubscription<MagicLevelSetStatusData>
+      _onV2MagicLevelSetStatusSubscription;
+  StreamSubscription<MagicLevelGetStatusData>
+      _onV2MagicLevelGetStatusSubscription;
+  StreamSubscription<ConfigModelAppStatusData>
+      _onConfigModelAppStatusSubscription;
+  StreamSubscription<ConfigModelSubscriptionStatus>
+      _onConfigModelSubscriptionStatusSubscription;
+  StreamSubscription<ConfigModelPublicationStatus>
+      _onConfigModelPublicationStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
@@ -79,111 +105,149 @@ class MeshManagerApi {
         .doOnData(print);
 
     _onNetworkLoadedSubscription =
-        _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded).listen(_onNetworkLoadedStreamController.add);
+        _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded)
+            .listen(_onNetworkLoadedStreamController.add);
     _onNetworkImportedSubscription =
-        _onMeshNetworkEventSucceed(MeshManagerApiEvent.imported).listen(_onNetworkImportedController.add);
+        _onMeshNetworkEventSucceed(MeshManagerApiEvent.imported)
+            .listen(_onNetworkImportedController.add);
     _onNetworkUpdatedSubscription =
-        _onMeshNetworkEventSucceed(MeshManagerApiEvent.updated).listen(_onNetworkUpdatedController.add);
+        _onMeshNetworkEventSucceed(MeshManagerApiEvent.updated)
+            .listen(_onNetworkUpdatedController.add);
 
     _onNetworkLoadFailedSubscription =
-        _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed).listen(_onNetworkLoadedStreamController.addError);
+        _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed)
+            .listen(_onNetworkLoadedStreamController.addError);
     _onNetworkImportFailedSubscripiton =
-        _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportedController.addError);
+        _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed)
+            .listen(_onNetworkImportedController.addError);
 
     _onMeshPduCreatedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.meshPduCreated.value)
+        .where((event) =>
+            event['eventName'] == MeshManagerApiEvent.meshPduCreated.value)
         .map((event) => event['pdu'] as List)
         .map((event) => event.cast<int>())
         .listen(_onMeshPduCreatedController.add);
 
     _sendProvisioningPduSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.sendProvisioningPdu.value)
+        .where((event) =>
+            event['eventName'] == MeshManagerApiEvent.sendProvisioningPdu.value)
         .map((event) => SendProvisioningPduData.fromJson(event))
         .listen(_sendProvisioningPduController.add);
 
     _onProvisioningStateChangedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningStateChanged.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.provisioningStateChanged.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningStateChangedController.add);
 
     _onProvisioningCompletedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningCompleted.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.provisioningCompleted.value)
         .map((event) => MeshProvisioningCompletedData.fromJson(event))
         .listen(_onProvisioningCompletedController.add);
 
     _onProvisioningFailedSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningFailed.value)
+        .where((event) =>
+            event['eventName'] == MeshManagerApiEvent.provisioningFailed.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningFailedController.add);
 
     _onConfigCompositionDataStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.configCompositionDataStatus.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.configCompositionDataStatus.value)
         .map((event) => ConfigCompositionDataStatusData.fromJson(event))
         .listen(_onConfigCompositionDataStatusController.add);
     _onConfigAppKeyStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.configAppKeyStatus.value)
+        .where((event) =>
+            event['eventName'] == MeshManagerApiEvent.configAppKeyStatus.value)
         .map((event) => ConfigAppKeyStatusData.fromJson(event))
         .listen(_onConfigAppKeyStatusController.add);
     _onGenericLevelStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.genericLevelStatus.value)
+        .where((event) =>
+            event['eventName'] == MeshManagerApiEvent.genericLevelStatus.value)
         .map((event) => GenericLevelStatusData.fromJson(event))
         .listen(_onGenericLevelStatusController.add);
     _onGenericOnOffStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.genericOnOffStatus.value)
+        .where((event) =>
+            event['eventName'] == MeshManagerApiEvent.genericOnOffStatus.value)
         .map((event) => GenericOnOffStatusData.fromJson(event))
         .listen(_onGenericOnOffStatusController.add);
     _onV2MagicLevelSetStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelSetStatus.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.v2MagicLevelSetStatus.value)
         .map((event) => MagicLevelSetStatusData.fromJson(event))
         .listen(_onV2MagicLevelSetStatusController.add);
     _onV2MagicLevelGetStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelGetStatus.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.v2MagicLevelGetStatus.value)
         .map((event) => MagicLevelGetStatusData.fromJson(event))
         .listen(_onV2MagicLevelGetStatusController.add);
 
     _onConfigModelAppStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.configModelAppStatus.value)
         .map((event) => ConfigModelAppStatusData.fromJson(event))
         .listen(_onConfigModelAppStatusController.add);
     _onConfigModelSubscriptionStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelSubscriptionStatus.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.configModelSubscriptionStatus.value)
         .map((event) => ConfigModelSubscriptionStatus.fromJson(event))
         .listen(_onConfigModelSubscriptionStatusController.add);
     _onConfigModelPublicationStatusSubscription = _eventChannelStream
-        .where((event) => event['eventName'] == MeshManagerApiEvent.configModelPublicationStatus.value)
+        .where((event) =>
+            event['eventName'] ==
+            MeshManagerApiEvent.configModelPublicationStatus.value)
         .map((event) => ConfigModelPublicationStatus.fromJson(event))
         .listen(_onConfigModelPublicationStatusController.add);
   }
 
-  Stream<IMeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
+  Stream<IMeshNetwork> get onNetworkLoaded =>
+      _onNetworkLoadedStreamController.stream;
 
-  Stream<IMeshNetwork> get onNetworkImported => _onNetworkImportedController.stream;
+  Stream<IMeshNetwork> get onNetworkImported =>
+      _onNetworkImportedController.stream;
 
-  Stream<IMeshNetwork> get onNetworkUpdated => _onNetworkUpdatedController.stream;
+  Stream<IMeshNetwork> get onNetworkUpdated =>
+      _onNetworkUpdatedController.stream;
 
   Stream<List<int>> get onMeshPduCreated => _onMeshPduCreatedController.stream;
 
-  Stream<SendProvisioningPduData> get sendProvisioningPdu => _sendProvisioningPduController.stream;
+  Stream<SendProvisioningPduData> get sendProvisioningPdu =>
+      _sendProvisioningPduController.stream;
 
-  Stream<MeshProvisioningStatusData> get onProvisioningStateChanged => _onProvisioningStateChangedController.stream;
+  Stream<MeshProvisioningStatusData> get onProvisioningStateChanged =>
+      _onProvisioningStateChangedController.stream;
 
-  Stream<MeshProvisioningCompletedData> get onProvisioningCompleted => _onProvisioningCompletedController.stream;
+  Stream<MeshProvisioningCompletedData> get onProvisioningCompleted =>
+      _onProvisioningCompletedController.stream;
 
-  Stream<MeshProvisioningStatusData> get onProvisioningFailed => _onProvisioningFailedController.stream;
+  Stream<MeshProvisioningStatusData> get onProvisioningFailed =>
+      _onProvisioningFailedController.stream;
 
   Stream<ConfigCompositionDataStatusData> get onConfigCompositionDataStatus =>
       _onConfigCompositionDataStatusController.stream;
 
-  Stream<ConfigAppKeyStatusData> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+  Stream<ConfigAppKeyStatusData> get onConfigAppKeyStatus =>
+      _onConfigAppKeyStatusController.stream;
 
-  Stream<GenericLevelStatusData> get onGenericLevelStatus => _onGenericLevelStatusController.stream;
+  Stream<GenericLevelStatusData> get onGenericLevelStatus =>
+      _onGenericLevelStatusController.stream;
 
-  Stream<GenericOnOffStatusData> get onGenericOnOffStatus => _onGenericOnOffStatusController.stream;
+  Stream<GenericOnOffStatusData> get onGenericOnOffStatus =>
+      _onGenericOnOffStatusController.stream;
 
-  Stream<MagicLevelSetStatusData> get onV2MagicLevelSetStatus => _onV2MagicLevelSetStatusController.stream;
+  Stream<MagicLevelSetStatusData> get onV2MagicLevelSetStatus =>
+      _onV2MagicLevelSetStatusController.stream;
 
-  Stream<MagicLevelGetStatusData> get onV2MagicLevelGetStatus => _onV2MagicLevelGetStatusController.stream;
-
+  Stream<MagicLevelGetStatusData> get onV2MagicLevelGetStatus =>
+      _onV2MagicLevelGetStatusController.stream;
 
   IMeshNetwork get meshNetwork => _lastMeshNetwork;
 
@@ -231,6 +295,8 @@ class MeshManagerApi {
         _onConfigModelAppStatusController.close(),
         _onConfigModelSubscriptionStatusController.close(),
         _onConfigModelPublicationStatusController.close(),
+        _onV2MagicLevelSetStatusController.close(),
+        _onV2MagicLevelGetStatusController.close(),
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
@@ -245,22 +311,26 @@ class MeshManagerApi {
     return future;
   }
 
-  Future<void> setMtu(final int mtuSize) => _methodChannel.invokeMethod('setMtuSize', {'mtuSize': mtuSize});
+  Future<void> setMtu(final int mtuSize) =>
+      _methodChannel.invokeMethod('setMtuSize', {'mtuSize': mtuSize});
 
-  Future<String> exportMeshNetwork() => _methodChannel.invokeMethod('exportMeshNetwork');
+  Future<String> exportMeshNetwork() =>
+      _methodChannel.invokeMethod('exportMeshNetwork');
 
-  Future<void> resetMeshNetwork() => _methodChannel.invokeMethod('resetMeshNetwork');
+  Future<void> resetMeshNetwork() =>
+      _methodChannel.invokeMethod('resetMeshNetwork');
 
-  Future<void> handleNotifications(int mtu, List<int> pdu) =>
-      _methodChannel.invokeMethod('handleNotifications', {'mtu': mtu, 'pdu': pdu});
+  Future<void> handleNotifications(int mtu, List<int> pdu) => _methodChannel
+      .invokeMethod('handleNotifications', {'mtu': mtu, 'pdu': pdu});
 
-  Future<void> handleWriteCallbacks(int mtu, List<int> pdu) =>
-      _methodChannel.invokeMethod('handleWriteCallbacks', {'mtu': mtu, 'pdu': pdu});
+  Future<void> handleWriteCallbacks(int mtu, List<int> pdu) => _methodChannel
+      .invokeMethod('handleWriteCallbacks', {'mtu': mtu, 'pdu': pdu});
 
   Future<void> identifyNode(String serviceUuid) =>
       _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
 
-  Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
+  Future<void> cleanProvisioningData() =>
+      _methodChannel.invokeMethod('cleanProvisioningData');
 
   Future<GenericLevelStatusData> sendGenericLevelSet(
     int address,
@@ -271,8 +341,8 @@ class MeshManagerApi {
     int transitionResolution,
     int delay,
   }) async {
-    final status =
-        _onGenericLevelStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+    final status = _onGenericLevelStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
     await _methodChannel.invokeMethod('sendGenericLevelSet', {
       'address': address,
       'level': level,
@@ -294,8 +364,9 @@ class MeshManagerApi {
     int transitionResolution,
     int delay,
   }) async {
-    final status = _onGenericOnOffStatusController.stream
-        .firstWhere((element) => element.source == address && element.presentState == value, orElse: () => null);
+    final status = _onGenericOnOffStatusController.stream.firstWhere(
+        (element) => element.source == address && element.presentState == value,
+        orElse: () => null);
     await _methodChannel.invokeMethod('sendGenericOnOffSet', {
       'address': address,
       'value': value,
@@ -309,16 +380,16 @@ class MeshManagerApi {
   }
 
   Future<MagicLevelSetStatusData> sendV2MagicLevelSet(
-      int address,
-      int io,
-      int index,
-      int value,
-      int correlation,
-      int sequenceNumber, {
-        int keyIndex = 0,
-      }) async {
-    final status =
-    _onV2MagicLevelSetStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+    int address,
+    int io,
+    int index,
+    int value,
+    int correlation,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    final status = _onV2MagicLevelSetStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
     await _methodChannel.invokeMethod('sendV2MagicLevel', {
       'io': io,
       'index': index,
@@ -332,16 +403,16 @@ class MeshManagerApi {
   }
 
   Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
-      int address,
-      int io,
-      int index,
-      int value,
-      int correlation,
-      int sequenceNumber, {
-        int keyIndex = 0,
-      }) async {
-    final status =
-    _onV2MagicLevelGetStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+    int address,
+    int io,
+    int index,
+    int value,
+    int correlation,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    final status = _onV2MagicLevelGetStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
     await _methodChannel.invokeMethod('getV2MagicLevel', {
       'io': io,
       'index': index,
@@ -353,16 +424,20 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<void> sendConfigCompositionDataGet(int dest) =>
-      _methodChannel.invokeMethod('sendConfigCompositionDataGet', {'dest': dest});
+  Future<void> sendConfigCompositionDataGet(int dest) => _methodChannel
+      .invokeMethod('sendConfigCompositionDataGet', {'dest': dest});
 
-  Future<void> sendConfigAppKeyAdd(int dest) => _methodChannel.invokeMethod('sendConfigAppKeyAdd', {'dest': dest});
+  Future<void> sendConfigAppKeyAdd(int dest) =>
+      _methodChannel.invokeMethod('sendConfigAppKeyAdd', {'dest': dest});
 
-  Future<ConfigModelAppStatusData> sendConfigModelAppBind(int nodeId, int elementId, int modelId,
+  Future<ConfigModelAppStatusData> sendConfigModelAppBind(
+      int nodeId, int elementId, int modelId,
       {int appKeyIndex = 0}) async {
     final status = _onConfigModelAppStatusController.stream.firstWhere(
         (element) =>
-            element.elementAddress == elementId && element.modelId == modelId && element.appKeyIndex == appKeyIndex,
+            element.elementAddress == elementId &&
+            element.modelId == modelId &&
+            element.appKeyIndex == appKeyIndex,
         orElse: () => null);
     await _methodChannel.invokeMethod('sendConfigModelAppBind', {
       'nodeId': nodeId,
@@ -374,7 +449,10 @@ class MeshManagerApi {
   }
 
   Future<ConfigModelSubscriptionStatus> sendConfigModelSubscriptionAdd(
-      int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
+      int address,
+      int elementAddress,
+      int subscriptionAddress,
+      int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
         (element) =>
             element.elementAddress == elementAddress &&
@@ -390,8 +468,8 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<void> sendConfigModelSubscriptionDelete(
-      int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
+  Future<void> sendConfigModelSubscriptionDelete(int address,
+      int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
         (element) =>
             element.elementAddress == elementAddress &&
@@ -459,14 +537,16 @@ class MeshManagerApi {
     return '${_digits(msb >> 32, 8)}-${_digits(msb >> 16, 4)}-${_digits(msb, 4)}-${_digits(lsb >> 48, 4)}-${_digits(lsb, 12)}';
   }
 
-  Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
+  Future<void> provisioningIos(String uuid) =>
+      _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
 
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
   Future<int> getSequenceNumber(ProvisionedMeshNode node) async {
     if (Platform.isIOS) {
-      return _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': await node.unicastAddress});
+      return _methodChannel.invokeMethod('getSequenceNumberForAddress',
+          {'address': await node.unicastAddress});
     } else if (Platform.isAndroid) {
       return node.sequenceNumber;
     }
@@ -478,17 +558,24 @@ class MeshManagerApi {
     return (hi | (val & (hi - 1))).toRadixString(16).substring(1);
   }
 
-  Stream<Map<String, Object>> _filterEventChannel(final MeshManagerApiEvent eventType) =>
-      _eventChannelStream.where((event) => event['eventName'] == eventType.value);
+  Stream<Map<String, Object>> _filterEventChannel(
+          final MeshManagerApiEvent eventType) =>
+      _eventChannelStream
+          .where((event) => event['eventName'] == eventType.value);
 
-  Stream<MeshNetwork> _onMeshNetworkEventSucceed(final MeshManagerApiEvent eventType) =>
-      _filterEventChannel(eventType).map((event) => MeshNetworkEventData.fromJson(event)).map((event) {
+  Stream<MeshNetwork> _onMeshNetworkEventSucceed(
+          final MeshManagerApiEvent eventType) =>
+      _filterEventChannel(eventType)
+          .map((event) => MeshNetworkEventData.fromJson(event))
+          .map((event) {
         if (eventType == MeshManagerApiEvent.updated) {
           return _lastMeshNetwork;
         }
         return MeshNetwork(event.id);
       }).doOnData((event) => _lastMeshNetwork = event);
 
-  Stream<MeshNetworkEventError> _onMeshNetworkEventFailed(final MeshManagerApiEvent eventType) =>
-      _filterEventChannel(eventType).map((event) => MeshNetworkEventError.fromJson(event));
+  Stream<MeshNetworkEventError> _onMeshNetworkEventFailed(
+          final MeshManagerApiEvent eventType) =>
+      _filterEventChannel(eventType)
+          .map((event) => MeshNetworkEventError.fromJson(event));
 }

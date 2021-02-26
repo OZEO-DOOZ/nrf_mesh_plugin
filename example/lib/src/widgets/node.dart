@@ -21,7 +21,8 @@ class _NodeState extends State<Node> {
   void initState() {
     super.initState();
     _nodeUuid = widget.node.uuid;
-    widget.node.unicastAddress.then((value) => setState(() => _nodeAdress = value.toString()));
+    widget.node.unicastAddress
+        .then((value) => setState(() => _nodeAdress = value.toString()));
   }
 
   @override
@@ -33,7 +34,8 @@ class _NodeState extends State<Node> {
       onExpansionChanged: (isOpen) {
         if (isOpen) {
           print('load elements');
-          widget.node.elements.then((value) => setState(() => _elements = value));
+          widget.node.elements
+              .then((value) => setState(() => _elements = value));
         }
       },
       children: <Widget>[

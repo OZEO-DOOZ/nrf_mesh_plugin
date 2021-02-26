@@ -13,7 +13,10 @@ class MeshElement extends StatelessWidget {
       children: <Widget>[
         Text('address : ${element.address}'),
         Row(
-          children: <Widget>[Text('Models: '), ...element.models.map((e) => Model(e))],
+          children: <Widget>[
+            Text('Models: '),
+            ...element.models.map((e) => Model(e))
+          ],
         )
       ],
     );

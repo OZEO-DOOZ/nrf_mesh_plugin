@@ -10,7 +10,11 @@ class Model extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      children: <Widget>[Text(' ${model.modelId} '), appKeyBindIcon(), Text(', ')],
+      children: <Widget>[
+        Text(' ${model.modelId} '),
+        appKeyBindIcon(),
+        Text(', ')
+      ],
     );
   }
 

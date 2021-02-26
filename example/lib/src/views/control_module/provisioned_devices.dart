@@ -66,7 +66,9 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return Module(device: _devices.elementAt(i), meshManagerApi: _meshManagerApi);
+                            return Module(
+                                device: _devices.elementAt(i),
+                                meshManagerApi: _meshManagerApi);
                           },
                         ),
                       );
