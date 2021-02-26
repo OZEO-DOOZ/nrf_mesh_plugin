@@ -16,6 +16,5 @@ abstract class LightCtlStatusData with _$LightCtlStatusData {
       int source,
       int destination) = _LightCtlStatusData;
 
-  factory LightCtlStatusData.fromJson(Map<String, dynamic> json) =>
-      _$LightCtlStatusDataFromJson(json);
+  factory LightCtlStatusData.fromJson(Map<String, dynamic> json) => _$LightCtlStatusDataFromJson(json);
 }

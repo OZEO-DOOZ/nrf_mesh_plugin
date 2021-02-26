@@ -17,8 +17,8 @@ class _$GroupDataTearOff {
   const _$GroupDataTearOff();
 
 // ignore: unused_element
-  _GroupData call(String name, int address, @nullable String addressLabel,
-      String meshUuid, int parentAddress, @nullable String parentAddressLabel) {
+  _GroupData call(String name, int address, @nullable String addressLabel, String meshUuid, int parentAddress,
+      @nullable String parentAddressLabel) {
     return _GroupData(
       name,
       address,
@@ -56,8 +56,7 @@ mixin _$GroupData {
 
 /// @nodoc
 abstract class $GroupDataCopyWith<$Res> {
-  factory $GroupDataCopyWith(GroupData value, $Res Function(GroupData) then) =
-      _$GroupDataCopyWithImpl<$Res>;
+  factory $GroupDataCopyWith(GroupData value, $Res Function(GroupData) then) = _$GroupDataCopyWithImpl<$Res>;
   $Res call(
       {String name,
       int address,
@@ -87,25 +86,17 @@ class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
     return _then(_value.copyWith(
       name: name == freezed ? _value.name : name as String,
       address: address == freezed ? _value.address : address as int,
-      addressLabel: addressLabel == freezed
-          ? _value.addressLabel
-          : addressLabel as String,
+      addressLabel: addressLabel == freezed ? _value.addressLabel : addressLabel as String,
       meshUuid: meshUuid == freezed ? _value.meshUuid : meshUuid as String,
-      parentAddress: parentAddress == freezed
-          ? _value.parentAddress
-          : parentAddress as int,
-      parentAddressLabel: parentAddressLabel == freezed
-          ? _value.parentAddressLabel
-          : parentAddressLabel as String,
+      parentAddress: parentAddress == freezed ? _value.parentAddress : parentAddress as int,
+      parentAddressLabel: parentAddressLabel == freezed ? _value.parentAddressLabel : parentAddressLabel as String,
     ));
   }
 }
 
 /// @nodoc
 abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
-  factory _$GroupDataCopyWith(
-          _GroupData value, $Res Function(_GroupData) then) =
-      __$GroupDataCopyWithImpl<$Res>;
+  factory _$GroupDataCopyWith(_GroupData value, $Res Function(_GroupData) then) = __$GroupDataCopyWithImpl<$Res>;
   @override
   $Res call(
       {String name,
@@ -117,8 +108,7 @@ abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
-    implements _$GroupDataCopyWith<$Res> {
+class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res> implements _$GroupDataCopyWith<$Res> {
   __$GroupDataCopyWithImpl(_GroupData _value, $Res Function(_GroupData) _then)
       : super(_value, (v) => _then(v as _GroupData));
 
@@ -140,9 +130,7 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
       addressLabel == freezed ? _value.addressLabel : addressLabel as String,
       meshUuid == freezed ? _value.meshUuid : meshUuid as String,
       parentAddress == freezed ? _value.parentAddress : parentAddress as int,
-      parentAddressLabel == freezed
-          ? _value.parentAddressLabel
-          : parentAddressLabel as String,
+      parentAddressLabel == freezed ? _value.parentAddressLabel : parentAddressLabel as String,
     ));
   }
 }
@@ -151,15 +139,14 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_GroupData implements _GroupData {
-  const _$_GroupData(this.name, this.address, @nullable this.addressLabel,
-      this.meshUuid, this.parentAddress, @nullable this.parentAddressLabel)
+  const _$_GroupData(this.name, this.address, @nullable this.addressLabel, this.meshUuid, this.parentAddress,
+      @nullable this.parentAddressLabel)
       : assert(name != null),
         assert(address != null),
         assert(meshUuid != null),
         assert(parentAddress != null);
 
-  factory _$_GroupData.fromJson(Map<String, dynamic> json) =>
-      _$_$_GroupDataFromJson(json);
+  factory _$_GroupData.fromJson(Map<String, dynamic> json) => _$_$_GroupDataFromJson(json);
 
   @override
   final String name;
@@ -185,23 +172,15 @@ class _$_GroupData implements _GroupData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _GroupData &&
-            (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality()
-                    .equals(other.address, address)) &&
+            (identical(other.name, name) || const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.address, address) || const DeepCollectionEquality().equals(other.address, address)) &&
             (identical(other.addressLabel, addressLabel) ||
-                const DeepCollectionEquality()
-                    .equals(other.addressLabel, addressLabel)) &&
-            (identical(other.meshUuid, meshUuid) ||
-                const DeepCollectionEquality()
-                    .equals(other.meshUuid, meshUuid)) &&
+                const DeepCollectionEquality().equals(other.addressLabel, addressLabel)) &&
+            (identical(other.meshUuid, meshUuid) || const DeepCollectionEquality().equals(other.meshUuid, meshUuid)) &&
             (identical(other.parentAddress, parentAddress) ||
-                const DeepCollectionEquality()
-                    .equals(other.parentAddress, parentAddress)) &&
+                const DeepCollectionEquality().equals(other.parentAddress, parentAddress)) &&
             (identical(other.parentAddressLabel, parentAddressLabel) ||
-                const DeepCollectionEquality()
-                    .equals(other.parentAddressLabel, parentAddressLabel)));
+                const DeepCollectionEquality().equals(other.parentAddressLabel, parentAddressLabel)));
   }
 
   @override
@@ -215,8 +194,7 @@ class _$_GroupData implements _GroupData {
       const DeepCollectionEquality().hash(parentAddressLabel);
 
   @override
-  _$GroupDataCopyWith<_GroupData> get copyWith =>
-      __$GroupDataCopyWithImpl<_GroupData>(this, _$identity);
+  _$GroupDataCopyWith<_GroupData> get copyWith => __$GroupDataCopyWithImpl<_GroupData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -225,16 +203,10 @@ class _$_GroupData implements _GroupData {
 }
 
 abstract class _GroupData implements GroupData {
-  const factory _GroupData(
-      String name,
-      int address,
-      @nullable String addressLabel,
-      String meshUuid,
-      int parentAddress,
+  const factory _GroupData(String name, int address, @nullable String addressLabel, String meshUuid, int parentAddress,
       @nullable String parentAddressLabel) = _$_GroupData;
 
-  factory _GroupData.fromJson(Map<String, dynamic> json) =
-      _$_GroupData.fromJson;
+  factory _GroupData.fromJson(Map<String, dynamic> json) = _$_GroupData.fromJson;
 
   @override
   String get name;

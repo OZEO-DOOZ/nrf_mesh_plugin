@@ -11,8 +11,7 @@ class Node extends StatefulWidget {
   final ProvisionedMeshNode node;
   final MeshManagerApi meshManagerApi;
 
-  const Node({Key key, this.node, this.meshManagerApi, this.name})
-      : super(key: key);
+  const Node({Key key, this.node, this.meshManagerApi, this.name}) : super(key: key);
 
   @override
   _NodeState createState() => _NodeState();
@@ -88,8 +87,7 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
   final MeshManagerApi meshManagerApi;
   final ProvisionedMeshNode node;
 
-  const ConfigureOutputAsLightDimmer({Key key, this.meshManagerApi, this.node})
-      : super(key: key);
+  const ConfigureOutputAsLightDimmer({Key key, this.meshManagerApi, this.node}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -99,34 +97,26 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
         final scaffoldState = Scaffold.of(context);
         final target = 0;
         final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
-        var sequenceNumber =
-            await meshManagerApi.getSequenceNumber(provisioner);
+        var sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
         try {
           final getBoardTypeStatus = await meshManagerApi
-              .sendGenericLevelSet(await node.unicastAddress,
-                  BoardData.configuration(target).toByte(), sequenceNumber)
+              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber)
               .timeout(Duration(seconds: 40));
           final boardType = BoardData.decode(getBoardTypeStatus.level);
           if (boardType.payload == 0xA) {
-            sequenceNumber =
-                await meshManagerApi.getSequenceNumber(provisioner);
+            sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
             final setupDimmerStatus = await meshManagerApi
                 .sendGenericLevelSet(
-                    await node.unicastAddress,
-                    BoardData.lightDimmerOutput(target).toByte(),
-                    sequenceNumber)
+                    await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber)
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
-            scaffoldState.showSnackBar(
-                SnackBar(content: Text('Board successfully configured')));
+            scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
           } else {
-            scaffoldState.showSnackBar(SnackBar(
-                content: Text(
-                    'Board type ${boardType.payload} not supported as dimmer (for now)')));
+            scaffoldState.showSnackBar(
+                SnackBar(content: Text('Board type ${boardType.payload} not supported as dimmer (for now)')));
           }
         } on TimeoutException catch (_) {
-          scaffoldState
-              .showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+          scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
         }
       },
     );
@@ -137,9 +127,7 @@ class ConfigureOuputAsLightOnOff extends StatelessWidget {
   final MeshManagerApi meshManagerApi;
   final ProvisionedMeshNode node;
 
-  const ConfigureOuputAsLightOnOff(
-      {Key key, @required this.meshManagerApi, @required this.node})
-      : super(key: key);
+  const ConfigureOuputAsLightOnOff({Key key, @required this.meshManagerApi, @required this.node}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -149,32 +137,26 @@ class ConfigureOuputAsLightOnOff extends StatelessWidget {
         final scaffoldState = Scaffold.of(context);
         final target = 0;
         final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
-        var sequenceNumber =
-            await meshManagerApi.getSequenceNumber(provisioner);
+        var sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
         try {
           final getBoardTypeStatus = await meshManagerApi
-              .sendGenericLevelSet(await node.unicastAddress,
-                  BoardData.configuration(target).toByte(), sequenceNumber)
+              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber)
               .timeout(Duration(seconds: 40));
           final boardType = BoardData.decode(getBoardTypeStatus.level);
           if (boardType.payload == 0xA) {
-            sequenceNumber =
-                await meshManagerApi.getSequenceNumber(provisioner);
+            sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
             final setupDimmerStatus = await meshManagerApi
-                .sendGenericLevelSet(await node.unicastAddress,
-                    BoardData.lightOnOffOutput(target).toByte(), sequenceNumber)
+                .sendGenericLevelSet(
+                    await node.unicastAddress, BoardData.lightOnOffOutput(target).toByte(), sequenceNumber)
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
-            scaffoldState.showSnackBar(
-                SnackBar(content: Text('Board successfully configured')));
+            scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
           } else {
-            scaffoldState.showSnackBar(SnackBar(
-                content: Text(
-                    'Board type ${boardType.payload} not supported as on/off (for now)')));
+            scaffoldState.showSnackBar(
+                SnackBar(content: Text('Board type ${boardType.payload} not supported as on/off (for now)')));
           }
         } on TimeoutException catch (_) {
-          scaffoldState
-              .showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+          scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
         }
       },
     );

@@ -5,10 +5,8 @@ part 'generic_level_status.g.dart';
 
 @freezed
 abstract class GenericLevelStatusData with _$GenericLevelStatusData {
-  const factory GenericLevelStatusData(
-          int level, @nullable int targetLevel, int source, int destination) =
+  const factory GenericLevelStatusData(int level, @nullable int targetLevel, int source, int destination) =
       _GenericLevelStatusData;
 
-  factory GenericLevelStatusData.fromJson(Map<String, dynamic> json) =>
-      _$GenericLevelStatusDataFromJson(json);
+  factory GenericLevelStatusData.fromJson(Map<String, dynamic> json) => _$GenericLevelStatusDataFromJson(json);
 }

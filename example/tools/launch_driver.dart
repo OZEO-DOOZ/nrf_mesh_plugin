@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 void main(List<String> arguments) async {
-  final targetOs = arguments.isNotEmpty && arguments.first == 'ios'
-      ? Platform.isIOS
-      : Platform.isAndroid;
+  final targetOs = arguments.isNotEmpty && arguments.first == 'ios' ? Platform.isIOS : Platform.isAndroid;
 
   if (targetOs == Platform.isAndroid) {
     if (!Platform.environment.containsKey('ANDROID_SDK_ROOT')) {
@@ -25,8 +23,7 @@ void main(List<String> arguments) async {
     );
     print('installing app');
     await Process.run('flutter', ['install']);
-    final adbPath =
-        '${Platform.environment['ANDROID_SDK_ROOT']}/platform-tools/adb';
+    final adbPath = '${Platform.environment['ANDROID_SDK_ROOT']}/platform-tools/adb';
     var baseCommand = [
       '-d',
       'shell',
@@ -36,19 +33,13 @@ void main(List<String> arguments) async {
     ];
 
     //  setup permission
-    var accessCoarseLocation = [
-      ...baseCommand,
-      'android.permission.ACCESS_COARSE_LOCATION'
-    ];
+    var accessCoarseLocation = [...baseCommand, 'android.permission.ACCESS_COARSE_LOCATION'];
     await Process.run(
       adbPath,
       accessCoarseLocation,
       runInShell: true,
     );
-    var accessFineLocation = [
-      ...baseCommand,
-      'android.permission.ACCESS_FINE_LOCATION'
-    ];
+    var accessFineLocation = [...baseCommand, 'android.permission.ACCESS_FINE_LOCATION'];
     await Process.run(
       adbPath,
       accessFineLocation,
@@ -64,8 +55,7 @@ void main(List<String> arguments) async {
   }
 
   print('launch driver');
-  final flutterDriveProcess = await Process.start(
-      'flutter', ['drive', '--target=test_driver/app.dart', '--no-build']);
+  final flutterDriveProcess = await Process.start('flutter', ['drive', '--target=test_driver/app.dart', '--no-build']);
   flutterDriveProcess.stdout.transform(utf8.decoder).listen(stdout.write);
   await flutterDriveProcess.exitCode;
 }
