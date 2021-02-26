@@ -28,11 +28,14 @@ ElementData _$ElementDataFromJson(Map json) {
     json['name'] as String,
     json['address'] as int,
     json['locationDescriptor'] as int,
-    (json['models'] as List)?.map((e) => e == null ? null : ModelData.fromJson(e as Map))?.toList(),
+    (json['models'] as List)
+        ?.map((e) => e == null ? null : ModelData.fromJson(e as Map))
+        ?.toList(),
   );
 }
 
-Map<String, dynamic> _$ElementDataToJson(ElementData instance) => <String, dynamic>{
+Map<String, dynamic> _$ElementDataToJson(ElementData instance) =>
+    <String, dynamic>{
       'key': instance.key,
       'address': instance.address,
       'name': instance.name,

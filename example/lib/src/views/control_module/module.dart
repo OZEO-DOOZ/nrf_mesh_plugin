@@ -34,7 +34,8 @@ class _ModuleState extends State<Module> {
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(
+        widget.meshManagerApi, bleMeshManager);
 
     _init();
   }
@@ -141,15 +142,18 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
 
   StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
+  StreamSubscription<BleManagerCallbacksDiscoveredServices>
+      onServicesDiscoveredSubscription;
   StreamSubscription<BluetoothDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
+  StreamSubscription<BleMeshManagerCallbacksDataReceived>
+      onDataReceivedSubscription;
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
   StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
-  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
+  DoozProvisionedBleMeshManagerCallbacks(
+      this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
       print('onDeviceConnecting $event');
     });
@@ -181,7 +185,8 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
       print('onDeviceDisconnected $event');
     });
 
-    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+    onMeshPduCreatedSubscription =
+        meshManagerApi.onMeshPduCreated.listen((event) async {
       print('onMeshPduCreated $event');
       await bleMeshManager.sendPdu(event);
     });

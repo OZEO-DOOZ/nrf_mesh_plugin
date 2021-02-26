@@ -32,10 +32,13 @@ class _SendDeleteGroupState extends State<SendDeleteGroup> {
           onPressed: () async {
             final scaffoldState = Scaffold.of(context);
             try {
-              await widget.meshManagerApi.meshNetwork.removeGroup(_id).timeout(Duration(seconds: 40));
+              await widget.meshManagerApi.meshNetwork
+                  .removeGroup(_id)
+                  .timeout(Duration(seconds: 40));
               scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldState.showSnackBar(
+                  SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
               scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
             } catch (e) {
