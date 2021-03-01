@@ -198,6 +198,35 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "sendV2MagicLevel" -> {
+                val io = call.argument<Int>("io")!!
+                val index = call.argument<Int>("index")!!
+                val value = call.argument<Int>("value")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val meshMessage = MagicLevelSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        io, index, value, correlation, sequenceNumber
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getV2MagicLevel" -> {
+                val io = call.argument<Int>("io")!!
+                val index = call.argument<Int>("index")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val meshMessage = MagicLevelGet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        io, index, correlation, sequenceNumber
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!
                 result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString())
