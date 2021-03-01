@@ -64,6 +64,32 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                     ))
                 }
             }
+            is MagicLevelSetStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onMagicLevelSetStatus",
+                            "io" to meshMessage.io,
+                            "index" to meshMessage.index,
+                            "value" to meshMessage.value,
+                            "correlation" to meshMessage.correlation,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is MagicLevelGetStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onMagicLevelGetStatus",
+                            "io" to meshMessage.io,
+                            "index" to meshMessage.index,
+                            "value" to meshMessage.value,
+                            "correlation" to meshMessage.correlation,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
             is ConfigModelAppStatus -> {
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(

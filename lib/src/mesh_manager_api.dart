@@ -10,6 +10,8 @@ import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status
 import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/magic_level_get_status/magic_level_get_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/magic_level_set_status/magic_level_set_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/light_ctl_status/light_ctl_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/light_hsl_status/light_hsl_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/light_lightness_status/light_lightness_status.dart';
@@ -40,6 +42,9 @@ class MeshManagerApi {
   final _onConfigCompositionDataStatusController = StreamController<ConfigCompositionDataStatusData>.broadcast();
   final _onConfigAppKeyStatusController = StreamController<ConfigAppKeyStatusData>.broadcast();
   final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
+  final _onV2MagicLevelSetStatusController = StreamController<MagicLevelSetStatusData>.broadcast();
+  final _onV2MagicLevelGetStatusController = StreamController<MagicLevelGetStatusData>.broadcast();
+
   final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
   final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
   final _onConfigModelSubscriptionStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
@@ -63,6 +68,8 @@ class MeshManagerApi {
   StreamSubscription<ConfigAppKeyStatusData> _onConfigAppKeyStatusSubscription;
   StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
+  StreamSubscription<MagicLevelSetStatusData> _onV2MagicLevelSetStatusSubscription;
+  StreamSubscription<MagicLevelGetStatusData> _onV2MagicLevelGetStatusSubscription;
   StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
   StreamSubscription<ConfigModelSubscriptionStatus> _onConfigModelSubscriptionStatusSubscription;
   StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
@@ -136,6 +143,14 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.genericOnOffStatus.value)
         .map((event) => GenericOnOffStatusData.fromJson(event))
         .listen(_onGenericOnOffStatusController.add);
+    _onV2MagicLevelSetStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelSetStatus.value)
+        .map((event) => MagicLevelSetStatusData.fromJson(event))
+        .listen(_onV2MagicLevelSetStatusController.add);
+    _onV2MagicLevelGetStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelGetStatus.value)
+        .map((event) => MagicLevelGetStatusData.fromJson(event))
+        .listen(_onV2MagicLevelGetStatusController.add);
 
     _onLightLightnessStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.lightLightnessStatus.value)
@@ -189,6 +204,10 @@ class MeshManagerApi {
 
   Stream<GenericOnOffStatusData> get onGenericOnOffStatus => _onGenericOnOffStatusController.stream;
 
+  Stream<MagicLevelSetStatusData> get onV2MagicLevelSetStatus => _onV2MagicLevelSetStatusController.stream;
+
+  Stream<MagicLevelGetStatusData> get onV2MagicLevelGetStatus => _onV2MagicLevelGetStatusController.stream;
+
   IMeshNetwork get meshNetwork => _lastMeshNetwork;
 
   Stream<LightLightnessStatusData> get onLightLightnessStatus => _onLightLightnessStatusController.stream;
@@ -220,6 +239,8 @@ class MeshManagerApi {
         _onConfigCompositionDataStatusSubscription.cancel(),
         _onConfigAppKeyStatusSubscription.cancel(),
         _onGenericLevelStatusSubscription.cancel(),
+        _onV2MagicLevelSetStatusSubscription.cancel(),
+        _onV2MagicLevelGetStatusSubscription.cancel(),
         _onGenericOnOffStatusSubscription.cancel(),
         _onConfigModelAppStatusSubscription.cancel(),
         _onConfigModelSubscriptionStatusSubscription.cancel(),
@@ -245,6 +266,8 @@ class MeshManagerApi {
         _onConfigModelAppStatusController.close(),
         _onConfigModelSubscriptionStatusController.close(),
         _onConfigModelPublicationStatusController.close(),
+        _onV2MagicLevelSetStatusController.close(),
+        _onV2MagicLevelGetStatusController.close(),
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
@@ -318,6 +341,51 @@ class MeshManagerApi {
       'transitionStep': transitionStep,
       'transitionResolution': transitionResolution,
       'delay': delay,
+    });
+    return status;
+  }
+
+  Future<MagicLevelSetStatusData> sendV2MagicLevelSet(
+    int address,
+    int io,
+    int index,
+    int value,
+    int correlation,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    final status = _onV2MagicLevelSetStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('sendV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'value': value,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+      'sequenceNumber': sequenceNumber,
+    });
+    return status;
+  }
+
+  Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
+    int address,
+    int io,
+    int index,
+    int value,
+    int correlation,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    final status = _onV2MagicLevelGetStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('getV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+      'sequenceNumber': sequenceNumber,
     });
     return status;
   }
