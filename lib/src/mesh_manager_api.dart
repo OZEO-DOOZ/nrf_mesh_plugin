@@ -12,6 +12,9 @@ import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_lev
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/magic_level_get_status/magic_level_get_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/magic_level_set_status/magic_level_set_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/light_ctl_status/light_ctl_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/light_hsl_status/light_hsl_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/light_lightness_status/light_lightness_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_provisioning_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
@@ -47,6 +50,10 @@ class MeshManagerApi {
   final _onConfigModelSubscriptionStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
   final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
 
+  final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
+  final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
+  final _onLightHslStatusController = StreamController<LightHslStatusData>.broadcast();
+
   StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkUpdatedSubscription;
@@ -66,6 +73,10 @@ class MeshManagerApi {
   StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
   StreamSubscription<ConfigModelSubscriptionStatus> _onConfigModelSubscriptionStatusSubscription;
   StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
+
+  StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
+  StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
+  StreamSubscription<LightHslStatusData> _onLightHslStatusSubscription;
 
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
@@ -141,6 +152,19 @@ class MeshManagerApi {
         .map((event) => MagicLevelGetStatusData.fromJson(event))
         .listen(_onV2MagicLevelGetStatusController.add);
 
+    _onLightLightnessStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.lightLightnessStatus.value)
+        .map((event) => LightLightnessStatusData.fromJson(event))
+        .listen(_onLightLightnessStatusController.add);
+    _onLightCtlStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.lightCtlStatus.value)
+        .map((event) => LightCtlStatusData.fromJson(event))
+        .listen(_onLightCtlStatusController.add);
+    _onLightHslStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.lightHslStatus.value)
+        .map((event) => LightHslStatusData.fromJson(event))
+        .listen(_onLightHslStatusController.add);
+
     _onConfigModelAppStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
         .map((event) => ConfigModelAppStatusData.fromJson(event))
@@ -186,6 +210,12 @@ class MeshManagerApi {
 
   IMeshNetwork get meshNetwork => _lastMeshNetwork;
 
+  Stream<LightLightnessStatusData> get onLightLightnessStatus => _onLightLightnessStatusController.stream;
+
+  Stream<LightCtlStatusData> get onLightCtlStatus => _onLightCtlStatusController.stream;
+
+  Stream<LightHslStatusData> get onLightHslStatus => _onLightHslStatusController.stream;
+
   String get meshProvisioningUuidServiceKey {
     if (Platform.isAndroid) {
       return meshProvisioningUuid.toString();
@@ -215,6 +245,12 @@ class MeshManagerApi {
         _onConfigModelAppStatusSubscription.cancel(),
         _onConfigModelSubscriptionStatusSubscription.cancel(),
         _onConfigModelPublicationStatusSubscription.cancel(),
+        _onLightLightnessStatusSubscription.cancel(),
+        _onLightCtlStatusSubscription.cancel(),
+        _onLightHslStatusSubscription.cancel(),
+        _onLightLightnessStatusController.close(),
+        _onLightCtlStatusController.close(),
+        _onLightHslStatusController.close(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -318,18 +354,22 @@ class MeshManagerApi {
     int sequenceNumber, {
     int keyIndex = 0,
   }) async {
-    final status = _onV2MagicLevelSetStatusController.stream
-        .firstWhere((element) => element.source == address, orElse: () => null);
-    await _methodChannel.invokeMethod('sendV2MagicLevel', {
-      'io': io,
-      'index': index,
-      'value': value,
-      'correlation': correlation,
-      'address': address,
-      'keyIndex': keyIndex,
-      'sequenceNumber': sequenceNumber,
-    });
-    return status;
+    if (Platform.isAndroid) {
+      final status = _onV2MagicLevelSetStatusController.stream
+          .firstWhere((element) => element.source == address, orElse: () => null);
+      await _methodChannel.invokeMethod('sendV2MagicLevel', {
+        'io': io,
+        'index': index,
+        'value': value,
+        'correlation': correlation,
+        'address': address,
+        'keyIndex': keyIndex,
+        'sequenceNumber': sequenceNumber,
+      });
+      return status;
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
   }
 
   Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
@@ -341,17 +381,21 @@ class MeshManagerApi {
     int sequenceNumber, {
     int keyIndex = 0,
   }) async {
-    final status = _onV2MagicLevelGetStatusController.stream
-        .firstWhere((element) => element.source == address, orElse: () => null);
-    await _methodChannel.invokeMethod('getV2MagicLevel', {
-      'io': io,
-      'index': index,
-      'correlation': correlation,
-      'address': address,
-      'keyIndex': keyIndex,
-      'sequenceNumber': sequenceNumber,
-    });
-    return status;
+    if (Platform.isAndroid) {
+      final status = _onV2MagicLevelGetStatusController.stream
+          .firstWhere((element) => element.source == address, orElse: () => null);
+      await _methodChannel.invokeMethod('getV2MagicLevel', {
+        'io': io,
+        'index': index,
+        'correlation': correlation,
+        'address': address,
+        'keyIndex': keyIndex,
+        'sequenceNumber': sequenceNumber,
+      });
+      return status;
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
   }
 
   Future<void> sendConfigCompositionDataGet(int dest) =>
@@ -446,6 +490,77 @@ class MeshManagerApi {
       'modelIdentifier': modelIdentifier,
     });
     return status;
+  }
+
+  Future<LightLightnessStatusData> sendLightLightness(
+    int address,
+    int lightness,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    if (Platform.isAndroid) {
+      final status = _onLightLightnessStatusController.stream
+          .firstWhere((element) => element.source == address, orElse: () => null);
+      await _methodChannel.invokeMethod('sendLightLightness', {
+        'address': address,
+        'lightness': lightness,
+        'sequenceNumber': sequenceNumber,
+        'keyIndex': keyIndex,
+      });
+      return status;
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
+  }
+
+  Future<LightCtlStatusData> sendLightCtl(
+    int address,
+    int lightness,
+    int temperature,
+    int lightDeltaUV,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    if (Platform.isAndroid) {
+      final status =
+          _onLightCtlStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+      await _methodChannel.invokeMethod('sendLightCtl', {
+        'address': address,
+        'lightness': lightness,
+        'temperature': temperature,
+        'lightDeltaUV': lightDeltaUV,
+        'sequenceNumber': sequenceNumber,
+        'keyIndex': keyIndex,
+      });
+      return status;
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
+  }
+
+  Future<LightHslStatusData> sendLightHsl(
+    int address,
+    int lightness,
+    int hue,
+    int saturation,
+    int sequenceNumber, {
+    int keyIndex = 0,
+  }) async {
+    if (Platform.isAndroid) {
+      final status =
+          _onLightHslStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+      await _methodChannel.invokeMethod('sendLightHsl', {
+        'address': address,
+        'lightness': lightness,
+        'hue': hue,
+        'saturation': saturation,
+        'sequenceNumber': sequenceNumber,
+        'keyIndex': keyIndex,
+      });
+      return status;
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
   }
 
   String getDeviceUuid(List<int> serviceData) {

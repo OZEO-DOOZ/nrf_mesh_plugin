@@ -131,6 +131,48 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                     ))
                 }
             }
+            is LightLightnessStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onLightLightnessStatus",
+                            "presentLightness" to meshMessage.presentLightness,
+                            "targetLightness" to meshMessage.targetLightness,
+                            "transitionSteps" to meshMessage.transitionSteps,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is LightCtlStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onLightCtlStatus",
+                            "presentLightness" to meshMessage.presentLightness,
+                            "targetLightness" to meshMessage.targetLightness,
+                            "presentTemperature" to meshMessage.presentTemperature,
+                            "targetTemperature" to meshMessage.targetTemperature,
+                            "transitionSteps" to meshMessage.transitionSteps,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is LightHslStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onLightHslStatus",
+                            "presentLightness" to meshMessage.presentLightness,
+                            "presentHue" to meshMessage.presentHue,
+                            "presentSaturation" to meshMessage.presentSaturation,
+                            "transitionSteps" to meshMessage.transitionSteps,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
             else -> {
                 Log.d("DoozMeshStatusCallbacks", meshMessage.javaClass.toString())
             }

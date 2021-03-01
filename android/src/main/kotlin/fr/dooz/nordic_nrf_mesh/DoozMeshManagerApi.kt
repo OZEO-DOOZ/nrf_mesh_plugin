@@ -26,7 +26,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
 
     init {
-        EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
+        EventChannel(binaryMessenger, "$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
@@ -178,7 +178,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val appKeyIndex = call.argument<Int>("appKeyIndex")!!
                 val credentialFlag = call.argument<Boolean>("credentialFlag")!!
                 val publishTtl = call.argument<Int>("publishTtl")!!
-                val publicationSteps  = call.argument<Int>("publicationSteps")!!
+                val publicationSteps = call.argument<Int>("publicationSteps")!!
                 val publicationResolution = call.argument<Int>("publicationResolution")!!
                 val retransmitCount = call.argument<Int>("retransmitCount")!!
                 val retransmitIntervalSteps = call.argument<Int>("retransmitIntervalSteps")!!
@@ -225,6 +225,46 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         io, index, correlation, sequenceNumber
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "sendLightLightness" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val lightnessSet = LightLightnessSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness,
+                        sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightnessSet)
+                result.success(null)
+            }
+            "sendLightCtl" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val temperature = call.argument<Int>("temperature")
+                val lightDeltaUV = call.argument<Int>("lightDeltaUV")
+                val lightCtlSet = LightCtlSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness,
+                        temperature,
+                        lightDeltaUV,
+                        sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightCtlSet)
+                result.success(null)
+            }
+            "sendLightHsl" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val hue = call.argument<Int>("hue")
+                val saturation = call.argument<Int>("saturation")
+                val lightHslSet = LightHslSet(mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness, hue, saturation, sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightHslSet)
                 result.success(null)
             }
             "getDeviceUuid" -> {
