@@ -244,8 +244,8 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val address = call.argument<Int>("address")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
                 val lightness = call.argument<Int>("lightness")!!
-                val temperature = call.argument<Int>("temperature")
-                val lightDeltaUV = call.argument<Int>("lightDeltaUV")
+                val temperature = call.argument<Int>("temperature")!!
+                val lightDeltaUV = call.argument<Int>("lightDeltaUV")!!
                 val lightCtlSet = LightCtlSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         lightness,
@@ -260,8 +260,8 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val address = call.argument<Int>("address")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
                 val lightness = call.argument<Int>("lightness")!!
-                val hue = call.argument<Int>("hue")
-                val saturation = call.argument<Int>("saturation")
+                val hue = call.argument<Int>("hue")!!
+                val saturation = call.argument<Int>("saturation")!!
                 val lightHslSet = LightHslSet(mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         lightness, hue, saturation, sequenceNumber)
                 mMeshManagerApi.createMeshPdu(address, lightHslSet)

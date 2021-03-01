@@ -6,15 +6,17 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import no.nordicsemi.android.mesh.MeshNetwork
-import no.nordicsemi.android.mesh.Provisioner
-import java.lang.IllegalArgumentException
+import no.nordicsemi.android.mesh.*
+import java.lang.Exception
+import java.util.*
+import java.util.Collections.sort
 
 class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
     private var eventSink : EventChannel.EventSink? = null
-    private var eventChannel: EventChannel = EventChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/events")
-    private var methodChannel: MethodChannel = MethodChannel(binaryMessenger,"$namespace/mesh_network/${meshNetwork.id}/methods")
-
+    private var eventChannel: EventChannel = EventChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.id}/events")
+    private var methodChannel: MethodChannel = MethodChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.id}/methods")
+    private val tag: String = DoozMeshNetwork::class.java.simpleName
+    
     init {
         eventChannel.setStreamHandler(this)
         methodChannel.setMethodCallHandler(this)
@@ -34,6 +36,16 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
 
     override fun onCancel(arguments: Any?) {
         eventSink = null
+    }
+
+    //adding prov to mesh n/w
+    private fun addProvisioner(provisioner: Provisioner): Boolean {
+        return try {
+             meshNetwork.addProvisioner(provisioner)
+        } catch (e: java.lang.IllegalArgumentException) {
+            Log.e(tag, "caught exception " + e.message)
+            false
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -59,7 +71,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
             "selectProvisioner" -> {
                 val provisionerIndex = call.argument<Int>("provisionerIndex")!!
                 meshNetwork.selectProvisioner(meshNetwork.provisioners[provisionerIndex])
-                result.success(null);
+                result.success(null)
             }
             "getSequenceNumberForAddress" -> {
                 val address = call.argument<Int>("address")!!
@@ -83,16 +95,16 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
             }
             "groups" -> {
                 result.success(meshNetwork.groups.map {
-                            mapOf(
-                                    "name" to it.name,
-                                    "address" to it.address,
-                                    "addressLabel" to it.addressLabel?.toString(),
-                                    "meshUuid" to it.meshUuid,
-                                    "parentAddress" to it.parentAddress,
-                                    "parentAddressLabel" to it.parentAddressLabel?.toString()
+                    mapOf(
+                            "name" to it.name,
+                            "address" to it.address,
+                            "addressLabel" to it.addressLabel?.toString(),
+                            "meshUuid" to it.meshUuid,
+                            "parentAddress" to it.parentAddress,
+                            "parentAddressLabel" to it.parentAddressLabel?.toString()
 
-                            )
-                        }
+                    )
+                }
                 )
             }
             "removeGroup" -> {
@@ -107,7 +119,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val group = meshNetwork.groups.first {
                     it.address == groupAddress
                 }!!
-                result.success(meshNetwork.getElements(group).map {element ->
+                result.success(meshNetwork.getElements(group).map { element ->
                     mapOf(
                             "name" to element.name,
                             "address" to element.elementAddress,
@@ -144,13 +156,36 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 result.success(meshNetwork.selectedProvisioner.provisionerUuid)
             }
             "highestAllocatableAddress" -> {
-                var maxAddress = 0;
+                var maxAddress = 0
                 for (addressRange in meshNetwork.selectedProvisioner.allocatedUnicastRanges) {
                     if (maxAddress < addressRange.highAddress) {
                         maxAddress = addressRange.highAddress
                     }
                 }
                 result.success(maxAddress)
+            }
+            "addProvisioner" -> {
+                val unicastAddressRange = call.argument<Int>("unicastAddressRange")!!
+                val groupAddressRange = call.argument<Int>("groupAddressRange")!!
+                val sceneAddressRange = call.argument<Int>("sceneAddressRange")!!
+                val globalTtl = call.argument<Int>("globalTtl")!!
+
+                try {
+                    val unicastRange: AllocatedUnicastRange = meshNetwork.nextAvailableUnicastAddressRange(unicastAddressRange)
+                    val groupRange: AllocatedGroupRange = meshNetwork.nextAvailableGroupAddressRange(groupAddressRange)
+                    val sceneRange: AllocatedSceneRange = meshNetwork.nextAvailableSceneAddressRange(sceneAddressRange)!!
+                    val provisioner: Provisioner = meshNetwork.createProvisioner("DOOZ Mesh Provisioner",
+                            unicastRange, groupRange, sceneRange)
+                    val unicastId = provisioner.allocatedUnicastRanges[0].lowAddress
+
+                    provisioner.assignProvisionerAddress(unicastId)
+                    provisioner.globalTtl = globalTtl
+
+                    val success = this.addProvisioner(provisioner)
+                    result.success(success)
+                }catch (e: Exception){
+                    result.error("100", e.message, "Please check the given addresses range")
+                }
             }
             else -> {
                 result.notImplemented()

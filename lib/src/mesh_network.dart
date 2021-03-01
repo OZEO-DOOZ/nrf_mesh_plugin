@@ -24,6 +24,8 @@ abstract class IMeshNetwork {
   Future<String> selectedProvisionerUuid();
 
   Future<void> selectProvisioner(int provisionerIndex);
+
+  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -98,4 +100,13 @@ class MeshNetwork implements IMeshNetwork {
     final result = await _methodChannel.invokeMethod<List>('getProvisionersUUID');
     return result.cast<String>();
   }
+
+  @override
+  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) =>
+      _methodChannel.invokeMethod('addProvisioner', {
+        'unicastAddressRange': unicastAddressRange,
+        'groupAddressRange': groupAddressRange,
+        'sceneAddressRange': sceneAddressRange,
+        'globalTtl': globalTtl,
+      });
 }
