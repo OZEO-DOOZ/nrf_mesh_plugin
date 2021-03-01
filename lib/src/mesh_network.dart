@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/models/group/group.dart';
@@ -102,11 +104,16 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) =>
-      _methodChannel.invokeMethod('addProvisioner', {
+  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) {
+    if (Platform.isAndroid) {
+      return _methodChannel.invokeMethod('addProvisioner', {
         'unicastAddressRange': unicastAddressRange,
         'groupAddressRange': groupAddressRange,
         'sceneAddressRange': sceneAddressRange,
         'globalTtl': globalTtl,
       });
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
+  }
 }
