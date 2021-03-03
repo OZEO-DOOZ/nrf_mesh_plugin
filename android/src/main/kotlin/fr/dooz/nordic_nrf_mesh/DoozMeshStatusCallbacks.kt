@@ -64,6 +64,32 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                     ))
                 }
             }
+            is MagicLevelSetStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onMagicLevelSetStatus",
+                            "io" to meshMessage.io,
+                            "index" to meshMessage.index,
+                            "value" to meshMessage.value,
+                            "correlation" to meshMessage.correlation,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is MagicLevelGetStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onMagicLevelGetStatus",
+                            "io" to meshMessage.io,
+                            "index" to meshMessage.index,
+                            "value" to meshMessage.value,
+                            "correlation" to meshMessage.correlation,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
             is ConfigModelAppStatus -> {
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
@@ -102,6 +128,48 @@ class DoozMeshStatusCallbacks(var eventSink : EventChannel.EventSink?): MeshStat
                             "retransmitIntervalSteps" to meshMessage.publishRetransmitIntervalSteps,
                             "modelIdentifier" to meshMessage.modelIdentifier,
                             "isSuccessful" to meshMessage.isSuccessful
+                    ))
+                }
+            }
+            is LightLightnessStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onLightLightnessStatus",
+                            "presentLightness" to meshMessage.presentLightness,
+                            "targetLightness" to meshMessage.targetLightness,
+                            "transitionSteps" to meshMessage.transitionSteps,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is LightCtlStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onLightCtlStatus",
+                            "presentLightness" to meshMessage.presentLightness,
+                            "targetLightness" to meshMessage.targetLightness,
+                            "presentTemperature" to meshMessage.presentTemperature,
+                            "targetTemperature" to meshMessage.targetTemperature,
+                            "transitionSteps" to meshMessage.transitionSteps,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is LightHslStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onLightHslStatus",
+                            "presentLightness" to meshMessage.presentLightness,
+                            "presentHue" to meshMessage.presentHue,
+                            "presentSaturation" to meshMessage.presentSaturation,
+                            "transitionSteps" to meshMessage.transitionSteps,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
                     ))
                 }
             }

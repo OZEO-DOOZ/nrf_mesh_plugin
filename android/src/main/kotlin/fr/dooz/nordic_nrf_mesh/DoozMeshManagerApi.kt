@@ -200,6 +200,75 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "sendV2MagicLevel" -> {
+                val io = call.argument<Int>("io")!!
+                val index = call.argument<Int>("index")!!
+                val value = call.argument<Int>("value")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val meshMessage = MagicLevelSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        io, index, value, correlation, sequenceNumber
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getV2MagicLevel" -> {
+                val io = call.argument<Int>("io")!!
+                val index = call.argument<Int>("index")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val meshMessage = MagicLevelGet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        io, index, correlation, sequenceNumber
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "sendLightLightness" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val lightnessSet = LightLightnessSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness,
+                        sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightnessSet)
+                result.success(null)
+            }
+            "sendLightCtl" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val temperature = call.argument<Int>("temperature")!!
+                val lightDeltaUV = call.argument<Int>("lightDeltaUV")!!
+                val lightCtlSet = LightCtlSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness,
+                        temperature,
+                        lightDeltaUV,
+                        sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightCtlSet)
+                result.success(null)
+            }
+            "sendLightHsl" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val hue = call.argument<Int>("hue")!!
+                val saturation = call.argument<Int>("saturation")!!
+                val lightHslSet = LightHslSet(mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness, hue, saturation, sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightHslSet)
+                result.success(null)
+            }
             "getDeviceUuid" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!
                 result.success(mMeshManagerApi.getDeviceUuid(serviceData).toString())

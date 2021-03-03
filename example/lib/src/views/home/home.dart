@@ -121,10 +121,19 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
           },
         ),
         RaisedButton(
+          child: Text('add provisioner'),
+          onPressed: () async {
+            //13 provisioners are maximum with the below given ranges and the default ttl is 5
+            //above that, will throw error
+            final result = await _meshNetwork.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
+            debugPrint('provisioner added : ${result}');
+          },
+        ),
+        RaisedButton(
           child: Text('get provisioner uuid'),
           onPressed: () async {
             final provUUIDs = await _meshNetwork.provisionersUUIDList;
-            debugPrint('${provUUIDs.elementAt(0)}');
+            debugPrint('${provUUIDs.length}');
           },
         ),
         RaisedButton(
