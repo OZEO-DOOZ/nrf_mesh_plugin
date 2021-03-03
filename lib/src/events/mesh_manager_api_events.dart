@@ -40,4 +40,5 @@ class MeshManagerApiEvent {
   static const configModelAppStatus = MeshManagerApiEvent._('onConfigModelAppStatus');
   static const configModelSubscriptionStatus = MeshManagerApiEvent._('onConfigModelSubscriptionStatus');
   static const configModelPublicationStatus = MeshManagerApiEvent._('onConfigModelPublicationStatus');
+  static const configNodeResetStatus = MeshManagerApiEvent._('onConfigNodeResetStatus');
 }

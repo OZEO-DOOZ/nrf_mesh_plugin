@@ -37,8 +37,8 @@ abstract class BleMeshManagerCallbacks extends BleManagerCallbacks {
 
   @override
   Future<void> dispose() => Future.wait([
-        super.dispose(),
         onDataReceivedController.close(),
         onDataSentController.close(),
+        super.dispose(),
       ]);
 }

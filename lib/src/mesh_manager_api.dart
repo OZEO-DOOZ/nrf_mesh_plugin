@@ -8,6 +8,7 @@ import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/c
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/magic_level_get_status/magic_level_get_status.dart';
@@ -49,6 +50,7 @@ class MeshManagerApi {
   final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
   final _onConfigModelSubscriptionStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
   final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
+  final _onConfigNodeResetStatusController = StreamController<ConfigNodeResetStatus>.broadcast();
 
   final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
   final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
@@ -58,7 +60,7 @@ class MeshManagerApi {
   StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
   StreamSubscription<MeshNetwork> _onNetworkUpdatedSubscription;
   StreamSubscription<MeshNetworkEventError> _onNetworkLoadFailedSubscription;
-  StreamSubscription<MeshNetworkEventError> _onNetworkImportFailedSubscripiton;
+  StreamSubscription<MeshNetworkEventError> _onNetworkImportFailedSubscription;
   StreamSubscription<List<int>> _onMeshPduCreatedSubscription;
   StreamSubscription<SendProvisioningPduData> _sendProvisioningPduSubscription;
   StreamSubscription<MeshProvisioningStatusData> _onProvisioningStateChangedSubscription;
@@ -73,6 +75,7 @@ class MeshManagerApi {
   StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
   StreamSubscription<ConfigModelSubscriptionStatus> _onConfigModelSubscriptionStatusSubscription;
   StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
+  StreamSubscription<ConfigNodeResetStatus> _onConfigNodeResetStatusSubscription;
 
   StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
   StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
@@ -98,7 +101,7 @@ class MeshManagerApi {
 
     _onNetworkLoadFailedSubscription =
         _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed).listen(_onNetworkLoadedStreamController.addError);
-    _onNetworkImportFailedSubscripiton =
+    _onNetworkImportFailedSubscription =
         _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportedController.addError);
 
     _onMeshPduCreatedSubscription = _eventChannelStream
@@ -177,6 +180,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configModelPublicationStatus.value)
         .map((event) => ConfigModelPublicationStatus.fromJson(event))
         .listen(_onConfigModelPublicationStatusController.add);
+    _onConfigNodeResetStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configNodeResetStatus.value)
+        .map((event) => ConfigNodeResetStatus.fromJson(event))
+        .listen(_onConfigNodeResetStatusController.add);
   }
 
   Stream<IMeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
@@ -230,7 +237,7 @@ class MeshManagerApi {
         _onNetworkImportedSubscription.cancel(),
         _onNetworkUpdatedSubscription.cancel(),
         _onNetworkLoadFailedSubscription.cancel(),
-        _onNetworkImportFailedSubscripiton.cancel(),
+        _onNetworkImportFailedSubscription.cancel(),
         _onMeshPduCreatedSubscription.cancel(),
         _sendProvisioningPduSubscription.cancel(),
         _onProvisioningStateChangedSubscription.cancel(),
@@ -251,6 +258,7 @@ class MeshManagerApi {
         _onLightLightnessStatusController.close(),
         _onLightCtlStatusController.close(),
         _onLightHslStatusController.close(),
+        _onConfigNodeResetStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -268,6 +276,7 @@ class MeshManagerApi {
         _onConfigModelPublicationStatusController.close(),
         _onV2MagicLevelSetStatusController.close(),
         _onV2MagicLevelGetStatusController.close(),
+        _onConfigNodeResetStatusController.close(),
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
@@ -577,15 +586,23 @@ class MeshManagerApi {
 
   Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
 
-  /// Will try to unprovision the specified [ProvisionedMeshNode].
+  /// Will try to deprovision the specified [ProvisionedMeshNode].
+  ///
+  /// On Android:
   ///
   /// Returns true if the action was successfully sent to Nordic's ADK, false otherwise
   /// Throws an method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
-  Future<bool> unprovision(ProvisionedMeshNode meshNode) async {
+  Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
     if (Platform.isAndroid) {
-      return _methodChannel.invokeMethod('deprovision', {'unicastAddress': await meshNode.unicastAddress});
+      final unicastAddress = await meshNode.unicastAddress;
+      final status = _onConfigNodeResetStatusController.stream
+          .where((element) => element.source == unicastAddress)
+          .timeout(const Duration(seconds: 5), onTimeout: (sink) => sink.add(null))
+          .first;
+      await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
+      return status;
     } else {
-      throw Exception('Platform not supported');
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
   }
 

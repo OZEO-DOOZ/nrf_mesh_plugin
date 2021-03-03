@@ -24,8 +24,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     private var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
     private val unProvisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
-
-    private val TAG: String = this.javaClass.name
+    private val TAG: String = DoozMeshManagerApi::class.java.simpleName
 
     init {
         EventChannel(binaryMessenger, "$namespace/mesh_manager_api/events").setStreamHandler(this)
