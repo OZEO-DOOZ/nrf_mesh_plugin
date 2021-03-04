@@ -24,6 +24,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     private var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
     private val unProvisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
+    private val tag: String = DoozMeshManagerApi::class.java.simpleName
 
     init {
         EventChannel(binaryMessenger, "$namespace/mesh_manager_api/events").setStreamHandler(this)
@@ -66,7 +67,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     }
 
     override fun onListen(arguments: Any?, events: EventSink?) {
-        Log.d(this.javaClass.name, "onListen $arguments $events")
+        Log.d(tag, "onListen $arguments $events")
         this.eventSink = events
         doozMeshManagerCallbacks.eventSink = eventSink
         doozMeshProvisioningStatusCallbacks.eventSink = eventSink
@@ -295,6 +296,23 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 }
                 mMeshManagerApi.startProvisioning(unProvisionedMeshNode.meshNode)
                 result.success(null)
+            }
+            "deprovision" -> {
+                Log.d(tag, "should unprovision")
+                try {
+                    val unicastAddress = call.argument<Int>("unicastAddress")!!
+                    val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                    val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(unicastAddress)
+                    if(pNode == null){
+                        result.error("NOT_FOUND", "MeshNode with unicastAddress $unicastAddress doesn't exist", null)
+                    } else{
+                    val configNodeReset = ConfigNodeReset()
+                    mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)}
+                } catch (ex: Exception) {
+                    Log.e(tag, ex.message)
+                    result.success(false)
+                }
+                result.success(true)
             }
             "sendConfigCompositionDataGet" -> {
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, ConfigCompositionDataGet())
