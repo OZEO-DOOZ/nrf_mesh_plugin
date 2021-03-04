@@ -8,18 +8,18 @@ import no.nordicsemi.android.mesh.MeshStatusCallbacks
 import no.nordicsemi.android.mesh.transport.*
 
 class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatusCallbacks {
-    private val TAG: String = DoozMeshStatusCallbacks::class.java.simpleName
+    private val tag: String = DoozMeshStatusCallbacks::class.java.simpleName
 
     override fun onMeshMessageProcessed(dst: Int, meshMessage: MeshMessage) {
-        Log.d(TAG, "onMeshMessageProcessed to " + dst.toString())
+        Log.d(tag, "onMeshMessageProcessed to " + dst.toString())
     }
 
     override fun onMeshMessageReceived(src: Int, meshMessage: MeshMessage) {
-        Log.d(TAG, "onMeshMessageReceived")
+        Log.d(tag, "onMeshMessageReceived")
 
         when (meshMessage) {
             is ConfigCompositionDataStatus -> {
-                Log.d(TAG, "received a ConfigCompositionDataStatus")
+                Log.d(tag, "received a ConfigCompositionDataStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onConfigCompositionDataStatus",
@@ -32,7 +32,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is ConfigAppKeyStatus -> {
-                Log.d(TAG, "received a ConfigAppKeyStatus")
+                Log.d(tag, "received a ConfigAppKeyStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onConfigAppKeyStatus",
@@ -45,7 +45,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is GenericOnOffStatus -> {
-                Log.d(TAG, "received a GenericOnOffStatus")
+                Log.d(tag, "received a GenericOnOffStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onGenericOnOffStatus",
@@ -58,7 +58,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is GenericLevelStatus -> {
-                Log.d(TAG, "received a GenericLevelStatus")
+                Log.d(tag, "received a GenericLevelStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onGenericLevelStatus",
@@ -96,7 +96,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is ConfigModelAppStatus -> {
-                Log.d(TAG, "received a ConfigModelAppStatus")
+                Log.d(tag, "received a ConfigModelAppStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onConfigModelAppStatus",
@@ -107,7 +107,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is ConfigModelSubscriptionStatus -> {
-                Log.d(TAG, "received a ConfigModelSubscriptionStatus")
+                Log.d(tag, "received a ConfigModelSubscriptionStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onConfigModelSubscriptionStatus",
@@ -121,7 +121,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is ConfigModelPublicationStatus -> {
-                Log.d(TAG, "received a ConfigModelPublicationStatus")
+                Log.d(tag, "received a ConfigModelPublicationStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onConfigModelPublicationStatus",
@@ -182,38 +182,39 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 }
             }
             is ConfigNodeResetStatus -> {
-                Log.d(TAG, "received a ConfigNodeResetStatus")
+                Log.d(tag, "received a ConfigNodeResetStatus")
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onConfigNodeResetStatus",
                             "source" to meshMessage.src,
+                            "destination" to meshMessage.dst,
                             "success" to true,
                     ))
                 }
             }
             else -> {
-                Log.d(TAG, "Unknown message received :" + meshMessage.javaClass.toString())
+                Log.d(tag, "Unknown message received :" + meshMessage.javaClass.toString())
             }
         }
     }
 
     override fun onUnknownPduReceived(src: Int, accessPayload: ByteArray?) {
-        Log.d(TAG, "onUnknownPduReceived")
+        Log.d(tag, "onUnknownPduReceived")
     }
 
     override fun onTransactionFailed(dst: Int, hasIncompleteTimerExpired: Boolean) {
-        Log.d(TAG, "onTransactionFailed")
+        Log.d(tag, "onTransactionFailed")
     }
 
     override fun onBlockAcknowledgementProcessed(dst: Int, message: ControlMessage) {
-        Log.d(TAG, "onBlockAcknowledgementProcessed")
+        Log.d(tag, "onBlockAcknowledgementProcessed")
     }
 
     override fun onBlockAcknowledgementReceived(src: Int, message: ControlMessage) {
-        Log.d(TAG, "onBlockAcknowledgementReceived")
+        Log.d(tag, "onBlockAcknowledgementReceived")
     }
 
     override fun onMessageDecryptionFailed(meshLayer: String?, errorMessage: String?) {
-        Log.d(TAG, "onMessageDecryptionFailed")
+        Log.d(tag, "onMessageDecryptionFailed")
     }
 }

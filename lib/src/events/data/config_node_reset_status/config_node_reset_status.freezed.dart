@@ -17,9 +17,10 @@ class _$ConfigNodeResetStatusTearOff {
   const _$ConfigNodeResetStatusTearOff();
 
 // ignore: unused_element
-  _ConfigNodeResetStatus call(int source, bool success) {
+  _ConfigNodeResetStatus call(int source, int destination, bool success) {
     return _ConfigNodeResetStatus(
       source,
+      destination,
       success,
     );
   }
@@ -37,6 +38,7 @@ const $ConfigNodeResetStatus = _$ConfigNodeResetStatusTearOff();
 /// @nodoc
 mixin _$ConfigNodeResetStatus {
   int get source;
+  int get destination;
   bool get success;
 
   Map<String, dynamic> toJson();
@@ -47,7 +49,7 @@ mixin _$ConfigNodeResetStatus {
 abstract class $ConfigNodeResetStatusCopyWith<$Res> {
   factory $ConfigNodeResetStatusCopyWith(ConfigNodeResetStatus value, $Res Function(ConfigNodeResetStatus) then) =
       _$ConfigNodeResetStatusCopyWithImpl<$Res>;
-  $Res call({int source, bool success});
+  $Res call({int source, int destination, bool success});
 }
 
 /// @nodoc
@@ -61,10 +63,12 @@ class _$ConfigNodeResetStatusCopyWithImpl<$Res> implements $ConfigNodeResetStatu
   @override
   $Res call({
     Object source = freezed,
+    Object destination = freezed,
     Object success = freezed,
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
+      destination: destination == freezed ? _value.destination : destination as int,
       success: success == freezed ? _value.success : success as bool,
     ));
   }
@@ -75,7 +79,7 @@ abstract class _$ConfigNodeResetStatusCopyWith<$Res> implements $ConfigNodeReset
   factory _$ConfigNodeResetStatusCopyWith(_ConfigNodeResetStatus value, $Res Function(_ConfigNodeResetStatus) then) =
       __$ConfigNodeResetStatusCopyWithImpl<$Res>;
   @override
-  $Res call({int source, bool success});
+  $Res call({int source, int destination, bool success});
 }
 
 /// @nodoc
@@ -90,10 +94,12 @@ class __$ConfigNodeResetStatusCopyWithImpl<$Res> extends _$ConfigNodeResetStatus
   @override
   $Res call({
     Object source = freezed,
+    Object destination = freezed,
     Object success = freezed,
   }) {
     return _then(_ConfigNodeResetStatus(
       source == freezed ? _value.source : source as int,
+      destination == freezed ? _value.destination : destination as int,
       success == freezed ? _value.success : success as bool,
     ));
   }
@@ -103,8 +109,9 @@ class __$ConfigNodeResetStatusCopyWithImpl<$Res> extends _$ConfigNodeResetStatus
 
 /// @nodoc
 class _$_ConfigNodeResetStatus implements _ConfigNodeResetStatus {
-  const _$_ConfigNodeResetStatus(this.source, this.success)
+  const _$_ConfigNodeResetStatus(this.source, this.destination, this.success)
       : assert(source != null),
+        assert(destination != null),
         assert(success != null);
 
   factory _$_ConfigNodeResetStatus.fromJson(Map<String, dynamic> json) => _$_$_ConfigNodeResetStatusFromJson(json);
@@ -112,11 +119,13 @@ class _$_ConfigNodeResetStatus implements _ConfigNodeResetStatus {
   @override
   final int source;
   @override
+  final int destination;
+  @override
   final bool success;
 
   @override
   String toString() {
-    return 'ConfigNodeResetStatus(source: $source, success: $success)';
+    return 'ConfigNodeResetStatus(source: $source, destination: $destination, success: $success)';
   }
 
   @override
@@ -124,12 +133,17 @@ class _$_ConfigNodeResetStatus implements _ConfigNodeResetStatus {
     return identical(this, other) ||
         (other is _ConfigNodeResetStatus &&
             (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.destination, destination) ||
+                const DeepCollectionEquality().equals(other.destination, destination)) &&
             (identical(other.success, success) || const DeepCollectionEquality().equals(other.success, success)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(source) ^ const DeepCollectionEquality().hash(success);
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(source) ^
+      const DeepCollectionEquality().hash(destination) ^
+      const DeepCollectionEquality().hash(success);
 
   @override
   _$ConfigNodeResetStatusCopyWith<_ConfigNodeResetStatus> get copyWith =>
@@ -142,12 +156,14 @@ class _$_ConfigNodeResetStatus implements _ConfigNodeResetStatus {
 }
 
 abstract class _ConfigNodeResetStatus implements ConfigNodeResetStatus {
-  const factory _ConfigNodeResetStatus(int source, bool success) = _$_ConfigNodeResetStatus;
+  const factory _ConfigNodeResetStatus(int source, int destination, bool success) = _$_ConfigNodeResetStatus;
 
   factory _ConfigNodeResetStatus.fromJson(Map<String, dynamic> json) = _$_ConfigNodeResetStatus.fromJson;
 
   @override
   int get source;
+  @override
+  int get destination;
   @override
   bool get success;
   @override

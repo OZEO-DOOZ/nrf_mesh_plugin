@@ -24,7 +24,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     private var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
     private val unProvisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
-    private val TAG: String = DoozMeshManagerApi::class.java.simpleName
+    private val tag: String = DoozMeshManagerApi::class.java.simpleName
 
     init {
         EventChannel(binaryMessenger, "$namespace/mesh_manager_api/events").setStreamHandler(this)
@@ -67,7 +67,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     }
 
     override fun onListen(arguments: Any?, events: EventSink?) {
-        Log.d(TAG, "onListen $arguments $events")
+        Log.d(tag, "onListen $arguments $events")
         this.eventSink = events
         doozMeshManagerCallbacks.eventSink = eventSink
         doozMeshProvisioningStatusCallbacks.eventSink = eventSink
@@ -298,7 +298,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "deprovision" -> {
-                Log.d(TAG, "should unprovision")
+                Log.d(tag, "should unprovision")
                 try {
                     val unicastAddress = call.argument<Int>("unicastAddress")!!
                     val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
@@ -309,7 +309,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                     val configNodeReset = ConfigNodeReset()
                     mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)}
                 } catch (ex: Exception) {
-                    Log.e(TAG, ex.message)
+                    Log.e(tag, ex.message)
                     result.success(false)
                 }
                 result.success(true)
