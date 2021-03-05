@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/utils/provisioning.dart' as utils_provisioning;
@@ -37,6 +38,18 @@ class NordicNrfMesh {
     final utils_provisioning.ProvisioningEvent events,
   }) =>
       utils_provisioning.provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events: events);
+
+  Future<ConfigNodeResetStatus> deprovision(
+    final MeshManagerApi meshManagerApi,
+    ProvisionedMeshNode meshNode,
+  ) =>
+      utils_provisioning.deprovision(meshManagerApi, meshNode);
+
+  Future<void> cancelProvisioning(
+    final MeshManagerApi meshManagerApi,
+    final BleMeshManager bleMeshManager,
+  ) =>
+      utils_provisioning.cancelProvisioning(meshManagerApi, bleMeshManager);
 
   bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
       utils_advertisement_data.addressIsInAdvertisementData(address, advertisementData);

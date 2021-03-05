@@ -588,10 +588,9 @@ class MeshManagerApi {
 
   /// Will try to deprovision the specified [ProvisionedMeshNode].
   ///
-  /// On Android:
-  ///
-  /// Returns true if the action was successfully sent to Nordic's ADK, false otherwise
-  /// Throws an method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
+  /// Returns a [ConfigNodeResetStatus] or null if timeout after 5sec
+  /// Throws a method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
+  /// Throws an [UnsupportedError] if the current OS is not supported
   Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
     if (Platform.isAndroid) {
       final unicastAddress = await meshNode.unicastAddress;

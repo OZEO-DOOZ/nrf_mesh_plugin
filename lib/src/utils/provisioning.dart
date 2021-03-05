@@ -5,6 +5,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
@@ -21,10 +22,15 @@ class _ProvisioningEvent {
 
 class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onProvisioning => _provisioningController.stream;
+
   Stream<void> get onProvisioningCapabilities => _provisioningCapabilitiesController.stream;
+
   Stream<void> get onProvisioningInvitation => _provisioningInvitationController.stream;
+
   Stream<void> get onProvisioningReconnect => _provisioningReconnectController.stream;
+
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
   Future<void> dispose() => Future.wait([
@@ -180,6 +186,18 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     ]));
   }
 }
+
+Future<void> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager) {
+// TODO
+  FlutterBlue.instance.stopScan();
+  if (bleMeshManager.connected) {
+    bleMeshManager.disconnect();
+  }
+  // bleMeshManager.refreshDeviceCache();
+}
+
+Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, ProvisionedMeshNode meshNode) =>
+    meshManagerApi.deprovision(meshNode);
 
 class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
   final MeshManagerApi meshManagerApi;
