@@ -599,6 +599,7 @@ class MeshManagerApi {
           .timeout(const Duration(seconds: 5), onTimeout: (sink) => sink.add(null))
           .first;
       await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
+      // TODO dont forget to delete node from db ?
       return status;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
