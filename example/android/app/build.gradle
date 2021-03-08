@@ -40,7 +40,7 @@ android {
     
     defaultConfig {
         applicationId "fr.dooz.nordic_nrf_mesh_example"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
