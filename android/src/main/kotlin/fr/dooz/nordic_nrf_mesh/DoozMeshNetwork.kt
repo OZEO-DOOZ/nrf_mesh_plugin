@@ -2,14 +2,18 @@ package fr.dooz.nordic_nrf_mesh
 
 import android.annotation.SuppressLint
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.*
-import java.lang.Exception
+import no.nordicsemi.android.mesh.transport.NodeDeserializer
+import java.lang.reflect.Type
 import java.util.*
-import java.util.Collections.sort
+
 
 class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
     private var eventSink : EventChannel.EventSink? = null
@@ -155,6 +159,16 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
             "selectedProvisionerUuid" -> {
                 result.success(meshNetwork.selectedProvisioner.provisionerUuid)
             }
+            "getProvisionersAsJson" -> {
+
+                val nodeList: List<Provisioner> = meshNetwork.provisioners
+                val gsonBuilder = GsonBuilder()
+                val provisionerListType: Type = object : TypeToken<List<Provisioner?>?>() {}.type
+                gsonBuilder.registerTypeAdapter(provisionerListType, NodeDeserializer())
+                val gson: Gson = gsonBuilder.create()
+                val provisionerListJson: String = gson.toJson(nodeList)
+                result.success(provisionerListJson)
+            }
             "highestAllocatableAddress" -> {
                 var maxAddress = 0
                 for (addressRange in meshNetwork.selectedProvisioner.allocatedUnicastRanges) {
@@ -183,7 +197,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
 
                     val success = this.addProvisioner(provisioner)
                     result.success(success)
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     result.error("100", e.message, "Please check the given addresses range")
                 }
             }

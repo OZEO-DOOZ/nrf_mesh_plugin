@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/models/group/group.dart';
+import 'package:nordic_nrf_mesh/src/models/provisioner/provisioner.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 
 abstract class IMeshNetwork {
@@ -12,6 +14,7 @@ abstract class IMeshNetwork {
   Future<List<ProvisionedMeshNode>> get nodes;
   String get id;
   Future<List<String>> get provisionersUUIDList;
+  Future<List<Provisioner>> get provisionersAsJson;
 
   Future<GroupData> addGroupWithName(String name);
 
@@ -101,6 +104,17 @@ class MeshNetwork implements IMeshNetwork {
   Future<List<String>> get provisionersUUIDList async {
     final result = await _methodChannel.invokeMethod<List>('getProvisionersUUID');
     return result.cast<String>();
+  }
+
+  @override
+  Future<List<Provisioner>> get provisionersAsJson async {
+    var provisioners = <Provisioner>[];
+    final result = await _methodChannel.invokeMethod('getProvisionersAsJson');
+    var prov = json.decode(result) as List;
+    prov.forEach((value) {
+      provisioners.add(Provisioner.fromJson(value));
+    });
+    return provisioners;
   }
 
   @override
