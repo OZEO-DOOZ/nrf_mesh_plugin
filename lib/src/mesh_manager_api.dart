@@ -586,11 +586,6 @@ class MeshManagerApi {
 
   Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
 
-  /// Will try to deprovision the specified [ProvisionedMeshNode].
-  ///
-  /// Returns a [ConfigNodeResetStatus] or null if timeout after 5sec
-  /// Throws a method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
-  /// Throws an [UnsupportedError] if the current OS is not supported
   Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
     if (Platform.isAndroid) {
       final unicastAddress = await meshNode.unicastAddress;

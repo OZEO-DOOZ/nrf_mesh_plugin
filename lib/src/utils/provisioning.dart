@@ -48,8 +48,9 @@ Future<ProvisionedMeshNode> provisioning(
     {ProvisioningEvent events}) async {
   if (Platform.isIOS || Platform.isAndroid) {
     return _provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events);
+  } else {
+    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
-  throw Exception('Platform ${Platform.operatingSystem} is not supported');
 }
 
 Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
@@ -187,17 +188,38 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   }
 }
 
-Future<void> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager) {
-// TODO
-  FlutterBlue.instance.stopScan();
-  if (bleMeshManager.connected) {
-    bleMeshManager.disconnect();
+Future<bool> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager) async {
+  if (Platform.isIOS || Platform.isAndroid) {
+    print('should cancel provisioning');
+    try {
+      await FlutterBlue.instance.stopScan(); // TODO migrate to new BLE lib
+      if (bleMeshManager.connected) {
+        await bleMeshManager.disconnect();
+      } else {
+        print('mesh manager not currently connected');
+      }
+      if (Platform.isAndroid) {
+        await bleMeshManager.refreshDeviceCache();
+      } else {
+        print('no need to refresh device cache on ${Platform.operatingSystem}');
+      }
+      return true;
+    } catch (e) {
+      print('ERROR - $e');
+      return false;
+    }
+  } else {
+    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
-  // bleMeshManager.refreshDeviceCache();
 }
 
-Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, ProvisionedMeshNode meshNode) =>
+Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, ProvisionedMeshNode meshNode) {
+  if (Platform.isIOS || Platform.isAndroid) {
     meshManagerApi.deprovision(meshNode);
+  } else {
+    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+  }
+}
 
 class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
   final MeshManagerApi meshManagerApi;

@@ -30,6 +30,13 @@ class NordicNrfMesh {
     return meshManagerApi;
   }
 
+
+  /// Will try to provision the specified [BluetoothDevice].
+  ///
+  /// Returns a [ProvisionedMeshNode] if success.
+  ///
+  /// Throws an [Exception] if provisioning failed
+  /// or an [UnsupportedError] if the current OS is not supported.
   Future<ProvisionedMeshNode> provisioning(
     final MeshManagerApi meshManagerApi,
     final BleMeshManager bleMeshManager,
@@ -39,13 +46,24 @@ class NordicNrfMesh {
   }) =>
       utils_provisioning.provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events: events);
 
+  /// Will try to deprovision the specified [ProvisionedMeshNode].
+  ///
+  /// Returns a [ConfigNodeResetStatus] or null if timeout after 5sec.
+  ///
+  /// Throws a method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
+  /// or an [UnsupportedError] if the current OS is not supported.
   Future<ConfigNodeResetStatus> deprovision(
     final MeshManagerApi meshManagerApi,
-    ProvisionedMeshNode meshNode,
+    final ProvisionedMeshNode meshNode,
   ) =>
       utils_provisioning.deprovision(meshManagerApi, meshNode);
 
-  Future<void> cancelProvisioning(
+  /// Will try to cancel the provisioning.
+  ///
+  /// Returns `true` if the call has been successful, `false` otherwise.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Future<bool> cancelProvisioning(
     final MeshManagerApi meshManagerApi,
     final BleMeshManager bleMeshManager,
   ) =>
