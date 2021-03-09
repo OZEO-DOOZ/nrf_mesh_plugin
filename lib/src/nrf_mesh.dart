@@ -30,7 +30,6 @@ class NordicNrfMesh {
     return meshManagerApi;
   }
 
-
   /// Will try to provision the specified [BluetoothDevice].
   ///
   /// Returns a [ProvisionedMeshNode] if success.
