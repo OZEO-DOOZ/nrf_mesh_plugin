@@ -188,7 +188,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                             "eventName" to "onConfigNodeResetStatus",
                             "source" to meshMessage.src,
                             "destination" to meshMessage.dst,
-                            "success" to true,
+                            "success" to true
                     ))
                 }
             }
