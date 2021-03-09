@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
-import 'package:nordic_nrf_mesh/src/models/provisioner/provisioner.dart';
 
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -141,7 +139,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         RaisedButton(
           child: Text('get provisioner list'),
           onPressed: () async {
-            var provUUIDs = await _meshNetwork.provisionersAsJson;
+            var provUUIDs = await _meshNetwork.provisionerList;
             provUUIDs.forEach((value) {
               print('${value}');
             });

@@ -14,7 +14,7 @@ abstract class IMeshNetwork {
   Future<List<ProvisionedMeshNode>> get nodes;
   String get id;
   Future<List<String>> get provisionersUUIDList;
-  Future<List<Provisioner>> get provisionersAsJson;
+  Future<List<Provisioner>> get provisionerList;
 
   Future<GroupData> addGroupWithName(String name);
 
@@ -107,7 +107,7 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<List<Provisioner>> get provisionersAsJson async {
+  Future<List<Provisioner>> get provisionerList async {
     var provisioners = <Provisioner>[];
     final result = await _methodChannel.invokeMethod('getProvisionersAsJson');
     var prov = json.decode(result) as List;
