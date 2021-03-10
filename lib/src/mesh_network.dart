@@ -31,6 +31,8 @@ abstract class IMeshNetwork {
   Future<void> selectProvisioner(int provisionerIndex);
 
   Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl);
+
+  Future<bool> updateProvisioner(Provisioner provisioner);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -125,6 +127,21 @@ class MeshNetwork implements IMeshNetwork {
         'groupAddressRange': groupAddressRange,
         'sceneAddressRange': sceneAddressRange,
         'globalTtl': globalTtl,
+      });
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
+  }
+
+  @override
+  Future<bool> updateProvisioner(Provisioner provisioner) {
+    if (Platform.isAndroid) {
+      return _methodChannel.invokeMethod('updateProvisioner', {
+        'provisionerUuid': provisioner.provisionerUuid,
+        'provisionerName': provisioner.provisionerName,
+        'provisionerAddress': provisioner.provisionerAddress,
+        'globalTtl': provisioner.globalTtl,
+        'lastSelected': provisioner.lastSelected
       });
     } else {
       throw UnsupportedError('Platform not supported');

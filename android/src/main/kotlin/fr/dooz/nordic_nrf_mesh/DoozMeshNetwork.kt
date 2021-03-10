@@ -201,6 +201,23 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                     result.error("100", e.message, "Please check the given addresses range")
                 }
             }
+            "updateProvisioner" -> {
+                val provisionerUuid = call.argument<String>("provisionerUuid")!!
+                val provisionerName = call.argument<String>("provisionerName")!!
+                val provisionerAddress = call.argument<Int>("provisionerAddress")!!
+                val globalTtl = call.argument<Int>("globalTtl")!!
+                val lastSelected = call.argument<Boolean>("lastSelected")!!
+                
+                meshNetwork.provisioners.forEach { provisioner ->
+                    if(provisioner.provisionerUuid == provisionerUuid){
+                        provisioner.provisionerName = provisionerName
+                        provisioner.provisionerAddress = provisionerAddress
+                        provisioner.globalTtl = globalTtl
+                        provisioner.isLastSelected = lastSelected
+                        result.success(meshNetwork.updateProvisioner(provisioner))
+                    }
+                }
+            }
             else -> {
                 result.notImplemented()
             }
