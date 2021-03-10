@@ -215,7 +215,7 @@ Future<bool> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bl
 
 Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, ProvisionedMeshNode meshNode) {
   if (Platform.isIOS || Platform.isAndroid) {
-    meshManagerApi.deprovision(meshNode);
+    return meshManagerApi.deprovision(meshNode);
   } else {
     throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
