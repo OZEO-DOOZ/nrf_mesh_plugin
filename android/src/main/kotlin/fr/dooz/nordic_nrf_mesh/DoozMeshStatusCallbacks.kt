@@ -65,7 +65,9 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                             "level" to meshMessage.presentLevel,
                             "targetLevel" to meshMessage.targetLevel,
                             "source" to meshMessage.src,
-                            "destination" to meshMessage.dst
+                            "destination" to meshMessage.dst,
+                            "transitionResolution" to meshMessage.transitionResolution,
+                            "transitionSteps" to meshMessage.transitionSteps
                     ))
                 }
             }
