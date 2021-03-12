@@ -586,12 +586,6 @@ class MeshManagerApi {
 
   Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
 
-  /// Will try to deprovision the specified [ProvisionedMeshNode].
-  ///
-  /// On Android:
-  ///
-  /// Returns true if the action was successfully sent to Nordic's ADK, false otherwise
-  /// Throws an method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
   Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
     if (Platform.isAndroid) {
       final unicastAddress = await meshNode.unicastAddress;
@@ -600,6 +594,7 @@ class MeshManagerApi {
           .timeout(const Duration(seconds: 5), onTimeout: (sink) => sink.add(null))
           .first;
       await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
+      // TODO dont forget to delete node from db ?
       return status;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
