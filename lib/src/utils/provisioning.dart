@@ -5,6 +5,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
@@ -21,10 +22,15 @@ class _ProvisioningEvent {
 
 class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onProvisioning => _provisioningController.stream;
+
   Stream<void> get onProvisioningCapabilities => _provisioningCapabilitiesController.stream;
+
   Stream<void> get onProvisioningInvitation => _provisioningInvitationController.stream;
+
   Stream<void> get onProvisioningReconnect => _provisioningReconnectController.stream;
+
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
   Future<void> dispose() => Future.wait([
@@ -42,8 +48,9 @@ Future<ProvisionedMeshNode> provisioning(
     {ProvisioningEvent events}) async {
   if (Platform.isIOS || Platform.isAndroid) {
     return _provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events);
+  } else {
+    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
-  throw Exception('Platform ${Platform.operatingSystem} is not supported');
 }
 
 Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
@@ -178,6 +185,39 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       if (Platform.isAndroid) onDataSentSubscription?.cancel(),
       if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
     ]));
+  }
+}
+
+Future<bool> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager) async {
+  if (Platform.isIOS || Platform.isAndroid) {
+    print('should cancel provisioning');
+    try {
+      await FlutterBlue.instance.stopScan(); // TODO migrate to new BLE lib
+      if (bleMeshManager.connected) {
+        await bleMeshManager.disconnect();
+      } else {
+        print('mesh manager not currently connected');
+      }
+      if (Platform.isAndroid) {
+        await bleMeshManager.refreshDeviceCache();
+      } else {
+        print('no need to refresh device cache on ${Platform.operatingSystem}');
+      }
+      return true;
+    } catch (e) {
+      print('ERROR - $e');
+      return false;
+    }
+  } else {
+    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+  }
+}
+
+Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, ProvisionedMeshNode meshNode) {
+  if (Platform.isIOS || Platform.isAndroid) {
+    return meshManagerApi.deprovision(meshNode);
+  } else {
+    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
 }
 

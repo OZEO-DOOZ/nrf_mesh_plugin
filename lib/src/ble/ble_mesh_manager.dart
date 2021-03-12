@@ -183,4 +183,8 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       }
     }
   }
+
+  Future<void> refreshDeviceCache() async {
+    // TODO migrate to new BLE lib and use following snippet : `await flutterReactiveBle.clearGattCache(foundDeviceId);`
+  }
 }
