@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
@@ -12,8 +13,7 @@ import 'package:nordic_nrf_mesh/src/utils/advertisement_data.dart' as utils_adve
 
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
-
-  Future<MeshManagerApi> _meshManagerApi;
+  final BleScanner _bleScanner = BleScanner();
 
   NordicNrfMesh();
 
@@ -22,6 +22,7 @@ class NordicNrfMesh {
     return version;
   }
 
+  Future<MeshManagerApi> _meshManagerApi;
   Future<MeshManagerApi> get meshManagerApi => _meshManagerApi ??= _createMeshManagerApi();
 
   Future<MeshManagerApi> _createMeshManagerApi() async {
@@ -29,6 +30,12 @@ class NordicNrfMesh {
     final meshManagerApi = MeshManagerApi();
     return meshManagerApi;
   }
+
+  bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
+      utils_advertisement_data.addressIsInAdvertisementData(address, advertisementData);
+
+  Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) =>
+      utils_advertisement_data.macAddressesFromAdvertisementData(advertisementData);
 
   /// Will try to provision the specified [BluetoothDevice].
   ///
@@ -68,9 +75,28 @@ class NordicNrfMesh {
   ) =>
       utils_provisioning.cancelProvisioning(meshManagerApi, bleMeshManager);
 
-  bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
-      utils_advertisement_data.addressIsInAdvertisementData(address, advertisementData);
+  /// Will begin a ble scan with the given parameters or defaults.
+  ///
+  /// Returns a List of [ScanResult] that may be empty if the timeout is triggered.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// TODO migrate this when using new ble lib
+  Future<List<ScanResult>> scanWithParams({
+    ScanMode scanMode = ScanMode.lowLatency,
+    List<Guid> withServices = const [],
+    Duration timeoutDuration = const Duration(seconds: 3),
+    bool allowDuplicates = false,
+  }) =>
+      _bleScanner.scanWithParams(
+        FlutterBlue.instance,
+        scanMode,
+        withServices,
+        timeoutDuration,
+        allowDuplicates,
+      );
 
-  Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) =>
-      utils_advertisement_data.macAddressesFromAdvertisementData(advertisementData);
+  /// Will stop the ble scanner if some is currently scanning
+  Future stopScan() => _bleScanner.stopScan(FlutterBlue.instance);
+
+  Future<int> getDeviceRssi(String uuid) => _bleScanner.getDeviceRssi(uuid);
 }
