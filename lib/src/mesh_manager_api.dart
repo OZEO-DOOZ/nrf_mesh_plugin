@@ -207,6 +207,8 @@ class MeshManagerApi {
 
   Stream<ConfigAppKeyStatusData> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
 
+  Stream<ConfigModelAppStatusData> get onConfigModelAppStatus => _onConfigModelAppStatusController.stream;
+
   Stream<GenericLevelStatusData> get onGenericLevelStatus => _onGenericLevelStatusController.stream;
 
   Stream<GenericOnOffStatusData> get onGenericOnOffStatus => _onGenericOnOffStatusController.stream;
@@ -436,7 +438,6 @@ class MeshManagerApi {
             element.subscriptionAddress == subscriptionAddress,
         orElse: () => null);
     await _methodChannel.invokeMethod('sendConfigModelSubscriptionAdd', {
-      'address': address,
       'elementAddress': elementAddress,
       'subscriptionAddress': subscriptionAddress,
       'modelIdentifier': modelIdentifier,
@@ -453,7 +454,6 @@ class MeshManagerApi {
             element.subscriptionAddress == subscriptionAddress,
         orElse: () => null);
     await _methodChannel.invokeMethod('sendConfigModelSubscriptionDelete', {
-      'address': address,
       'elementAddress': elementAddress,
       'subscriptionAddress': subscriptionAddress,
       'modelIdentifier': modelIdentifier,

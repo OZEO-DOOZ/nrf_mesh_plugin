@@ -155,25 +155,26 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "sendConfigModelSubscriptionAdd" -> {
-                val address = call.argument<Int>("address")!!
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelSubscriptionAdd(elementAddress, subscriptionAddress, modelIdentifier)
-                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
                 result.success(null)
             }
             "sendConfigModelSubscriptionDelete" -> {
-                val address = call.argument<Int>("address")!!
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelSubscriptionDelete(elementAddress, subscriptionAddress, modelIdentifier)
-                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
                 result.success(null)
             }
             "sendConfigModelPublicationSet" -> {
-                val address = call.argument<Int>("address")!!
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val publishAddress = call.argument<Int>("publishAddress")!!
                 val appKeyIndex = call.argument<Int>("appKeyIndex")!!
@@ -184,6 +185,8 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val retransmitCount = call.argument<Int>("retransmitCount")!!
                 val retransmitIntervalSteps = call.argument<Int>("retransmitIntervalSteps")!!
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelPublicationSet(
                         elementAddress,
                         publishAddress,
@@ -196,7 +199,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         retransmitIntervalSteps,
                         modelIdentifier
                 )
-                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
                 result.success(null)
             }
             "sendV2MagicLevel" -> {
