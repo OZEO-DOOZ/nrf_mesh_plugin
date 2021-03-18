@@ -50,7 +50,8 @@ class NordicNrfMesh {
     final String serviceDataUuid, {
     final utils_provisioning.ProvisioningEvent events,
   }) =>
-      utils_provisioning.provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events: events);
+      utils_provisioning.provisioning(meshManagerApi, bleMeshManager, _bleScanner, device, serviceDataUuid,
+          events: events);
 
   /// Will try to deprovision the specified [ProvisionedMeshNode].
   ///

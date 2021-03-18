@@ -232,24 +232,16 @@ class MeshManagerApi {
     return null;
   }
 
-  static const int _kAdvertisementTypeNodeIdentity = 0x01;
-  static const int _kAdvertisementTypeNetworkID = 0x00;
-  static const int _kAdvertisedHashOffset = 1;
-
-  bool isAdvertisedWithNodeIdentity(final List<int> serviceData) {
-    return serviceData != null &&
-        serviceData.length == 17 &&
-        serviceData[_kAdvertisedHashOffset - 1] == _kAdvertisementTypeNodeIdentity;
+  Future<bool> isAdvertisedWithNodeIdentity(final List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('isAdvertisedWithNodeIdentity', {'serviceData': serviceData});
   }
 
   Future<bool> nodeIdentityMatches(List<int> serviceData) async {
     return await _methodChannel.invokeMethod('nodeIdentityMatches', {'serviceData': serviceData});
   }
 
-  bool isAdvertisingWithNetworkIdentity(final List<int> serviceData) {
-    return serviceData != null &&
-        serviceData.length == 9 &&
-        serviceData[_kAdvertisedHashOffset - 1] == _kAdvertisementTypeNetworkID;
+  Future<bool> isAdvertisingWithNetworkIdentity(final List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('isAdvertisingWithNetworkIdentity', {'serviceData': serviceData});
   }
 
   Future<bool> networkIdMatches(List<int> serviceData) async {

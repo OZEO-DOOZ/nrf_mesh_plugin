@@ -19,9 +19,7 @@ class BleScanner {
   Future<bool> get isScanning => _flutterBlue.isScanning.first;
 
   Future stopScan() async {
-    if (await _flutterBlue.isScanning.first) {
-      await _flutterBlue.stopScan();
-    }
+    await _flutterBlue.stopScan();
   }
 
   /// Will begin a ble scan with the given parameters or defaults and wait for [timeoutDuration].
@@ -80,11 +78,11 @@ class BleScanner {
     }
   }
 
-  Future<ScanResult> searchForSpecificUID(String uid) {
+  Future<ScanResult> searchForSpecificUID(String uid) async {
     final result = _scanWithParamsAsStream(
       withServices: [meshProvisioningUuid],
     ).firstWhere((s) => s.device.id.id == uid, orElse: () => null);
-    stopScan();
+    await stopScan();
     return result;
   }
 

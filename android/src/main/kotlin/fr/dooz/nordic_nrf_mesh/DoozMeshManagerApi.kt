@@ -347,6 +347,22 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 var matches = mMeshManagerApi.networkIdMatches(networkId, serviceData)
                 result.success(matches)
             }
+            "isAdvertisingWithNetworkIdentity" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                try {
+                    result.success(mMeshManagerApi.isAdvertisingWithNetworkIdentity(serviceData))
+                } catch (e: Exception) {
+                    result.error("101", e.message, "an error occured while checking service data")
+                }
+            }
+            "isAdvertisedWithNodeIdentity" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                try {
+                    result.success(mMeshManagerApi.isAdvertisedWithNodeIdentity(serviceData))
+                } catch (e: Exception) {
+                    result.error("102", e.message, "an error occured while checking service data")
+                }
+            }
             else -> {
                 result.notImplemented()
             }
