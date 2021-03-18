@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';

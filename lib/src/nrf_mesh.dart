@@ -11,8 +11,6 @@ import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/utils/provisioning.dart' as utils_provisioning;
 import 'package:nordic_nrf_mesh/src/utils/advertisement_data.dart' as utils_advertisement_data;
 
-import 'ble/ble_manager.dart';
-
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
   final BleScanner _bleScanner = BleScanner();
