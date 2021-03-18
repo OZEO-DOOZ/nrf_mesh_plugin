@@ -55,7 +55,7 @@ class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscrip
             try {
               await widget.meshManagerApi
                   .sendConfigModelSubscriptionAdd(
-                      selectedAddress, selectedElementAddress, selectedSubscriptionAddress, selectedModelType)
+                      selectedElementAddress, selectedSubscriptionAddress, selectedModelType)
                   .timeout(Duration(seconds: 40));
               scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
