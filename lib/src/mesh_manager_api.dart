@@ -446,7 +446,7 @@ class MeshManagerApi {
   }
 
   Future<ConfigModelSubscriptionStatus> sendConfigModelSubscriptionAdd(
-      int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
+      int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
         (element) =>
             element.elementAddress == elementAddress &&
@@ -462,7 +462,7 @@ class MeshManagerApi {
   }
 
   Future<void> sendConfigModelSubscriptionDelete(
-      int address, int elementAddress, int subscriptionAddress, int modelIdentifier) async {
+      int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
         (element) =>
             element.elementAddress == elementAddress &&
