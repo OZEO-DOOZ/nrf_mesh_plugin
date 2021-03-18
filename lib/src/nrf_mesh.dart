@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
@@ -12,8 +13,7 @@ import 'package:nordic_nrf_mesh/src/utils/advertisement_data.dart' as utils_adve
 
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
-
-  Future<MeshManagerApi> _meshManagerApi;
+  final BleScanner _bleScanner = BleScanner();
 
   NordicNrfMesh();
 
@@ -22,6 +22,7 @@ class NordicNrfMesh {
     return version;
   }
 
+  Future<MeshManagerApi> _meshManagerApi;
   Future<MeshManagerApi> get meshManagerApi => _meshManagerApi ??= _createMeshManagerApi();
 
   Future<MeshManagerApi> _createMeshManagerApi() async {
@@ -29,6 +30,12 @@ class NordicNrfMesh {
     final meshManagerApi = MeshManagerApi();
     return meshManagerApi;
   }
+
+  bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
+      utils_advertisement_data.addressIsInAdvertisementData(address, advertisementData);
+
+  Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) =>
+      utils_advertisement_data.macAddressesFromAdvertisementData(advertisementData);
 
   /// Will try to provision the specified [BluetoothDevice].
   ///
@@ -43,7 +50,8 @@ class NordicNrfMesh {
     final String serviceDataUuid, {
     final utils_provisioning.ProvisioningEvent events,
   }) =>
-      utils_provisioning.provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events: events);
+      utils_provisioning.provisioning(meshManagerApi, bleMeshManager, _bleScanner, device, serviceDataUuid,
+          events: events);
 
   /// Will try to deprovision the specified [ProvisionedMeshNode].
   ///
@@ -68,9 +76,46 @@ class NordicNrfMesh {
   ) =>
       utils_provisioning.cancelProvisioning(meshManagerApi, bleMeshManager);
 
-  bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
-      utils_advertisement_data.addressIsInAdvertisementData(address, advertisementData);
+  /// Will scan for **unprovisioned** nodes.
+  ///
+  /// Returns a [List] of [ScanResult] that may be empty if no device is in range.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Future<List<ScanResult>> unprovisionedNodesInRange({
+    Duration timeoutDuration = defaultScanDuration,
+  }) =>
+      _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
-  Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) =>
-      utils_advertisement_data.macAddressesFromAdvertisementData(advertisementData);
+  /// Will scan for **provisioned** nodes.
+  ///
+  /// Returns a [List] of [ScanResult] that may be empty if no device is in range.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Future<List<ScanResult>> provisionedNodesInRange({
+    Duration timeoutDuration = defaultScanDuration,
+  }) =>
+      _bleScanner.provisionedNodesInRange(timeoutDuration: timeoutDuration);
+
+  /// Will scan for **provisioned** nodes.
+  ///
+  /// Returns a [Stream] of [ScanResult] for the user to listen to.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Stream<ScanResult> scanForProxy({
+    Duration timeoutDuration = defaultScanDuration,
+  }) =>
+      _bleScanner.scanForProxy(timeoutDuration: timeoutDuration);
+
+  /// Will scan for the given **unprovisioned** node uid.
+  ///
+  /// Returns a [ScanResult] or null if not found.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Future<ScanResult> searchForSpecificUID(String uid) => _bleScanner.searchForSpecificUID(uid);
+
+  /// By awaiting this getter, one will get the current status of the scanner
+  Future<bool> get isScanning => _bleScanner.isScanning;
+
+  /// Will stop the ble scanner if it is currently scanning
+  Future stopScan() => _bleScanner.stopScan();
 }

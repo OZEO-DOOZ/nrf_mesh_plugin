@@ -17,7 +17,7 @@ import kotlin.collections.ArrayList
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     private var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
-    private var eventSink :EventSink? = null
+    private var eventSink: EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
     private val doozMeshManagerCallbacks: DoozMeshManagerCallbacks
     private val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
@@ -39,7 +39,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
         mMeshManagerApi.setMeshStatusCallbacks(doozMeshStatusCallbacks)
     }
 
-    private fun loadMeshNetwork()  {
+    private fun loadMeshNetwork() {
         mMeshManagerApi.loadMeshNetwork()
     }
 
@@ -306,11 +306,12 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                     val unicastAddress = call.argument<Int>("unicastAddress")!!
                     val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
                     val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(unicastAddress)
-                    if(pNode == null){
+                    if (pNode == null) {
                         result.error("NOT_FOUND", "MeshNode with unicastAddress $unicastAddress doesn't exist", null)
-                    } else{
-                    val configNodeReset = ConfigNodeReset()
-                    mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)}
+                    } else {
+                        val configNodeReset = ConfigNodeReset()
+                        mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)
+                    }
                 } catch (ex: Exception) {
                     Log.e(tag, ex.message)
                     result.success(false)
@@ -330,6 +331,40 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             "setMtuSize" -> {
                 doozMeshManagerCallbacks.mtuSize = call.argument<Int>("mtuSize")!!
                 result.success(null)
+            }
+            "nodeIdentityMatches" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                currentMeshNetwork.nodes.forEach { node ->
+                    if (mMeshManagerApi.nodeIdentityMatches(node, serviceData)) {
+                        result.success(true)
+                    }
+                }
+                result.success(false)
+            }
+            "networkIdMatches" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val networkKeys = currentMeshNetwork.getNetKeys()!!
+                val networkId = mMeshManagerApi.generateNetworkId(networkKeys.get(0).getKey())
+                var matches = mMeshManagerApi.networkIdMatches(networkId, serviceData)
+                result.success(matches)
+            }
+            "isAdvertisingWithNetworkIdentity" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                try {
+                    result.success(mMeshManagerApi.isAdvertisingWithNetworkIdentity(serviceData))
+                } catch (e: Exception) {
+                    result.error("101", e.message, "an error occured while checking service data")
+                }
+            }
+            "isAdvertisedWithNodeIdentity" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                try {
+                    result.success(mMeshManagerApi.isAdvertisedWithNodeIdentity(serviceData))
+                } catch (e: Exception) {
+                    result.error("102", e.message, "an error occured while checking service data")
+                }
             }
             else -> {
                 result.notImplemented()

@@ -234,6 +234,22 @@ class MeshManagerApi {
     return null;
   }
 
+  Future<bool> isAdvertisedWithNodeIdentity(final List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('isAdvertisedWithNodeIdentity', {'serviceData': serviceData});
+  }
+
+  Future<bool> nodeIdentityMatches(List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('nodeIdentityMatches', {'serviceData': serviceData});
+  }
+
+  Future<bool> isAdvertisingWithNetworkIdentity(final List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('isAdvertisingWithNetworkIdentity', {'serviceData': serviceData});
+  }
+
+  Future<bool> networkIdMatches(List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('networkIdMatches', {'serviceData': serviceData});
+  }
+
   void dispose() => Future.wait([
         _onNetworkLoadedSubscription.cancel(),
         _onNetworkImportedSubscription.cancel(),
@@ -594,7 +610,6 @@ class MeshManagerApi {
           .timeout(const Duration(seconds: 5), onTimeout: (sink) => sink.add(null))
           .first;
       await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
-      // TODO dont forget to delete node from db ?
       return status;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
