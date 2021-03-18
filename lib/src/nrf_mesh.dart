@@ -11,6 +11,8 @@ import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/utils/provisioning.dart' as utils_provisioning;
 import 'package:nordic_nrf_mesh/src/utils/advertisement_data.dart' as utils_advertisement_data;
 
+import 'ble/ble_manager.dart';
+
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
   final BleScanner _bleScanner = BleScanner();
@@ -75,28 +77,46 @@ class NordicNrfMesh {
   ) =>
       utils_provisioning.cancelProvisioning(meshManagerApi, bleMeshManager);
 
-  /// Will begin a ble scan with the given parameters or defaults.
+  /// Will scan for **unprovisioned** nodes.
   ///
-  /// Returns a List of [ScanResult] that may be empty if the timeout is triggered.
+  /// Returns a [List] of [ScanResult] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  /// TODO migrate this when using new ble lib
-  Future<List<ScanResult>> scanWithParams({
-    ScanMode scanMode = ScanMode.lowLatency,
-    List<Guid> withServices = const [],
-    Duration timeoutDuration = const Duration(seconds: 3),
-    bool allowDuplicates = false,
+  Future<List<ScanResult>> unprovisionedNodesInRange({
+    Duration timeoutDuration = defaultScanDuration,
   }) =>
-      _bleScanner.scanWithParams(
-        FlutterBlue.instance,
-        scanMode,
-        withServices,
-        timeoutDuration,
-        allowDuplicates,
-      );
+      _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
-  /// Will stop the ble scanner if some is currently scanning
-  Future stopScan() => _bleScanner.stopScan(FlutterBlue.instance);
+  /// Will scan for **provisioned** nodes.
+  ///
+  /// Returns a [List] of [ScanResult] that may be empty if no device is in range.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Future<List<ScanResult>> provisionedNodesInRange({
+    Duration timeoutDuration = defaultScanDuration,
+  }) =>
+      _bleScanner.provisionedNodesInRange(timeoutDuration: timeoutDuration);
 
-  Future<int> getDeviceRssi(String uuid) => _bleScanner.getDeviceRssi(uuid);
+  /// Will scan for **provisioned** nodes.
+  ///
+  /// Returns a [Stream] of [ScanResult] for the user to listen to.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Stream<ScanResult> scanForProxy({
+    Duration timeoutDuration = defaultScanDuration,
+  }) =>
+      _bleScanner.scanForProxy(timeoutDuration: timeoutDuration);
+
+  /// Will scan for the given **unprovisioned** node uid.
+  ///
+  /// Returns a [ScanResult] or null if not found.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Future<ScanResult> searchForSpecificUID(String uid) => _bleScanner.searchForSpecificUID(uid);
+
+  /// By awaiting this getter, one will get the current status of the scanner
+  Future<bool> get isScanning => _bleScanner.isScanning;
+
+  /// Will stop the ble scanner if it is currently scanning
+  Future stopScan() => _bleScanner.stopScan();
 }

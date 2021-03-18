@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
@@ -230,6 +231,30 @@ class MeshManagerApi {
       return '1827';
     }
     return null;
+  }
+
+  static const int _kAdvertisementTypeNodeIdentity = 0x01;
+  static const int _kAdvertisementTypeNetworkID = 0x00;
+  static const int _kAdvertisedHashOffset = 1;
+
+  bool isAdvertisedWithNodeIdentity(final List<int> serviceData) {
+    return serviceData != null &&
+        serviceData.length == 17 &&
+        serviceData[_kAdvertisedHashOffset - 1] == _kAdvertisementTypeNodeIdentity;
+  }
+
+  Future<bool> nodeIdentityMatches(List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('nodeIdentityMatches', {'serviceData': serviceData});
+  }
+
+  bool isAdvertisingWithNetworkIdentity(final List<int> serviceData) {
+    return serviceData != null &&
+        serviceData.length == 9 &&
+        serviceData[_kAdvertisedHashOffset - 1] == _kAdvertisementTypeNetworkID;
+  }
+
+  Future<bool> networkIdMatches(List<int> serviceData) async {
+    return await _methodChannel.invokeMethod('networkIdMatches', {'serviceData': serviceData});
   }
 
   void dispose() => Future.wait([
@@ -594,7 +619,6 @@ class MeshManagerApi {
           .timeout(const Duration(seconds: 5), onTimeout: (sink) => sink.add(null))
           .first;
       await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
-      // TODO dont forget to delete node from db ?
       return status;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
