@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
@@ -43,18 +43,18 @@ class ProvisioningEvent extends _ProvisioningEvent {
       ]);
 }
 
-Future<ProvisionedMeshNode> provisioning(
-    MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager, BluetoothDevice device, String serviceDataUuid,
+Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
+    BleScanner bleScanner, BluetoothDevice device, String serviceDataUuid,
     {ProvisioningEvent events}) async {
   if (Platform.isIOS || Platform.isAndroid) {
-    return _provisioning(meshManagerApi, bleMeshManager, device, serviceDataUuid, events);
+    return _provisioning(meshManagerApi, bleMeshManager, bleScanner, device, serviceDataUuid, events);
   } else {
     throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
 }
 
 Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
-    BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
+    BleScanner bleScanner, BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
   ProvisionedMeshNode provisionedMeshNode;
@@ -65,11 +65,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     await bleMeshManager.disconnect();
     ScanResult scanResult;
     while (scanResult == null) {
-      final scanResults = (await FlutterBlue.instance.startScan(
-        withServices: [meshProxyUuid],
-        scanMode: ScanMode.lowLatency,
-        timeout: Duration(seconds: 1),
-      ) as List<ScanResult>);
+      final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
       scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
       await Future.delayed(Duration(milliseconds: 500));
     }
