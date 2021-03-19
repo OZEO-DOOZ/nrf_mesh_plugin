@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
@@ -40,6 +41,9 @@ class NordicNrfMesh {
   /// Will try to provision the specified [BluetoothDevice].
   ///
   /// Returns a [ProvisionedMeshNode] if success.
+  ///
+  /// The [BleManager] will still be connected to device after the process is a success.
+  /// If any error occurs, the [BleManager] will be disconnected from device.
   ///
   /// Throws an [Exception] if provisioning failed
   /// or an [UnsupportedError] if the current OS is not supported.
