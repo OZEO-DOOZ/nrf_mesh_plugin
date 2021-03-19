@@ -18,6 +18,7 @@ class _ProvisioningEvent {
   final _provisioningReconnectController = StreamController<void>();
   final _onConfigCompositionDataStatusController = StreamController<void>();
   final _onConfigAppKeyStatusController = StreamController<void>();
+  final _provisioningGattErrorController = StreamController<ProvisionedMeshNode>();
 }
 
 class ProvisioningEvent extends _ProvisioningEvent {
@@ -32,6 +33,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
 
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+  Stream<ProvisionedMeshNode> get onProvisioningGattError => _provisioningGattErrorController.stream;
 
   Future<void> dispose() => Future.wait([
         _provisioningController.close(),
@@ -40,6 +42,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
         _provisioningReconnectController.close(),
         _onConfigCompositionDataStatusController.close(),
         _onConfigAppKeyStatusController.close(),
+        _provisioningGattErrorController.close(),
       ]);
 }
 
@@ -144,6 +147,9 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
+  final onGattErrorSubscription = bleMeshManager.callbacks.onError.listen((event) {
+    events?._provisioningGattErrorController?.add(provisionedMeshNode);
+  });
 
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController?.add(null);
@@ -178,6 +184,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       onDeviceReadySubscription.cancel(),
       onDataReceivedSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
+      onGattErrorSubscription.cancel(),
       if (Platform.isAndroid) onDataSentSubscription?.cancel(),
       if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
     ]));
