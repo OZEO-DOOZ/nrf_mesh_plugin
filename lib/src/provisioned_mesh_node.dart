@@ -39,6 +39,7 @@ class ElementData {
   String toString() => 'ElementData ${toJson()}';
 }
 
+@JsonSerializable(anyMap: true)
 class ProvisionedMeshNode {
   final MethodChannel _methodChannel;
   final String uuid;
@@ -57,4 +58,11 @@ class ProvisionedMeshNode {
     final _elements = await _methodChannel.invokeMethod<List>('elements');
     return _elements.map((e) => ElementData.fromJson(e)).toList();
   }
+
+  factory ProvisionedMeshNode.fromJson(Map json) => _$ProvisionedMeshNodeFromJson(json.cast<String, dynamic>());
+
+  Map<String, dynamic> toJson() => _$ProvisionedMeshNodeToJson(this);
+
+  @override
+  String toString() => 'ProvisionedMeshNode ${toJson()}';
 }

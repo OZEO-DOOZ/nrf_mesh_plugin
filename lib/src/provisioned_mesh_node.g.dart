@@ -39,3 +39,13 @@ Map<String, dynamic> _$ElementDataToJson(ElementData instance) => <String, dynam
       'locationDescriptor': instance.locationDescriptor,
       'models': instance.models,
     };
+
+ProvisionedMeshNode _$ProvisionedMeshNodeFromJson(Map json) {
+  return ProvisionedMeshNode(
+    json['uuid'] as String,
+  );
+}
+
+Map<String, dynamic> _$ProvisionedMeshNodeToJson(ProvisionedMeshNode instance) => <String, dynamic>{
+      'uuid': instance.uuid,
+    };
