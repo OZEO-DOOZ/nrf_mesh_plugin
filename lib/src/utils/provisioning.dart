@@ -70,7 +70,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       await Future.delayed(Duration(milliseconds: 500));
     }
     if (scanResult == null) {
-      completer.completeError(Exception('Didn\'t find module'));
+      completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
       return;
     }
     events?._provisioningReconnectController?.add(null);
@@ -79,7 +79,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
     await meshManagerApi.cleanProvisioningData();
-    completer.completeError(Exception('Failed to provision device ${device.id.id}'));
+    completer.completeError(NrfMeshProvisioningException('Failed to provision device ${device.id.id}'));
   });
 
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
@@ -90,7 +90,8 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 
       if (elementSize == 0) {
         await meshManagerApi.cleanProvisioningData();
-        completer.completeError(Exception('Provisioning is failed. Module does not have any elements.'));
+        completer
+            .completeError(NrfMeshProvisioningException('Provisioning is failed. Module does not have any elements.'));
         return;
       }
 
@@ -215,6 +216,11 @@ Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, Provisi
   } else {
     throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
+}
+
+class NrfMeshProvisioningException implements Exception {
+  final String message;
+  NrfMeshProvisioningException([this.message]) : super();
 }
 
 class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
