@@ -33,6 +33,8 @@ abstract class IMeshNetwork {
   Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl);
 
   Future<bool> updateProvisioner(Provisioner provisioner);
+
+  Future<bool> deleteNode(String uid);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -145,6 +147,17 @@ class MeshNetwork implements IMeshNetwork {
       });
     } else {
       throw UnsupportedError('Platform not supported');
+    }
+  }
+
+  @override
+  Future<bool> deleteNode(String uid) {
+    if (Platform.isIOS || Platform.isAndroid) {
+      return _methodChannel.invokeMethod('deleteNode', {
+        'uid': uid,
+      });
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
   }
 }

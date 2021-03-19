@@ -11,16 +11,17 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.*
 import no.nordicsemi.android.mesh.transport.NodeDeserializer
+import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 import java.lang.reflect.Type
 import java.util.*
 
 
 class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
-    private var eventSink : EventChannel.EventSink? = null
+    private var eventSink: EventChannel.EventSink? = null
     private var eventChannel: EventChannel = EventChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.id}/events")
     private var methodChannel: MethodChannel = MethodChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.id}/methods")
     private val tag: String = DoozMeshNetwork::class.java.simpleName
-    
+
     init {
         eventChannel.setStreamHandler(this)
         methodChannel.setMethodCallHandler(this)
@@ -30,7 +31,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
         return meshNetwork.id
     }
 
-    private fun getMeshNetworkName() : String {
+    private fun getMeshNetworkName(): String {
         return meshNetwork.meshName
     }
 
@@ -45,7 +46,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
     //adding prov to mesh n/w
     private fun addProvisioner(provisioner: Provisioner): Boolean {
         return try {
-             meshNetwork.addProvisioner(provisioner)
+            meshNetwork.addProvisioner(provisioner)
         } catch (e: java.lang.IllegalArgumentException) {
             Log.e(tag, "caught exception " + e.message)
             false
@@ -207,9 +208,9 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val provisionerAddress = call.argument<Int>("provisionerAddress")!!
                 val globalTtl = call.argument<Int>("globalTtl")!!
                 val lastSelected = call.argument<Boolean>("lastSelected")!!
-                
+
                 meshNetwork.provisioners.forEach { provisioner ->
-                    if(provisioner.provisionerUuid == provisionerUuid){
+                    if (provisioner.provisionerUuid == provisionerUuid) {
                         provisioner.provisionerName = provisionerName
                         provisioner.provisionerAddress = provisionerAddress
                         provisioner.globalTtl = globalTtl
@@ -217,6 +218,16 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         result.success(meshNetwork.updateProvisioner(provisioner))
                     }
                 }
+            }
+            "deleteNode" -> {
+                val uid = call.argument<String>("uid")!!
+                var pNodeToDelete: ProvisionedMeshNode? = null
+                meshNetwork.nodes.forEach { node ->
+                    if (node.getUuid() == uid) {
+                        pNodeToDelete = node
+                    }
+                }
+                pNodeToDelete?.let { meshNetwork.deleteNode(it) }
             }
             else -> {
                 result.notImplemented()
