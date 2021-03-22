@@ -153,8 +153,7 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<Map> getMeshModelSubscriptions(
-      int elementAddress, int modelIdentifier) async {
+  Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier) async {
     return await _methodChannel.invokeMethod('getMeshModelSubscriptions', {
       'elementAddress': elementAddress,
       'modelIdentifier': modelIdentifier,

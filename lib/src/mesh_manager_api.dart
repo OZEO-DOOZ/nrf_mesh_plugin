@@ -350,11 +350,11 @@ class MeshManagerApi {
   }
 
   Future<GenericLevelStatusData> sendGenericLevelGet(
-      int address,{
-        int keyIndex = 0,
-      }) async {
+    int address, {
+    int keyIndex = 0,
+  }) async {
     final status =
-    _onGenericLevelStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
+        _onGenericLevelStatusController.stream.firstWhere((element) => element.source == address, orElse: () => null);
     await _methodChannel.invokeMethod('sendGenericLevelGet', {
       'address': address,
       'keyIndex': keyIndex,
@@ -490,12 +490,9 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<void> sendConfigModelSubscriptionDeleteAll(
-      int elementAddress, int modelIdentifier) async {
+  Future<void> sendConfigModelSubscriptionDeleteAll(int elementAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
-            (element) =>
-        element.elementAddress == elementAddress &&
-            element.modelIdentifier == modelIdentifier,
+        (element) => element.elementAddress == elementAddress && element.modelIdentifier == modelIdentifier,
         orElse: () => null);
     await _methodChannel.invokeMethod('sendConfigModelSubscriptionDeleteAll', {
       'elementAddress': elementAddress,
