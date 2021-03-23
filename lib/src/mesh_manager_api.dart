@@ -474,7 +474,7 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<void> sendConfigModelSubscriptionDelete(
+  Future<ConfigModelSubscriptionStatus> sendConfigModelSubscriptionDelete(
       int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
         (element) =>
