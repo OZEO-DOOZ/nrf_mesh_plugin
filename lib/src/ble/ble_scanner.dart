@@ -78,9 +78,9 @@ class BleScanner {
     }
   }
 
-  Future<ScanResult> searchForSpecificUID(String uid) async {
+  Future<ScanResult> searchForSpecificUID(String uid, {bool forProxy = false}) async {
     final result = _scanWithParamsAsStream(
-      withServices: [meshProvisioningUuid],
+      withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
     ).firstWhere((s) => s.device.id.id == uid, orElse: () => null);
     await stopScan();
     return result;

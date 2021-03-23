@@ -40,10 +40,9 @@ class NordicNrfMesh {
 
   /// Will try to provision the specified [BluetoothDevice].
   ///
-  /// Returns a [ProvisionedMeshNode] if success.
+  /// After the process or if any error occurs, the [BleManager] will be disconnected from device.
   ///
-  /// The [BleManager] will still be connected to device after the process is a success.
-  /// If any error occurs, the [BleManager] will be disconnected from device.
+  /// Returns a [ProvisionedMeshNode] if success.
   ///
   /// Throws an [Exception] if provisioning failed
   /// or an [UnsupportedError] if the current OS is not supported.
@@ -110,12 +109,15 @@ class NordicNrfMesh {
   }) =>
       _bleScanner.scanForProxy(timeoutDuration: timeoutDuration);
 
-  /// Will scan for the given **unprovisioned** node uid.
+  /// Will scan for the given node uid.
+  ///
+  /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [forProxy] bool flag.
   ///
   /// Returns a [ScanResult] or null if not found.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<ScanResult> searchForSpecificUID(String uid) => _bleScanner.searchForSpecificUID(uid);
+  Future<ScanResult> searchForSpecificUID(String uid, {bool forProxy = false}) =>
+      _bleScanner.searchForSpecificUID(uid, forProxy: forProxy);
 
   /// By awaiting this getter, one will get the current status of the scanner
   Future<bool> get isScanning => _bleScanner.isScanning;

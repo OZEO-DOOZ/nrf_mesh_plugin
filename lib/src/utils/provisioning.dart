@@ -168,7 +168,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 
   try {
     await completer.future;
-
+    await bleMeshManager.disconnect();
     return provisionedMeshNode;
   } catch (e) {
     await bleMeshManager.disconnect();
