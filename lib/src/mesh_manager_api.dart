@@ -84,6 +84,9 @@ class MeshManagerApi {
   Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork _lastMeshNetwork;
 
+  /// A [String] to hold the uuid of a newly provisionned node so we are able to delete it from the database if needed
+  String currentProvisionedNodeUuid;
+
   MeshManagerApi() {
     //  this is for debug purpose
     _eventChannelStream = _eventChannel
@@ -324,7 +327,10 @@ class MeshManagerApi {
   Future<void> identifyNode(String serviceUuid) =>
       _methodChannel.invokeMethod('identifyNode', {'serviceUuid': serviceUuid});
 
-  Future<void> cleanProvisioningData() => _methodChannel.invokeMethod('cleanProvisioningData');
+  Future<void> cleanProvisioningData() {
+    currentProvisionedNodeUuid = null;
+    return _methodChannel.invokeMethod('cleanProvisioningData');
+  }
 
   Future<GenericLevelStatusData> sendGenericLevelSet(
     int address,

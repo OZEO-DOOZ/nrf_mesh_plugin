@@ -66,6 +66,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     await bleMeshManager.disconnect();
+    meshManagerApi.currentProvisionedNodeUuid = event.meshNode.uuid;
     ScanResult scanResult;
     while (scanResult == null) {
       final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
@@ -195,6 +196,9 @@ Future<bool> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bl
   if (Platform.isIOS || Platform.isAndroid) {
     print('should cancel provisioning');
     try {
+      if (bleMeshManager.isProvisioningCompleted && meshManagerApi.currentProvisionedNodeUuid != null) {
+        await meshManagerApi.meshNetwork.deleteNode(meshManagerApi.currentProvisionedNodeUuid);
+      }
       await FlutterBlue.instance.stopScan(); // TODO migrate to new BLE lib
       if (bleMeshManager.connected) {
         await bleMeshManager.disconnect();
