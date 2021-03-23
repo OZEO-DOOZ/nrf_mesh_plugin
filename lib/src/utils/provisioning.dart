@@ -61,6 +61,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
   ProvisionedMeshNode provisionedMeshNode;
+  meshManagerApi.currentProvisionedNodeUuid = null;
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
   bleMeshManager.callbacks = provisioningCallbacks;
 
