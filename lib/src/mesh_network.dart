@@ -35,6 +35,8 @@ abstract class IMeshNetwork {
   Future<bool> updateProvisioner(Provisioner provisioner);
 
   Future<bool> deleteNode(String uid);
+  Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier);
+  Future<Map> getGroupElementIds(int groupAddress);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -159,5 +161,20 @@ class MeshNetwork implements IMeshNetwork {
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
+  }
+
+  @override
+  Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier) async {
+    return await _methodChannel.invokeMethod('getMeshModelSubscriptions', {
+      'elementAddress': elementAddress,
+      'modelIdentifier': modelIdentifier,
+    });
+  }
+
+  @override
+  Future<Map> getGroupElementIds(int groupAddress) async {
+    return await _methodChannel.invokeMethod('getGroupElementIds', {
+      'groupAddress': groupAddress,
+    });
   }
 }

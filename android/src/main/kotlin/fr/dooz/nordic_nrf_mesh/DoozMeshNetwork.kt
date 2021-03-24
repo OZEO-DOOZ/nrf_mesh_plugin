@@ -10,6 +10,7 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import no.nordicsemi.android.mesh.*
+import no.nordicsemi.android.mesh.transport.Element
 import no.nordicsemi.android.mesh.transport.NodeDeserializer
 import no.nordicsemi.android.mesh.transport.ProvisionedMeshNode
 import java.lang.reflect.Type
@@ -229,6 +230,40 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 }
                 pNodeToDelete?.let { result.success(meshNetwork.deleteNode(it)) }
                 result.success(false)
+            }
+            "getMeshModelSubscriptions" -> {
+                val elementAddress = call.argument<Int>("elementAddress")!!
+                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+
+                val elements: Map<Int, Element> = meshNetwork.getNode(elementAddress).getElements()
+                val addresses = elements[elementAddress]!!.meshModels[modelIdentifier]!!.subscribedAddresses
+                val map = mapOf(
+                        "elementId" to elementAddress,
+                        "modelId" to modelIdentifier,
+                        "addresses" to addresses,
+                        "name" to "ModelSubscriptionAddresses"
+                )
+                result.success(map)
+            }
+            "getGroupElementIds" -> {
+                val groupAddress = call.argument<Int>("groupAddress")!!
+                val subscribedAddresses: HashMap<Any?, Any?> = HashMap<Any?, Any?>()
+
+                val group: Group? = meshNetwork.getGroup(groupAddress)
+                val elements: List<Element> = meshNetwork.getElements(group)
+
+                for (element in elements) {
+                    val models = element.meshModels
+                    val onOff = models[GENERIC_ONOFF_SERVER]
+                    val level = models[GENERIC_LEVEL_SERVER]
+                    val onOffSubscribedAddresses = onOff!!.subscribedAddresses
+                    val levelSubscribedAddresses = level!!.subscribedAddresses
+                    val modelIds: MutableMap<Int, List<Int>> = HashMap()
+                    modelIds[GENERIC_ONOFF_SERVER] = onOffSubscribedAddresses
+                    modelIds[GENERIC_LEVEL_SERVER] = levelSubscribedAddresses
+                    subscribedAddresses[element.elementAddress] = modelIds
+                }
+                result.success(subscribedAddresses)
             }
             else -> {
                 result.notImplemented()

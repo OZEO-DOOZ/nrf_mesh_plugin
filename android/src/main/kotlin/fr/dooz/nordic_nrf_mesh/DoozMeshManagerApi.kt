@@ -135,6 +135,15 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "sendGenericLevelGet" -> {
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val meshMessage: MeshMessage = GenericLevelGet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex)
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
             "sendGenericOnOffSet" -> {
                 val address = call.argument<Int>("address")!!
                 val value = call.argument<Boolean>("value")!!
@@ -172,6 +181,13 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelSubscriptionDelete(elementAddress, subscriptionAddress, modelIdentifier)
                 mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
+                result.success(null)
+            }
+            "sendConfigModelSubscriptionDeleteAll" -> {
+                val elementAddress = call.argument<Int>("elementAddress")!!
+                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val meshMessage = ConfigModelSubscriptionDeleteAll(elementAddress, modelIdentifier)
+                mMeshManagerApi.createMeshPdu(elementAddress, meshMessage)
                 result.success(null)
             }
             "sendConfigModelPublicationSet" -> {
