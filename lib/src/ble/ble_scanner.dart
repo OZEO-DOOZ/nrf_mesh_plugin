@@ -5,8 +5,9 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 import 'ble_manager.dart'; // for mesh guid constants
 
-const Duration defaultScanDuration = Duration(seconds: 3);
+const Duration defaultScanDuration = Duration(seconds: 5);
 
+/// TODO migrate this singleton to new ble lib
 class BleScanner {
   static BleScanner _instance;
 
@@ -27,7 +28,6 @@ class BleScanner {
   /// Returns a List of [ScanResult] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  /// TODO migrate this when using new ble lib
   Future<List<ScanResult>> _scanWithParamsAsFuture({
     ScanMode scanMode = ScanMode.lowLatency,
     List<Guid> withServices = const [],
@@ -59,7 +59,6 @@ class BleScanner {
   /// Returns a [Stream] of [ScanResult] that may be empty if no node is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  /// TODO migrate this when using new ble lib
   Stream<ScanResult> _scanWithParamsAsStream({
     ScanMode scanMode = ScanMode.lowLatency,
     List<Guid> withServices = const [],
@@ -81,9 +80,20 @@ class BleScanner {
   Future<ScanResult> searchForSpecificUID(String uid, {bool forProxy = false}) async {
     final result = _scanWithParamsAsStream(
       withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
-    ).firstWhere((s) => s.device.id.id == uid, orElse: () => null);
+    ).firstWhere((s) => validScanResult(s, uid), orElse: () => null);
     await stopScan();
     return result;
+  }
+
+  bool validScanResult(ScanResult s, String uid) {
+    if (Platform.isAndroid) {
+      return s.device.id.id == uid;
+    } else if (Platform.isIOS) {
+      //TODO
+      throw UnimplementedError();
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
   }
 
   Future<List<ScanResult>> unprovisionedNodesInRange({

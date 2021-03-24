@@ -56,7 +56,7 @@ class NordicNrfMesh {
       utils_provisioning.provisioning(meshManagerApi, bleMeshManager, _bleScanner, device, serviceDataUuid,
           events: events);
 
-  /// Will try to deprovision the specified [ProvisionedMeshNode].
+  /// Will try to deprovision the specified [ProvisionedMeshNode] by sending a unicast [ConfigNodeReset] message.
   ///
   /// Returns a [ConfigNodeResetStatus] or null if timeout after 5sec.
   ///
