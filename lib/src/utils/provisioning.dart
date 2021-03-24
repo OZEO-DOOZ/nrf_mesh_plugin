@@ -18,6 +18,7 @@ class _ProvisioningEvent {
   final _provisioningReconnectController = StreamController<void>();
   final _onConfigCompositionDataStatusController = StreamController<void>();
   final _onConfigAppKeyStatusController = StreamController<void>();
+  final _provisioningGattErrorController = StreamController<ProvisionedMeshNode>();
 }
 
 class ProvisioningEvent extends _ProvisioningEvent {
@@ -32,6 +33,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
 
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+  Stream<ProvisionedMeshNode> get onProvisioningGattError => _provisioningGattErrorController.stream;
 
   Future<void> dispose() => Future.wait([
         _provisioningController.close(),
@@ -40,6 +42,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
         _provisioningReconnectController.close(),
         _onConfigCompositionDataStatusController.close(),
         _onConfigAppKeyStatusController.close(),
+        _provisioningGattErrorController.close(),
       ]);
 }
 
@@ -58,43 +61,42 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
   ProvisionedMeshNode provisionedMeshNode;
+
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
   bleMeshManager.callbacks = provisioningCallbacks;
-
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
-    await bleMeshManager.disconnect();
-    ScanResult scanResult;
-    while (scanResult == null) {
-      final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
-      scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
-      await Future.delayed(Duration(milliseconds: 500));
-    }
-    if (scanResult == null) {
+    try {
+      await bleMeshManager.disconnect();
+      ScanResult scanResult;
+      while (scanResult == null) {
+        final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
+        scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
+        await Future.delayed(Duration(milliseconds: 500));
+      }
+      if (scanResult == null) {
+        completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
+        return;
+      }
+      events?._provisioningReconnectController?.add(null);
+      await bleMeshManager.connect(scanResult.device);
+      provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
+    } catch (e) {
       completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
-      return;
     }
-    events?._provisioningReconnectController?.add(null);
-    await bleMeshManager.connect(scanResult.device);
-    provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
-    await meshManagerApi.cleanProvisioningData();
     completer.completeError(NrfMeshProvisioningException('Failed to provision device ${device.id.id}'));
   });
-
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController?.add(null);
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
       final elementSize = await unprovisionedMeshNode.getNumberOfElements();
-
       if (elementSize == 0) {
-        await meshManagerApi.cleanProvisioningData();
         completer
             .completeError(NrfMeshProvisioningException('Provisioning is failed. Module does not have any elements.'));
         return;
       }
-
       if (Platform.isAndroid) {
         var assigned = false;
         final maxAddress = await meshManagerApi.meshNetwork.highestAllocatableAddress;
@@ -119,7 +121,6 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       }
     }
   });
-
   final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
     if (Platform.isIOS && bleMeshManager.isProvisioningCompleted) {
       final unicast = await provisionedMeshNode.unicastAddress;
@@ -128,7 +129,6 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       await meshManagerApi.identifyNode(serviceDataUuid);
     }
   });
-
   final sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
     await bleMeshManager.sendPdu(event.pdu);
   });
@@ -144,7 +144,9 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
-
+  final onGattErrorSubscription = bleMeshManager.callbacks.onError.listen((event) {
+    events?._provisioningGattErrorController?.add(provisionedMeshNode);
+  });
   final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController?.add(null);
     await meshManagerApi.sendConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
@@ -153,20 +155,16 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     events?._onConfigAppKeyStatusController?.add(null);
     completer.complete(provisionedMeshNode);
   });
-
-  if (bleMeshManager.connected) {
-    await bleMeshManager.disconnect();
-  }
-
-  await bleMeshManager.connect(device);
-
   try {
+    if (bleMeshManager.connected) {
+      await bleMeshManager.disconnect();
+    }
+    await bleMeshManager.connect(device);
     await completer.future;
-
     await bleMeshManager.disconnect();
     return provisionedMeshNode;
   } catch (e) {
-    await bleMeshManager.disconnect();
+    await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
     rethrow;
   } finally {
     unawaited(Future.wait([
@@ -179,17 +177,33 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       onDeviceReadySubscription.cancel(),
       onDataReceivedSubscription.cancel(),
       onMeshPduCreatedSubscription.cancel(),
+      onGattErrorSubscription.cancel(),
       if (Platform.isAndroid) onDataSentSubscription?.cancel(),
       if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
     ]));
   }
 }
 
-Future<bool> cancelProvisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager) async {
+Future<bool> cancelProvisioning(
+    MeshManagerApi meshManagerApi, BleScanner bleScanner, BleMeshManager bleMeshManager) async {
   if (Platform.isIOS || Platform.isAndroid) {
     print('should cancel provisioning');
     try {
-      await FlutterBlue.instance.stopScan(); // TODO migrate to new BLE lib
+      final cachedProvisionedMeshNodeUuid = await meshManagerApi.cachedProvisionedMeshNodeUuid();
+      if (bleMeshManager.isProvisioningCompleted && cachedProvisionedMeshNodeUuid != null) {
+        var pNodeToDelete;
+        final nodes = await meshManagerApi.meshNetwork.nodes;
+        for (final n in nodes) {
+          if (n.uuid == cachedProvisionedMeshNodeUuid) {
+            pNodeToDelete = n;
+            break;
+          }
+        }
+        await meshManagerApi.deprovision(pNodeToDelete);
+        await meshManagerApi.meshNetwork.deleteNode(cachedProvisionedMeshNodeUuid);
+      }
+      await meshManagerApi.cleanProvisioningData();
+      await bleScanner.stopScan();
       if (bleMeshManager.connected) {
         await bleMeshManager.disconnect();
       } else {

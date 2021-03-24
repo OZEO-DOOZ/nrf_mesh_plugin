@@ -643,6 +643,8 @@ class MeshManagerApi {
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
+  Future<String> cachedProvisionedMeshNodeUuid() => _methodChannel.invokeMethod('cachedProvisionedMeshNodeUuid');
+
   Future<int> getSequenceNumber(ProvisionedMeshNode node) async {
     if (Platform.isIOS) {
       return _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': await node.unicastAddress});

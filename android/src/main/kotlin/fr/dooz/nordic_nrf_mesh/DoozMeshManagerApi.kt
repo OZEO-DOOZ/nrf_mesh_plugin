@@ -316,6 +316,14 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.startProvisioning(unProvisionedMeshNode.meshNode)
                 result.success(null)
             }
+            "cachedProvisionedMeshNodeUuid" -> {
+                if (null == currentProvisionedMeshNode) {
+                    result.success(null)
+                } else {
+                    val provisionedMeshNode = currentProvisionedMeshNode!!
+                    result.success(provisionedMeshNode.meshNode.getUuid())
+                }
+            }
             "deprovision" -> {
                 Log.d(tag, "should unprovision")
                 try {

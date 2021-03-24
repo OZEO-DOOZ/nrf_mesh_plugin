@@ -39,7 +39,8 @@ abstract class BleManagerCallbacks {
   final onDeviceReadyController = StreamController<BluetoothDevice>();
   Stream<BluetoothDevice> get onDeviceReady => onDeviceReadyController.stream;
 
-  // Stream<BleManagerCallbacksError> onError;
+  final onErrorController = StreamController<BleManagerCallbacksError>();
+  Stream<BleManagerCallbacksError> get onError => onErrorController.stream;
 
   // Stream<BluetoothDevice> onDeviceNotSupported;
 
