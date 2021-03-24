@@ -77,7 +77,7 @@ class NordicNrfMesh {
     final MeshManagerApi meshManagerApi,
     final BleMeshManager bleMeshManager,
   ) =>
-      utils_provisioning.cancelProvisioning(meshManagerApi, bleMeshManager);
+      utils_provisioning.cancelProvisioning(meshManagerApi, _bleScanner, bleMeshManager);
 
   /// Will scan for **unprovisioned** nodes.
   ///
