@@ -227,7 +227,14 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         pNodeToDelete = node
                     }
                 }
-                pNodeToDelete?.let { meshNetwork.deleteNode(it) }
+                var isDeleted: Boolean = true
+                pNodeToDelete?.let { isDeleted = meshNetwork.deleteNode(it) }
+                if (null == pNodeToDelete) {
+                    isDeleted = false
+                } else {
+                    isDeleted = true
+                }
+                result.success(isDeleted)
             }
             else -> {
                 result.notImplemented()
