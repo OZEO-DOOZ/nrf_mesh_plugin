@@ -39,7 +39,6 @@ class ElementData {
   String toString() => 'ElementData ${toJson()}';
 }
 
-@JsonSerializable(anyMap: true)
 class ProvisionedMeshNode {
   final MethodChannel _methodChannel;
   final String uuid;
