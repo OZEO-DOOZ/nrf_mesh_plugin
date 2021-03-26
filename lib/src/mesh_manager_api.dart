@@ -416,7 +416,6 @@ class MeshManagerApi {
     int address,
     int io,
     int index,
-    int value,
     int correlation,
     int sequenceNumber, {
     int keyIndex = 0,
