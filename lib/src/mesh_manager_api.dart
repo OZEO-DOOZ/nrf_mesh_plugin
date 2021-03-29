@@ -519,8 +519,8 @@ class MeshManagerApi {
             element.publishTtl == publishTtl &&
             element.publicationSteps == publicationSteps &&
             element.publicationResolution == publicationResolution &&
-            element.publishRetransmitCount == retransmitCount &&
-            element.publishRetransmitIntervalSteps == retransmitIntervalSteps &&
+            element.retransmitCount == retransmitCount &&
+            element.retransmitIntervalSteps == retransmitIntervalSteps &&
             element.modelIdentifier == modelIdentifier,
         orElse: () => null);
     await _methodChannel.invokeMethod('sendConfigModelPublicationSet', {
