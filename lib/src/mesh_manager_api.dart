@@ -390,8 +390,7 @@ class MeshManagerApi {
     int io,
     int index,
     int value,
-    int correlation,
-    int sequenceNumber, {
+    int correlation, {
     int keyIndex = 0,
   }) async {
     if (Platform.isAndroid) {
@@ -404,7 +403,6 @@ class MeshManagerApi {
         'correlation': correlation,
         'address': address,
         'keyIndex': keyIndex,
-        'sequenceNumber': sequenceNumber,
       });
       return status;
     } else {

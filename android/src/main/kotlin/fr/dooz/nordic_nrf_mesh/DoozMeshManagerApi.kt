@@ -225,7 +225,9 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val correlation = call.argument<Int>("correlation")!!
                 val address = call.argument<Int>("address")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
-                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val prov = mMeshManagerApi.meshNetwork!!.selectedProvisioner!!
+                val pNode = mMeshManagerApi.meshNetwork!!.getNode(prov!!.provisionerUuid)
+                val sequenceNumber = pNode!!.sequenceNumber
                 val meshMessage = MagicLevelSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         io, index, value, correlation, sequenceNumber
