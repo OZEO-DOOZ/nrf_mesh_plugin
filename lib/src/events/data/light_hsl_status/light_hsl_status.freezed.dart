@@ -17,14 +17,8 @@ class _$LightHslStatusDataTearOff {
   const _$LightHslStatusDataTearOff();
 
 // ignore: unused_element
-  _LightHslStatusData call(
-      int presentLightness,
-      int presentHue,
-      int presentSaturation,
-      int transitionSteps,
-      int transitionResolution,
-      int source,
-      int destination) {
+  _LightHslStatusData call(int presentLightness, int presentHue, int presentSaturation, int transitionSteps,
+      int transitionResolution, int source, int destination) {
     return _LightHslStatusData(
       presentLightness,
       presentHue,
@@ -62,8 +56,7 @@ mixin _$LightHslStatusData {
 
 /// @nodoc
 abstract class $LightHslStatusDataCopyWith<$Res> {
-  factory $LightHslStatusDataCopyWith(
-          LightHslStatusData value, $Res Function(LightHslStatusData) then) =
+  factory $LightHslStatusDataCopyWith(LightHslStatusData value, $Res Function(LightHslStatusData) then) =
       _$LightHslStatusDataCopyWithImpl<$Res>;
   $Res call(
       {int presentLightness,
@@ -76,8 +69,7 @@ abstract class $LightHslStatusDataCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$LightHslStatusDataCopyWithImpl<$Res>
-    implements $LightHslStatusDataCopyWith<$Res> {
+class _$LightHslStatusDataCopyWithImpl<$Res> implements $LightHslStatusDataCopyWith<$Res> {
   _$LightHslStatusDataCopyWithImpl(this._value, this._then);
 
   final LightHslStatusData _value;
@@ -95,31 +87,20 @@ class _$LightHslStatusDataCopyWithImpl<$Res>
     Object destination = freezed,
   }) {
     return _then(_value.copyWith(
-      presentLightness: presentLightness == freezed
-          ? _value.presentLightness
-          : presentLightness as int,
+      presentLightness: presentLightness == freezed ? _value.presentLightness : presentLightness as int,
       presentHue: presentHue == freezed ? _value.presentHue : presentHue as int,
-      presentSaturation: presentSaturation == freezed
-          ? _value.presentSaturation
-          : presentSaturation as int,
-      transitionSteps: transitionSteps == freezed
-          ? _value.transitionSteps
-          : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed
-          ? _value.transitionResolution
-          : transitionResolution as int,
+      presentSaturation: presentSaturation == freezed ? _value.presentSaturation : presentSaturation as int,
+      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
+      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
       source: source == freezed ? _value.source : source as int,
-      destination:
-          destination == freezed ? _value.destination : destination as int,
+      destination: destination == freezed ? _value.destination : destination as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$LightHslStatusDataCopyWith<$Res>
-    implements $LightHslStatusDataCopyWith<$Res> {
-  factory _$LightHslStatusDataCopyWith(
-          _LightHslStatusData value, $Res Function(_LightHslStatusData) then) =
+abstract class _$LightHslStatusDataCopyWith<$Res> implements $LightHslStatusDataCopyWith<$Res> {
+  factory _$LightHslStatusDataCopyWith(_LightHslStatusData value, $Res Function(_LightHslStatusData) then) =
       __$LightHslStatusDataCopyWithImpl<$Res>;
   @override
   $Res call(
@@ -133,11 +114,9 @@ abstract class _$LightHslStatusDataCopyWith<$Res>
 }
 
 /// @nodoc
-class __$LightHslStatusDataCopyWithImpl<$Res>
-    extends _$LightHslStatusDataCopyWithImpl<$Res>
+class __$LightHslStatusDataCopyWithImpl<$Res> extends _$LightHslStatusDataCopyWithImpl<$Res>
     implements _$LightHslStatusDataCopyWith<$Res> {
-  __$LightHslStatusDataCopyWithImpl(
-      _LightHslStatusData _value, $Res Function(_LightHslStatusData) _then)
+  __$LightHslStatusDataCopyWithImpl(_LightHslStatusData _value, $Res Function(_LightHslStatusData) _then)
       : super(_value, (v) => _then(v as _LightHslStatusData));
 
   @override
@@ -154,19 +133,11 @@ class __$LightHslStatusDataCopyWithImpl<$Res>
     Object destination = freezed,
   }) {
     return _then(_LightHslStatusData(
-      presentLightness == freezed
-          ? _value.presentLightness
-          : presentLightness as int,
+      presentLightness == freezed ? _value.presentLightness : presentLightness as int,
       presentHue == freezed ? _value.presentHue : presentHue as int,
-      presentSaturation == freezed
-          ? _value.presentSaturation
-          : presentSaturation as int,
-      transitionSteps == freezed
-          ? _value.transitionSteps
-          : transitionSteps as int,
-      transitionResolution == freezed
-          ? _value.transitionResolution
-          : transitionResolution as int,
+      presentSaturation == freezed ? _value.presentSaturation : presentSaturation as int,
+      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
+      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
     ));
@@ -177,14 +148,8 @@ class __$LightHslStatusDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_LightHslStatusData implements _LightHslStatusData {
-  const _$_LightHslStatusData(
-      this.presentLightness,
-      this.presentHue,
-      this.presentSaturation,
-      this.transitionSteps,
-      this.transitionResolution,
-      this.source,
-      this.destination)
+  const _$_LightHslStatusData(this.presentLightness, this.presentHue, this.presentSaturation, this.transitionSteps,
+      this.transitionResolution, this.source, this.destination)
       : assert(presentLightness != null),
         assert(presentHue != null),
         assert(presentSaturation != null),
@@ -193,8 +158,7 @@ class _$_LightHslStatusData implements _LightHslStatusData {
         assert(source != null),
         assert(destination != null);
 
-  factory _$_LightHslStatusData.fromJson(Map<String, dynamic> json) =>
-      _$_$_LightHslStatusDataFromJson(json);
+  factory _$_LightHslStatusData.fromJson(Map<String, dynamic> json) => _$_$_LightHslStatusDataFromJson(json);
 
   @override
   final int presentLightness;
@@ -221,25 +185,18 @@ class _$_LightHslStatusData implements _LightHslStatusData {
     return identical(this, other) ||
         (other is _LightHslStatusData &&
             (identical(other.presentLightness, presentLightness) ||
-                const DeepCollectionEquality()
-                    .equals(other.presentLightness, presentLightness)) &&
+                const DeepCollectionEquality().equals(other.presentLightness, presentLightness)) &&
             (identical(other.presentHue, presentHue) ||
-                const DeepCollectionEquality()
-                    .equals(other.presentHue, presentHue)) &&
+                const DeepCollectionEquality().equals(other.presentHue, presentHue)) &&
             (identical(other.presentSaturation, presentSaturation) ||
-                const DeepCollectionEquality()
-                    .equals(other.presentSaturation, presentSaturation)) &&
+                const DeepCollectionEquality().equals(other.presentSaturation, presentSaturation)) &&
             (identical(other.transitionSteps, transitionSteps) ||
-                const DeepCollectionEquality()
-                    .equals(other.transitionSteps, transitionSteps)) &&
+                const DeepCollectionEquality().equals(other.transitionSteps, transitionSteps)) &&
             (identical(other.transitionResolution, transitionResolution) ||
-                const DeepCollectionEquality().equals(
-                    other.transitionResolution, transitionResolution)) &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
+                const DeepCollectionEquality().equals(other.transitionResolution, transitionResolution)) &&
+            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality()
-                    .equals(other.destination, destination)));
+                const DeepCollectionEquality().equals(other.destination, destination)));
   }
 
   @override
@@ -264,17 +221,10 @@ class _$_LightHslStatusData implements _LightHslStatusData {
 }
 
 abstract class _LightHslStatusData implements LightHslStatusData {
-  const factory _LightHslStatusData(
-      int presentLightness,
-      int presentHue,
-      int presentSaturation,
-      int transitionSteps,
-      int transitionResolution,
-      int source,
-      int destination) = _$_LightHslStatusData;
+  const factory _LightHslStatusData(int presentLightness, int presentHue, int presentSaturation, int transitionSteps,
+      int transitionResolution, int source, int destination) = _$_LightHslStatusData;
 
-  factory _LightHslStatusData.fromJson(Map<String, dynamic> json) =
-      _$_LightHslStatusData.fromJson;
+  factory _LightHslStatusData.fromJson(Map<String, dynamic> json) = _$_LightHslStatusData.fromJson;
 
   @override
   int get presentLightness;

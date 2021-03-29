@@ -6,8 +6,7 @@ part of 'config_model_publication_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(
-    Map<String, dynamic> json) {
+_$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(Map<String, dynamic> json) {
   return _$_ConfigModelPublicationStatus(
     json['elementAddress'] as int,
     json['publishAddress'] as int,
@@ -23,8 +22,7 @@ _$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(
   );
 }
 
-Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(
-        _$_ConfigModelPublicationStatus instance) =>
+Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(_$_ConfigModelPublicationStatus instance) =>
     <String, dynamic>{
       'elementAddress': instance.elementAddress,
       'publishAddress': instance.publishAddress,

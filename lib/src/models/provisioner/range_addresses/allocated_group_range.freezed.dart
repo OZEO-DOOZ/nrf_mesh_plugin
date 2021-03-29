@@ -45,15 +45,13 @@ mixin _$AllocatedGroupRange {
 
 /// @nodoc
 abstract class $AllocatedGroupRangeCopyWith<$Res> {
-  factory $AllocatedGroupRangeCopyWith(
-          AllocatedGroupRange value, $Res Function(AllocatedGroupRange) then) =
+  factory $AllocatedGroupRangeCopyWith(AllocatedGroupRange value, $Res Function(AllocatedGroupRange) then) =
       _$AllocatedGroupRangeCopyWithImpl<$Res>;
   $Res call({int lowAddress, int highAddress});
 }
 
 /// @nodoc
-class _$AllocatedGroupRangeCopyWithImpl<$Res>
-    implements $AllocatedGroupRangeCopyWith<$Res> {
+class _$AllocatedGroupRangeCopyWithImpl<$Res> implements $AllocatedGroupRangeCopyWith<$Res> {
   _$AllocatedGroupRangeCopyWithImpl(this._value, this._then);
 
   final AllocatedGroupRange _value;
@@ -67,28 +65,23 @@ class _$AllocatedGroupRangeCopyWithImpl<$Res>
   }) {
     return _then(_value.copyWith(
       lowAddress: lowAddress == freezed ? _value.lowAddress : lowAddress as int,
-      highAddress:
-          highAddress == freezed ? _value.highAddress : highAddress as int,
+      highAddress: highAddress == freezed ? _value.highAddress : highAddress as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$AllocatedGroupRangeCopyWith<$Res>
-    implements $AllocatedGroupRangeCopyWith<$Res> {
-  factory _$AllocatedGroupRangeCopyWith(_AllocatedGroupRange value,
-          $Res Function(_AllocatedGroupRange) then) =
+abstract class _$AllocatedGroupRangeCopyWith<$Res> implements $AllocatedGroupRangeCopyWith<$Res> {
+  factory _$AllocatedGroupRangeCopyWith(_AllocatedGroupRange value, $Res Function(_AllocatedGroupRange) then) =
       __$AllocatedGroupRangeCopyWithImpl<$Res>;
   @override
   $Res call({int lowAddress, int highAddress});
 }
 
 /// @nodoc
-class __$AllocatedGroupRangeCopyWithImpl<$Res>
-    extends _$AllocatedGroupRangeCopyWithImpl<$Res>
+class __$AllocatedGroupRangeCopyWithImpl<$Res> extends _$AllocatedGroupRangeCopyWithImpl<$Res>
     implements _$AllocatedGroupRangeCopyWith<$Res> {
-  __$AllocatedGroupRangeCopyWithImpl(
-      _AllocatedGroupRange _value, $Res Function(_AllocatedGroupRange) _then)
+  __$AllocatedGroupRangeCopyWithImpl(_AllocatedGroupRange _value, $Res Function(_AllocatedGroupRange) _then)
       : super(_value, (v) => _then(v as _AllocatedGroupRange));
 
   @override
@@ -114,8 +107,7 @@ class _$_AllocatedGroupRange implements _AllocatedGroupRange {
       : assert(lowAddress != null),
         assert(highAddress != null);
 
-  factory _$_AllocatedGroupRange.fromJson(Map<String, dynamic> json) =>
-      _$_$_AllocatedGroupRangeFromJson(json);
+  factory _$_AllocatedGroupRange.fromJson(Map<String, dynamic> json) => _$_$_AllocatedGroupRangeFromJson(json);
 
   @override
   final int lowAddress;
@@ -132,11 +124,9 @@ class _$_AllocatedGroupRange implements _AllocatedGroupRange {
     return identical(this, other) ||
         (other is _AllocatedGroupRange &&
             (identical(other.lowAddress, lowAddress) ||
-                const DeepCollectionEquality()
-                    .equals(other.lowAddress, lowAddress)) &&
+                const DeepCollectionEquality().equals(other.lowAddress, lowAddress)) &&
             (identical(other.highAddress, highAddress) ||
-                const DeepCollectionEquality()
-                    .equals(other.highAddress, highAddress)));
+                const DeepCollectionEquality().equals(other.highAddress, highAddress)));
   }
 
   @override
@@ -147,8 +137,7 @@ class _$_AllocatedGroupRange implements _AllocatedGroupRange {
 
   @override
   _$AllocatedGroupRangeCopyWith<_AllocatedGroupRange> get copyWith =>
-      __$AllocatedGroupRangeCopyWithImpl<_AllocatedGroupRange>(
-          this, _$identity);
+      __$AllocatedGroupRangeCopyWithImpl<_AllocatedGroupRange>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -157,11 +146,9 @@ class _$_AllocatedGroupRange implements _AllocatedGroupRange {
 }
 
 abstract class _AllocatedGroupRange implements AllocatedGroupRange {
-  const factory _AllocatedGroupRange(int lowAddress, int highAddress) =
-      _$_AllocatedGroupRange;
+  const factory _AllocatedGroupRange(int lowAddress, int highAddress) = _$_AllocatedGroupRange;
 
-  factory _AllocatedGroupRange.fromJson(Map<String, dynamic> json) =
-      _$_AllocatedGroupRange.fromJson;
+  factory _AllocatedGroupRange.fromJson(Map<String, dynamic> json) = _$_AllocatedGroupRange.fromJson;
 
   @override
   int get lowAddress;

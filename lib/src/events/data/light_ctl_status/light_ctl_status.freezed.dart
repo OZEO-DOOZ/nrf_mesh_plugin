@@ -17,15 +17,8 @@ class _$LightCtlStatusDataTearOff {
   const _$LightCtlStatusDataTearOff();
 
 // ignore: unused_element
-  _LightCtlStatusData call(
-      int presentLightness,
-      int targetLightness,
-      int presentTemperature,
-      int targetTemperature,
-      int transitionSteps,
-      int transitionResolution,
-      int source,
-      int destination) {
+  _LightCtlStatusData call(int presentLightness, int targetLightness, int presentTemperature, int targetTemperature,
+      int transitionSteps, int transitionResolution, int source, int destination) {
     return _LightCtlStatusData(
       presentLightness,
       targetLightness,
@@ -65,8 +58,7 @@ mixin _$LightCtlStatusData {
 
 /// @nodoc
 abstract class $LightCtlStatusDataCopyWith<$Res> {
-  factory $LightCtlStatusDataCopyWith(
-          LightCtlStatusData value, $Res Function(LightCtlStatusData) then) =
+  factory $LightCtlStatusDataCopyWith(LightCtlStatusData value, $Res Function(LightCtlStatusData) then) =
       _$LightCtlStatusDataCopyWithImpl<$Res>;
   $Res call(
       {int presentLightness,
@@ -80,8 +72,7 @@ abstract class $LightCtlStatusDataCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$LightCtlStatusDataCopyWithImpl<$Res>
-    implements $LightCtlStatusDataCopyWith<$Res> {
+class _$LightCtlStatusDataCopyWithImpl<$Res> implements $LightCtlStatusDataCopyWith<$Res> {
   _$LightCtlStatusDataCopyWithImpl(this._value, this._then);
 
   final LightCtlStatusData _value;
@@ -100,36 +91,21 @@ class _$LightCtlStatusDataCopyWithImpl<$Res>
     Object destination = freezed,
   }) {
     return _then(_value.copyWith(
-      presentLightness: presentLightness == freezed
-          ? _value.presentLightness
-          : presentLightness as int,
-      targetLightness: targetLightness == freezed
-          ? _value.targetLightness
-          : targetLightness as int,
-      presentTemperature: presentTemperature == freezed
-          ? _value.presentTemperature
-          : presentTemperature as int,
-      targetTemperature: targetTemperature == freezed
-          ? _value.targetTemperature
-          : targetTemperature as int,
-      transitionSteps: transitionSteps == freezed
-          ? _value.transitionSteps
-          : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed
-          ? _value.transitionResolution
-          : transitionResolution as int,
+      presentLightness: presentLightness == freezed ? _value.presentLightness : presentLightness as int,
+      targetLightness: targetLightness == freezed ? _value.targetLightness : targetLightness as int,
+      presentTemperature: presentTemperature == freezed ? _value.presentTemperature : presentTemperature as int,
+      targetTemperature: targetTemperature == freezed ? _value.targetTemperature : targetTemperature as int,
+      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
+      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
       source: source == freezed ? _value.source : source as int,
-      destination:
-          destination == freezed ? _value.destination : destination as int,
+      destination: destination == freezed ? _value.destination : destination as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$LightCtlStatusDataCopyWith<$Res>
-    implements $LightCtlStatusDataCopyWith<$Res> {
-  factory _$LightCtlStatusDataCopyWith(
-          _LightCtlStatusData value, $Res Function(_LightCtlStatusData) then) =
+abstract class _$LightCtlStatusDataCopyWith<$Res> implements $LightCtlStatusDataCopyWith<$Res> {
+  factory _$LightCtlStatusDataCopyWith(_LightCtlStatusData value, $Res Function(_LightCtlStatusData) then) =
       __$LightCtlStatusDataCopyWithImpl<$Res>;
   @override
   $Res call(
@@ -144,11 +120,9 @@ abstract class _$LightCtlStatusDataCopyWith<$Res>
 }
 
 /// @nodoc
-class __$LightCtlStatusDataCopyWithImpl<$Res>
-    extends _$LightCtlStatusDataCopyWithImpl<$Res>
+class __$LightCtlStatusDataCopyWithImpl<$Res> extends _$LightCtlStatusDataCopyWithImpl<$Res>
     implements _$LightCtlStatusDataCopyWith<$Res> {
-  __$LightCtlStatusDataCopyWithImpl(
-      _LightCtlStatusData _value, $Res Function(_LightCtlStatusData) _then)
+  __$LightCtlStatusDataCopyWithImpl(_LightCtlStatusData _value, $Res Function(_LightCtlStatusData) _then)
       : super(_value, (v) => _then(v as _LightCtlStatusData));
 
   @override
@@ -166,24 +140,12 @@ class __$LightCtlStatusDataCopyWithImpl<$Res>
     Object destination = freezed,
   }) {
     return _then(_LightCtlStatusData(
-      presentLightness == freezed
-          ? _value.presentLightness
-          : presentLightness as int,
-      targetLightness == freezed
-          ? _value.targetLightness
-          : targetLightness as int,
-      presentTemperature == freezed
-          ? _value.presentTemperature
-          : presentTemperature as int,
-      targetTemperature == freezed
-          ? _value.targetTemperature
-          : targetTemperature as int,
-      transitionSteps == freezed
-          ? _value.transitionSteps
-          : transitionSteps as int,
-      transitionResolution == freezed
-          ? _value.transitionResolution
-          : transitionResolution as int,
+      presentLightness == freezed ? _value.presentLightness : presentLightness as int,
+      targetLightness == freezed ? _value.targetLightness : targetLightness as int,
+      presentTemperature == freezed ? _value.presentTemperature : presentTemperature as int,
+      targetTemperature == freezed ? _value.targetTemperature : targetTemperature as int,
+      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
+      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
     ));
@@ -194,15 +156,8 @@ class __$LightCtlStatusDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_LightCtlStatusData implements _LightCtlStatusData {
-  const _$_LightCtlStatusData(
-      this.presentLightness,
-      this.targetLightness,
-      this.presentTemperature,
-      this.targetTemperature,
-      this.transitionSteps,
-      this.transitionResolution,
-      this.source,
-      this.destination)
+  const _$_LightCtlStatusData(this.presentLightness, this.targetLightness, this.presentTemperature,
+      this.targetTemperature, this.transitionSteps, this.transitionResolution, this.source, this.destination)
       : assert(presentLightness != null),
         assert(targetLightness != null),
         assert(presentTemperature != null),
@@ -212,8 +167,7 @@ class _$_LightCtlStatusData implements _LightCtlStatusData {
         assert(source != null),
         assert(destination != null);
 
-  factory _$_LightCtlStatusData.fromJson(Map<String, dynamic> json) =>
-      _$_$_LightCtlStatusDataFromJson(json);
+  factory _$_LightCtlStatusData.fromJson(Map<String, dynamic> json) => _$_$_LightCtlStatusDataFromJson(json);
 
   @override
   final int presentLightness;
@@ -242,28 +196,20 @@ class _$_LightCtlStatusData implements _LightCtlStatusData {
     return identical(this, other) ||
         (other is _LightCtlStatusData &&
             (identical(other.presentLightness, presentLightness) ||
-                const DeepCollectionEquality()
-                    .equals(other.presentLightness, presentLightness)) &&
+                const DeepCollectionEquality().equals(other.presentLightness, presentLightness)) &&
             (identical(other.targetLightness, targetLightness) ||
-                const DeepCollectionEquality()
-                    .equals(other.targetLightness, targetLightness)) &&
+                const DeepCollectionEquality().equals(other.targetLightness, targetLightness)) &&
             (identical(other.presentTemperature, presentTemperature) ||
-                const DeepCollectionEquality()
-                    .equals(other.presentTemperature, presentTemperature)) &&
+                const DeepCollectionEquality().equals(other.presentTemperature, presentTemperature)) &&
             (identical(other.targetTemperature, targetTemperature) ||
-                const DeepCollectionEquality()
-                    .equals(other.targetTemperature, targetTemperature)) &&
+                const DeepCollectionEquality().equals(other.targetTemperature, targetTemperature)) &&
             (identical(other.transitionSteps, transitionSteps) ||
-                const DeepCollectionEquality()
-                    .equals(other.transitionSteps, transitionSteps)) &&
+                const DeepCollectionEquality().equals(other.transitionSteps, transitionSteps)) &&
             (identical(other.transitionResolution, transitionResolution) ||
-                const DeepCollectionEquality().equals(
-                    other.transitionResolution, transitionResolution)) &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
+                const DeepCollectionEquality().equals(other.transitionResolution, transitionResolution)) &&
+            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality()
-                    .equals(other.destination, destination)));
+                const DeepCollectionEquality().equals(other.destination, destination)));
   }
 
   @override
@@ -299,8 +245,7 @@ abstract class _LightCtlStatusData implements LightCtlStatusData {
       int source,
       int destination) = _$_LightCtlStatusData;
 
-  factory _LightCtlStatusData.fromJson(Map<String, dynamic> json) =
-      _$_LightCtlStatusData.fromJson;
+  factory _LightCtlStatusData.fromJson(Map<String, dynamic> json) = _$_LightCtlStatusData.fromJson;
 
   @override
   int get presentLightness;

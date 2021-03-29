@@ -65,9 +65,7 @@ mixin _$Provisioner {
 
 /// @nodoc
 abstract class $ProvisionerCopyWith<$Res> {
-  factory $ProvisionerCopyWith(
-          Provisioner value, $Res Function(Provisioner) then) =
-      _$ProvisionerCopyWithImpl<$Res>;
+  factory $ProvisionerCopyWith(Provisioner value, $Res Function(Provisioner) then) = _$ProvisionerCopyWithImpl<$Res>;
   $Res call(
       {String provisionerName,
       String provisionerUuid,
@@ -99,16 +97,10 @@ class _$ProvisionerCopyWithImpl<$Res> implements $ProvisionerCopyWith<$Res> {
     Object lastSelected = freezed,
   }) {
     return _then(_value.copyWith(
-      provisionerName: provisionerName == freezed
-          ? _value.provisionerName
-          : provisionerName as String,
-      provisionerUuid: provisionerUuid == freezed
-          ? _value.provisionerUuid
-          : provisionerUuid as String,
+      provisionerName: provisionerName == freezed ? _value.provisionerName : provisionerName as String,
+      provisionerUuid: provisionerUuid == freezed ? _value.provisionerUuid : provisionerUuid as String,
       globalTtl: globalTtl == freezed ? _value.globalTtl : globalTtl as int,
-      provisionerAddress: provisionerAddress == freezed
-          ? _value.provisionerAddress
-          : provisionerAddress as int,
+      provisionerAddress: provisionerAddress == freezed ? _value.provisionerAddress : provisionerAddress as int,
       allocatedUnicastRanges: allocatedUnicastRanges == freezed
           ? _value.allocatedUnicastRanges
           : allocatedUnicastRanges as List<AllocatedUnicastRange>,
@@ -118,17 +110,14 @@ class _$ProvisionerCopyWithImpl<$Res> implements $ProvisionerCopyWith<$Res> {
       allocatedSceneRanges: allocatedSceneRanges == freezed
           ? _value.allocatedSceneRanges
           : allocatedSceneRanges as List<AllocatedSceneRange>,
-      lastSelected:
-          lastSelected == freezed ? _value.lastSelected : lastSelected as bool,
+      lastSelected: lastSelected == freezed ? _value.lastSelected : lastSelected as bool,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$ProvisionerCopyWith<$Res>
-    implements $ProvisionerCopyWith<$Res> {
-  factory _$ProvisionerCopyWith(
-          _Provisioner value, $Res Function(_Provisioner) then) =
+abstract class _$ProvisionerCopyWith<$Res> implements $ProvisionerCopyWith<$Res> {
+  factory _$ProvisionerCopyWith(_Provisioner value, $Res Function(_Provisioner) then) =
       __$ProvisionerCopyWithImpl<$Res>;
   @override
   $Res call(
@@ -143,10 +132,8 @@ abstract class _$ProvisionerCopyWith<$Res>
 }
 
 /// @nodoc
-class __$ProvisionerCopyWithImpl<$Res> extends _$ProvisionerCopyWithImpl<$Res>
-    implements _$ProvisionerCopyWith<$Res> {
-  __$ProvisionerCopyWithImpl(
-      _Provisioner _value, $Res Function(_Provisioner) _then)
+class __$ProvisionerCopyWithImpl<$Res> extends _$ProvisionerCopyWithImpl<$Res> implements _$ProvisionerCopyWith<$Res> {
+  __$ProvisionerCopyWithImpl(_Provisioner _value, $Res Function(_Provisioner) _then)
       : super(_value, (v) => _then(v as _Provisioner));
 
   @override
@@ -164,25 +151,15 @@ class __$ProvisionerCopyWithImpl<$Res> extends _$ProvisionerCopyWithImpl<$Res>
     Object lastSelected = freezed,
   }) {
     return _then(_Provisioner(
-      provisionerName == freezed
-          ? _value.provisionerName
-          : provisionerName as String,
-      provisionerUuid == freezed
-          ? _value.provisionerUuid
-          : provisionerUuid as String,
+      provisionerName == freezed ? _value.provisionerName : provisionerName as String,
+      provisionerUuid == freezed ? _value.provisionerUuid : provisionerUuid as String,
       globalTtl == freezed ? _value.globalTtl : globalTtl as int,
-      provisionerAddress == freezed
-          ? _value.provisionerAddress
-          : provisionerAddress as int,
+      provisionerAddress == freezed ? _value.provisionerAddress : provisionerAddress as int,
       allocatedUnicastRanges == freezed
           ? _value.allocatedUnicastRanges
           : allocatedUnicastRanges as List<AllocatedUnicastRange>,
-      allocatedGroupRanges == freezed
-          ? _value.allocatedGroupRanges
-          : allocatedGroupRanges as List<AllocatedGroupRange>,
-      allocatedSceneRanges == freezed
-          ? _value.allocatedSceneRanges
-          : allocatedSceneRanges as List<AllocatedSceneRange>,
+      allocatedGroupRanges == freezed ? _value.allocatedGroupRanges : allocatedGroupRanges as List<AllocatedGroupRange>,
+      allocatedSceneRanges == freezed ? _value.allocatedSceneRanges : allocatedSceneRanges as List<AllocatedSceneRange>,
       lastSelected == freezed ? _value.lastSelected : lastSelected as bool,
     ));
   }
@@ -192,15 +169,8 @@ class __$ProvisionerCopyWithImpl<$Res> extends _$ProvisionerCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_Provisioner implements _Provisioner {
-  const _$_Provisioner(
-      this.provisionerName,
-      this.provisionerUuid,
-      this.globalTtl,
-      this.provisionerAddress,
-      this.allocatedUnicastRanges,
-      this.allocatedGroupRanges,
-      this.allocatedSceneRanges,
-      this.lastSelected)
+  const _$_Provisioner(this.provisionerName, this.provisionerUuid, this.globalTtl, this.provisionerAddress,
+      this.allocatedUnicastRanges, this.allocatedGroupRanges, this.allocatedSceneRanges, this.lastSelected)
       : assert(provisionerName != null),
         assert(provisionerUuid != null),
         assert(globalTtl != null),
@@ -210,8 +180,7 @@ class _$_Provisioner implements _Provisioner {
         assert(allocatedSceneRanges != null),
         assert(lastSelected != null);
 
-  factory _$_Provisioner.fromJson(Map<String, dynamic> json) =>
-      _$_$_ProvisionerFromJson(json);
+  factory _$_Provisioner.fromJson(Map<String, dynamic> json) => _$_$_ProvisionerFromJson(json);
 
   @override
   final String provisionerName;
@@ -240,29 +209,21 @@ class _$_Provisioner implements _Provisioner {
     return identical(this, other) ||
         (other is _Provisioner &&
             (identical(other.provisionerName, provisionerName) ||
-                const DeepCollectionEquality()
-                    .equals(other.provisionerName, provisionerName)) &&
+                const DeepCollectionEquality().equals(other.provisionerName, provisionerName)) &&
             (identical(other.provisionerUuid, provisionerUuid) ||
-                const DeepCollectionEquality()
-                    .equals(other.provisionerUuid, provisionerUuid)) &&
+                const DeepCollectionEquality().equals(other.provisionerUuid, provisionerUuid)) &&
             (identical(other.globalTtl, globalTtl) ||
-                const DeepCollectionEquality()
-                    .equals(other.globalTtl, globalTtl)) &&
+                const DeepCollectionEquality().equals(other.globalTtl, globalTtl)) &&
             (identical(other.provisionerAddress, provisionerAddress) ||
-                const DeepCollectionEquality()
-                    .equals(other.provisionerAddress, provisionerAddress)) &&
+                const DeepCollectionEquality().equals(other.provisionerAddress, provisionerAddress)) &&
             (identical(other.allocatedUnicastRanges, allocatedUnicastRanges) ||
-                const DeepCollectionEquality().equals(
-                    other.allocatedUnicastRanges, allocatedUnicastRanges)) &&
+                const DeepCollectionEquality().equals(other.allocatedUnicastRanges, allocatedUnicastRanges)) &&
             (identical(other.allocatedGroupRanges, allocatedGroupRanges) ||
-                const DeepCollectionEquality().equals(
-                    other.allocatedGroupRanges, allocatedGroupRanges)) &&
+                const DeepCollectionEquality().equals(other.allocatedGroupRanges, allocatedGroupRanges)) &&
             (identical(other.allocatedSceneRanges, allocatedSceneRanges) ||
-                const DeepCollectionEquality().equals(
-                    other.allocatedSceneRanges, allocatedSceneRanges)) &&
+                const DeepCollectionEquality().equals(other.allocatedSceneRanges, allocatedSceneRanges)) &&
             (identical(other.lastSelected, lastSelected) ||
-                const DeepCollectionEquality()
-                    .equals(other.lastSelected, lastSelected)));
+                const DeepCollectionEquality().equals(other.lastSelected, lastSelected)));
   }
 
   @override
@@ -278,8 +239,7 @@ class _$_Provisioner implements _Provisioner {
       const DeepCollectionEquality().hash(lastSelected);
 
   @override
-  _$ProvisionerCopyWith<_Provisioner> get copyWith =>
-      __$ProvisionerCopyWithImpl<_Provisioner>(this, _$identity);
+  _$ProvisionerCopyWith<_Provisioner> get copyWith => __$ProvisionerCopyWithImpl<_Provisioner>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -298,8 +258,7 @@ abstract class _Provisioner implements Provisioner {
       List<AllocatedSceneRange> allocatedSceneRanges,
       bool lastSelected) = _$_Provisioner;
 
-  factory _Provisioner.fromJson(Map<String, dynamic> json) =
-      _$_Provisioner.fromJson;
+  factory _Provisioner.fromJson(Map<String, dynamic> json) = _$_Provisioner.fromJson;
 
   @override
   String get provisionerName;
