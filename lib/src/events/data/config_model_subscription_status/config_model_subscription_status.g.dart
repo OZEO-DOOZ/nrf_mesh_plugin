@@ -6,7 +6,8 @@ part of 'config_model_subscription_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigModelSubscriptionStatus _$_$_ConfigModelSubscriptionStatusFromJson(Map<String, dynamic> json) {
+_$_ConfigModelSubscriptionStatus _$_$_ConfigModelSubscriptionStatusFromJson(
+    Map<String, dynamic> json) {
   return _$_ConfigModelSubscriptionStatus(
     json['source'] as int,
     json['destination'] as int,
@@ -17,7 +18,8 @@ _$_ConfigModelSubscriptionStatus _$_$_ConfigModelSubscriptionStatusFromJson(Map<
   );
 }
 
-Map<String, dynamic> _$_$_ConfigModelSubscriptionStatusToJson(_$_ConfigModelSubscriptionStatus instance) =>
+Map<String, dynamic> _$_$_ConfigModelSubscriptionStatusToJson(
+        _$_ConfigModelSubscriptionStatus instance) =>
     <String, dynamic>{
       'source': instance.source,
       'destination': instance.destination,

@@ -6,7 +6,8 @@ part of 'config_model_publication_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(Map<String, dynamic> json) {
+_$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(
+    Map<String, dynamic> json) {
   return _$_ConfigModelPublicationStatus(
     json['elementAddress'] as int,
     json['publishAddress'] as int,
@@ -15,14 +16,15 @@ _$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(Map<St
     json['publishTtl'] as int,
     json['publicationSteps'] as int,
     json['publicationResolution'] as int,
-    json['publishRetransmitCount'] as int,
-    json['publishRetransmitIntervalSteps'] as int,
+    json['retransmitCount'] as int,
+    json['retransmitIntervalSteps'] as int,
     json['modelIdentifier'] as int,
     json['isSuccessful'] as bool,
   );
 }
 
-Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(_$_ConfigModelPublicationStatus instance) =>
+Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(
+        _$_ConfigModelPublicationStatus instance) =>
     <String, dynamic>{
       'elementAddress': instance.elementAddress,
       'publishAddress': instance.publishAddress,
@@ -31,8 +33,8 @@ Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(_$_ConfigModelPubli
       'publishTtl': instance.publishTtl,
       'publicationSteps': instance.publicationSteps,
       'publicationResolution': instance.publicationResolution,
-      'publishRetransmitCount': instance.publishRetransmitCount,
-      'publishRetransmitIntervalSteps': instance.publishRetransmitIntervalSteps,
+      'retransmitCount': instance.retransmitCount,
+      'retransmitIntervalSteps': instance.retransmitIntervalSteps,
       'modelIdentifier': instance.modelIdentifier,
       'isSuccessful': instance.isSuccessful,
     };

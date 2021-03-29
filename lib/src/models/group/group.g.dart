@@ -17,7 +17,8 @@ _$_GroupData _$_$_GroupDataFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$_$_GroupDataToJson(_$_GroupData instance) => <String, dynamic>{
+Map<String, dynamic> _$_$_GroupDataToJson(_$_GroupData instance) =>
+    <String, dynamic>{
       'name': instance.name,
       'address': instance.address,
       'addressLabel': instance.addressLabel,

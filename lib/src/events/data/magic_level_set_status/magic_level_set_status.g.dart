@@ -6,7 +6,8 @@ part of 'magic_level_set_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_MagicLevelSetStatusData _$_$_MagicLevelSetStatusDataFromJson(Map<String, dynamic> json) {
+_$_MagicLevelSetStatusData _$_$_MagicLevelSetStatusDataFromJson(
+    Map<String, dynamic> json) {
   return _$_MagicLevelSetStatusData(
     json['io'] as int,
     json['index'] as int,
@@ -17,7 +18,9 @@ _$_MagicLevelSetStatusData _$_$_MagicLevelSetStatusDataFromJson(Map<String, dyna
   );
 }
 
-Map<String, dynamic> _$_$_MagicLevelSetStatusDataToJson(_$_MagicLevelSetStatusData instance) => <String, dynamic>{
+Map<String, dynamic> _$_$_MagicLevelSetStatusDataToJson(
+        _$_MagicLevelSetStatusData instance) =>
+    <String, dynamic>{
       'io': instance.io,
       'index': instance.index,
       'value': instance.value,

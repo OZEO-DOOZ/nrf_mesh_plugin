@@ -8,7 +8,8 @@ part of 'generic_level_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-GenericLevelStatusData _$GenericLevelStatusDataFromJson(Map<String, dynamic> json) {
+GenericLevelStatusData _$GenericLevelStatusDataFromJson(
+    Map<String, dynamic> json) {
   return _GenericLevelStatusData.fromJson(json);
 }
 
@@ -17,8 +18,13 @@ class _$GenericLevelStatusDataTearOff {
   const _$GenericLevelStatusDataTearOff();
 
 // ignore: unused_element
-  _GenericLevelStatusData call(int level, @nullable int targetLevel, @nullable int transitionSteps,
-      @nullable int transitionResolution, int source, int destination) {
+  _GenericLevelStatusData call(
+      int level,
+      @nullable int targetLevel,
+      @nullable int transitionSteps,
+      @nullable int transitionResolution,
+      int source,
+      int destination) {
     return _GenericLevelStatusData(
       level,
       targetLevel,
@@ -57,7 +63,8 @@ mixin _$GenericLevelStatusData {
 
 /// @nodoc
 abstract class $GenericLevelStatusDataCopyWith<$Res> {
-  factory $GenericLevelStatusDataCopyWith(GenericLevelStatusData value, $Res Function(GenericLevelStatusData) then) =
+  factory $GenericLevelStatusDataCopyWith(GenericLevelStatusData value,
+          $Res Function(GenericLevelStatusData) then) =
       _$GenericLevelStatusDataCopyWithImpl<$Res>;
   $Res call(
       {int level,
@@ -69,7 +76,8 @@ abstract class $GenericLevelStatusDataCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$GenericLevelStatusDataCopyWithImpl<$Res> implements $GenericLevelStatusDataCopyWith<$Res> {
+class _$GenericLevelStatusDataCopyWithImpl<$Res>
+    implements $GenericLevelStatusDataCopyWith<$Res> {
   _$GenericLevelStatusDataCopyWithImpl(this._value, this._then);
 
   final GenericLevelStatusData _value;
@@ -87,18 +95,26 @@ class _$GenericLevelStatusDataCopyWithImpl<$Res> implements $GenericLevelStatusD
   }) {
     return _then(_value.copyWith(
       level: level == freezed ? _value.level : level as int,
-      targetLevel: targetLevel == freezed ? _value.targetLevel : targetLevel as int,
-      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      targetLevel:
+          targetLevel == freezed ? _value.targetLevel : targetLevel as int,
+      transitionSteps: transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps as int,
+      transitionResolution: transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution as int,
       source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      destination:
+          destination == freezed ? _value.destination : destination as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$GenericLevelStatusDataCopyWith<$Res> implements $GenericLevelStatusDataCopyWith<$Res> {
-  factory _$GenericLevelStatusDataCopyWith(_GenericLevelStatusData value, $Res Function(_GenericLevelStatusData) then) =
+abstract class _$GenericLevelStatusDataCopyWith<$Res>
+    implements $GenericLevelStatusDataCopyWith<$Res> {
+  factory _$GenericLevelStatusDataCopyWith(_GenericLevelStatusData value,
+          $Res Function(_GenericLevelStatusData) then) =
       __$GenericLevelStatusDataCopyWithImpl<$Res>;
   @override
   $Res call(
@@ -111,9 +127,11 @@ abstract class _$GenericLevelStatusDataCopyWith<$Res> implements $GenericLevelSt
 }
 
 /// @nodoc
-class __$GenericLevelStatusDataCopyWithImpl<$Res> extends _$GenericLevelStatusDataCopyWithImpl<$Res>
+class __$GenericLevelStatusDataCopyWithImpl<$Res>
+    extends _$GenericLevelStatusDataCopyWithImpl<$Res>
     implements _$GenericLevelStatusDataCopyWith<$Res> {
-  __$GenericLevelStatusDataCopyWithImpl(_GenericLevelStatusData _value, $Res Function(_GenericLevelStatusData) _then)
+  __$GenericLevelStatusDataCopyWithImpl(_GenericLevelStatusData _value,
+      $Res Function(_GenericLevelStatusData) _then)
       : super(_value, (v) => _then(v as _GenericLevelStatusData));
 
   @override
@@ -131,8 +149,12 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res> extends _$GenericLevelStatusDa
     return _then(_GenericLevelStatusData(
       level == freezed ? _value.level : level as int,
       targetLevel == freezed ? _value.targetLevel : targetLevel as int,
-      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps as int,
+      transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution as int,
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
     ));
@@ -143,13 +165,19 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res> extends _$GenericLevelStatusDa
 
 /// @nodoc
 class _$_GenericLevelStatusData implements _GenericLevelStatusData {
-  const _$_GenericLevelStatusData(this.level, @nullable this.targetLevel, @nullable this.transitionSteps,
-      @nullable this.transitionResolution, this.source, this.destination)
+  const _$_GenericLevelStatusData(
+      this.level,
+      @nullable this.targetLevel,
+      @nullable this.transitionSteps,
+      @nullable this.transitionResolution,
+      this.source,
+      this.destination)
       : assert(level != null),
         assert(source != null),
         assert(destination != null);
 
-  factory _$_GenericLevelStatusData.fromJson(Map<String, dynamic> json) => _$_$_GenericLevelStatusDataFromJson(json);
+  factory _$_GenericLevelStatusData.fromJson(Map<String, dynamic> json) =>
+      _$_$_GenericLevelStatusDataFromJson(json);
 
   @override
   final int level;
@@ -176,16 +204,22 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _GenericLevelStatusData &&
-            (identical(other.level, level) || const DeepCollectionEquality().equals(other.level, level)) &&
+            (identical(other.level, level) ||
+                const DeepCollectionEquality().equals(other.level, level)) &&
             (identical(other.targetLevel, targetLevel) ||
-                const DeepCollectionEquality().equals(other.targetLevel, targetLevel)) &&
+                const DeepCollectionEquality()
+                    .equals(other.targetLevel, targetLevel)) &&
             (identical(other.transitionSteps, transitionSteps) ||
-                const DeepCollectionEquality().equals(other.transitionSteps, transitionSteps)) &&
+                const DeepCollectionEquality()
+                    .equals(other.transitionSteps, transitionSteps)) &&
             (identical(other.transitionResolution, transitionResolution) ||
-                const DeepCollectionEquality().equals(other.transitionResolution, transitionResolution)) &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+                const DeepCollectionEquality().equals(
+                    other.transitionResolution, transitionResolution)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality().equals(other.destination, destination)));
+                const DeepCollectionEquality()
+                    .equals(other.destination, destination)));
   }
 
   @override
@@ -200,7 +234,8 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
 
   @override
   _$GenericLevelStatusDataCopyWith<_GenericLevelStatusData> get copyWith =>
-      __$GenericLevelStatusDataCopyWithImpl<_GenericLevelStatusData>(this, _$identity);
+      __$GenericLevelStatusDataCopyWithImpl<_GenericLevelStatusData>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -209,10 +244,16 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
 }
 
 abstract class _GenericLevelStatusData implements GenericLevelStatusData {
-  const factory _GenericLevelStatusData(int level, @nullable int targetLevel, @nullable int transitionSteps,
-      @nullable int transitionResolution, int source, int destination) = _$_GenericLevelStatusData;
+  const factory _GenericLevelStatusData(
+      int level,
+      @nullable int targetLevel,
+      @nullable int transitionSteps,
+      @nullable int transitionResolution,
+      int source,
+      int destination) = _$_GenericLevelStatusData;
 
-  factory _GenericLevelStatusData.fromJson(Map<String, dynamic> json) = _$_GenericLevelStatusData.fromJson;
+  factory _GenericLevelStatusData.fromJson(Map<String, dynamic> json) =
+      _$_GenericLevelStatusData.fromJson;
 
   @override
   int get level;
