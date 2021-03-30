@@ -328,8 +328,7 @@ class MeshManagerApi {
 
   Future<GenericLevelStatusData> sendGenericLevelSet(
     int address,
-    int level,
-    int sequenceNumber, {
+    int level, {
     int keyIndex = 0,
     int transitionStep,
     int transitionResolution,
@@ -340,7 +339,6 @@ class MeshManagerApi {
     await _methodChannel.invokeMethod('sendGenericLevelSet', {
       'address': address,
       'level': level,
-      'sequenceNumber': sequenceNumber,
       'keyIndex': keyIndex,
       'transitionStep': transitionStep,
       'transitionResolution': transitionResolution,
@@ -414,8 +412,7 @@ class MeshManagerApi {
     int address,
     int io,
     int index,
-    int correlation,
-    int sequenceNumber, {
+    int correlation, {
     int keyIndex = 0,
   }) async {
     if (Platform.isAndroid) {
@@ -427,7 +424,6 @@ class MeshManagerApi {
         'correlation': correlation,
         'address': address,
         'keyIndex': keyIndex,
-        'sequenceNumber': sequenceNumber,
       });
       return status;
     } else {
