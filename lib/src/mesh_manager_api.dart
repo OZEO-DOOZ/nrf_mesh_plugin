@@ -186,9 +186,11 @@ class MeshManagerApi {
         .listen(_onConfigNodeResetStatusController.add);
   }
 
-  Stream<ConfigModelPublicationStatus> get onConfigModelPublicationStatus => _onConfigModelPublicationStatusController.stream;
+  Stream<ConfigModelPublicationStatus> get onConfigModelPublicationStatus =>
+      _onConfigModelPublicationStatusController.stream;
 
-  Stream<ConfigModelSubscriptionStatus> get onConfigModelSubscriptionStatus => _onConfigModelSubscriptionStatusController.stream;
+  Stream<ConfigModelSubscriptionStatus> get onConfigModelSubscriptionStatus =>
+      _onConfigModelSubscriptionStatusController.stream;
 
   Stream<IMeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
 

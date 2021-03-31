@@ -104,8 +104,7 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
           final boardType = BoardData.decode(getBoardTypeStatus.level);
           if (boardType.payload == 0xA) {
             final setupDimmerStatus = await meshManagerApi
-                .sendGenericLevelSet(
-                    await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte())
+                .sendGenericLevelSet(await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte())
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
             scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
@@ -141,8 +140,7 @@ class ConfigureOuputAsLightOnOff extends StatelessWidget {
           final boardType = BoardData.decode(getBoardTypeStatus.level);
           if (boardType.payload == 0xA) {
             final setupDimmerStatus = await meshManagerApi
-                .sendGenericLevelSet(
-                    await node.unicastAddress, BoardData.lightOnOffOutput(target).toByte())
+                .sendGenericLevelSet(await node.unicastAddress, BoardData.lightOnOffOutput(target).toByte())
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
             scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
