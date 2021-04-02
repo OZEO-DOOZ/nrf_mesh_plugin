@@ -96,7 +96,7 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
       onPressed: () async {
         final scaffoldState = Scaffold.of(context);
         final target = 0;
-        final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
+        // final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
         try {
           final getBoardTypeStatus = await meshManagerApi
               .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte())
