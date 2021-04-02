@@ -186,6 +186,12 @@ class MeshManagerApi {
         .listen(_onConfigNodeResetStatusController.add);
   }
 
+  Stream<ConfigModelPublicationStatus> get onConfigModelPublicationStatus =>
+      _onConfigModelPublicationStatusController.stream;
+
+  Stream<ConfigModelSubscriptionStatus> get onConfigModelSubscriptionStatus =>
+      _onConfigModelSubscriptionStatusController.stream;
+
   Stream<IMeshNetwork> get onNetworkLoaded => _onNetworkLoadedStreamController.stream;
 
   Stream<IMeshNetwork> get onNetworkImported => _onNetworkImportedController.stream;
@@ -328,8 +334,7 @@ class MeshManagerApi {
 
   Future<GenericLevelStatusData> sendGenericLevelSet(
     int address,
-    int level,
-    int sequenceNumber, {
+    int level, {
     int keyIndex = 0,
     int transitionStep,
     int transitionResolution,
@@ -340,7 +345,6 @@ class MeshManagerApi {
     await _methodChannel.invokeMethod('sendGenericLevelSet', {
       'address': address,
       'level': level,
-      'sequenceNumber': sequenceNumber,
       'keyIndex': keyIndex,
       'transitionStep': transitionStep,
       'transitionResolution': transitionResolution,
@@ -390,8 +394,7 @@ class MeshManagerApi {
     int io,
     int index,
     int value,
-    int correlation,
-    int sequenceNumber, {
+    int correlation, {
     int keyIndex = 0,
   }) async {
     if (Platform.isAndroid) {
@@ -404,7 +407,6 @@ class MeshManagerApi {
         'correlation': correlation,
         'address': address,
         'keyIndex': keyIndex,
-        'sequenceNumber': sequenceNumber,
       });
       return status;
     } else {
@@ -416,8 +418,7 @@ class MeshManagerApi {
     int address,
     int io,
     int index,
-    int correlation,
-    int sequenceNumber, {
+    int correlation, {
     int keyIndex = 0,
   }) async {
     if (Platform.isAndroid) {
@@ -429,7 +430,6 @@ class MeshManagerApi {
         'correlation': correlation,
         'address': address,
         'keyIndex': keyIndex,
-        'sequenceNumber': sequenceNumber,
       });
       return status;
     } else {
@@ -521,8 +521,8 @@ class MeshManagerApi {
             element.publishTtl == publishTtl &&
             element.publicationSteps == publicationSteps &&
             element.publicationResolution == publicationResolution &&
-            element.publishRetransmitCount == retransmitCount &&
-            element.publishRetransmitIntervalSteps == retransmitIntervalSteps &&
+            element.retransmitCount == retransmitCount &&
+            element.retransmitIntervalSteps == retransmitIntervalSteps &&
             element.modelIdentifier == modelIdentifier,
         orElse: () => null);
     await _methodChannel.invokeMethod('sendConfigModelPublicationSet', {

@@ -117,7 +117,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "sendGenericLevelSet" -> {
-                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
                 val address = call.argument<Int>("address")!!
                 val level = call.argument<Int>("level")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
@@ -225,7 +225,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val correlation = call.argument<Int>("correlation")!!
                 val address = call.argument<Int>("address")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
-                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
                 val meshMessage = MagicLevelSet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         io, index, value, correlation, sequenceNumber
@@ -239,7 +239,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val correlation = call.argument<Int>("correlation")!!
                 val address = call.argument<Int>("address")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
-                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
                 val meshMessage = MagicLevelGet(
                         mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
                         io, index, correlation, sequenceNumber

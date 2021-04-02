@@ -13,8 +13,8 @@ abstract class ConfigModelPublicationStatus with _$ConfigModelPublicationStatus 
     int publishTtl,
     int publicationSteps,
     int publicationResolution,
-    int publishRetransmitCount,
-    int publishRetransmitIntervalSteps,
+    int retransmitCount,
+    int retransmitIntervalSteps,
     int modelIdentifier,
     bool isSuccessful,
   ) = _ConfigModelPublicationStatus;

@@ -25,8 +25,8 @@ class _$ConfigModelPublicationStatusTearOff {
       int publishTtl,
       int publicationSteps,
       int publicationResolution,
-      int publishRetransmitCount,
-      int publishRetransmitIntervalSteps,
+      int retransmitCount,
+      int retransmitIntervalSteps,
       int modelIdentifier,
       bool isSuccessful) {
     return _ConfigModelPublicationStatus(
@@ -37,8 +37,8 @@ class _$ConfigModelPublicationStatusTearOff {
       publishTtl,
       publicationSteps,
       publicationResolution,
-      publishRetransmitCount,
-      publishRetransmitIntervalSteps,
+      retransmitCount,
+      retransmitIntervalSteps,
       modelIdentifier,
       isSuccessful,
     );
@@ -63,8 +63,8 @@ mixin _$ConfigModelPublicationStatus {
   int get publishTtl;
   int get publicationSteps;
   int get publicationResolution;
-  int get publishRetransmitCount;
-  int get publishRetransmitIntervalSteps;
+  int get retransmitCount;
+  int get retransmitIntervalSteps;
   int get modelIdentifier;
   bool get isSuccessful;
 
@@ -85,8 +85,8 @@ abstract class $ConfigModelPublicationStatusCopyWith<$Res> {
       int publishTtl,
       int publicationSteps,
       int publicationResolution,
-      int publishRetransmitCount,
-      int publishRetransmitIntervalSteps,
+      int retransmitCount,
+      int retransmitIntervalSteps,
       int modelIdentifier,
       bool isSuccessful});
 }
@@ -108,8 +108,8 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res> implements $ConfigModelPu
     Object publishTtl = freezed,
     Object publicationSteps = freezed,
     Object publicationResolution = freezed,
-    Object publishRetransmitCount = freezed,
-    Object publishRetransmitIntervalSteps = freezed,
+    Object retransmitCount = freezed,
+    Object retransmitIntervalSteps = freezed,
     Object modelIdentifier = freezed,
     Object isSuccessful = freezed,
   }) {
@@ -122,11 +122,9 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res> implements $ConfigModelPu
       publicationSteps: publicationSteps == freezed ? _value.publicationSteps : publicationSteps as int,
       publicationResolution:
           publicationResolution == freezed ? _value.publicationResolution : publicationResolution as int,
-      publishRetransmitCount:
-          publishRetransmitCount == freezed ? _value.publishRetransmitCount : publishRetransmitCount as int,
-      publishRetransmitIntervalSteps: publishRetransmitIntervalSteps == freezed
-          ? _value.publishRetransmitIntervalSteps
-          : publishRetransmitIntervalSteps as int,
+      retransmitCount: retransmitCount == freezed ? _value.retransmitCount : retransmitCount as int,
+      retransmitIntervalSteps:
+          retransmitIntervalSteps == freezed ? _value.retransmitIntervalSteps : retransmitIntervalSteps as int,
       modelIdentifier: modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
       isSuccessful: isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
@@ -147,8 +145,8 @@ abstract class _$ConfigModelPublicationStatusCopyWith<$Res> implements $ConfigMo
       int publishTtl,
       int publicationSteps,
       int publicationResolution,
-      int publishRetransmitCount,
-      int publishRetransmitIntervalSteps,
+      int retransmitCount,
+      int retransmitIntervalSteps,
       int modelIdentifier,
       bool isSuccessful});
 }
@@ -172,8 +170,8 @@ class __$ConfigModelPublicationStatusCopyWithImpl<$Res> extends _$ConfigModelPub
     Object publishTtl = freezed,
     Object publicationSteps = freezed,
     Object publicationResolution = freezed,
-    Object publishRetransmitCount = freezed,
-    Object publishRetransmitIntervalSteps = freezed,
+    Object retransmitCount = freezed,
+    Object retransmitIntervalSteps = freezed,
     Object modelIdentifier = freezed,
     Object isSuccessful = freezed,
   }) {
@@ -185,10 +183,8 @@ class __$ConfigModelPublicationStatusCopyWithImpl<$Res> extends _$ConfigModelPub
       publishTtl == freezed ? _value.publishTtl : publishTtl as int,
       publicationSteps == freezed ? _value.publicationSteps : publicationSteps as int,
       publicationResolution == freezed ? _value.publicationResolution : publicationResolution as int,
-      publishRetransmitCount == freezed ? _value.publishRetransmitCount : publishRetransmitCount as int,
-      publishRetransmitIntervalSteps == freezed
-          ? _value.publishRetransmitIntervalSteps
-          : publishRetransmitIntervalSteps as int,
+      retransmitCount == freezed ? _value.retransmitCount : retransmitCount as int,
+      retransmitIntervalSteps == freezed ? _value.retransmitIntervalSteps : retransmitIntervalSteps as int,
       modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
       isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
@@ -207,8 +203,8 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
       this.publishTtl,
       this.publicationSteps,
       this.publicationResolution,
-      this.publishRetransmitCount,
-      this.publishRetransmitIntervalSteps,
+      this.retransmitCount,
+      this.retransmitIntervalSteps,
       this.modelIdentifier,
       this.isSuccessful)
       : assert(elementAddress != null),
@@ -218,8 +214,8 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
         assert(publishTtl != null),
         assert(publicationSteps != null),
         assert(publicationResolution != null),
-        assert(publishRetransmitCount != null),
-        assert(publishRetransmitIntervalSteps != null),
+        assert(retransmitCount != null),
+        assert(retransmitIntervalSteps != null),
         assert(modelIdentifier != null),
         assert(isSuccessful != null);
 
@@ -241,9 +237,9 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
   @override
   final int publicationResolution;
   @override
-  final int publishRetransmitCount;
+  final int retransmitCount;
   @override
-  final int publishRetransmitIntervalSteps;
+  final int retransmitIntervalSteps;
   @override
   final int modelIdentifier;
   @override
@@ -251,7 +247,7 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
 
   @override
   String toString() {
-    return 'ConfigModelPublicationStatus(elementAddress: $elementAddress, publishAddress: $publishAddress, appKeyIndex: $appKeyIndex, credentialFlag: $credentialFlag, publishTtl: $publishTtl, publicationSteps: $publicationSteps, publicationResolution: $publicationResolution, publishRetransmitCount: $publishRetransmitCount, publishRetransmitIntervalSteps: $publishRetransmitIntervalSteps, modelIdentifier: $modelIdentifier, isSuccessful: $isSuccessful)';
+    return 'ConfigModelPublicationStatus(elementAddress: $elementAddress, publishAddress: $publishAddress, appKeyIndex: $appKeyIndex, credentialFlag: $credentialFlag, publishTtl: $publishTtl, publicationSteps: $publicationSteps, publicationResolution: $publicationResolution, retransmitCount: $retransmitCount, retransmitIntervalSteps: $retransmitIntervalSteps, modelIdentifier: $modelIdentifier, isSuccessful: $isSuccessful)';
   }
 
   @override
@@ -272,11 +268,10 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
                 const DeepCollectionEquality().equals(other.publicationSteps, publicationSteps)) &&
             (identical(other.publicationResolution, publicationResolution) ||
                 const DeepCollectionEquality().equals(other.publicationResolution, publicationResolution)) &&
-            (identical(other.publishRetransmitCount, publishRetransmitCount) ||
-                const DeepCollectionEquality().equals(other.publishRetransmitCount, publishRetransmitCount)) &&
-            (identical(other.publishRetransmitIntervalSteps, publishRetransmitIntervalSteps) ||
-                const DeepCollectionEquality()
-                    .equals(other.publishRetransmitIntervalSteps, publishRetransmitIntervalSteps)) &&
+            (identical(other.retransmitCount, retransmitCount) ||
+                const DeepCollectionEquality().equals(other.retransmitCount, retransmitCount)) &&
+            (identical(other.retransmitIntervalSteps, retransmitIntervalSteps) ||
+                const DeepCollectionEquality().equals(other.retransmitIntervalSteps, retransmitIntervalSteps)) &&
             (identical(other.modelIdentifier, modelIdentifier) ||
                 const DeepCollectionEquality().equals(other.modelIdentifier, modelIdentifier)) &&
             (identical(other.isSuccessful, isSuccessful) ||
@@ -293,8 +288,8 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
       const DeepCollectionEquality().hash(publishTtl) ^
       const DeepCollectionEquality().hash(publicationSteps) ^
       const DeepCollectionEquality().hash(publicationResolution) ^
-      const DeepCollectionEquality().hash(publishRetransmitCount) ^
-      const DeepCollectionEquality().hash(publishRetransmitIntervalSteps) ^
+      const DeepCollectionEquality().hash(retransmitCount) ^
+      const DeepCollectionEquality().hash(retransmitIntervalSteps) ^
       const DeepCollectionEquality().hash(modelIdentifier) ^
       const DeepCollectionEquality().hash(isSuccessful);
 
@@ -317,8 +312,8 @@ abstract class _ConfigModelPublicationStatus implements ConfigModelPublicationSt
       int publishTtl,
       int publicationSteps,
       int publicationResolution,
-      int publishRetransmitCount,
-      int publishRetransmitIntervalSteps,
+      int retransmitCount,
+      int retransmitIntervalSteps,
       int modelIdentifier,
       bool isSuccessful) = _$_ConfigModelPublicationStatus;
 
@@ -339,9 +334,9 @@ abstract class _ConfigModelPublicationStatus implements ConfigModelPublicationSt
   @override
   int get publicationResolution;
   @override
-  int get publishRetransmitCount;
+  int get retransmitCount;
   @override
-  int get publishRetransmitIntervalSteps;
+  int get retransmitIntervalSteps;
   @override
   int get modelIdentifier;
   @override
