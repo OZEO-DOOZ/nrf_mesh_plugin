@@ -157,7 +157,8 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
 
                 val provisionedMeshNode = meshNetwork.getNode(address)
 
-                result.success(provisionedMeshNode.uuid)
+                val pNode = DoozProvisionedMeshNode(binaryMessenger, provisionedMeshNode)
+                result.success(pNode.meshNode.uuid)
             }
             "getProvisionersUUID" -> {
                 val provisionersUUID = meshNetwork.provisioners.map { provisioner ->
