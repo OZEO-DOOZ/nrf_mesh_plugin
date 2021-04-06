@@ -35,8 +35,12 @@ abstract class IMeshNetwork {
   Future<bool> updateProvisioner(Provisioner provisioner);
 
   Future<bool> deleteNode(String uid);
+
   Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier);
+
   Future<Map> getGroupElementIds(int groupAddress);
+
+  Future<ProvisionedMeshNode> getNode(int address);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -176,5 +180,13 @@ class MeshNetwork implements IMeshNetwork {
     return await _methodChannel.invokeMethod('getGroupElementIds', {
       'groupAddress': groupAddress,
     });
+  }
+
+  @override
+  Future<ProvisionedMeshNode> getNode(int address) async {
+    final _node = await _methodChannel.invokeMethod<String>('getNode', {
+      'address': address,
+    });
+    return ProvisionedMeshNode(_node);
   }
 }
