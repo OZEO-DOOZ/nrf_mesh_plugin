@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 import 'package:pedantic/pedantic.dart';
@@ -17,7 +17,7 @@ class ScanningAndProvisioning extends StatefulWidget {
 }
 
 class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
-  final flutterBlue = FlutterBlue.instance;
+  final flutterReactiveBle = FlutterReactiveBle();
 
   bool loading = true;
   bool isScanning = true;
@@ -25,8 +25,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   StreamSubscription _scanSubscription;
   MeshManagerApi _meshManagerApi;
 
-  final _serviceData = <String, Guid>{};
-  final _devices = <BluetoothDevice>{};
+  final _serviceData = <String, Uuid>{};
+  final _devices = <DiscoveredDevice>{};
 
   @override
   void initState() {
@@ -39,7 +39,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   @override
   void dispose() {
     super.dispose();
-    flutterBlue.stopScan();
     _scanSubscription?.cancel();
   }
 
@@ -53,37 +52,21 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     });
   }
 
-  Future<void> isNotScanning(FlutterBlue flutterBlue) {
-    final completer = Completer<void>();
-
-    flutterBlue.isScanning.listen((event) {
-      if (!event && !completer.isCompleted) {
-        completer.complete(null);
-      }
-    });
-
-    flutterBlue.stopScan();
-
-    return completer.future;
-  }
-
   Future<void> _scanUnprovisionned() async {
     _serviceData.clear();
     setState(() {
       _devices.clear();
     });
 
-    await isNotScanning(flutterBlue);
-
-    _scanSubscription = flutterBlue.scan(
+    _scanSubscription = flutterReactiveBle.scanForDevices(
       withServices: [
         meshProvisioningUuid,
       ],
-    ).listen((scanResult) async {
-      _serviceData[scanResult.device.id.id] = Guid(_meshManagerApi
-          .getDeviceUuid(scanResult.advertisementData.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
+    ).listen((device) async {
+      _serviceData[device.id] =
+          Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
       setState(() {
-        _devices.add(scanResult.device);
+        _devices.add(device);
       });
     });
     setState(() {
@@ -97,14 +80,13 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     if (!mounted) {
       return;
     }
-    await flutterBlue.stopScan();
     await _scanSubscription?.cancel();
     setState(() {
       isScanning = false;
     });
   }
 
-  Future<void> provisionDevice(BluetoothDevice device) async {
+  Future<void> provisionDevice(DiscoveredDevice device) async {
     if (isScanning) {
       await _stopScan();
     }
@@ -119,9 +101,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       String deviceUUID;
 
       if (Platform.isAndroid) {
-        deviceUUID = _serviceData[device.id.id].toString();
+        deviceUUID = _serviceData[device.id].toString();
       } else if (Platform.isIOS) {
-        deviceUUID = device.id.id.toString();
+        deviceUUID = device.id.toString();
       }
       final provisioningEvent = ProvisioningEvent();
       final provisionedMeshNodeF = widget.nordicNrfMesh

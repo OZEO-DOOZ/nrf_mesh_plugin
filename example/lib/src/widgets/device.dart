@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class Device extends StatelessWidget {
-  final BluetoothDevice device;
+  final DiscoveredDevice device;
   final VoidCallback onTap;
 
   const Device({Key key, this.device, this.onTap}) : super(key: key);
@@ -14,7 +14,7 @@ class Device extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: EdgeInsets.all(8),
-          child: Text('${device.name} : ${device.id.id}'),
+          child: Text('${device.name} : ${device.id}'),
         ),
       ),
     );
