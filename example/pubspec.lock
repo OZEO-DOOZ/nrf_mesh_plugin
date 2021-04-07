@@ -200,6 +200,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.11"
+  flutter_reactive_ble:
+    dependency: transitive
+    description:
+      name: flutter_reactive_ble
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.7.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -222,6 +229,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  functional_data:
+    dependency: transitive
+    description:
+      name: functional_data
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   glob:
     dependency: transitive
     description:
@@ -355,6 +369,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0-nullsafety.1"
+  plain_optional:
+    dependency: transitive
+    description:
+      name: plain_optional
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.3"
   platform:
     dependency: transitive
     description:

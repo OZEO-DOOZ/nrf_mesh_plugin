@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
@@ -47,7 +47,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
 }
 
 Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
-    BleScanner bleScanner, BluetoothDevice device, String serviceDataUuid,
+    BleScanner bleScanner, DiscoveredDevice device, String serviceDataUuid,
     {ProvisioningEvent events}) async {
   if (Platform.isIOS || Platform.isAndroid) {
     return _provisioning(meshManagerApi, bleMeshManager, bleScanner, device, serviceDataUuid, events);
@@ -57,7 +57,7 @@ Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BleMeshM
 }
 
 Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
-    BleScanner bleScanner, BluetoothDevice device, String serviceDataUuid, ProvisioningEvent events) async {
+    BleScanner bleScanner, DiscoveredDevice deviceToProvision, String serviceDataUuid, ProvisioningEvent events) async {
   assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
   final completer = Completer();
   ProvisionedMeshNode provisionedMeshNode;
@@ -67,25 +67,25 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
       await bleMeshManager.disconnect();
-      ScanResult scanResult;
-      while (scanResult == null) {
+      DiscoveredDevice device;
+      while (device == null) {
         final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
-        scanResult = scanResults.firstWhere((element) => element.device.id.id == device.id.id, orElse: () => null);
+        device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
         await Future.delayed(Duration(milliseconds: 500));
       }
-      if (scanResult == null) {
+      if (device == null) {
         completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
         return;
       }
       events?._provisioningReconnectController?.add(null);
-      await bleMeshManager.connect(scanResult.device);
+      await bleMeshManager.connect(device);
       provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
     } catch (e) {
       completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
     }
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
-    completer.completeError(NrfMeshProvisioningException('Failed to provision device ${device.id.id}'));
+    completer.completeError(NrfMeshProvisioningException('Failed to provision device ${deviceToProvision.id}'));
   });
   final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
@@ -159,7 +159,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     if (bleMeshManager.connected) {
       await bleMeshManager.disconnect();
     }
-    await bleMeshManager.connect(device);
+    await bleMeshManager.connect(deviceToProvision);
     await completer.future;
     await bleMeshManager.disconnect();
     return provisionedMeshNode;
@@ -203,7 +203,6 @@ Future<bool> cancelProvisioning(
         await meshManagerApi.meshNetwork.deleteNode(cachedProvisionedMeshNodeUuid);
       }
       await meshManagerApi.cleanProvisioningData();
-      await bleScanner.stopScan();
       if (bleMeshManager.connected) {
         await bleMeshManager.disconnect();
       } else {

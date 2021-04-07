@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
@@ -12,24 +11,26 @@ import 'package:retry/retry.dart';
 class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   static BleMeshManager _instance;
 
-  BluetoothCharacteristic _meshProxyDataInCharacteristic;
-  BluetoothCharacteristic _meshProxyDataOutCharacteristic;
-  BluetoothCharacteristic _meshProvisioningDataInCharacteristic;
-  BluetoothCharacteristic _meshProvisioningDataOutCharacteristic;
+  Uuid _meshProxyDataInCharacteristicUuid;
+  Uuid _meshProxyDataOutCharacteristicUuid;
+  Uuid _meshProvisioningDataInCharacteristicUuid;
+  Uuid _meshProvisioningDataOutCharacteristicUuid;
+
+  List<DiscoveredService> _discoveredServices;
 
   StreamSubscription<List<int>> _meshProxyDataOutSubscription;
   StreamSubscription<List<int>> _meshProvisioningDataOutSubscription;
 
-  BleMeshManager._();
+  BleMeshManager._(FlutterReactiveBle _bleInstance) : super(_bleInstance);
 
-  factory BleMeshManager() => _instance ??= BleMeshManager._();
+  factory BleMeshManager(FlutterReactiveBle _bleInstance) => _instance ??= BleMeshManager._(_bleInstance);
 
-  void onDeviceDisconnected(final BluetoothDevice device) async {
+  void onDeviceDisconnected(final DiscoveredDevice device) async {
     isProvisioningCompleted = false;
-    _meshProvisioningDataInCharacteristic = null;
-    _meshProvisioningDataOutCharacteristic = null;
-    _meshProxyDataInCharacteristic = null;
-    _meshProxyDataOutCharacteristic = null;
+    _meshProvisioningDataInCharacteristicUuid = null;
+    _meshProvisioningDataOutCharacteristicUuid = null;
+    _meshProxyDataInCharacteristicUuid = null;
+    _meshProxyDataOutCharacteristicUuid = null;
     await _meshProxyDataOutSubscription?.cancel();
     _meshProxyDataOutSubscription = null;
     await _meshProvisioningDataOutSubscription?.cancel();
@@ -37,37 +38,45 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   @override
-  Future<BluetoothService> isRequiredServiceSupported(final BluetoothDevice device) async {
-    var writeRequest = false;
-    final services = await device.discoverServices();
-    var service = services.firstWhere((element) => element.uuid == meshProxyUuid, orElse: () => null);
+  Future<DiscoveredService> isRequiredServiceSupported(final DiscoveredDevice device) async {
+    _discoveredServices = await bleInstance.discoverServices(device.id);
+    var service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid, orElse: () => null);
     if (service != null) {
       isProvisioningCompleted = true;
-      _meshProxyDataInCharacteristic =
-          service.characteristics.firstWhere((element) => element.uuid == meshProxyDataIn, orElse: () => null);
-      _meshProxyDataOutCharacteristic =
-          service.characteristics.firstWhere((element) => element.uuid == meshProxyDataOut, orElse: () => null);
-      if (_meshProxyDataInCharacteristic != null) {
-        writeRequest = _meshProxyDataInCharacteristic.properties.writeWithoutResponse;
+      _meshProxyDataInCharacteristicUuid =
+          service.characteristicIds.firstWhere((uuid) => uuid == meshProxyDataIn, orElse: () => null);
+      _meshProxyDataOutCharacteristicUuid =
+          service.characteristicIds.firstWhere((uuid) => uuid == meshProxyDataOut, orElse: () => null);
+      if (_meshProxyDataInCharacteristicUuid != null) {
+        final characteristic = QualifiedCharacteristic(
+          characteristicId: _meshProxyDataInCharacteristicUuid,
+          serviceId: service.serviceId,
+          deviceId: device.id,
+        );
+        await bleInstance.writeCharacteristicWithoutResponse(characteristic, value: null);
       }
-      if (_meshProxyDataInCharacteristic != null && _meshProxyDataOutCharacteristic != null && writeRequest) {
+      if (_meshProxyDataInCharacteristicUuid != null && _meshProxyDataOutCharacteristicUuid != null) {
         return service;
       }
       return null;
     } else {
-      service = services.firstWhere((element) => element.uuid == meshProvisioningUuid, orElse: () => null);
+      service =
+          _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid, orElse: () => null);
       if (service != null) {
         isProvisioningCompleted = false;
-        _meshProvisioningDataInCharacteristic =
-            service.characteristics.firstWhere((element) => element.uuid == meshProvisioningDataIn, orElse: () => null);
-        _meshProvisioningDataOutCharacteristic = service.characteristics
-            .firstWhere((element) => element.uuid == meshProvisioningDataOut, orElse: () => null);
-        if (_meshProvisioningDataInCharacteristic != null) {
-          writeRequest = _meshProvisioningDataInCharacteristic.properties.writeWithoutResponse;
+        _meshProvisioningDataInCharacteristicUuid =
+            service.characteristicIds.firstWhere((uuid) => uuid == meshProvisioningDataIn, orElse: () => null);
+        _meshProvisioningDataOutCharacteristicUuid =
+            service.characteristicIds.firstWhere((uuid) => uuid == meshProvisioningDataOut, orElse: () => null);
+        if (_meshProvisioningDataInCharacteristicUuid != null) {
+          final characteristic = QualifiedCharacteristic(
+            characteristicId: _meshProxyDataInCharacteristicUuid,
+            serviceId: service.serviceId,
+            deviceId: device.id,
+          );
+          await bleInstance.writeCharacteristicWithoutResponse(characteristic, value: null);
         }
-        if (_meshProvisioningDataInCharacteristic != null &&
-            _meshProvisioningDataOutCharacteristic != null &&
-            writeRequest) {
+        if (_meshProvisioningDataInCharacteristicUuid != null && _meshProvisioningDataOutCharacteristicUuid != null) {
           return service;
         }
         return null;
@@ -77,61 +86,84 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   @override
-  Future<void> initGatt(final BluetoothDevice device) async {
+  Future<void> initGatt(final DiscoveredDevice device) async {
+    var service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid, orElse: () => null);
     if (isProvisioningCompleted) {
-      final dataOut = _meshProxyDataOutCharacteristic.properties;
-      if (dataOut.read) {
-        await _meshProxyDataOutCharacteristic.read();
-      }
+      final dataOutCharacteristic = QualifiedCharacteristic(
+        characteristicId: _meshProxyDataOutCharacteristicUuid,
+        serviceId: service.serviceId,
+        deviceId: device.id,
+      );
+      await bleInstance.readCharacteristic(dataOutCharacteristic);
 
-      final dataIn = _meshProxyDataInCharacteristic.properties;
-      if (dataIn.read) {
-        await _meshProxyDataInCharacteristic.read();
-      }
+      final dataInCharacteristic = QualifiedCharacteristic(
+        characteristicId: _meshProxyDataInCharacteristicUuid,
+        serviceId: service.serviceId,
+        deviceId: device.id,
+      );
+      await bleInstance.readCharacteristic(dataInCharacteristic);
 
-      if (dataOut.notify) {
-        await _meshProxyDataOutSubscription?.cancel();
-        _meshProxyDataOutSubscription =
-            _meshProxyDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) {
-          callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
-        });
-        await _meshProxyDataOutCharacteristic.setNotifyValue(true);
-        if (Platform.isAndroid) {
-          final descriptor = _meshProxyDataOutCharacteristic.descriptors
-              .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
-          if (descriptor != null) {
-            await descriptor.write(enableNotificationValue);
-          }
-        }
-      }
+      await _meshProxyDataOutSubscription?.cancel();
+      _meshProxyDataOutSubscription = bleInstance
+          .subscribeToCharacteristic(dataOutCharacteristic)
+          .where((data) => data?.isNotEmpty == true)
+          .listen((data) =>
+              callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
+      // if (dataOut.notify) {
+      //   await _meshProxyDataOutSubscription?.cancel();
+      //   _meshProxyDataOutSubscription =
+      //       _meshProxyDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) {
+      //     callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
+      //   });
+      //   await _meshProxyDataOutCharacteristic.setNotifyValue(true);
+      //   if (Platform.isAndroid) {
+      //     final descriptor = _meshProxyDataOutCharacteristic.descriptors
+      //         .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
+      //     if (descriptor != null) {
+      //       await descriptor.write(enableNotificationValue);
+      //     }
+      //   }
+      // }
     } else {
-      final dataIn = _meshProvisioningDataInCharacteristic.properties;
-      if (dataIn.read) {
-        await _meshProvisioningDataInCharacteristic.read();
-      }
+      service =
+          _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid, orElse: () => null);
+      final dataInCharacteristic = QualifiedCharacteristic(
+        characteristicId: _meshProvisioningDataInCharacteristicUuid,
+        serviceId: service.serviceId,
+        deviceId: device.id,
+      );
+      await bleInstance.readCharacteristic(dataInCharacteristic);
 
-      final dataOut = _meshProvisioningDataOutCharacteristic.properties;
-      if (dataOut.read) {
-        await _meshProvisioningDataOutCharacteristic.read();
-      }
+      final dataOutCharacteristic = QualifiedCharacteristic(
+        characteristicId: _meshProvisioningDataOutCharacteristicUuid,
+        serviceId: service.serviceId,
+        deviceId: device.id,
+      );
+      await bleInstance.readCharacteristic(dataOutCharacteristic);
 
-      if (dataOut.notify) {
-        await _meshProvisioningDataOutSubscription?.cancel();
-        _meshProvisioningDataOutSubscription =
-            _meshProvisioningDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) {
-          callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
-        });
-
-        await _meshProvisioningDataOutCharacteristic.setNotifyValue(true);
-
-        if (Platform.isAndroid) {
-          final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
-              .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
-          if (descriptor != null) {
-            await descriptor.write(enableNotificationValue);
-          }
-        }
-      }
+      await _meshProvisioningDataOutSubscription?.cancel();
+      _meshProvisioningDataOutSubscription = bleInstance
+          .subscribeToCharacteristic(dataOutCharacteristic)
+          .where((data) => data?.isNotEmpty == true)
+          .listen((data) =>
+              callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
+      // if (dataOut.notify) {
+      //   await _meshProvisioningDataOutSubscription?.cancel();
+      //   _meshProvisioningDataOutSubscription =
+      //       _meshProvisioningDataOutCharacteristic.value.where((event) => event?.isNotEmpty == true).listen((event) {
+      //     callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, event));
+      //   });
+      //
+      //   await _meshProvisioningDataOutCharacteristic.setNotifyValue(true);
+      //
+      //   if (Platform.isAndroid) {
+      //     final descriptor = _meshProvisioningDataOutCharacteristic.descriptors
+      //         .firstWhere((element) => element.uuid == clientCharacteristicConfigDescriptorUuid, orElse: () => null);
+      //     if (descriptor != null) {
+      //       await descriptor.write(enableNotificationValue);
+      //     }
+      //   }
+      // }
     }
   }
 
@@ -156,35 +188,47 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       return;
     }
     if (isProvisioningCompleted) {
-      if (_meshProxyDataInCharacteristic == null) {
+      if (_meshProxyDataInCharacteristicUuid == null) {
         return;
       }
-      if (_meshProxyDataInCharacteristic.properties.writeWithoutResponse) {
-        try {
-          await retry(
-            () async => await _meshProxyDataInCharacteristic.write(data, withoutResponse: true),
-            retryIf: (e) => e is PlatformException,
-          );
-          callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
-        } catch (_) {}
-      }
+      try {
+        await retry(
+          () async {
+            final service =
+                _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid, orElse: () => null);
+            final dataInCharacteristic = QualifiedCharacteristic(
+              characteristicId: _meshProxyDataInCharacteristicUuid,
+              serviceId: service.serviceId,
+              deviceId: device.id,
+            );
+            await bleInstance.writeCharacteristicWithoutResponse(dataInCharacteristic, value: data);
+          },
+          retryIf: (e) => e is PlatformException,
+        );
+        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+      } catch (_) {}
     } else {
-      if (_meshProvisioningDataInCharacteristic == null) {
+      if (_meshProxyDataInCharacteristicUuid == null) {
         return;
       }
-      if (_meshProvisioningDataInCharacteristic.properties.writeWithoutResponse) {
-        try {
-          await retry(
-            () async => await _meshProvisioningDataInCharacteristic.write(data, withoutResponse: true),
-            retryIf: (e) => e is PlatformException,
-          );
-          callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
-        } catch (_) {}
-      }
+      try {
+        await retry(
+          () async {
+            final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid,
+                orElse: () => null);
+            final dataInCharacteristic = QualifiedCharacteristic(
+              characteristicId: _meshProvisioningDataInCharacteristicUuid,
+              serviceId: service.serviceId,
+              deviceId: device.id,
+            );
+            await bleInstance.writeCharacteristicWithoutResponse(dataInCharacteristic, value: data);
+          },
+          retryIf: (e) => e is PlatformException,
+        );
+        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+      } catch (_) {}
     }
   }
 
-  Future<void> refreshDeviceCache() async {
-    // TODO migrate to new BLE lib and use following snippet : `await flutterReactiveBle.clearGattCache(foundDeviceId);`
-  }
+  Future<void> refreshDeviceCache() => bleInstance.clearGattCache(device.id);
 }

@@ -1,17 +1,17 @@
 import 'dart:async';
 
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class BleManagerCallbacksDiscoveredServices {
-  final BluetoothDevice device;
-  final BluetoothService service;
+  final DiscoveredDevice device;
+  final DiscoveredService service;
   final bool optionalServicesFound;
 
   const BleManagerCallbacksDiscoveredServices(this.device, this.service, this.optionalServicesFound);
 }
 
 class BleManagerCallbacksError {
-  final BluetoothDevice device;
+  final DiscoveredDevice device;
   final String message;
   final int code;
 
@@ -19,25 +19,25 @@ class BleManagerCallbacksError {
 }
 
 abstract class BleManagerCallbacks {
-  final onDeviceConnectingController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceConnecting => onDeviceConnectingController.stream;
+  final onDeviceConnectingController = StreamController<DiscoveredDevice>();
+  Stream<DiscoveredDevice> get onDeviceConnecting => onDeviceConnectingController.stream;
 
-  final onDeviceConnectedController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceConnected => onDeviceConnectedController.stream;
+  final onDeviceConnectedController = StreamController<DiscoveredDevice>();
+  Stream<DiscoveredDevice> get onDeviceConnected => onDeviceConnectedController.stream;
 
-  final onDeviceDisconnectingController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
+  final onDeviceDisconnectingController = StreamController<DiscoveredDevice>();
+  Stream<DiscoveredDevice> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
 
-  final onDeviceDisconnectedController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
+  final onDeviceDisconnectedController = StreamController<DiscoveredDevice>();
+  Stream<DiscoveredDevice> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
 
   // Stream<BluetoothDevice> onLinkLossOccurred;
 
   final onServicesDiscoveredController = StreamController<BleManagerCallbacksDiscoveredServices>();
   Stream<BleManagerCallbacksDiscoveredServices> get onServicesDiscovered => onServicesDiscoveredController.stream;
 
-  final onDeviceReadyController = StreamController<BluetoothDevice>();
-  Stream<BluetoothDevice> get onDeviceReady => onDeviceReadyController.stream;
+  final onDeviceReadyController = StreamController<DiscoveredDevice>();
+  Stream<DiscoveredDevice> get onDeviceReady => onDeviceReadyController.stream;
 
   final onErrorController = StreamController<BleManagerCallbacksError>();
   Stream<BleManagerCallbacksError> get onError => onErrorController.stream;
@@ -46,7 +46,7 @@ abstract class BleManagerCallbacks {
 
   Future<void> sendMtuToMeshManagerApi(int mtu);
 
-  bool shouldEnableBatteryLevelNotifications(BluetoothDevice device) => false;
+  bool shouldEnableBatteryLevelNotifications(DiscoveredDevice device) => false;
 
   Future<void> dispose() => Future.wait([
         onDeviceConnectingController.close(),

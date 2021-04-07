@@ -1,53 +1,42 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 
 import 'ble_manager.dart'; // for mesh guid constants
 
 const Duration defaultScanDuration = Duration(seconds: 5);
 
-/// TODO migrate this singleton to new ble lib
 class BleScanner {
   static BleScanner _instance;
-
   BleScanner._();
 
   factory BleScanner() => _instance ??= BleScanner._();
 
-  final FlutterBlue _flutterBlue = FlutterBlue.instance;
-
-  Future<bool> get isScanning => _flutterBlue.isScanning.first;
-
-  Future stopScan() async {
-    await _flutterBlue.stopScan();
-  }
+  final FlutterReactiveBle _flutterReactiveBle = FlutterReactiveBle();
 
   /// Will begin a ble scan with the given parameters or defaults and wait for [timeoutDuration].
   ///
   /// Returns a List of [ScanResult] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<List<ScanResult>> _scanWithParamsAsFuture({
+  Future<List<DiscoveredDevice>> _scanWithParamsAsFuture({
     ScanMode scanMode = ScanMode.lowLatency,
-    List<Guid> withServices = const [],
+    List<Uuid> withServices = const [],
     Duration timeoutDuration = defaultScanDuration,
     bool allowDuplicates = false,
   }) async {
     if (Platform.isIOS || Platform.isAndroid) {
-      // FlutterBlue startScan method returns a dynamic Future.. so we get it and build the List with good Type after the scan is done
-      final dynamicResult = await _flutterBlue.startScan(
-        withServices: withServices,
-        scanMode: scanMode,
-        timeout: timeoutDuration,
-        allowDuplicates: allowDuplicates,
-      );
-      final scanResults = <ScanResult>[];
-      for (final result in dynamicResult) {
-        if (result is ScanResult) {
-          scanResults.add(result);
-        }
-      }
+      final scanResults = <DiscoveredDevice>[];
+      final streamSub = _flutterReactiveBle
+          .scanForDevices(
+            withServices: withServices,
+            scanMode: scanMode,
+          )
+          .listen((device) => scanResults.add(device));
+      await Future.delayed(timeoutDuration, () => streamSub.cancel());
       return scanResults;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
@@ -56,38 +45,37 @@ class BleScanner {
 
   /// Will begin a ble scan with the given parameters or defaults.
   ///
-  /// Returns a [Stream] of [ScanResult] that may be empty if no node is in range.
+  /// Returns a [Stream] of [DiscoveredDevice] that may be empty if no node is in range.
+  ///
+  /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<ScanResult> _scanWithParamsAsStream({
+  Stream<DiscoveredDevice> _scanWithParamsAsStream({
     ScanMode scanMode = ScanMode.lowLatency,
-    List<Guid> withServices = const [],
+    List<Uuid> withServices = const [],
     Duration timeoutDuration = defaultScanDuration,
     bool allowDuplicates = false,
   }) {
     if (Platform.isIOS || Platform.isAndroid) {
-      return _flutterBlue.scan(
+      return _flutterReactiveBle.scanForDevices(
         withServices: withServices,
         scanMode: scanMode,
-        timeout: timeoutDuration,
-        allowDuplicates: allowDuplicates,
       );
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
   }
 
-  Future<ScanResult> searchForSpecificUID(String uid, {bool forProxy = false}) async {
+  Future<DiscoveredDevice> searchForSpecificUID(String uid, {bool forProxy = false}) async {
     final result = _scanWithParamsAsStream(
       withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
     ).firstWhere((s) => validScanResult(s, uid), orElse: () => null);
-    await stopScan();
     return result;
   }
 
-  bool validScanResult(ScanResult s, String uid) {
+  bool validScanResult(DiscoveredDevice s, String uid) {
     if (Platform.isAndroid) {
-      return s.device.id.id == uid;
+      return s.id == uid;
     } else if (Platform.isIOS) {
       //TODO
       throw UnimplementedError();
@@ -96,7 +84,7 @@ class BleScanner {
     }
   }
 
-  Future<List<ScanResult>> unprovisionedNodesInRange({
+  Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
       _scanWithParamsAsFuture(
@@ -104,7 +92,7 @@ class BleScanner {
         timeoutDuration: timeoutDuration,
       );
 
-  Future<List<ScanResult>> provisionedNodesInRange({
+  Future<List<DiscoveredDevice>> provisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
       _scanWithParamsAsFuture(
@@ -112,7 +100,7 @@ class BleScanner {
         timeoutDuration: timeoutDuration,
       );
 
-  Stream<ScanResult> scanForProxy({
+  Stream<DiscoveredDevice> scanForProxy({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
       _scanWithParamsAsStream(
