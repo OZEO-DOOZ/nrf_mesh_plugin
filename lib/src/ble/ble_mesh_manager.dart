@@ -23,7 +23,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   BleMeshManager._(FlutterReactiveBle _bleInstance) : super(_bleInstance);
 
-  factory BleMeshManager(FlutterReactiveBle _bleInstance) => _instance ??= BleMeshManager._(_bleInstance);
+  factory BleMeshManager() => _instance ??= BleMeshManager._(FlutterReactiveBle());
 
   void onDeviceDisconnected(final DiscoveredDevice device) async {
     isProvisioningCompleted = false;
