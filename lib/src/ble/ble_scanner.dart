@@ -17,6 +17,8 @@ class BleScanner {
 
   final FlutterReactiveBle _flutterReactiveBle = FlutterReactiveBle();
 
+  Stream<BleStatus> get bleStatus => _flutterReactiveBle.statusStream;
+
   /// Will begin a ble scan with the given parameters or defaults and wait for [timeoutDuration].
   ///
   /// Returns a List of [ScanResult] that may be empty if no device is in range.

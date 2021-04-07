@@ -120,4 +120,7 @@ class NordicNrfMesh {
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Future<DiscoveredDevice> searchForSpecificUID(String uid, {bool forProxy = false}) =>
       _bleScanner.searchForSpecificUID(uid, forProxy: forProxy);
+
+  /// Provide a [Stream] of the current [BleStatus] of the host device.
+  Stream<BleStatus> get bleStatus => _bleScanner.bleStatus;
 }
