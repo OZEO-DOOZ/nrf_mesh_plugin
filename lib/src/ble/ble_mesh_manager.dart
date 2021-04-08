@@ -61,13 +61,13 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       return null;
     } else {
       service =
-          _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid, orElse: () => null);
+          _discoveredServices.firstWhere((service) => service.serviceId == Uuid.parse('1827'), orElse: () => null);
       if (service != null) {
         isProvisioningCompleted = false;
         _meshProvisioningDataInCharacteristicUuid =
-            service.characteristicIds.firstWhere((uuid) => uuid == meshProvisioningDataIn, orElse: () => null);
+            service.characteristicIds.firstWhere((uuid) => uuid == Uuid.parse('2adb'), orElse: () => null);
         _meshProvisioningDataOutCharacteristicUuid =
-            service.characteristicIds.firstWhere((uuid) => uuid == meshProvisioningDataOut, orElse: () => null);
+            service.characteristicIds.firstWhere((uuid) => uuid == Uuid.parse('2adc'), orElse: () => null);
         if (_meshProvisioningDataInCharacteristicUuid != null) {
           final characteristic = QualifiedCharacteristic(
             characteristicId: _meshProxyDataInCharacteristicUuid,
@@ -230,5 +230,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     }
   }
 
-  Future<void> refreshDeviceCache() => bleInstance.clearGattCache(device.id);
+  Future<void> refreshDeviceCache() {
+    if (device != null) {
+      return bleInstance.clearGattCache(device.id);
+    }
+    return null;
+  }
 }

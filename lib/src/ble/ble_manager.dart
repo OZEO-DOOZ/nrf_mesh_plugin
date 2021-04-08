@@ -91,14 +91,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _connected = true;
     _device = device;
 
-    final negociatedMtu = await _bleInstance.requestMtu(deviceId: _device.id);
-    if (Platform.isAndroid) {
-      mtuSize = negociatedMtu - 3;
-    } else if (Platform.isIOS) {
-      mtuSize = negociatedMtu;
-    }
-    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
-
     final service = await isRequiredServiceSupported(device);
     if (service == null) {
       throw Exception('Required service not found');
@@ -109,11 +101,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     }
     await initGatt(device);
-    final fMtuChanged = _bleInstance.requestMtu(deviceId: _device.id);
+    final negociatedMtu = await _bleInstance.requestMtu(deviceId: _device.id, mtu: 517);
     if (Platform.isAndroid) {
-      await _bleInstance.requestMtu(deviceId: _device.id, mtu: 517);
-      await fMtuChanged;
+      mtuSize = negociatedMtu - 3;
+    } else if (Platform.isIOS) {
+      mtuSize = negociatedMtu;
     }
+    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
     if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
       _callbacks.onDeviceReadyController.add(device);
     }
