@@ -47,35 +47,19 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           service.characteristicIds.firstWhere((uuid) => uuid == meshProxyDataIn, orElse: () => null);
       _meshProxyDataOutCharacteristicUuid =
           service.characteristicIds.firstWhere((uuid) => uuid == meshProxyDataOut, orElse: () => null);
-      if (_meshProxyDataInCharacteristicUuid != null) {
-        final characteristic = QualifiedCharacteristic(
-          characteristicId: _meshProxyDataInCharacteristicUuid,
-          serviceId: service.serviceId,
-          deviceId: device.id,
-        );
-        await bleInstance.writeCharacteristicWithoutResponse(characteristic, value: null);
-      }
       if (_meshProxyDataInCharacteristicUuid != null && _meshProxyDataOutCharacteristicUuid != null) {
         return service;
       }
       return null;
     } else {
       service =
-          _discoveredServices.firstWhere((service) => service.serviceId == Uuid.parse('1827'), orElse: () => null);
+          _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid, orElse: () => null);
       if (service != null) {
         isProvisioningCompleted = false;
         _meshProvisioningDataInCharacteristicUuid =
-            service.characteristicIds.firstWhere((uuid) => uuid == Uuid.parse('2adb'), orElse: () => null);
+            service.characteristicIds.firstWhere((uuid) => uuid == meshProvisioningDataIn, orElse: () => null);
         _meshProvisioningDataOutCharacteristicUuid =
-            service.characteristicIds.firstWhere((uuid) => uuid == Uuid.parse('2adc'), orElse: () => null);
-        if (_meshProvisioningDataInCharacteristicUuid != null) {
-          final characteristic = QualifiedCharacteristic(
-            characteristicId: _meshProxyDataInCharacteristicUuid,
-            serviceId: service.serviceId,
-            deviceId: device.id,
-          );
-          await bleInstance.writeCharacteristicWithoutResponse(characteristic, value: null);
-        }
+            service.characteristicIds.firstWhere((uuid) => uuid == meshProvisioningDataOut, orElse: () => null);
         if (_meshProvisioningDataInCharacteristicUuid != null && _meshProvisioningDataOutCharacteristicUuid != null) {
           return service;
         }
