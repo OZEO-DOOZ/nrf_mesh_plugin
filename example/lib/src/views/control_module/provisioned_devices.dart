@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/module.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
@@ -17,13 +17,13 @@ class ProvisionedDevices extends StatefulWidget {
 }
 
 class _ProvisionedDevicesState extends State<ProvisionedDevices> {
-  final flutterBlue = FlutterBlue.instance;
-  final _devices = <BluetoothDevice>{};
+  final flutterReactiveBle = FlutterReactiveBle();
+  final _devices = <DiscoveredDevice>{};
 
   MeshManagerApi _meshManagerApi;
   bool loading = true;
   bool isScanning = false;
-  StreamSubscription<ScanResult> _scanSubscription;
+  StreamSubscription<DiscoveredDevice> _scanSubscription;
 //  final _serviceData = <String, Guid>{};
 
   @override
@@ -37,7 +37,6 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   @override
   void dispose() {
     super.dispose();
-    flutterBlue.stopScan();
     _scanSubscription?.cancel();
   }
 
@@ -90,33 +89,19 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     });
   }
 
-  Future<void> isNotScanning(FlutterBlue flutterBlue) {
-    final completer = Completer<void>();
-
-    flutterBlue.isScanning.listen((event) {
-      if (!event && !completer.isCompleted) {
-        completer.complete(null);
-      }
-    });
-
-    return completer.future;
-  }
-
   Future<void> _scanProvisionned() async {
     setState(() {
       _devices.clear();
     });
 
-    await isNotScanning(flutterBlue);
-
     //  TODO: we should check if the device advertise with the good network id
-    _scanSubscription = flutterBlue.scan(
+    _scanSubscription = flutterReactiveBle.scanForDevices(
       withServices: [
         meshProxyUuid,
       ],
-    ).listen((scanResult) async {
+    ).listen((device) async {
       setState(() {
-        _devices.add(scanResult.device);
+        _devices.add(device);
       });
     });
     setState(() {
@@ -130,7 +115,6 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     if (!mounted) {
       return;
     }
-    await flutterBlue.stopScan();
     await _scanSubscription?.cancel();
     setState(() {
       isScanning = false;

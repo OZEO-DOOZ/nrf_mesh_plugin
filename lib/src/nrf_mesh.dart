@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
@@ -49,7 +49,7 @@ class NordicNrfMesh {
   Future<ProvisionedMeshNode> provisioning(
     final MeshManagerApi meshManagerApi,
     final BleMeshManager bleMeshManager,
-    final BluetoothDevice device,
+    final DiscoveredDevice device,
     final String serviceDataUuid, {
     final utils_provisioning.ProvisioningEvent events,
   }) =>
@@ -81,30 +81,32 @@ class NordicNrfMesh {
 
   /// Will scan for **unprovisioned** nodes.
   ///
-  /// Returns a [List] of [ScanResult] that may be empty if no device is in range.
+  /// Returns a [List] of [DiscoveredDevice] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<List<ScanResult>> unprovisionedNodesInRange({
+  Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
       _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
   /// Will scan for **provisioned** nodes.
   ///
-  /// Returns a [List] of [ScanResult] that may be empty if no device is in range.
+  /// Returns a [List] of [DiscoveredDevice] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<List<ScanResult>> provisionedNodesInRange({
+  Future<List<DiscoveredDevice>> provisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
       _bleScanner.provisionedNodesInRange(timeoutDuration: timeoutDuration);
 
   /// Will scan for **provisioned** nodes.
   ///
-  /// Returns a [Stream] of [ScanResult] for the user to listen to.
+  /// Returns a [Stream] of [DiscoveredDevice] for the user to listen to.
+  ///
+  /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<ScanResult> scanForProxy({
+  Stream<DiscoveredDevice> scanForProxy({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
       _bleScanner.scanForProxy(timeoutDuration: timeoutDuration);
@@ -113,15 +115,12 @@ class NordicNrfMesh {
   ///
   /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [forProxy] bool flag.
   ///
-  /// Returns a [ScanResult] or null if not found.
+  /// Returns a [DiscoveredDevice] or null if not found.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<ScanResult> searchForSpecificUID(String uid, {bool forProxy = false}) =>
+  Future<DiscoveredDevice> searchForSpecificUID(String uid, {bool forProxy = false}) =>
       _bleScanner.searchForSpecificUID(uid, forProxy: forProxy);
 
-  /// By awaiting this getter, one will get the current status of the scanner
-  Future<bool> get isScanning => _bleScanner.isScanning;
-
-  /// Will stop the ble scanner if it is currently scanning
-  Future stopScan() => _bleScanner.stopScan();
+  /// Provide a [Stream] of the current [BleStatus] of the host device.
+  Stream<BleStatus> get bleStatus => _bleScanner.bleStatus;
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_generic_on_off.dart';
 
@@ -14,7 +14,7 @@ import 'commands/send_generic_level.dart';
 import 'node.dart';
 
 class Module extends StatefulWidget {
-  final BluetoothDevice device;
+  final DiscoveredDevice device;
   final MeshManagerApi meshManagerApi;
 
   const Module({Key key, this.device, this.meshManagerApi}) : super(key: key);
@@ -139,14 +139,14 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   final MeshManagerApi meshManagerApi;
   final BleMeshManager bleMeshManager;
 
-  StreamSubscription<BluetoothDevice> onDeviceConnectingSubscription;
-  StreamSubscription<BluetoothDevice> onDeviceConnectedSubscription;
+  StreamSubscription<DiscoveredDevice> onDeviceConnectingSubscription;
+  StreamSubscription<DiscoveredDevice> onDeviceConnectedSubscription;
   StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
-  StreamSubscription<BluetoothDevice> onDeviceReadySubscription;
+  StreamSubscription<DiscoveredDevice> onDeviceReadySubscription;
   StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
-  StreamSubscription<BluetoothDevice> onDeviceDisconnectingSubscription;
-  StreamSubscription<BluetoothDevice> onDeviceDisconnectedSubscription;
+  StreamSubscription<DiscoveredDevice> onDeviceDisconnectingSubscription;
+  StreamSubscription<DiscoveredDevice> onDeviceDisconnectedSubscription;
   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
   DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
@@ -162,7 +162,7 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
     });
 
     onDeviceReadySubscription = onDeviceReady.listen((event) async {
-      print('onDeviceReady ${event.id.id}');
+      print('onDeviceReady ${event.id}');
     });
 
     onDataReceivedSubscription = onDataReceived.listen((event) async {
