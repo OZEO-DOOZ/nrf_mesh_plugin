@@ -13,9 +13,9 @@ class BleManagerCallbacksDiscoveredServices {
 class BleManagerCallbacksError {
   final DiscoveredDevice device;
   final String message;
-  final int code;
+  final Object error;
 
-  const BleManagerCallbacksError(this.device, this.message, this.code);
+  const BleManagerCallbacksError(this.device, this.message, this.error);
 }
 
 abstract class BleManagerCallbacks {

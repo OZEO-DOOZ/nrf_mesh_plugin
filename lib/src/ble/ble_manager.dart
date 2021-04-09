@@ -25,7 +25,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   bool isProvisioningCompleted = false;
   E _callbacks;
   StreamSubscription<ConnectionStateUpdate> _connectedDeviceStatusStream;
-  StreamSubscription<int> _mtuSizeSubscription;
 
   int mtuSize = maxPacketSize;
 
@@ -44,7 +43,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   Future<void> dispose() async {
     await callbacks?.dispose();
-    await _mtuSizeSubscription?.cancel();
     await _connectedDeviceStatusStream?.cancel();
   }
 
@@ -83,6 +81,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             _callbacks.onDeviceDisconnectedController.add(device);
           }
           break;
+      }
+    }, onError: (Object error) {
+      if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
+        _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'ERROR CAUGHT IN CONNECTION STREAM', error));
       }
     });
   }
@@ -129,6 +131,5 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
       _callbacks.onDeviceDisconnectedController.add(_device);
     }
-    unawaited(_mtuSizeSubscription.cancel());
   }
 }

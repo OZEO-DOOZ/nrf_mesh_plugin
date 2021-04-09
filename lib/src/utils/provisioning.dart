@@ -69,7 +69,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       await bleMeshManager.disconnect();
       DiscoveredDevice device;
       while (device == null) {
-        final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
+        final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 5));
         device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
         await Future.delayed(Duration(milliseconds: 500));
       }
@@ -81,7 +81,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       await bleMeshManager.connect(device);
       provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
     } catch (e) {
-      completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
+      completer.completeError(NrfMeshProvisioningException('error during provisioning completed listener'));
     }
   });
   final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
