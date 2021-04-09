@@ -232,14 +232,7 @@ class MeshManagerApi {
 
   Stream<LightHslStatusData> get onLightHslStatus => _onLightHslStatusController.stream;
 
-  Uuid get meshProvisioningUuidServiceKey {
-    // if (Platform.isAndroid) {
-    //   return meshProvisioningUuid.toString();
-    // } else if (Platform.isIOS) {
-    return Uuid.parse('1827');
-    // }
-    // return null;
-  }
+  Uuid get meshProvisioningUuidServiceKey => meshProvisioningUuid;
 
   Future<bool> isAdvertisedWithNodeIdentity(final List<int> serviceData) async {
     return await _methodChannel.invokeMethod('isAdvertisedWithNodeIdentity', {'serviceData': serviceData});
