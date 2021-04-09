@@ -70,7 +70,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 
       DiscoveredDevice device;
       while (device == null) {
-        final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 5));
+        final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
         device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
         await Future.delayed(Duration(milliseconds: 500));
       }

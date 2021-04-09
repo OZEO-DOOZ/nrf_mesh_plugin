@@ -66,7 +66,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           if (!_callbacks.onDeviceConnectedController.isClosed && _callbacks.onDeviceConnectedController.hasListener) {
             _callbacks.onDeviceConnectedController.add(device);
           }
-          await _negociateAndInitGatt(device);
+          _connected = true;
+          _device = device;
+          await _negociateAndInitGatt();
           break;
         case DeviceConnectionState.disconnecting:
           if (!_callbacks.onDeviceDisconnectedController.isClosed &&
@@ -88,11 +90,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     });
   }
 
-  Future<void> _negociateAndInitGatt(DiscoveredDevice device) async {
-    _connected = true;
-    _device = device;
-
-    final service = await isRequiredServiceSupported(device);
+  Future<void> _negociateAndInitGatt() async {
+    final service = await isRequiredServiceSupported();
     if (service == null) {
       throw Exception('Required service not found');
     }
@@ -101,7 +100,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
       _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
     }
-    await initGatt(device);
+    await initGatt();
     final negociatedMtu = await _bleInstance.requestMtu(deviceId: _device.id, mtu: 517);
     if (Platform.isAndroid) {
       mtuSize = negociatedMtu - 3;
@@ -115,10 +114,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   }
 
   @visibleForOverriding
-  Future<DiscoveredService> isRequiredServiceSupported(final DiscoveredDevice device);
+  Future<DiscoveredService> isRequiredServiceSupported();
 
   @visibleForOverriding
-  Future<void> initGatt(final DiscoveredDevice device);
+  Future<void> initGatt();
 
   Future<void> disconnect() async {
     if (!_callbacks.onDeviceDisconnectingController.isClosed &&
