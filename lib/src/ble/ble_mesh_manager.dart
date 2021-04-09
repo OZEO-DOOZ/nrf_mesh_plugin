@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
@@ -36,6 +37,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     _meshProxyDataOutSubscription = null;
     await _meshProvisioningDataOutSubscription?.cancel();
     _meshProvisioningDataOutSubscription = null;
+  }
+
+  @override
+  Future<void> disconnect() {
+    onDeviceDisconnected(device);
+    return super.disconnect();
   }
 
   @override
@@ -166,8 +173,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   Future<void> refreshDeviceCache() {
-    if (device != null) {
-      return bleInstance.clearGattCache(device.id);
+    if (Platform.isAndroid) {
+      if (device != null) {
+        return bleInstance.clearGattCache(device.id);
+      }
     }
     return null;
   }

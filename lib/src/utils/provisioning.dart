@@ -66,6 +66,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   bleMeshManager.callbacks = provisioningCallbacks;
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
+      await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
       DiscoveredDevice device;
       while (device == null) {
@@ -79,6 +80,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       }
       events?._provisioningReconnectController?.add(null);
       await bleMeshManager.connect(device);
+      await bleMeshManager.refreshDeviceCache();
       provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
     } catch (e) {
       completer.completeError(NrfMeshProvisioningException('error during provisioning completed listener'));
@@ -157,10 +159,12 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   });
   try {
     if (bleMeshManager.connected) {
+      await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
     }
     await bleMeshManager.connect(deviceToProvision);
     await completer.future;
+    await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
     return provisionedMeshNode;
   } catch (e) {
@@ -204,14 +208,10 @@ Future<bool> cancelProvisioning(
       }
       await meshManagerApi.cleanProvisioningData();
       if (bleMeshManager.connected) {
+        await bleMeshManager.refreshDeviceCache();
         await bleMeshManager.disconnect();
       } else {
         print('mesh manager not currently connected');
-      }
-      if (Platform.isAndroid) {
-        await bleMeshManager.refreshDeviceCache();
-      } else {
-        print('no need to refresh device cache on ${Platform.operatingSystem}');
       }
       return true;
     } catch (e) {
