@@ -66,8 +66,8 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   bleMeshManager.callbacks = provisioningCallbacks;
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
-      await bleMeshManager.refreshDeviceCache();
-      await bleMeshManager.disconnect();
+      await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
+
       DiscoveredDevice device;
       while (device == null) {
         final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 5));
@@ -80,7 +80,6 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       }
       events?._provisioningReconnectController?.add(null);
       await bleMeshManager.connect(device);
-      await bleMeshManager.refreshDeviceCache();
       provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
     } catch (e) {
       completer.completeError(NrfMeshProvisioningException('error during provisioning completed listener'));
@@ -159,13 +158,12 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   });
   try {
     if (bleMeshManager.connected) {
-      await bleMeshManager.refreshDeviceCache();
-      await bleMeshManager.disconnect();
+      await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
     }
     await bleMeshManager.connect(deviceToProvision);
     await completer.future;
-    await bleMeshManager.refreshDeviceCache();
-    await bleMeshManager.disconnect();
+    await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
+
     return provisionedMeshNode;
   } catch (e) {
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
@@ -208,8 +206,7 @@ Future<bool> cancelProvisioning(
       }
       await meshManagerApi.cleanProvisioningData();
       if (bleMeshManager.connected) {
-        await bleMeshManager.refreshDeviceCache();
-        await bleMeshManager.disconnect();
+        await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
       } else {
         print('mesh manager not currently connected');
       }

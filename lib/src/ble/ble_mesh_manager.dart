@@ -172,10 +172,10 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     }
   }
 
-  Future<void> refreshDeviceCache() {
+  Future<void> refreshDeviceCache() async {
     if (Platform.isAndroid) {
       if (device != null) {
-        return bleInstance.clearGattCache(device.id);
+        return await bleInstance.clearGattCache(device.id);
       }
     }
     return null;

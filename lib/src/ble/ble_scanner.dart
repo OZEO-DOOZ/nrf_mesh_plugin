@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 
 import 'ble_manager.dart'; // for mesh guid constants
 
@@ -28,7 +27,6 @@ class BleScanner {
     ScanMode scanMode = ScanMode.lowLatency,
     List<Uuid> withServices = const [],
     Duration timeoutDuration = defaultScanDuration,
-    bool allowDuplicates = false,
   }) async {
     if (Platform.isIOS || Platform.isAndroid) {
       final scanResults = <DiscoveredDevice>[];
@@ -56,7 +54,6 @@ class BleScanner {
     ScanMode scanMode = ScanMode.lowLatency,
     List<Uuid> withServices = const [],
     Duration timeoutDuration = defaultScanDuration,
-    bool allowDuplicates = false,
   }) {
     if (Platform.isIOS || Platform.isAndroid) {
       return _flutterReactiveBle.scanForDevices(
