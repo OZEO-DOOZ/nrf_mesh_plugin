@@ -68,7 +68,12 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           }
           _connected = true;
           _device = device;
-          await _negociateAndInitGatt();
+          try {
+            await _negociateAndInitGatt();
+          } on Exception catch (e) {
+            print('ERROR while negociating connection: $e');
+            await disconnect();
+          }
           break;
         case DeviceConnectionState.disconnecting:
           if (!_callbacks.onDeviceDisconnectedController.isClosed &&
@@ -81,6 +86,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               _callbacks.onDeviceDisconnectedController.hasListener) {
             _callbacks.onDeviceDisconnectedController.add(device);
           }
+          _connected = false;
           break;
       }
     }, onError: (Object error) {
@@ -120,14 +126,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   Future<void> initGatt();
 
   Future<void> disconnect() async {
-    if (!_callbacks.onDeviceDisconnectingController.isClosed &&
-        _callbacks.onDeviceDisconnectingController.hasListener) {
-      _callbacks.onDeviceDisconnectingController.add(_device);
-    }
     await _connectedDeviceStatusStream.cancel();
-    _connected = false;
-    if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
-      _callbacks.onDeviceDisconnectedController.add(_device);
-    }
   }
 }
