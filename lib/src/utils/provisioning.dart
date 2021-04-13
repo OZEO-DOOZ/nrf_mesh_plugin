@@ -69,7 +69,10 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
 
       DiscoveredDevice device;
-      while (device == null) {
+      var scanTries = 0;
+      while (device == null && scanTries < 10) {
+        scanTries++;
+        print('attempt #$scanTries to scan for ${deviceToProvision.id}');
         final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
         device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
         await Future.delayed(Duration(milliseconds: 500));
