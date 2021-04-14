@@ -63,6 +63,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   ProvisionedMeshNode provisionedMeshNode;
 
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
+  await bleMeshManager.callbacks?.dispose();
   bleMeshManager.callbacks = provisioningCallbacks;
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
