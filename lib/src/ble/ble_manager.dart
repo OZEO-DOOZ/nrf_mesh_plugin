@@ -131,8 +131,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       _callbacks.onDeviceDisconnectingController.add(device);
     }
     await _connectedDeviceStatusStream.cancel();
-    if (!_callbacks.onDeviceDisconnectedController.isClosed &&
-        _callbacks.onDeviceDisconnectedController.hasListener) {
+    if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
       _callbacks.onDeviceDisconnectedController.add(device);
     }
     _connected = false;
