@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_deprovisioning.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_generic_on_off.dart';
 
 import 'commands/send_create_group_with_name.dart';
@@ -93,6 +94,7 @@ class _ModuleState extends State<Module> {
           SendGetElementsForGroup(widget.meshManagerApi),
           SendCreateGroupWithName(widget.meshManagerApi),
           SendDeleteGroup(widget.meshManagerApi),
+          SendDeprovisioning(meshManagerApi: widget.meshManagerApi),
         ],
       );
     }
