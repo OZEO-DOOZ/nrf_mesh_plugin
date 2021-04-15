@@ -76,9 +76,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           }
           break;
         case DeviceConnectionState.disconnecting:
-          if (!_callbacks.onDeviceDisconnectedController.isClosed &&
-              _callbacks.onDeviceDisconnectedController.hasListener) {
-            _callbacks.onDeviceDisconnectedController.add(device);
+          if (!_callbacks.onDeviceDisconnectingController.isClosed &&
+              _callbacks.onDeviceDisconnectingController.hasListener) {
+            _callbacks.onDeviceDisconnectingController.add(device);
           }
           break;
         case DeviceConnectionState.disconnected:
@@ -126,6 +126,14 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   Future<void> initGatt();
 
   Future<void> disconnect() async {
+    if (!_callbacks.onDeviceDisconnectingController.isClosed &&
+        _callbacks.onDeviceDisconnectingController.hasListener) {
+      _callbacks.onDeviceDisconnectingController.add(device);
+    }
     await _connectedDeviceStatusStream.cancel();
+    if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
+      _callbacks.onDeviceDisconnectedController.add(device);
+    }
+    _connected = false;
   }
 }
