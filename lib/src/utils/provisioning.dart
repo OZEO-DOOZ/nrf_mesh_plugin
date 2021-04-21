@@ -63,11 +63,12 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   ProvisionedMeshNode provisionedMeshNode;
 
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
-  await bleMeshManager.callbacks?.dispose();
+  unawaited(bleMeshManager.callbacks?.dispose());
   bleMeshManager.callbacks = provisioningCallbacks;
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
-      await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
+      await bleMeshManager.refreshDeviceCache();
+      await bleMeshManager.disconnect();
 
       DiscoveredDevice device;
       var scanTries = 0;
@@ -161,12 +162,12 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     completer.complete(provisionedMeshNode);
   });
   try {
-    if (bleMeshManager.connected) {
-      await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
-    }
+    await bleMeshManager.refreshDeviceCache();
+    await bleMeshManager.disconnect();
     await bleMeshManager.connect(deviceToProvision);
     await completer.future;
-    await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
+    await bleMeshManager.refreshDeviceCache();
+    await bleMeshManager.disconnect();
 
     return provisionedMeshNode;
   } catch (e) {
@@ -209,11 +210,8 @@ Future<bool> cancelProvisioning(
         await meshManagerApi.meshNetwork.deleteNode(cachedProvisionedMeshNodeUuid);
       }
       await meshManagerApi.cleanProvisioningData();
-      if (bleMeshManager.connected) {
-        await bleMeshManager.refreshDeviceCache().then((value) async => await bleMeshManager.disconnect());
-      } else {
-        print('mesh manager not currently connected');
-      }
+      await bleMeshManager.refreshDeviceCache();
+      await bleMeshManager.disconnect();
       return true;
     } catch (e) {
       print('ERROR - $e');

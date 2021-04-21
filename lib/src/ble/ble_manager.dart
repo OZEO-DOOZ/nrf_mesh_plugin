@@ -20,7 +20,6 @@ const Duration kConnectionTimeout = Duration(seconds: 30);
 
 abstract class BleManager<E extends BleManagerCallbacks> {
   DiscoveredDevice _device;
-  bool _connected = false;
   bool isProvisioningCompleted = false;
   E _callbacks;
   StreamSubscription<ConnectionStateUpdate> _connectedDeviceStatusStream;
@@ -32,8 +31,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   E get callbacks => _callbacks;
 
   DiscoveredDevice get device => _device;
-
-  bool get connected => _connected;
 
   final FlutterReactiveBle _bleInstance;
   FlutterReactiveBle get bleInstance => _bleInstance;
@@ -66,7 +63,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           if (!_callbacks.onDeviceConnectedController.isClosed && _callbacks.onDeviceConnectedController.hasListener) {
             _callbacks.onDeviceConnectedController.add(device);
           }
-          _connected = true;
           _device = device;
           try {
             await _negociateAndInitGatt();
@@ -86,7 +82,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               _callbacks.onDeviceDisconnectedController.hasListener) {
             _callbacks.onDeviceDisconnectedController.add(device);
           }
-          _connected = false;
+          _device = null;
           break;
       }
     }, onError: (Object error) {
@@ -130,10 +126,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         _callbacks.onDeviceDisconnectingController.hasListener) {
       _callbacks.onDeviceDisconnectingController.add(device);
     }
-    await _connectedDeviceStatusStream.cancel();
+    await _connectedDeviceStatusStream?.cancel();
     if (!_callbacks.onDeviceDisconnectedController.isClosed && _callbacks.onDeviceDisconnectedController.hasListener) {
       _callbacks.onDeviceDisconnectedController.add(device);
     }
-    _connected = false;
   }
 }

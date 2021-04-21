@@ -169,8 +169,8 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       if (device != null) {
         try {
           return await bleInstance.clearGattCache(device.id);
-        } on GenericFailure catch (e) {
-          if (e.message.toLowerCase().contains('not connected')) {
+        } on Exception catch (e) {
+          if (e.toString().toLowerCase().contains('not connected')) {
             print('cannot clear gatt cache because not connected');
           } else {
             rethrow;
