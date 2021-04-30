@@ -325,7 +325,6 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 }
             }
             "deprovision" -> {
-                Log.d(tag, "should unprovision")
                 try {
                     val unicastAddress = call.argument<Int>("unicastAddress")!!
                     val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
@@ -333,6 +332,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                     if (pNode == null) {
                         result.error("NOT_FOUND", "MeshNode with unicastAddress $unicastAddress doesn't exist", null)
                     } else {
+                        Log.d(tag, "should unprovision the nodeId : " + unicastAddress)
                         val configNodeReset = ConfigNodeReset()
                         mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)
                     }

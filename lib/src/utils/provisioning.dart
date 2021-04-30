@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
@@ -75,9 +76,15 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       while (device == null && scanTries < 10) {
         scanTries++;
         print('attempt #$scanTries to scan for ${deviceToProvision.id}');
-        final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
-        device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
-        await Future.delayed(Duration(milliseconds: 500));
+        try {
+          final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
+          device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
+          await Future.delayed(Duration(milliseconds: 1500));
+        } catch (e) {
+          debugPrint('this shit is buggy ----------------->');
+          debugPrint('$e');
+          //events.prov
+        }
       }
       if (device == null) {
         completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
@@ -167,6 +174,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     await bleMeshManager.connect(deviceToProvision);
     await completer.future;
     await bleMeshManager.refreshDeviceCache();
+    await Future.delayed(Duration(milliseconds: 1500));
     await bleMeshManager.disconnect();
 
     return provisionedMeshNode;

@@ -2,29 +2,29 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/magic_level_get_status/magic_level_get_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/magic_level_set_status/magic_level_set_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/light_ctl_status/light_ctl_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/light_hsl_status/light_hsl_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/light_lightness_status/light_lightness_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/magic_level_get_status/magic_level_get_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/magic_level_set_status/magic_level_set_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
 import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_provisioning_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
 import 'package:nordic_nrf_mesh/src/events/mesh_manager_api_events.dart';
+import 'package:nordic_nrf_mesh/src/mesh_network.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:nordic_nrf_mesh/src/contants.dart';
-import 'package:nordic_nrf_mesh/src/mesh_network.dart';
 
 class MeshManagerApi {
   final _methodChannel = const MethodChannel('$namespace/mesh_manager_api/methods');
@@ -186,6 +186,8 @@ class MeshManagerApi {
         .map((event) => ConfigNodeResetStatus.fromJson(event))
         .listen(_onConfigNodeResetStatusController.add);
   }
+
+  Stream<ConfigNodeResetStatus> get onConfigNodeResetStatus => _onConfigNodeResetStatusController.stream;
 
   Stream<ConfigModelPublicationStatus> get onConfigModelPublicationStatus =>
       _onConfigModelPublicationStatusController.stream;
@@ -624,7 +626,7 @@ class MeshManagerApi {
       final unicastAddress = await meshNode.unicastAddress;
       final status = _onConfigNodeResetStatusController.stream
           .where((element) => element.source == unicastAddress)
-          .timeout(const Duration(seconds: 5), onTimeout: (sink) => sink.add(null))
+          .timeout(const Duration(seconds: 3), onTimeout: (sink) => sink.add(null))
           .first;
       await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
       return status;

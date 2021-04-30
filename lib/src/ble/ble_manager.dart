@@ -64,12 +64,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             _callbacks.onDeviceConnectedController.add(device);
           }
           _device = device;
-          try {
-            await _negociateAndInitGatt();
-          } on Exception catch (e) {
-            print('ERROR while negociating connection: $e');
-            await disconnect();
-          }
+          await _negociateAndInitGatt();
           break;
         case DeviceConnectionState.disconnecting:
           if (!_callbacks.onDeviceDisconnectingController.isClosed &&
@@ -85,7 +80,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           _device = null;
           break;
       }
-    }, onError: (Object error) {
+    }, onError: (Object error) async {
+      await disconnect();
       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
         _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'ERROR CAUGHT IN CONNECTION STREAM', error));
       }

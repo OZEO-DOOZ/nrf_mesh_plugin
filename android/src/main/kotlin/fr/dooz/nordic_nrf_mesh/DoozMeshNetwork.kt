@@ -230,14 +230,9 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
             }
             "deleteNode" -> {
                 val uid = call.argument<String>("uid")!!
-                var pNodeToDelete: ProvisionedMeshNode? = null
-                meshNetwork.nodes.forEach { node ->
-                    if (node.getUuid() == uid) {
-                        pNodeToDelete = node
-                    }
-                }
-                pNodeToDelete?.let { result.success(meshNetwork.deleteNode(it)) }
-                result.success(false)
+                var pNodeToDelete: ProvisionedMeshNode? = meshNetwork.getNode(uid)
+                Log.d(tag, "should delete the nodeId : ${pNodeToDelete?.unicastAddress}")
+                result.success(pNodeToDelete?.let { meshNetwork.deleteNode(it) })
             }
             "getMeshModelSubscriptions" -> {
                 val elementAddress = call.argument<Int>("elementAddress")!!
