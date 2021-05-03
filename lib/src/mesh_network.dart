@@ -157,11 +157,12 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<bool> deleteNode(String uid) {
+  Future<bool> deleteNode(String uid) async {
     if (Platform.isIOS || Platform.isAndroid) {
-      return _methodChannel.invokeMethod('deleteNode', {
+      var status = await _methodChannel.invokeMethod('deleteNode', {
         'uid': uid,
       });
+      return status;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }

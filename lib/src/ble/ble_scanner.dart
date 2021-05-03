@@ -53,7 +53,6 @@ class BleScanner {
   Stream<DiscoveredDevice> _scanWithParamsAsStream({
     ScanMode scanMode = ScanMode.lowLatency,
     List<Uuid> withServices = const [],
-    Duration timeoutDuration = defaultScanDuration,
   }) {
     if (Platform.isIOS || Platform.isAndroid) {
       return _flutterReactiveBle.scanForDevices(
@@ -104,6 +103,5 @@ class BleScanner {
   }) =>
       _scanWithParamsAsStream(
         withServices: [meshProxyUuid],
-        timeoutDuration: timeoutDuration,
       );
 }
