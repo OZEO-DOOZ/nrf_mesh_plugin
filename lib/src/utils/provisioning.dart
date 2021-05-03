@@ -64,7 +64,6 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   ProvisionedMeshNode provisionedMeshNode;
 
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
-  unawaited(bleMeshManager.callbacks?.dispose());
   bleMeshManager.callbacks = provisioningCallbacks;
   final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
@@ -81,9 +80,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
           await Future.delayed(Duration(milliseconds: 1500));
         } catch (e) {
-          debugPrint('this shit is buggy ----------------->');
-          debugPrint('$e');
-          //events.prov
+          debugPrint('scanner error : $e');
         }
       }
       if (device == null) {
@@ -173,10 +170,11 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     await bleMeshManager.disconnect();
     await bleMeshManager.connect(deviceToProvision);
     await completer.future;
+    await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
+    //Added a 1,5 seconds to wait for a refreshDeviceCache.
     await Future.delayed(Duration(milliseconds: 1500));
     await bleMeshManager.disconnect();
-
     return provisionedMeshNode;
   } catch (e) {
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
@@ -206,16 +204,14 @@ Future<bool> cancelProvisioning(
     try {
       final cachedProvisionedMeshNodeUuid = await meshManagerApi.cachedProvisionedMeshNodeUuid();
       if (bleMeshManager.isProvisioningCompleted && cachedProvisionedMeshNodeUuid != null) {
-        var pNodeToDelete;
         final nodes = await meshManagerApi.meshNetwork.nodes;
-        for (final n in nodes) {
-          if (n.uuid == cachedProvisionedMeshNodeUuid) {
-            pNodeToDelete = n;
-            break;
-          }
+        var nodeToDelete =
+            nodes.firstWhere((element) => element.uuid == cachedProvisionedMeshNodeUuid, orElse: () => null);
+        if (nodeToDelete != null) {
+          await meshManagerApi.deprovision(nodeToDelete);
+          //TODO: check if the deprov delete the node and remove the below code
+          await meshManagerApi.meshNetwork.deleteNode(cachedProvisionedMeshNodeUuid);
         }
-        await meshManagerApi.deprovision(pNodeToDelete);
-        await meshManagerApi.meshNetwork.deleteNode(cachedProvisionedMeshNodeUuid);
       }
       await meshManagerApi.cleanProvisioningData();
       await bleMeshManager.refreshDeviceCache();
