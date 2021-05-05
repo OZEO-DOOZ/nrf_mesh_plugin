@@ -160,6 +160,14 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val pNode = DoozProvisionedMeshNode(binaryMessenger, provisionedMeshNode)
                 result.success(pNode.meshNode.uuid)
             }
+            "getNodeUsingUUID" -> {
+                val uuid = call.argument<String>("uuid")!!
+
+                val provisionedMeshNode = meshNetwork.getNode(uuid)
+
+                val pNode = DoozProvisionedMeshNode(binaryMessenger, provisionedMeshNode)
+                result.success(pNode.meshNode.uuid)
+            }
             "getProvisionersUUID" -> {
                 val provisionersUUID = meshNetwork.provisioners.map { provisioner ->
                     provisioner.provisionerUuid

@@ -41,6 +41,8 @@ abstract class IMeshNetwork {
   Future<Map> getGroupElementIds(int groupAddress);
 
   Future<ProvisionedMeshNode> getNode(int address);
+
+  Future<ProvisionedMeshNode> getNodeUsingUUID(String uuid);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -187,6 +189,14 @@ class MeshNetwork implements IMeshNetwork {
   Future<ProvisionedMeshNode> getNode(int address) async {
     final _node = await _methodChannel.invokeMethod<String>('getNode', {
       'address': address,
+    });
+    return ProvisionedMeshNode(_node);
+  }
+
+  @override
+  Future<ProvisionedMeshNode> getNodeUsingUUID(String uuid) async {
+    final _node = await _methodChannel.invokeMethod<String>('getNodeUsingUUID', {
+      'uuid': uuid,
     });
     return ProvisionedMeshNode(_node);
   }
