@@ -8,6 +8,7 @@ part of 'generic_level_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
 GenericLevelStatusData _$GenericLevelStatusDataFromJson(Map<String, dynamic> json) {
   return _GenericLevelStatusData.fromJson(json);
 }
@@ -59,6 +60,7 @@ mixin _$GenericLevelStatusData {
 abstract class $GenericLevelStatusDataCopyWith<$Res> {
   factory $GenericLevelStatusDataCopyWith(GenericLevelStatusData value, $Res Function(GenericLevelStatusData) then) =
       _$GenericLevelStatusDataCopyWithImpl<$Res>;
+
   $Res call(
       {int level,
       @nullable int targetLevel,
@@ -73,6 +75,7 @@ class _$GenericLevelStatusDataCopyWithImpl<$Res> implements $GenericLevelStatusD
   _$GenericLevelStatusDataCopyWithImpl(this._value, this._then);
 
   final GenericLevelStatusData _value;
+
   // ignore: unused_field
   final $Res Function(GenericLevelStatusData) _then;
 
@@ -100,6 +103,7 @@ class _$GenericLevelStatusDataCopyWithImpl<$Res> implements $GenericLevelStatusD
 abstract class _$GenericLevelStatusDataCopyWith<$Res> implements $GenericLevelStatusDataCopyWith<$Res> {
   factory _$GenericLevelStatusDataCopyWith(_GenericLevelStatusData value, $Res Function(_GenericLevelStatusData) then) =
       __$GenericLevelStatusDataCopyWithImpl<$Res>;
+
   @override
   $Res call(
       {int level,
@@ -216,12 +220,15 @@ abstract class _GenericLevelStatusData implements GenericLevelStatusData {
 
   @override
   int get level;
+
   @override
   @nullable
   int get targetLevel;
+
   @override
   @nullable
   int get transitionSteps;
+
   @override
   @nullable
   int get transitionResolution;

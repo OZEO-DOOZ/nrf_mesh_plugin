@@ -8,6 +8,7 @@ part of 'config_model_app_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
 ConfigModelAppStatusData _$ConfigModelAppStatusDataFromJson(Map<String, dynamic> json) {
   return _ConfigModelAppStatusData.fromJson(json);
 }
@@ -50,6 +51,7 @@ abstract class $ConfigModelAppStatusDataCopyWith<$Res> {
   factory $ConfigModelAppStatusDataCopyWith(
           ConfigModelAppStatusData value, $Res Function(ConfigModelAppStatusData) then) =
       _$ConfigModelAppStatusDataCopyWithImpl<$Res>;
+
   $Res call({int elementAddress, int modelId, int appKeyIndex});
 }
 
@@ -58,6 +60,7 @@ class _$ConfigModelAppStatusDataCopyWithImpl<$Res> implements $ConfigModelAppSta
   _$ConfigModelAppStatusDataCopyWithImpl(this._value, this._then);
 
   final ConfigModelAppStatusData _value;
+
   // ignore: unused_field
   final $Res Function(ConfigModelAppStatusData) _then;
 
@@ -80,6 +83,7 @@ abstract class _$ConfigModelAppStatusDataCopyWith<$Res> implements $ConfigModelA
   factory _$ConfigModelAppStatusDataCopyWith(
           _ConfigModelAppStatusData value, $Res Function(_ConfigModelAppStatusData) then) =
       __$ConfigModelAppStatusDataCopyWithImpl<$Res>;
+
   @override
   $Res call({int elementAddress, int modelId, int appKeyIndex});
 }
@@ -168,10 +172,13 @@ abstract class _ConfigModelAppStatusData implements ConfigModelAppStatusData {
 
   @override
   int get elementAddress;
+
   @override
   int get modelId;
+
   @override
   int get appKeyIndex;
+
   @override
   _$ConfigModelAppStatusDataCopyWith<_ConfigModelAppStatusData> get copyWith;
 }

@@ -47,6 +47,7 @@ mixin _$AllocatedSceneRange {
 abstract class $AllocatedSceneRangeCopyWith<$Res> {
   factory $AllocatedSceneRangeCopyWith(AllocatedSceneRange value, $Res Function(AllocatedSceneRange) then) =
       _$AllocatedSceneRangeCopyWithImpl<$Res>;
+
   $Res call({int firstScene, int lastScene});
 }
 
@@ -55,6 +56,7 @@ class _$AllocatedSceneRangeCopyWithImpl<$Res> implements $AllocatedSceneRangeCop
   _$AllocatedSceneRangeCopyWithImpl(this._value, this._then);
 
   final AllocatedSceneRange _value;
+
   // ignore: unused_field
   final $Res Function(AllocatedSceneRange) _then;
 
@@ -74,6 +76,7 @@ class _$AllocatedSceneRangeCopyWithImpl<$Res> implements $AllocatedSceneRangeCop
 abstract class _$AllocatedSceneRangeCopyWith<$Res> implements $AllocatedSceneRangeCopyWith<$Res> {
   factory _$AllocatedSceneRangeCopyWith(_AllocatedSceneRange value, $Res Function(_AllocatedSceneRange) then) =
       __$AllocatedSceneRangeCopyWithImpl<$Res>;
+
   @override
   $Res call({int firstScene, int lastScene});
 }
@@ -152,8 +155,10 @@ abstract class _AllocatedSceneRange implements AllocatedSceneRange {
 
   @override
   int get firstScene;
+
   @override
   int get lastScene;
+
   @override
   _$AllocatedSceneRangeCopyWith<_AllocatedSceneRange> get copyWith;
 }

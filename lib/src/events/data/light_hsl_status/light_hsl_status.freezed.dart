@@ -58,6 +58,7 @@ mixin _$LightHslStatusData {
 abstract class $LightHslStatusDataCopyWith<$Res> {
   factory $LightHslStatusDataCopyWith(LightHslStatusData value, $Res Function(LightHslStatusData) then) =
       _$LightHslStatusDataCopyWithImpl<$Res>;
+
   $Res call(
       {int presentLightness,
       int presentHue,
@@ -73,6 +74,7 @@ class _$LightHslStatusDataCopyWithImpl<$Res> implements $LightHslStatusDataCopyW
   _$LightHslStatusDataCopyWithImpl(this._value, this._then);
 
   final LightHslStatusData _value;
+
   // ignore: unused_field
   final $Res Function(LightHslStatusData) _then;
 
@@ -102,6 +104,7 @@ class _$LightHslStatusDataCopyWithImpl<$Res> implements $LightHslStatusDataCopyW
 abstract class _$LightHslStatusDataCopyWith<$Res> implements $LightHslStatusDataCopyWith<$Res> {
   factory _$LightHslStatusDataCopyWith(_LightHslStatusData value, $Res Function(_LightHslStatusData) then) =
       __$LightHslStatusDataCopyWithImpl<$Res>;
+
   @override
   $Res call(
       {int presentLightness,
@@ -228,12 +231,16 @@ abstract class _LightHslStatusData implements LightHslStatusData {
 
   @override
   int get presentLightness;
+
   @override
   int get presentHue;
+
   @override
   int get presentSaturation;
+
   @override
   int get transitionSteps;
+
   @override
   int get transitionResolution;
   @override

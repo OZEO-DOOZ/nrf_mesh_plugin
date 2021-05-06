@@ -57,6 +57,7 @@ mixin _$GroupData {
 /// @nodoc
 abstract class $GroupDataCopyWith<$Res> {
   factory $GroupDataCopyWith(GroupData value, $Res Function(GroupData) then) = _$GroupDataCopyWithImpl<$Res>;
+
   $Res call(
       {String name,
       int address,
@@ -97,6 +98,7 @@ class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
 /// @nodoc
 abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
   factory _$GroupDataCopyWith(_GroupData value, $Res Function(_GroupData) then) = __$GroupDataCopyWithImpl<$Res>;
+
   @override
   $Res call(
       {String name,
@@ -210,11 +212,14 @@ abstract class _GroupData implements GroupData {
 
   @override
   String get name;
+
   @override
   int get address;
+
   @override
   @nullable
   String get addressLabel;
+
   @override
   String get meshUuid;
   @override

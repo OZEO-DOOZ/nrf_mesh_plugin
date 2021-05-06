@@ -8,6 +8,7 @@ part of 'config_model_subscription_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
 ConfigModelSubscriptionStatus _$ConfigModelSubscriptionStatusFromJson(Map<String, dynamic> json) {
   return _ConfigModelSubscriptionStatus.fromJson(json);
 }
@@ -17,8 +18,12 @@ class _$ConfigModelSubscriptionStatusTearOff {
   const _$ConfigModelSubscriptionStatusTearOff();
 
 // ignore: unused_element
-  _ConfigModelSubscriptionStatus call(int source, int destination, int elementAddress, int subscriptionAddress,
-      int modelIdentifier, bool isSuccessful) {
+  _ConfigModelSubscriptionStatus call(int source,
+      int destination,
+      int elementAddress,
+      int subscriptionAddress,
+      int modelIdentifier,
+      bool isSuccessful) {
     return _ConfigModelSubscriptionStatus(
       source,
       destination,
@@ -42,21 +47,28 @@ const $ConfigModelSubscriptionStatus = _$ConfigModelSubscriptionStatusTearOff();
 /// @nodoc
 mixin _$ConfigModelSubscriptionStatus {
   int get source;
+
   int get destination;
+
   int get elementAddress;
+
   int get subscriptionAddress;
+
   int get modelIdentifier;
+
   bool get isSuccessful;
 
   Map<String, dynamic> toJson();
-  $ConfigModelSubscriptionStatusCopyWith<ConfigModelSubscriptionStatus> get copyWith;
+
+  $ConfigModelSubscriptionStatusCopyWith<ConfigModelSubscriptionStatus>
+  get copyWith;
 }
 
 /// @nodoc
 abstract class $ConfigModelSubscriptionStatusCopyWith<$Res> {
-  factory $ConfigModelSubscriptionStatusCopyWith(
-          ConfigModelSubscriptionStatus value, $Res Function(ConfigModelSubscriptionStatus) then) =
-      _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>;
+  factory $ConfigModelSubscriptionStatusCopyWith(ConfigModelSubscriptionStatus value,
+      $Res Function(ConfigModelSubscriptionStatus) then) =
+  _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>;
   $Res call(
       {int source,
       int destination,
@@ -67,10 +79,12 @@ abstract class $ConfigModelSubscriptionStatusCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res> implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
+class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
+    implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
   _$ConfigModelSubscriptionStatusCopyWithImpl(this._value, this._then);
 
   final ConfigModelSubscriptionStatus _value;
+
   // ignore: unused_field
   final $Res Function(ConfigModelSubscriptionStatus) _then;
 
@@ -85,26 +99,35 @@ class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res> implements $ConfigModelS
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
-      elementAddress: elementAddress == freezed ? _value.elementAddress : elementAddress as int,
-      subscriptionAddress: subscriptionAddress == freezed ? _value.subscriptionAddress : subscriptionAddress as int,
-      modelIdentifier: modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
-      isSuccessful: isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
+      destination:
+      destination == freezed ? _value.destination : destination as int,
+      elementAddress: elementAddress == freezed
+          ? _value.elementAddress
+          : elementAddress as int,
+      subscriptionAddress: subscriptionAddress == freezed
+          ? _value.subscriptionAddress
+          : subscriptionAddress as int,
+      modelIdentifier: modelIdentifier == freezed
+          ? _value.modelIdentifier
+          : modelIdentifier as int,
+      isSuccessful:
+      isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res> implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
-  factory _$ConfigModelSubscriptionStatusCopyWith(
-          _ConfigModelSubscriptionStatus value, $Res Function(_ConfigModelSubscriptionStatus) then) =
-      __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>;
+abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res>
+    implements $ConfigModelSubscriptionStatusCopyWith<$Res> {
+  factory _$ConfigModelSubscriptionStatusCopyWith(_ConfigModelSubscriptionStatus value,
+      $Res Function(_ConfigModelSubscriptionStatus) then) =
+  __$ConfigModelSubscriptionStatusCopyWithImpl<$Res>;
+
   @override
-  $Res call(
-      {int source,
-      int destination,
-      int elementAddress,
-      int subscriptionAddress,
+  $Res call({int source,
+    int destination,
+    int elementAddress,
+    int subscriptionAddress,
       int modelIdentifier,
       bool isSuccessful});
 }
@@ -112,12 +135,13 @@ abstract class _$ConfigModelSubscriptionStatusCopyWith<$Res> implements $ConfigM
 /// @nodoc
 class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res> extends _$ConfigModelSubscriptionStatusCopyWithImpl<$Res>
     implements _$ConfigModelSubscriptionStatusCopyWith<$Res> {
-  __$ConfigModelSubscriptionStatusCopyWithImpl(
-      _ConfigModelSubscriptionStatus _value, $Res Function(_ConfigModelSubscriptionStatus) _then)
+  __$ConfigModelSubscriptionStatusCopyWithImpl(_ConfigModelSubscriptionStatus _value,
+      $Res Function(_ConfigModelSubscriptionStatus) _then)
       : super(_value, (v) => _then(v as _ConfigModelSubscriptionStatus));
 
   @override
-  _ConfigModelSubscriptionStatus get _value => super._value as _ConfigModelSubscriptionStatus;
+  _ConfigModelSubscriptionStatus get _value =>
+      super._value as _ConfigModelSubscriptionStatus;
 
   @override
   $Res call({
@@ -132,8 +156,12 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res> extends _$ConfigModelSu
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
       elementAddress == freezed ? _value.elementAddress : elementAddress as int,
-      subscriptionAddress == freezed ? _value.subscriptionAddress : subscriptionAddress as int,
-      modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
+      subscriptionAddress == freezed
+          ? _value.subscriptionAddress
+          : subscriptionAddress as int,
+      modelIdentifier == freezed
+          ? _value.modelIdentifier
+          : modelIdentifier as int,
       isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
@@ -141,10 +169,14 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res> extends _$ConfigModelSu
 
 @JsonSerializable()
 
-/// @nodoc
-class _$_ConfigModelSubscriptionStatus implements _ConfigModelSubscriptionStatus {
-  const _$_ConfigModelSubscriptionStatus(this.source, this.destination, this.elementAddress, this.subscriptionAddress,
-      this.modelIdentifier, this.isSuccessful)
+/// @nodoc class _$_ConfigModelSubscriptionStatus
+    implements _ConfigModelSubscriptionStatus {
+  const _$_ConfigModelSubscriptionStatus(this.source,
+      this.destination,
+      this.elementAddress,
+      this.subscriptionAddress,
+      this.modelIdentifier,
+      this.isSuccessful)
       : assert(source != null),
         assert(destination != null),
         assert(elementAddress != null),
@@ -177,17 +209,23 @@ class _$_ConfigModelSubscriptionStatus implements _ConfigModelSubscriptionStatus
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ConfigModelSubscriptionStatus &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality().equals(other.destination, destination)) &&
+                const DeepCollectionEquality()
+                    .equals(other.destination, destination)) &&
             (identical(other.elementAddress, elementAddress) ||
-                const DeepCollectionEquality().equals(other.elementAddress, elementAddress)) &&
+                const DeepCollectionEquality()
+                    .equals(other.elementAddress, elementAddress)) &&
             (identical(other.subscriptionAddress, subscriptionAddress) ||
-                const DeepCollectionEquality().equals(other.subscriptionAddress, subscriptionAddress)) &&
+                const DeepCollectionEquality()
+                    .equals(other.subscriptionAddress, subscriptionAddress)) &&
             (identical(other.modelIdentifier, modelIdentifier) ||
-                const DeepCollectionEquality().equals(other.modelIdentifier, modelIdentifier)) &&
+                const DeepCollectionEquality()
+                    .equals(other.modelIdentifier, modelIdentifier)) &&
             (identical(other.isSuccessful, isSuccessful) ||
-                const DeepCollectionEquality().equals(other.isSuccessful, isSuccessful)));
+                const DeepCollectionEquality()
+                    .equals(other.isSuccessful, isSuccessful)));
   }
 
   @override
@@ -201,8 +239,10 @@ class _$_ConfigModelSubscriptionStatus implements _ConfigModelSubscriptionStatus
       const DeepCollectionEquality().hash(isSuccessful);
 
   @override
-  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus> get copyWith =>
-      __$ConfigModelSubscriptionStatusCopyWithImpl<_ConfigModelSubscriptionStatus>(this, _$identity);
+  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus>
+  get copyWith =>
+      __$ConfigModelSubscriptionStatusCopyWithImpl<
+          _ConfigModelSubscriptionStatus>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -210,25 +250,35 @@ class _$_ConfigModelSubscriptionStatus implements _ConfigModelSubscriptionStatus
   }
 }
 
-abstract class _ConfigModelSubscriptionStatus implements ConfigModelSubscriptionStatus {
-  const factory _ConfigModelSubscriptionStatus(int source, int destination, int elementAddress, int subscriptionAddress,
-      int modelIdentifier, bool isSuccessful) = _$_ConfigModelSubscriptionStatus;
+abstract class _ConfigModelSubscriptionStatus
+    implements ConfigModelSubscriptionStatus {
+  const factory _ConfigModelSubscriptionStatus(int source,
+      int destination,
+      int elementAddress,
+      int subscriptionAddress,
+      int modelIdentifier,
+      bool isSuccessful) = _$_ConfigModelSubscriptionStatus;
 
   factory _ConfigModelSubscriptionStatus.fromJson(Map<String, dynamic> json) =
-      _$_ConfigModelSubscriptionStatus.fromJson;
+  _$_ConfigModelSubscriptionStatus.fromJson;
 
   @override
   int get source;
+
   @override
   int get destination;
+
   @override
   int get elementAddress;
   @override
   int get subscriptionAddress;
   @override
   int get modelIdentifier;
+
   @override
   bool get isSuccessful;
+
   @override
-  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus> get copyWith;
+  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus>
+  get copyWith;
 }
