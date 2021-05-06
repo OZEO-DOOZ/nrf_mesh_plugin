@@ -8,6 +8,7 @@ part of 'light_lightness_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
 LightLightnessStatusData _$LightLightnessStatusDataFromJson(Map<String, dynamic> json) {
   return _LightLightnessStatusData.fromJson(json);
 }
@@ -57,6 +58,7 @@ abstract class $LightLightnessStatusDataCopyWith<$Res> {
   factory $LightLightnessStatusDataCopyWith(
           LightLightnessStatusData value, $Res Function(LightLightnessStatusData) then) =
       _$LightLightnessStatusDataCopyWithImpl<$Res>;
+
   $Res call(
       {int presentLightness,
       int targetLightness,
@@ -71,6 +73,7 @@ class _$LightLightnessStatusDataCopyWithImpl<$Res> implements $LightLightnessSta
   _$LightLightnessStatusDataCopyWithImpl(this._value, this._then);
 
   final LightLightnessStatusData _value;
+
   // ignore: unused_field
   final $Res Function(LightLightnessStatusData) _then;
 
@@ -99,6 +102,7 @@ abstract class _$LightLightnessStatusDataCopyWith<$Res> implements $LightLightne
   factory _$LightLightnessStatusDataCopyWith(
           _LightLightnessStatusData value, $Res Function(_LightLightnessStatusData) then) =
       __$LightLightnessStatusDataCopyWithImpl<$Res>;
+
   @override
   $Res call(
       {int presentLightness,
@@ -218,12 +222,16 @@ abstract class _LightLightnessStatusData implements LightLightnessStatusData {
 
   @override
   int get presentLightness;
+
   @override
   int get targetLightness;
+
   @override
   int get transitionSteps;
+
   @override
   int get transitionResolution;
+
   @override
   int get source;
   @override

@@ -8,6 +8,7 @@ part of 'magic_level_get_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
 MagicLevelGetStatusData _$MagicLevelGetStatusDataFromJson(Map<String, dynamic> json) {
   return _MagicLevelGetStatusData.fromJson(json);
 }
@@ -55,6 +56,7 @@ mixin _$MagicLevelGetStatusData {
 abstract class $MagicLevelGetStatusDataCopyWith<$Res> {
   factory $MagicLevelGetStatusDataCopyWith(MagicLevelGetStatusData value, $Res Function(MagicLevelGetStatusData) then) =
       _$MagicLevelGetStatusDataCopyWithImpl<$Res>;
+
   $Res call({int io, int index, int value, int correlation, int source, int destination});
 }
 
@@ -63,6 +65,7 @@ class _$MagicLevelGetStatusDataCopyWithImpl<$Res> implements $MagicLevelGetStatu
   _$MagicLevelGetStatusDataCopyWithImpl(this._value, this._then);
 
   final MagicLevelGetStatusData _value;
+
   // ignore: unused_field
   final $Res Function(MagicLevelGetStatusData) _then;
 
@@ -91,6 +94,7 @@ abstract class _$MagicLevelGetStatusDataCopyWith<$Res> implements $MagicLevelGet
   factory _$MagicLevelGetStatusDataCopyWith(
           _MagicLevelGetStatusData value, $Res Function(_MagicLevelGetStatusData) then) =
       __$MagicLevelGetStatusDataCopyWithImpl<$Res>;
+
   @override
   $Res call({int io, int index, int value, int correlation, int source, int destination});
 }
@@ -198,12 +202,16 @@ abstract class _MagicLevelGetStatusData implements MagicLevelGetStatusData {
 
   @override
   int get io;
+
   @override
   int get index;
+
   @override
   int get value;
+
   @override
   int get correlation;
+
   @override
   int get source;
   @override

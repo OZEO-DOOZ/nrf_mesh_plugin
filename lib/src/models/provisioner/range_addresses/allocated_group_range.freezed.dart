@@ -47,6 +47,7 @@ mixin _$AllocatedGroupRange {
 abstract class $AllocatedGroupRangeCopyWith<$Res> {
   factory $AllocatedGroupRangeCopyWith(AllocatedGroupRange value, $Res Function(AllocatedGroupRange) then) =
       _$AllocatedGroupRangeCopyWithImpl<$Res>;
+
   $Res call({int lowAddress, int highAddress});
 }
 
@@ -55,6 +56,7 @@ class _$AllocatedGroupRangeCopyWithImpl<$Res> implements $AllocatedGroupRangeCop
   _$AllocatedGroupRangeCopyWithImpl(this._value, this._then);
 
   final AllocatedGroupRange _value;
+
   // ignore: unused_field
   final $Res Function(AllocatedGroupRange) _then;
 
@@ -74,6 +76,7 @@ class _$AllocatedGroupRangeCopyWithImpl<$Res> implements $AllocatedGroupRangeCop
 abstract class _$AllocatedGroupRangeCopyWith<$Res> implements $AllocatedGroupRangeCopyWith<$Res> {
   factory _$AllocatedGroupRangeCopyWith(_AllocatedGroupRange value, $Res Function(_AllocatedGroupRange) then) =
       __$AllocatedGroupRangeCopyWithImpl<$Res>;
+
   @override
   $Res call({int lowAddress, int highAddress});
 }
@@ -152,8 +155,10 @@ abstract class _AllocatedGroupRange implements AllocatedGroupRange {
 
   @override
   int get lowAddress;
+
   @override
   int get highAddress;
+
   @override
   _$AllocatedGroupRangeCopyWith<_AllocatedGroupRange> get copyWith;
 }

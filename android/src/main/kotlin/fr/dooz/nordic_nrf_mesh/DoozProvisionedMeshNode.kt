@@ -25,6 +25,11 @@ class DoozProvisionedMeshNode(binaryMessenger: BinaryMessenger, var meshNode: Pr
             "elementAt" -> {
 
             }
+            "setSequenceNumber" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                meshNode.sequenceNumber = sequenceNumber
+                result.success(null)
+            }
             "getSequenceNumber" -> {
                 result.success(meshNode.sequenceNumber);
             }
