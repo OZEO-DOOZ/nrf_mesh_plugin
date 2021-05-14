@@ -265,13 +265,19 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
 
                 for (element in elements) {
                     val models = element.meshModels
-                    val onOff = models[GENERIC_ONOFF_SERVER]
-                    val level = models[GENERIC_LEVEL_SERVER]
-                    val onOffSubscribedAddresses = onOff!!.subscribedAddresses
-                    val levelSubscribedAddresses = level!!.subscribedAddresses
+                    val onOffServer = models[GENERIC_ONOFF_SERVER]
+                    val levelServer = models[GENERIC_LEVEL_SERVER]
+                    val onOffClient = models[GENERIC_ONOFF_CLIENT]
+                    val levelClient = models[GENERIC_LEVEL_CLIENT]
+                    val onOffServerSubscribedAddresses = onOffServer!!.subscribedAddresses
+                    val levelServerSubscribedAddresses = levelServer!!.subscribedAddresses
+                    val onOffClientSubscribedAddresses = onOffClient!!.subscribedAddresses
+                    val levelClientSubscribedAddresses = levelClient!!.subscribedAddresses
                     val modelIds: MutableMap<Int, List<Int>> = HashMap()
-                    modelIds[GENERIC_ONOFF_SERVER] = onOffSubscribedAddresses
-                    modelIds[GENERIC_LEVEL_SERVER] = levelSubscribedAddresses
+                    modelIds[GENERIC_ONOFF_SERVER] = onOffServerSubscribedAddresses
+                    modelIds[GENERIC_LEVEL_SERVER] = levelServerSubscribedAddresses
+                    modelIds[GENERIC_ONOFF_CLIENT] = onOffClientSubscribedAddresses
+                    modelIds[GENERIC_LEVEL_CLIENT] = levelClientSubscribedAddresses
                     subscribedAddresses[element.elementAddress] = modelIds
                 }
                 result.success(subscribedAddresses)
