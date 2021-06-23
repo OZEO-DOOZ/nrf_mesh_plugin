@@ -89,6 +89,14 @@ class NordicNrfMesh {
   }) =>
       _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
+  /// Will scan for **unprovisioned** nodes.
+  ///
+  /// Returns a [Stream] of [DiscoveredDevice] that may be empty if no device is in range.
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Stream<DiscoveredDevice> unprovisionedNodesAsStream() =>
+      _bleScanner.unprovisionedNodesAsStream();
+
   /// Will scan for **provisioned** nodes.
   ///
   /// Returns a [List] of [DiscoveredDevice] that may be empty if no device is in range.
