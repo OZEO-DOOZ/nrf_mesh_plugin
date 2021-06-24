@@ -45,7 +45,7 @@ class BleScanner {
 
   /// Will begin a ble scan with the given parameters or defaults.
   ///
-  /// Returns a [Stream] of [DiscoveredDevice] that may be empty if no node is in range.
+  /// Returns a [Stream] of [DiscoveredDevice].
   ///
   /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///
@@ -90,6 +90,8 @@ class BleScanner {
         timeoutDuration: timeoutDuration,
       );
 
+  Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _scanWithParamsAsStream(withServices: [meshProvisioningUuid]);
+
   Future<List<DiscoveredDevice>> provisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
   }) =>
@@ -98,10 +100,5 @@ class BleScanner {
         timeoutDuration: timeoutDuration,
       );
 
-  Stream<DiscoveredDevice> scanForProxy({
-    Duration timeoutDuration = defaultScanDuration,
-  }) =>
-      _scanWithParamsAsStream(
-        withServices: [meshProxyUuid],
-      );
+  Stream<DiscoveredDevice> scanForProxy() => _scanWithParamsAsStream(withServices: [meshProxyUuid]);
 }

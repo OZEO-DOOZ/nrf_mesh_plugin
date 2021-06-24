@@ -621,6 +621,9 @@ class MeshManagerApi {
 
   Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
 
+  Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
+      _methodChannel.invokeMethod('provisioning', meshNode.toJson());
+
   Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
     if (Platform.isAndroid) {
       final unicastAddress = await meshNode.unicastAddress;
@@ -634,9 +637,6 @@ class MeshManagerApi {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
   }
-
-  Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
-      _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
   Future<String> cachedProvisionedMeshNodeUuid() => _methodChannel.invokeMethod('cachedProvisionedMeshNodeUuid');
 

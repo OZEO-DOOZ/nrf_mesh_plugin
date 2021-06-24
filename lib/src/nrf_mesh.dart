@@ -89,6 +89,15 @@ class NordicNrfMesh {
   }) =>
       _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
+  /// Will scan for **unprovisioned** nodes.
+  ///
+  /// Returns a [Stream] of [DiscoveredDevice].
+  ///
+  /// To stop the scan, make sure to cancel any subscription to this [Stream].
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _bleScanner.scanForUnprovisionedNodes();
+
   /// Will scan for **provisioned** nodes.
   ///
   /// Returns a [List] of [DiscoveredDevice] that may be empty if no device is in range.
@@ -106,10 +115,7 @@ class NordicNrfMesh {
   /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<DiscoveredDevice> scanForProxy({
-    Duration timeoutDuration = defaultScanDuration,
-  }) =>
-      _bleScanner.scanForProxy(timeoutDuration: timeoutDuration);
+  Stream<DiscoveredDevice> scanForProxy() => _bleScanner.scanForProxy();
 
   /// Will scan for the given node uid.
   ///
