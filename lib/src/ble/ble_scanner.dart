@@ -100,10 +100,5 @@ class BleScanner {
         timeoutDuration: timeoutDuration,
       );
 
-  Stream<DiscoveredDevice> scanForProxy({
-    Duration timeoutDuration = defaultScanDuration,
-  }) =>
-      _scanWithParamsAsStream(
-        withServices: [meshProxyUuid],
-      );
+  Stream<DiscoveredDevice> scanForProxy() => _scanWithParamsAsStream(withServices: [meshProxyUuid]);
 }

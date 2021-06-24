@@ -115,10 +115,7 @@ class NordicNrfMesh {
   /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<DiscoveredDevice> scanForProxy({
-    Duration timeoutDuration = defaultScanDuration,
-  }) =>
-      _bleScanner.scanForProxy(timeoutDuration: timeoutDuration);
+  Stream<DiscoveredDevice> scanForProxy() => _bleScanner.scanForProxy();
 
   /// Will scan for the given node uid.
   ///
