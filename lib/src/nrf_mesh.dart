@@ -96,8 +96,7 @@ class NordicNrfMesh {
   /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<DiscoveredDevice> unprovisionedNodesAsStream() =>
-      _bleScanner.unprovisionedNodesAsStream();
+  Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _bleScanner.scanForUnprovisionedNodes();
 
   /// Will scan for **provisioned** nodes.
   ///

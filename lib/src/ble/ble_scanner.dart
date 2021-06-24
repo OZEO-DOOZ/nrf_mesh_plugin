@@ -90,10 +90,7 @@ class BleScanner {
         timeoutDuration: timeoutDuration,
       );
 
-  Stream<DiscoveredDevice> unprovisionedNodesAsStream() =>
-      _scanWithParamsAsStream(
-        withServices: [meshProvisioningUuid],
-      );
+  Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _scanWithParamsAsStream(withServices: [meshProvisioningUuid]);
 
   Future<List<DiscoveredDevice>> provisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
