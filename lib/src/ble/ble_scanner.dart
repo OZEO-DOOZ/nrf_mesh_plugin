@@ -45,7 +45,7 @@ class BleScanner {
 
   /// Will begin a ble scan with the given parameters or defaults.
   ///
-  /// Returns a [Stream] of [DiscoveredDevice] that may be empty if no node is in range.
+  /// Returns a [Stream] of [DiscoveredDevice].
   ///
   /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///

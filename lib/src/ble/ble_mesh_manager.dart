@@ -26,7 +26,6 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   factory BleMeshManager() => _instance ??= BleMeshManager._(FlutterReactiveBle());
 
-  //TODO check calls
   void onDeviceDisconnected(final DiscoveredDevice device) async {
     isProvisioningCompleted = false;
     _meshProvisioningDataInCharacteristicUuid = null;

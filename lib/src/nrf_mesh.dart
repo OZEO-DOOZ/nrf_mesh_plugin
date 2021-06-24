@@ -91,7 +91,9 @@ class NordicNrfMesh {
 
   /// Will scan for **unprovisioned** nodes.
   ///
-  /// Returns a [Stream] of [DiscoveredDevice] that may be empty if no device is in range.
+  /// Returns a [Stream] of [DiscoveredDevice].
+  ///
+  /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Stream<DiscoveredDevice> unprovisionedNodesAsStream() =>
