@@ -50,7 +50,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     await retry(
       () async {
         serviceDiscoveryRetryCount++;
-        print('attempt #${serviceDiscoveryRetryCount++} to discover services...');
+        print('attempt #${serviceDiscoveryRetryCount} to discover services...');
         _discoveredServices = await bleInstance.discoverServices(device.id);
       },
       retryIf: (e) => e is PlatformException,
@@ -117,7 +117,8 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     await retry(
       () {
         getDataOutSubRetryCount++;
-        print('attempt #${getDataOutSubRetryCount++} to subscribe to $qCharacteristic...');
+        print('attempt #${getDataOutSubRetryCount} to subscribe to $qCharacteristic...');
+        dataOutSubscription?.cancel();
         dataOutSubscription = bleInstance
             .subscribeToCharacteristic(qCharacteristic)
             .where((data) => data?.isNotEmpty == true)
