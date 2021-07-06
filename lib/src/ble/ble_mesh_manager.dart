@@ -87,18 +87,11 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       await _meshProxyDataOutSubscription?.cancel();
       _meshProxyDataOutSubscription = await getDataOutSubscription(
           getQualifiedCharacteristic(_meshProxyDataOutCharacteristicUuid, discoveredService.serviceId));
-      if (null == _meshProxyDataOutSubscription) {
-        throw Exception('could not subscribe to proxy data out notifs from discovered service : $discoveredService');
-      }
     } else {
       discoveredService = getDiscoveredService(meshProvisioningUuid);
       await _meshProvisioningDataOutSubscription?.cancel();
       _meshProvisioningDataOutSubscription = await getDataOutSubscription(
           getQualifiedCharacteristic(_meshProvisioningDataOutCharacteristicUuid, discoveredService.serviceId));
-      if (null == _meshProvisioningDataOutSubscription) {
-        throw Exception(
-            'could not subscribe to provisioning data out notifs from discovered service : $discoveredService');
-      }
     }
   }
 
