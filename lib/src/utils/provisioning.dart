@@ -178,11 +178,6 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     //Added a 1,5 seconds to wait for a refreshDeviceCache.
     await Future.delayed(Duration(milliseconds: 1500));
     await bleMeshManager.disconnect();
-    return provisionedMeshNode;
-  } catch (e) {
-    await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
-    rethrow;
-  } finally {
     unawaited(Future.wait([
       onProvisioningCompletedSubscription.cancel(),
       onProvisioningStateChangedSubscription.cancel(),
@@ -197,6 +192,24 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       if (Platform.isAndroid) onDataSentSubscription?.cancel(),
       if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
     ]));
+    return provisionedMeshNode;
+  } catch (e) {
+    await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
+    unawaited(Future.wait([
+      onProvisioningCompletedSubscription.cancel(),
+      onProvisioningStateChangedSubscription.cancel(),
+      onProvisioningFailedSubscription.cancel(),
+      sendProvisioningPduSubscription.cancel(),
+      onConfigCompositionDataStatusSubscription.cancel(),
+      onConfigAppKeyStatusSubscription.cancel(),
+      onDeviceReadySubscription.cancel(),
+      onDataReceivedSubscription.cancel(),
+      onMeshPduCreatedSubscription.cancel(),
+      onGattErrorSubscription.cancel(),
+      if (Platform.isAndroid) onDataSentSubscription?.cancel(),
+      if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
+    ]));
+    rethrow;
   }
 }
 
