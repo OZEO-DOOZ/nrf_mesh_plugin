@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
@@ -72,13 +73,15 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 
       DiscoveredDevice device;
       var scanTries = 0;
-      while (device == null && scanTries < 10) {
+      while (device == null && scanTries < 15) {
         scanTries++;
-        print('attempt #$scanTries to scan for ${deviceToProvision.id}');
+        debugPrint('attempt #$scanTries to scan for ${deviceToProvision.id}');
         try {
-          final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
+          final scanResults = await bleScanner
+              .provisionedNodesInRange(timeoutDuration: Duration(seconds: 1))
+              .catchError((e) => [], test: (e) => e.toString().contains('scan throttle'));
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
-          await Future.delayed(Duration(milliseconds: 1500));
+          await Future.delayed(const Duration(milliseconds: 1500));
         } catch (e) {
           debugPrint('scanner error : $e');
         }
