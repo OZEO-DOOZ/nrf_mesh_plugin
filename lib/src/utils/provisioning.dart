@@ -80,7 +80,9 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
               .provisionedNodesInRange(timeoutDuration: Duration(seconds: 1))
               .catchError((e) => [], test: (e) => e.toString().contains('scan throttle'));
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
-          await Future.delayed(const Duration(milliseconds: 1500));
+          if (device == null) {
+            await Future.delayed(const Duration(milliseconds: 1500));
+          }
         } catch (e) {
           debugPrint('scanner error : $e');
         }
