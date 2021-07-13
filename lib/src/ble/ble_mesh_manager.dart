@@ -46,15 +46,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<DiscoveredService> isRequiredServiceSupported() async {
-    var serviceDiscoveryRetryCount = 0;
-    await retry(
-      () async {
-        serviceDiscoveryRetryCount++;
-        print('attempt #${serviceDiscoveryRetryCount} to discover services...');
-        _discoveredServices = await bleInstance.discoverServices(device.id);
-      },
-      retryIf: (e) => e is PlatformException,
-    );
+    _discoveredServices = await bleInstance.discoverServices(device.id);
     var service = getDiscoveredService(meshProxyUuid);
     if (service != null) {
       isProvisioningCompleted = true;
