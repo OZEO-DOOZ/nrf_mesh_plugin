@@ -77,12 +77,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     if (isProvisioningCompleted) {
       discoveredService = getDiscoveredService(meshProxyUuid);
       await _meshProxyDataOutSubscription?.cancel();
-      _meshProxyDataOutSubscription = await getDataOutSubscription(
+      _meshProxyDataOutSubscription = getDataOutSubscription(
           getQualifiedCharacteristic(_meshProxyDataOutCharacteristicUuid, discoveredService.serviceId));
     } else {
       discoveredService = getDiscoveredService(meshProvisioningUuid);
       await _meshProvisioningDataOutSubscription?.cancel();
-      _meshProvisioningDataOutSubscription = await getDataOutSubscription(
+      _meshProvisioningDataOutSubscription = getDataOutSubscription(
           getQualifiedCharacteristic(_meshProvisioningDataOutCharacteristicUuid, discoveredService.serviceId));
     }
   }
@@ -103,24 +103,9 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     );
   }
 
-  Future<StreamSubscription<List<int>>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) async {
-    StreamSubscription<List<int>> dataOutSubscription;
-    var getDataOutSubRetryCount = 0;
-    await retry(
-      () {
-        getDataOutSubRetryCount++;
-        print('attempt #${getDataOutSubRetryCount} to subscribe to $qCharacteristic...');
-        dataOutSubscription?.cancel();
-        dataOutSubscription = bleInstance
-            .subscribeToCharacteristic(qCharacteristic)
-            .where((data) => data?.isNotEmpty == true)
-            .listen((data) =>
-                callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
-      },
-      retryIf: (e) => e is PlatformException,
-    );
-    return dataOutSubscription;
-  }
+  StreamSubscription<List<int>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) =>
+      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data?.isNotEmpty == true).listen(
+          (data) => callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
 
   Future<void> sendPdu(final List<int> pdu) async {
     final chunks = ((pdu.length / (mtuSize - 1)) + 1).floor();
