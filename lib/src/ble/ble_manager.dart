@@ -26,10 +26,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   int mtuSize = maxPacketSize;
 
-  var gattRetryCount = 5;
-
-  var gattRetry = 0;
-
   set callbacks(final E callbacks) => _callbacks = callbacks;
 
   E get callbacks => _callbacks;
@@ -69,6 +65,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             _callbacks.onDeviceConnectedController.add(device);
           }
           _device = device;
+          await Future.delayed(Duration(milliseconds: 500));
           await _negotiateAndInitGatt();
           break;
         case DeviceConnectionState.disconnecting:
@@ -117,17 +114,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         _callbacks.onDeviceReadyController.add(device);
       }
     } catch (e) {
-      if (gattRetry < gattRetryCount) {
-        gattRetry ++;
-        //TODO: test do we need delay?
-        await Future.delayed(Duration(milliseconds: 250));
-        await _negotiateAndInitGatt();
-      } else {
-        gattRetry = 0;
-        if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
-          _callbacks.onErrorController
-              .add(BleManagerCallbacksError(device, 'GATT error', e));
-        }
+      if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
+        _callbacks.onErrorController.add(BleManagerCallbacksError(device, 'GATT error', e));
       }
     }
   }
