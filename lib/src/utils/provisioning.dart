@@ -96,15 +96,15 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
         final scanResults = await bleScanner.provisionedNodesInRange(
             timeoutDuration: Duration(seconds: 5)); //increase in time reduces 'Undocumented scan throttle' error
         device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
+        if (device != null) break;
         await Future.delayed(Duration(milliseconds: 1500));
       }
       if (device == null) {
         completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
-        return;
       }
       events?._provisioningReconnectController?.add(null);
       try {
-        await bleMeshManager.connect(device).catchError((onError) => debugPrint('caught error successfully $onError'));
+        await bleMeshManager.connect(device);
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
       } catch (e) {
         completer.completeError(NrfMeshProvisioningException('Error in connection during provisioning process'));
