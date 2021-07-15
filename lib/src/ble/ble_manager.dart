@@ -26,6 +26,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   int mtuSize = maxPacketSize;
 
+  var gattRetryCount = 5;
+
+  var gattRetry = 0;
+
   set callbacks(final E callbacks) => _callbacks = callbacks;
 
   E get callbacks => _callbacks;
@@ -33,6 +37,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   DiscoveredDevice get device => _device;
 
   final FlutterReactiveBle _bleInstance;
+
   FlutterReactiveBle get bleInstance => _bleInstance;
 
   BleManager(this._bleInstance);
@@ -64,7 +69,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             _callbacks.onDeviceConnectedController.add(device);
           }
           _device = device;
-          await _negociateAndInitGatt();
+          await _negotiateAndInitGatt();
           break;
         case DeviceConnectionState.disconnecting:
           if (!_callbacks.onDeviceDisconnectingController.isClosed &&
@@ -88,26 +93,42 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     });
   }
 
-  Future<void> _negociateAndInitGatt() async {
-    final service = await isRequiredServiceSupported();
-    if (service == null) {
-      throw Exception('Required service not found');
-    }
-    isProvisioningCompleted = service?.serviceId == meshProxyUuid;
-    await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
-    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
-      _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
-    }
-    await initGatt();
-    final negociatedMtu = await _bleInstance.requestMtu(deviceId: _device.id, mtu: 517);
-    if (Platform.isAndroid) {
-      mtuSize = negociatedMtu - 3;
-    } else if (Platform.isIOS) {
-      mtuSize = negociatedMtu;
-    }
-    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
-    if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
-      _callbacks.onDeviceReadyController.add(device);
+  Future<void> _negotiateAndInitGatt() async {
+    try {
+      final service = await isRequiredServiceSupported();
+      if (service == null) {
+        throw Exception('Required service not found');
+      }
+      isProvisioningCompleted = service?.serviceId == meshProxyUuid;
+      await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
+      if (!_callbacks.onServicesDiscoveredController.isClosed &&
+          _callbacks.onServicesDiscoveredController.hasListener) {
+        _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(device, service, false));
+      }
+      await initGatt();
+      final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device.id, mtu: 517);
+      if (Platform.isAndroid) {
+        mtuSize = negotiatedMtu - 3;
+      } else if (Platform.isIOS) {
+        mtuSize = negotiatedMtu;
+      }
+      await _callbacks.sendMtuToMeshManagerApi(mtuSize);
+      if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
+        _callbacks.onDeviceReadyController.add(device);
+      }
+    } catch (e) {
+      if (gattRetry < gattRetryCount) {
+        gattRetry ++;
+        //TODO: test do we need delay?
+        await Future.delayed(Duration(milliseconds: 250));
+        await _negotiateAndInitGatt();
+      } else {
+        gattRetry = 0;
+        if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
+          _callbacks.onErrorController
+              .add(BleManagerCallbacksError(device, 'GATT error', e));
+        }
+      }
     }
   }
 

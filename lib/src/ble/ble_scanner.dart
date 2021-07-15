@@ -8,8 +8,16 @@ import 'ble_manager.dart'; // for mesh guid constants
 
 const Duration defaultScanDuration = Duration(seconds: 5);
 
+class BleScannerError {
+  final String message;
+  final Object error;
+
+  const BleScannerError(this.message, this.error);
+}
+
 class BleScanner {
   static BleScanner _instance;
+
   BleScanner._();
 
   factory BleScanner() => _instance ??= BleScanner._();
@@ -17,6 +25,18 @@ class BleScanner {
   final FlutterReactiveBle _flutterReactiveBle = FlutterReactiveBle();
 
   Stream<BleStatus> get bleStatus => _flutterReactiveBle.statusStream;
+
+  var onErrorController;
+
+  Stream<BleScannerError> get onError => onErrorController.stream;
+
+  void initStream() {
+    onErrorController = StreamController<BleScannerError>();
+  }
+
+  void dispose() {
+    onErrorController?.close();
+  }
 
   /// Will begin a ble scan with the given parameters or defaults and wait for [timeoutDuration].
   ///
@@ -32,10 +52,14 @@ class BleScanner {
       final scanResults = <DiscoveredDevice>[];
       final streamSub = _flutterReactiveBle
           .scanForDevices(
-            withServices: withServices,
-            scanMode: scanMode,
-          )
-          .listen((device) => scanResults.add(device));
+        withServices: withServices,
+        scanMode: scanMode,
+      )
+          .listen((device) => scanResults.add(device), onError: (onError) {
+        if (!onErrorController.isClosed && onErrorController.hasListener) {
+          onErrorController.add(BleScannerError('Scanner Error', onError));
+        }
+      });
       await Future.delayed(timeoutDuration, () => streamSub.cancel());
       return scanResults;
     } else {

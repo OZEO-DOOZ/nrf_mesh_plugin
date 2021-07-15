@@ -55,5 +55,6 @@ abstract class BleManagerCallbacks {
         onDeviceDisconnectedController.close(),
         onServicesDiscoveredController.close(),
         onDeviceReadyController.close(),
+        onErrorController.close(),
       ]);
 }
