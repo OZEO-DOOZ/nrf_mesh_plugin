@@ -10,7 +10,6 @@ import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
-import 'package:pedantic/pedantic.dart';
 
 class _ProvisioningEvent {
   final _provisioningController = StreamController<void>();
@@ -47,6 +46,19 @@ class ProvisioningEvent extends _ProvisioningEvent {
       ]);
 }
 
+StreamSubscription onBleScannerError;
+StreamSubscription onProvisioningCompletedSubscription;
+StreamSubscription onProvisioningStateChangedSubscription;
+StreamSubscription onProvisioningFailedSubscription;
+StreamSubscription sendProvisioningPduSubscription;
+StreamSubscription onConfigCompositionDataStatusSubscription;
+StreamSubscription onConfigAppKeyStatusSubscription;
+StreamSubscription onDeviceReadySubscription;
+StreamSubscription onDataReceivedSubscription;
+StreamSubscription onMeshPduCreatedSubscription;
+StreamSubscription onGattErrorSubscription;
+StreamSubscription onDataSentSubscription;
+
 Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
     BleScanner bleScanner, DiscoveredDevice device, String serviceDataUuid,
     {ProvisioningEvent events}) async {
@@ -63,41 +75,48 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
   final completer = Completer();
   ProvisionedMeshNode provisionedMeshNode;
 
+  bleScanner.initStream();
+  //'Undocumented scan throttle' error caught here
+  onBleScannerError = bleScanner.onError.listen((event) {
+    debugPrint('Scanner Error : ${event.error}');
+  });
+
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
   bleMeshManager.callbacks = provisioningCallbacks;
-  final onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
+  onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
     try {
       await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
 
       DiscoveredDevice device;
       var scanTries = 0;
-      while (device == null && scanTries < 10) {
+      while (device == null && scanTries < 6) {
         scanTries++;
         print('attempt #$scanTries to scan for ${deviceToProvision.id}');
-        try {
-          final scanResults = await bleScanner.provisionedNodesInRange(timeoutDuration: Duration(seconds: 1));
-          device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
-          await Future.delayed(Duration(milliseconds: 1500));
-        } catch (e) {
-          debugPrint('scanner error : $e');
-        }
+        final scanResults = await bleScanner.provisionedNodesInRange(
+            timeoutDuration: Duration(seconds: 5)); //increase in time reduces 'Undocumented scan throttle' error
+        device = scanResults.firstWhere((device) => device.id == deviceToProvision.id, orElse: () => null);
+        if (device != null) break;
+        await Future.delayed(Duration(milliseconds: 1500));
       }
       if (device == null) {
         completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
-        return;
       }
       events?._provisioningReconnectController?.add(null);
-      await bleMeshManager.connect(device);
-      provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
+      try {
+        await bleMeshManager.connect(device);
+        provisionedMeshNode = ProvisionedMeshNode(event.meshNode.uuid);
+      } catch (e) {
+        completer.completeError(NrfMeshProvisioningException('Error in connection during provisioning process'));
+      }
     } catch (e) {
       completer.completeError(NrfMeshProvisioningException('error during provisioning completed listener'));
     }
   });
-  final onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
+  onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
     completer.completeError(NrfMeshProvisioningException('Failed to provision device ${deviceToProvision.id}'));
   });
-  final onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
+  onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController?.add(null);
       final unprovisionedMeshNode = UnprovisionedMeshNode(event.meshNode.uuid, event.meshNode.provisionerPublicKeyXY);
@@ -131,7 +150,7 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       }
     }
   });
-  final onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
+  onDeviceReadySubscription = bleMeshManager.callbacks.onDeviceReady.listen((event) async {
     if (Platform.isIOS && bleMeshManager.isProvisioningCompleted) {
       final unicast = await provisionedMeshNode.unicastAddress;
       await meshManagerApi.sendConfigCompositionDataGet(unicast);
@@ -139,29 +158,28 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
       await meshManagerApi.identifyNode(serviceDataUuid);
     }
   });
-  final sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
+  sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
     await bleMeshManager.sendPdu(event.pdu);
   });
-  final onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+  onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
     await bleMeshManager.sendPdu(event);
   });
-  StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
   if (Platform.isAndroid) {
     onDataSentSubscription = bleMeshManager.callbacks.onDataSent.listen((event) async {
       await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
     });
   }
-  final onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
+  onDataReceivedSubscription = bleMeshManager.callbacks.onDataReceived.listen((event) async {
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
-  final onGattErrorSubscription = bleMeshManager.callbacks.onError.listen((event) {
+  onGattErrorSubscription = bleMeshManager.callbacks.onError.listen((event) {
     events?._provisioningGattErrorController?.add(provisionedMeshNode);
   });
-  final onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
+  onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController?.add(null);
     await meshManagerApi.sendConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
-  final onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
+  onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
     events?._onConfigAppKeyStatusController?.add(null);
     completer.complete(provisionedMeshNode);
   });
@@ -175,26 +193,28 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
     //Added a 1,5 seconds to wait for a refreshDeviceCache.
     await Future.delayed(Duration(milliseconds: 1500));
     await bleMeshManager.disconnect();
+    cancelProvisioningCallbackSubscription(bleMeshManager);
     return provisionedMeshNode;
   } catch (e) {
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
     rethrow;
-  } finally {
-    unawaited(Future.wait([
-      onProvisioningCompletedSubscription.cancel(),
-      onProvisioningStateChangedSubscription.cancel(),
-      onProvisioningFailedSubscription.cancel(),
-      sendProvisioningPduSubscription.cancel(),
-      onConfigCompositionDataStatusSubscription.cancel(),
-      onConfigAppKeyStatusSubscription.cancel(),
-      onDeviceReadySubscription.cancel(),
-      onDataReceivedSubscription.cancel(),
-      onMeshPduCreatedSubscription.cancel(),
-      onGattErrorSubscription.cancel(),
-      if (Platform.isAndroid) onDataSentSubscription?.cancel(),
-      if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
-    ]));
   }
+}
+
+void cancelProvisioningCallbackSubscription(BleMeshManager bleMeshManager) {
+  onProvisioningCompletedSubscription?.cancel();
+  onProvisioningStateChangedSubscription?.cancel();
+  onProvisioningFailedSubscription?.cancel();
+  sendProvisioningPduSubscription?.cancel();
+  onConfigCompositionDataStatusSubscription?.cancel();
+  onConfigAppKeyStatusSubscription?.cancel();
+  onDeviceReadySubscription?.cancel();
+  onDataReceivedSubscription?.cancel();
+  onMeshPduCreatedSubscription?.cancel();
+  onGattErrorSubscription?.cancel();
+  onBleScannerError?.cancel();
+  if (Platform.isAndroid) onDataSentSubscription?.cancel();
+  if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose();
 }
 
 Future<bool> cancelProvisioning(
@@ -202,6 +222,8 @@ Future<bool> cancelProvisioning(
   if (Platform.isIOS || Platform.isAndroid) {
     print('should cancel provisioning');
     try {
+      bleScanner.dispose();
+
       final cachedProvisionedMeshNodeUuid = await meshManagerApi.cachedProvisionedMeshNodeUuid();
       if (bleMeshManager.isProvisioningCompleted && cachedProvisionedMeshNodeUuid != null) {
         final nodes = await meshManagerApi.meshNetwork.nodes;
@@ -216,6 +238,7 @@ Future<bool> cancelProvisioning(
       await meshManagerApi.cleanProvisioningData();
       await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
+      cancelProvisioningCallbackSubscription(bleMeshManager);
       return true;
     } catch (e) {
       print('ERROR - $e');
