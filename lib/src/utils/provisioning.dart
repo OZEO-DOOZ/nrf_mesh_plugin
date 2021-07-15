@@ -202,22 +202,19 @@ Future<ProvisionedMeshNode> _provisioning(MeshManagerApi meshManagerApi, BleMesh
 }
 
 void cancelProvisioningCallbackSubscription(BleMeshManager bleMeshManager) {
-  debugPrint('finally bloc called here ---------------->');
-  Future.wait([
-    onProvisioningCompletedSubscription?.cancel(),
-    onProvisioningStateChangedSubscription?.cancel(),
-    onProvisioningFailedSubscription?.cancel(),
-    sendProvisioningPduSubscription?.cancel(),
-    onConfigCompositionDataStatusSubscription?.cancel(),
-    onConfigAppKeyStatusSubscription?.cancel(),
-    onDeviceReadySubscription?.cancel(),
-    onDataReceivedSubscription?.cancel(),
-    onMeshPduCreatedSubscription?.cancel(),
-    onGattErrorSubscription?.cancel(),
-    onBleScannerError?.cancel(),
-    if (Platform.isAndroid) onDataSentSubscription?.cancel(),
-    if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose(),
-  ]);
+  onProvisioningCompletedSubscription?.cancel();
+  onProvisioningStateChangedSubscription?.cancel();
+  onProvisioningFailedSubscription?.cancel();
+  sendProvisioningPduSubscription?.cancel();
+  onConfigCompositionDataStatusSubscription?.cancel();
+  onConfigAppKeyStatusSubscription?.cancel();
+  onDeviceReadySubscription?.cancel();
+  onDataReceivedSubscription?.cancel();
+  onMeshPduCreatedSubscription?.cancel();
+  onGattErrorSubscription?.cancel();
+  onBleScannerError?.cancel();
+  if (Platform.isAndroid) onDataSentSubscription?.cancel();
+  if (bleMeshManager?.callbacks != null) bleMeshManager.callbacks.dispose();
 }
 
 Future<bool> cancelProvisioning(
