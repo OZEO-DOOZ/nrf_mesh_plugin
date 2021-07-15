@@ -46,7 +46,15 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<DiscoveredService> isRequiredServiceSupported() async {
-    _discoveredServices = await bleInstance.discoverServices(device.id);
+    var serviceDiscoveryRetryCount = 0;
+    await retry(
+      () async {
+        serviceDiscoveryRetryCount++;
+        print('attempt #${serviceDiscoveryRetryCount} to discover services...');
+        _discoveredServices = await bleInstance.discoverServices(device.id);
+      },
+      retryIf: (e) => e is PlatformException,
+    );
     var service = getDiscoveredService(meshProxyUuid);
     if (service != null) {
       isProvisioningCompleted = true;
@@ -77,12 +85,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     if (isProvisioningCompleted) {
       discoveredService = getDiscoveredService(meshProxyUuid);
       await _meshProxyDataOutSubscription?.cancel();
-      _meshProxyDataOutSubscription = getDataOutSubscription(
+      _meshProxyDataOutSubscription = await getDataOutSubscription(
           getQualifiedCharacteristic(_meshProxyDataOutCharacteristicUuid, discoveredService.serviceId));
     } else {
       discoveredService = getDiscoveredService(meshProvisioningUuid);
       await _meshProvisioningDataOutSubscription?.cancel();
-      _meshProvisioningDataOutSubscription = getDataOutSubscription(
+      _meshProvisioningDataOutSubscription = await getDataOutSubscription(
           getQualifiedCharacteristic(_meshProvisioningDataOutCharacteristicUuid, discoveredService.serviceId));
     }
   }
@@ -103,9 +111,23 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     );
   }
 
-  StreamSubscription<List<int>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) {
-    return bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data?.isNotEmpty == true).listen(
-        (data) => callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
+  Future<StreamSubscription<List<int>>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) async {
+    StreamSubscription<List<int>> dataOutSubscription;
+    var getDataOutSubRetryCount = 0;
+    await retry(
+      () {
+        getDataOutSubRetryCount++;
+        print('attempt #${getDataOutSubRetryCount} to subscribe to $qCharacteristic...');
+        dataOutSubscription?.cancel();
+        dataOutSubscription = bleInstance
+            .subscribeToCharacteristic(qCharacteristic)
+            .where((data) => data?.isNotEmpty == true)
+            .listen((data) =>
+                callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
+      },
+      retryIf: (e) => e is PlatformException,
+    );
+    return dataOutSubscription;
   }
 
   Future<void> sendPdu(final List<int> pdu) async {
@@ -177,6 +199,5 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
         }
       }
     }
-    return null;
   }
 }
