@@ -638,6 +638,13 @@ class MeshManagerApi {
     return status;
   }
 
+  Future<ConfigNetworkTransmitStatus> getNetworkTransmitSettings(int address) async {
+    final status = _onConfigNetworkTransmitStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('getNetworkTransmitSettings', {'address': address});
+    return status;
+  }
+
   String getDeviceUuid(List<int> serviceData) {
     var msb = 0;
     var lsb = 0;
