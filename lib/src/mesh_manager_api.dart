@@ -10,6 +10,7 @@ import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/c
 import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_network_transmit_status/config_network_transmit_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
@@ -52,6 +53,7 @@ class MeshManagerApi {
   final _onConfigModelSubscriptionStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
   final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
   final _onConfigNodeResetStatusController = StreamController<ConfigNodeResetStatus>.broadcast();
+  final _onConfigNetworkTransmitStatusController = StreamController<ConfigNetworkTransmitStatus>.broadcast();
 
   final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
   final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
@@ -77,6 +79,7 @@ class MeshManagerApi {
   StreamSubscription<ConfigModelSubscriptionStatus> _onConfigModelSubscriptionStatusSubscription;
   StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
   StreamSubscription<ConfigNodeResetStatus> _onConfigNodeResetStatusSubscription;
+  StreamSubscription<ConfigNetworkTransmitStatus> _onConfigNetworkTransmitStatusSubscription;
 
   StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
   StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
@@ -185,6 +188,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configNodeResetStatus.value)
         .map((event) => ConfigNodeResetStatus.fromJson(event))
         .listen(_onConfigNodeResetStatusController.add);
+    _onConfigNetworkTransmitStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configNetworkTransmitStatus.value)
+        .map((event) => ConfigNetworkTransmitStatus.fromJson(event))
+        .listen(_onConfigNetworkTransmitStatusController.add);
   }
 
   Stream<ConfigNodeResetStatus> get onConfigNodeResetStatus => _onConfigNodeResetStatusController.stream;
@@ -605,6 +612,25 @@ class MeshManagerApi {
     } else {
       throw UnsupportedError('Platform not supported');
     }
+  }
+
+  // Future getTtl(int address) {}
+
+  // Future setTtl(int address, int ttl) {}
+
+  Future<ConfigNetworkTransmitStatus> setNetworkTransmitSettings(
+    int address,
+    int transmitCount,
+    int transmitIntervalSteps,
+  ) async {
+    final status = _onConfigNetworkTransmitStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('setNetworkTransmitSettings', {
+      'address': address,
+      'transmitCount': transmitCount,
+      'transmitIntervalSteps': transmitIntervalSteps,
+    });
+    return status;
   }
 
   String getDeviceUuid(List<int> serviceData) {

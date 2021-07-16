@@ -194,6 +194,18 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                     ))
                 }
             }
+            is ConfigNetworkTransmitStatus -> {
+                Log.d(tag, "received a ConfigNetworkTransmitStatus")
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onConfigNetworkTransmitStatus",
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst,
+                            "transmitCount" to meshMessage.networkTransmitCount,
+                            "transmitIntervalSteps" to meshMessage.networkTransmitIntervalSteps
+                    ))
+                }
+            }
             else -> {
                 Log.d(tag, "Unknown message received :" + meshMessage.javaClass.toString())
             }
