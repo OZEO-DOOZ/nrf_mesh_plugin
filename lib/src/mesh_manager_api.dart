@@ -194,6 +194,9 @@ class MeshManagerApi {
         .listen(_onConfigNetworkTransmitStatusController.add);
   }
 
+  Stream<ConfigNetworkTransmitStatus> get onConfigNetworkTransmitStatus =>
+      _onConfigNetworkTransmitStatusController.stream;
+
   Stream<ConfigNodeResetStatus> get onConfigNodeResetStatus => _onConfigNodeResetStatusController.stream;
 
   Stream<ConfigModelPublicationStatus> get onConfigModelPublicationStatus =>
@@ -286,6 +289,7 @@ class MeshManagerApi {
         _onLightCtlStatusController.close(),
         _onLightHslStatusController.close(),
         _onConfigNodeResetStatusSubscription.cancel(),
+        _onConfigNetworkTransmitStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -304,6 +308,7 @@ class MeshManagerApi {
         _onV2MagicLevelSetStatusController.close(),
         _onV2MagicLevelGetStatusController.close(),
         _onConfigNodeResetStatusController.close(),
+        _onConfigNetworkTransmitStatusController.close(),
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
