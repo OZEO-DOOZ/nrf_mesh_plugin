@@ -8,7 +8,6 @@ part of 'config_model_publication_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-
 ConfigModelPublicationStatus _$ConfigModelPublicationStatusFromJson(Map<String, dynamic> json) {
   return _ConfigModelPublicationStatus.fromJson(json);
 }
@@ -60,25 +59,16 @@ mixin _$ConfigModelPublicationStatus {
   int get elementAddress;
   int get publishAddress;
   int get appKeyIndex;
-
   bool get credentialFlag;
-
   int get publishTtl;
-
   int get publicationSteps;
-
   int get publicationResolution;
-
   int get retransmitCount;
-
   int get retransmitIntervalSteps;
-
   int get modelIdentifier;
-
   bool get isSuccessful;
 
   Map<String, dynamic> toJson();
-
   $ConfigModelPublicationStatusCopyWith<ConfigModelPublicationStatus> get copyWith;
 }
 
@@ -106,7 +96,6 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res> implements $ConfigModelPu
   _$ConfigModelPublicationStatusCopyWithImpl(this._value, this._then);
 
   final ConfigModelPublicationStatus _value;
-
   // ignore: unused_field
   final $Res Function(ConfigModelPublicationStatus) _then;
 
@@ -147,7 +136,6 @@ abstract class _$ConfigModelPublicationStatusCopyWith<$Res> implements $ConfigMo
   factory _$ConfigModelPublicationStatusCopyWith(
           _ConfigModelPublicationStatus value, $Res Function(_ConfigModelPublicationStatus) then) =
       __$ConfigModelPublicationStatusCopyWithImpl<$Res>;
-
   @override
   $Res call(
       {int elementAddress,
@@ -333,16 +321,12 @@ abstract class _ConfigModelPublicationStatus implements ConfigModelPublicationSt
 
   @override
   int get elementAddress;
-
   @override
   int get publishAddress;
-
   @override
   int get appKeyIndex;
-
   @override
   bool get credentialFlag;
-
   @override
   int get publishTtl;
   @override
@@ -355,10 +339,8 @@ abstract class _ConfigModelPublicationStatus implements ConfigModelPublicationSt
   int get retransmitIntervalSteps;
   @override
   int get modelIdentifier;
-
   @override
   bool get isSuccessful;
-
   @override
   _$ConfigModelPublicationStatusCopyWith<_ConfigModelPublicationStatus> get copyWith;
 }

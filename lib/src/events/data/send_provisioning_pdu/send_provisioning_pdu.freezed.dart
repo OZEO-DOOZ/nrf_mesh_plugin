@@ -8,7 +8,6 @@ part of 'send_provisioning_pdu.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-
 SendProvisioningPduData _$SendProvisioningPduDataFromJson(Map<String, dynamic> json) {
   return _SendProvisioningPduData.fromJson(json);
 }
@@ -48,7 +47,6 @@ mixin _$SendProvisioningPduData {
 abstract class $SendProvisioningPduDataCopyWith<$Res> {
   factory $SendProvisioningPduDataCopyWith(SendProvisioningPduData value, $Res Function(SendProvisioningPduData) then) =
       _$SendProvisioningPduDataCopyWithImpl<$Res>;
-
   $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
 
@@ -57,7 +55,6 @@ class _$SendProvisioningPduDataCopyWithImpl<$Res> implements $SendProvisioningPd
   _$SendProvisioningPduDataCopyWithImpl(this._value, this._then);
 
   final SendProvisioningPduData _value;
-
   // ignore: unused_field
   final $Res Function(SendProvisioningPduData) _then;
 
@@ -78,7 +75,6 @@ abstract class _$SendProvisioningPduDataCopyWith<$Res> implements $SendProvision
   factory _$SendProvisioningPduDataCopyWith(
           _SendProvisioningPduData value, $Res Function(_SendProvisioningPduData) then) =
       __$SendProvisioningPduDataCopyWithImpl<$Res>;
-
   @override
   $Res call({List<int> pdu, UnprovisionedMeshNode meshNode});
 }
@@ -153,10 +149,8 @@ abstract class _SendProvisioningPduData implements SendProvisioningPduData {
 
   @override
   List<int> get pdu;
-
   @override
   UnprovisionedMeshNode get meshNode;
-
   @override
   _$SendProvisioningPduDataCopyWith<_SendProvisioningPduData> get copyWith;
 }
