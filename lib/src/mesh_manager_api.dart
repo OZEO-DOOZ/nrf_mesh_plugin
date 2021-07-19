@@ -628,7 +628,7 @@ class MeshManagerApi {
     }
   }
 
-  Future<ConfigDefaultTtlStatus> getTtl(int address) async {
+  Future<ConfigDefaultTtlStatus> getDefaultTtl(int address) async {
     final status = _onConfigDefaultTtlStatusController.stream
         .firstWhere((element) => element.source == address, orElse: () => null);
     await _methodChannel.invokeMethod('getDefaultTtl', {'address': address});
