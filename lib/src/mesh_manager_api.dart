@@ -637,7 +637,15 @@ class MeshManagerApi {
     return status;
   }
 
-  // Future setTtl(int address, int ttl) {}
+  Future<ConfigDefaultTtlStatus> setTtl(int address, int ttl) async {
+    final status = _onConfigDefaultTtlStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('setDefaultTtl', {
+      'address': address,
+      'ttl': ttl,
+    });
+    return status;
+  }
 
   Future<ConfigNetworkTransmitStatus> setNetworkTransmitSettings(
     int address,
