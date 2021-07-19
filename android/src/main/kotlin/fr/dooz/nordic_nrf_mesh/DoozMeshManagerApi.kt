@@ -163,6 +163,36 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "setNetworkTransmitSettings" -> {
+                val address = call.argument<Int>("address")!!
+                val transmitCount = call.argument<Int>("transmitCount")!!
+                val transmitIntervalSteps = call.argument<Int>("transmitIntervalSteps")!!
+                val meshMessage: MeshMessage = ConfigNetworkTransmitSet(
+                    transmitCount,
+                    transmitIntervalSteps
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getNetworkTransmitSettings" -> {
+                val address = call.argument<Int>("address")!!
+                val meshMessage: MeshMessage = ConfigNetworkTransmitGet()
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getDefaultTtl" -> {
+                val address = call.argument<Int>("address")!!
+                val meshMessage: MeshMessage = ConfigDefaultTtlGet()
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "setDefaultTtl" -> {
+                val address = call.argument<Int>("address")!!
+                val ttl = call.argument<Int>("ttl")!!
+                val meshMessage: MeshMessage = ConfigDefaultTtlSet(ttl)
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
             "sendConfigModelSubscriptionAdd" -> {
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!

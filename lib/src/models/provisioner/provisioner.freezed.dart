@@ -66,7 +66,6 @@ mixin _$Provisioner {
 /// @nodoc
 abstract class $ProvisionerCopyWith<$Res> {
   factory $ProvisionerCopyWith(Provisioner value, $Res Function(Provisioner) then) = _$ProvisionerCopyWithImpl<$Res>;
-
   $Res call(
       {String provisionerName,
       String provisionerUuid,
@@ -120,7 +119,6 @@ class _$ProvisionerCopyWithImpl<$Res> implements $ProvisionerCopyWith<$Res> {
 abstract class _$ProvisionerCopyWith<$Res> implements $ProvisionerCopyWith<$Res> {
   factory _$ProvisionerCopyWith(_Provisioner value, $Res Function(_Provisioner) then) =
       __$ProvisionerCopyWithImpl<$Res>;
-
   @override
   $Res call(
       {String provisionerName,
@@ -264,16 +262,12 @@ abstract class _Provisioner implements Provisioner {
 
   @override
   String get provisionerName;
-
   @override
   String get provisionerUuid;
-
   @override
   int get globalTtl;
-
   @override
   int get provisionerAddress;
-
   @override
   List<AllocatedUnicastRange> get allocatedUnicastRanges;
   @override

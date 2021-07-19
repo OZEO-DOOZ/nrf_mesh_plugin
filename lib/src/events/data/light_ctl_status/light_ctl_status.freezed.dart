@@ -60,7 +60,6 @@ mixin _$LightCtlStatusData {
 abstract class $LightCtlStatusDataCopyWith<$Res> {
   factory $LightCtlStatusDataCopyWith(LightCtlStatusData value, $Res Function(LightCtlStatusData) then) =
       _$LightCtlStatusDataCopyWithImpl<$Res>;
-
   $Res call(
       {int presentLightness,
       int targetLightness,
@@ -77,7 +76,6 @@ class _$LightCtlStatusDataCopyWithImpl<$Res> implements $LightCtlStatusDataCopyW
   _$LightCtlStatusDataCopyWithImpl(this._value, this._then);
 
   final LightCtlStatusData _value;
-
   // ignore: unused_field
   final $Res Function(LightCtlStatusData) _then;
 
@@ -109,7 +107,6 @@ class _$LightCtlStatusDataCopyWithImpl<$Res> implements $LightCtlStatusDataCopyW
 abstract class _$LightCtlStatusDataCopyWith<$Res> implements $LightCtlStatusDataCopyWith<$Res> {
   factory _$LightCtlStatusDataCopyWith(_LightCtlStatusData value, $Res Function(_LightCtlStatusData) then) =
       __$LightCtlStatusDataCopyWithImpl<$Res>;
-
   @override
   $Res call(
       {int presentLightness,
@@ -252,16 +249,12 @@ abstract class _LightCtlStatusData implements LightCtlStatusData {
 
   @override
   int get presentLightness;
-
   @override
   int get targetLightness;
-
   @override
   int get presentTemperature;
-
   @override
   int get targetTemperature;
-
   @override
   int get transitionSteps;
   @override

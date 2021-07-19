@@ -45,7 +45,6 @@ mixin _$MeshNetworkEventData {
 abstract class $MeshNetworkEventDataCopyWith<$Res> {
   factory $MeshNetworkEventDataCopyWith(MeshNetworkEventData value, $Res Function(MeshNetworkEventData) then) =
       _$MeshNetworkEventDataCopyWithImpl<$Res>;
-
   $Res call({String id});
 }
 
@@ -54,7 +53,6 @@ class _$MeshNetworkEventDataCopyWithImpl<$Res> implements $MeshNetworkEventDataC
   _$MeshNetworkEventDataCopyWithImpl(this._value, this._then);
 
   final MeshNetworkEventData _value;
-
   // ignore: unused_field
   final $Res Function(MeshNetworkEventData) _then;
 
@@ -72,7 +70,6 @@ class _$MeshNetworkEventDataCopyWithImpl<$Res> implements $MeshNetworkEventDataC
 abstract class _$MeshNetworkEventDataCopyWith<$Res> implements $MeshNetworkEventDataCopyWith<$Res> {
   factory _$MeshNetworkEventDataCopyWith(_MeshNetworkEventData value, $Res Function(_MeshNetworkEventData) then) =
       __$MeshNetworkEventDataCopyWithImpl<$Res>;
-
   @override
   $Res call({String id});
 }
@@ -139,7 +136,6 @@ abstract class _MeshNetworkEventData implements MeshNetworkEventData {
 
   @override
   String get id;
-
   @override
   _$MeshNetworkEventDataCopyWith<_MeshNetworkEventData> get copyWith;
 }
@@ -181,7 +177,6 @@ mixin _$MeshNetworkEventError {
 abstract class $MeshNetworkEventErrorCopyWith<$Res> {
   factory $MeshNetworkEventErrorCopyWith(MeshNetworkEventError value, $Res Function(MeshNetworkEventError) then) =
       _$MeshNetworkEventErrorCopyWithImpl<$Res>;
-
   $Res call({String error});
 }
 
@@ -190,7 +185,6 @@ class _$MeshNetworkEventErrorCopyWithImpl<$Res> implements $MeshNetworkEventErro
   _$MeshNetworkEventErrorCopyWithImpl(this._value, this._then);
 
   final MeshNetworkEventError _value;
-
   // ignore: unused_field
   final $Res Function(MeshNetworkEventError) _then;
 
@@ -208,7 +202,6 @@ class _$MeshNetworkEventErrorCopyWithImpl<$Res> implements $MeshNetworkEventErro
 abstract class _$MeshNetworkEventErrorCopyWith<$Res> implements $MeshNetworkEventErrorCopyWith<$Res> {
   factory _$MeshNetworkEventErrorCopyWith(_MeshNetworkEventError value, $Res Function(_MeshNetworkEventError) then) =
       __$MeshNetworkEventErrorCopyWithImpl<$Res>;
-
   @override
   $Res call({String error});
 }
@@ -275,7 +268,6 @@ abstract class _MeshNetworkEventError implements MeshNetworkEventError {
 
   @override
   String get error;
-
   @override
   _$MeshNetworkEventErrorCopyWith<_MeshNetworkEventError> get copyWith;
 }

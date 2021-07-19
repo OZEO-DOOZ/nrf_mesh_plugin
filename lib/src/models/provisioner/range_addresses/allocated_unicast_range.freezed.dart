@@ -8,7 +8,6 @@ part of 'allocated_unicast_range.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-
 AllocatedUnicastRange _$AllocatedUnicastRangeFromJson(Map<String, dynamic> json) {
   return _AllocatedUnicastRange.fromJson(json);
 }
@@ -48,7 +47,6 @@ mixin _$AllocatedUnicastRange {
 abstract class $AllocatedUnicastRangeCopyWith<$Res> {
   factory $AllocatedUnicastRangeCopyWith(AllocatedUnicastRange value, $Res Function(AllocatedUnicastRange) then) =
       _$AllocatedUnicastRangeCopyWithImpl<$Res>;
-
   $Res call({int lowAddress, int highAddress});
 }
 
@@ -57,7 +55,6 @@ class _$AllocatedUnicastRangeCopyWithImpl<$Res> implements $AllocatedUnicastRang
   _$AllocatedUnicastRangeCopyWithImpl(this._value, this._then);
 
   final AllocatedUnicastRange _value;
-
   // ignore: unused_field
   final $Res Function(AllocatedUnicastRange) _then;
 
@@ -77,7 +74,6 @@ class _$AllocatedUnicastRangeCopyWithImpl<$Res> implements $AllocatedUnicastRang
 abstract class _$AllocatedUnicastRangeCopyWith<$Res> implements $AllocatedUnicastRangeCopyWith<$Res> {
   factory _$AllocatedUnicastRangeCopyWith(_AllocatedUnicastRange value, $Res Function(_AllocatedUnicastRange) then) =
       __$AllocatedUnicastRangeCopyWithImpl<$Res>;
-
   @override
   $Res call({int lowAddress, int highAddress});
 }
@@ -156,10 +152,8 @@ abstract class _AllocatedUnicastRange implements AllocatedUnicastRange {
 
   @override
   int get lowAddress;
-
   @override
   int get highAddress;
-
   @override
   _$AllocatedUnicastRangeCopyWith<_AllocatedUnicastRange> get copyWith;
 }

@@ -8,7 +8,6 @@ part of 'generic_on_off_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-
 GenericOnOffStatusData _$GenericOnOffStatusDataFromJson(Map<String, dynamic> json) {
   return _GenericOnOffStatusData.fromJson(json);
 }
@@ -56,7 +55,6 @@ mixin _$GenericOnOffStatusData {
 abstract class $GenericOnOffStatusDataCopyWith<$Res> {
   factory $GenericOnOffStatusDataCopyWith(GenericOnOffStatusData value, $Res Function(GenericOnOffStatusData) then) =
       _$GenericOnOffStatusDataCopyWithImpl<$Res>;
-
   $Res call({int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps});
 }
 
@@ -65,7 +63,6 @@ class _$GenericOnOffStatusDataCopyWithImpl<$Res> implements $GenericOnOffStatusD
   _$GenericOnOffStatusDataCopyWithImpl(this._value, this._then);
 
   final GenericOnOffStatusData _value;
-
   // ignore: unused_field
   final $Res Function(GenericOnOffStatusData) _then;
 
@@ -91,7 +88,6 @@ class _$GenericOnOffStatusDataCopyWithImpl<$Res> implements $GenericOnOffStatusD
 abstract class _$GenericOnOffStatusDataCopyWith<$Res> implements $GenericOnOffStatusDataCopyWith<$Res> {
   factory _$GenericOnOffStatusDataCopyWith(_GenericOnOffStatusData value, $Res Function(_GenericOnOffStatusData) then) =
       __$GenericOnOffStatusDataCopyWithImpl<$Res>;
-
   @override
   $Res call({int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps});
 }
@@ -196,14 +192,11 @@ abstract class _GenericOnOffStatusData implements GenericOnOffStatusData {
 
   @override
   int get source;
-
   @override
   bool get presentState;
-
   @override
   @nullable
   bool get targetState;
-
   @override
   int get transitionResolution;
   @override

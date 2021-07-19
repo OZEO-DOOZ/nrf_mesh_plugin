@@ -8,7 +8,6 @@ part of 'config_node_reset_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-
 ConfigNodeResetStatus _$ConfigNodeResetStatusFromJson(Map<String, dynamic> json) {
   return _ConfigNodeResetStatus.fromJson(json);
 }
@@ -50,7 +49,6 @@ mixin _$ConfigNodeResetStatus {
 abstract class $ConfigNodeResetStatusCopyWith<$Res> {
   factory $ConfigNodeResetStatusCopyWith(ConfigNodeResetStatus value, $Res Function(ConfigNodeResetStatus) then) =
       _$ConfigNodeResetStatusCopyWithImpl<$Res>;
-
   $Res call({int source, int destination, bool success});
 }
 
@@ -59,7 +57,6 @@ class _$ConfigNodeResetStatusCopyWithImpl<$Res> implements $ConfigNodeResetStatu
   _$ConfigNodeResetStatusCopyWithImpl(this._value, this._then);
 
   final ConfigNodeResetStatus _value;
-
   // ignore: unused_field
   final $Res Function(ConfigNodeResetStatus) _then;
 
@@ -81,7 +78,6 @@ class _$ConfigNodeResetStatusCopyWithImpl<$Res> implements $ConfigNodeResetStatu
 abstract class _$ConfigNodeResetStatusCopyWith<$Res> implements $ConfigNodeResetStatusCopyWith<$Res> {
   factory _$ConfigNodeResetStatusCopyWith(_ConfigNodeResetStatus value, $Res Function(_ConfigNodeResetStatus) then) =
       __$ConfigNodeResetStatusCopyWithImpl<$Res>;
-
   @override
   $Res call({int source, int destination, bool success});
 }
@@ -166,13 +162,10 @@ abstract class _ConfigNodeResetStatus implements ConfigNodeResetStatus {
 
   @override
   int get source;
-
   @override
   int get destination;
-
   @override
   bool get success;
-
   @override
   _$ConfigNodeResetStatusCopyWith<_ConfigNodeResetStatus> get copyWith;
 }

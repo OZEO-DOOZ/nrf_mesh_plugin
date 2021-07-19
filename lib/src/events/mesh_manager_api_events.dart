@@ -41,4 +41,6 @@ class MeshManagerApiEvent {
   static const configModelSubscriptionStatus = MeshManagerApiEvent._('onConfigModelSubscriptionStatus');
   static const configModelPublicationStatus = MeshManagerApiEvent._('onConfigModelPublicationStatus');
   static const configNodeResetStatus = MeshManagerApiEvent._('onConfigNodeResetStatus');
+  static const configNetworkTransmitStatus = MeshManagerApiEvent._('onConfigNetworkTransmitStatus');
+  static const configDefaultTtlStatus = MeshManagerApiEvent._('onConfigDefaultTtlStatus');
 }
