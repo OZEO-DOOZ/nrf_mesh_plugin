@@ -130,10 +130,10 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
           },
         ),
         RaisedButton(
-          child: Text('get provisioner uuid'),
+          child: Text('get provisioner list'),
           onPressed: () async {
-            final provUUIDs = await _meshNetwork.provisionersUUIDList;
-            debugPrint('${provUUIDs.length}');
+            final provisionerList = await _meshNetwork.provisionerList;
+            debugPrint('# of provs : ${provisionerList.length}');
           },
         ),
         RaisedButton(
