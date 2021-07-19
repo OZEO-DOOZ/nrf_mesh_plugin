@@ -6,8 +6,7 @@ part of 'config_default_ttl_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigDefaultTtlStatus _$_$_ConfigDefaultTtlStatusFromJson(
-    Map<String, dynamic> json) {
+_$_ConfigDefaultTtlStatus _$_$_ConfigDefaultTtlStatusFromJson(Map<String, dynamic> json) {
   return _$_ConfigDefaultTtlStatus(
     json['source'] as int,
     json['destination'] as int,
@@ -15,9 +14,7 @@ _$_ConfigDefaultTtlStatus _$_$_ConfigDefaultTtlStatusFromJson(
   );
 }
 
-Map<String, dynamic> _$_$_ConfigDefaultTtlStatusToJson(
-        _$_ConfigDefaultTtlStatus instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$_$_ConfigDefaultTtlStatusToJson(_$_ConfigDefaultTtlStatus instance) => <String, dynamic>{
       'source': instance.source,
       'destination': instance.destination,
       'ttl': instance.ttl,
