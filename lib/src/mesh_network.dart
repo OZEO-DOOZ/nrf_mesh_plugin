@@ -13,7 +13,6 @@ abstract class IMeshNetwork {
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
   String get id;
-  Future<List<String>> get provisionersUUIDList;
   Future<List<Provisioner>> get provisionerList;
 
   Future<GroupData> addGroupWithName(String name);
@@ -24,6 +23,8 @@ abstract class IMeshNetwork {
 
   Future<int> nextAvailableUnicastAddress(int elementSize);
 
+  Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize);
+
   Future<bool> removeGroup(int id);
 
   Future<String> selectedProvisionerUuid();
@@ -33,6 +34,8 @@ abstract class IMeshNetwork {
   Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl);
 
   Future<bool> updateProvisioner(Provisioner provisioner);
+
+  Future<bool> removeProvisioner(String provisionerUUID);
 
   Future<bool> deleteNode(String uid);
 
@@ -99,6 +102,10 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
 
   @override
+  Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize) => _methodChannel
+      .invokeMethod('nextAvailableUnicastAddressWithMin', {'minAddress': minAddress, 'elementSize': elementSize});
+
+  @override
   Future<bool> removeGroup(int groupAddress) =>
       _methodChannel.invokeMethod('removeGroup', {'groupAddress': groupAddress});
 
@@ -111,12 +118,6 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<void> selectProvisioner(int provisionerIndex) =>
       _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
-
-  @override
-  Future<List<String>> get provisionersUUIDList async {
-    final result = await _methodChannel.invokeMethod<List>('getProvisionersUUID');
-    return result.cast<String>();
-  }
 
   @override
   Future<List<Provisioner>> get provisionerList async {
@@ -153,6 +154,15 @@ class MeshNetwork implements IMeshNetwork {
         'globalTtl': provisioner.globalTtl,
         'lastSelected': provisioner.lastSelected
       });
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
+  }
+
+  @override
+  Future<bool> removeProvisioner(String provisionerUUID) {
+    if (Platform.isAndroid) {
+      return _methodChannel.invokeMethod('removeProvisioner', {'provisionerUUID': provisionerUUID});
     } else {
       throw UnsupportedError('Platform not supported');
     }

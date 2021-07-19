@@ -66,6 +66,9 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
             "nextAvailableUnicastAddress" -> {
                 result.success(meshNetwork.nextAvailableUnicastAddress(call.argument<Int>("elementSize")!!, meshNetwork.selectedProvisioner))
             }
+            "nextAvailableUnicastAddressWithMin" -> {
+                result.success(meshNetwork.nextAvailableUnicastAddressWithMin(call.argument<Int>("minAddress")!!, call.argument<Int>("elementSize")!!, meshNetwork.selectedProvisioner))
+            }
             "assignUnicastAddress" -> {
                 try {
                     meshNetwork.assignUnicastAddress(call.argument<Int>("unicastAddress")!!)
@@ -168,12 +171,6 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 val pNode = DoozProvisionedMeshNode(binaryMessenger, provisionedMeshNode)
                 result.success(pNode.meshNode.uuid)
             }
-            "getProvisionersUUID" -> {
-                val provisionersUUID = meshNetwork.provisioners.map { provisioner ->
-                    provisioner.provisionerUuid
-                }
-                result.success(provisionersUUID)
-            }
             "selectedProvisionerUuid" -> {
                 result.success(meshNetwork.selectedProvisioner.provisionerUuid)
             }
@@ -235,6 +232,12 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                         result.success(meshNetwork.updateProvisioner(provisioner))
                     }
                 }
+            }
+            "removeProvisioner" -> {
+                val provisionerUUID = call.argument<String>("provisionerUUID")!!
+                val provisionerList: List<Provisioner> = meshNetwork.provisioners
+                val provisionerToDelete = provisionerList.firstOrNull { it.getProvisionerUuid() == provisionerUUID }!!
+                result.success(meshNetwork.removeProvisioner(provisionerToDelete))
             }
             "deleteNode" -> {
                 val uid = call.argument<String>("uid")!!
