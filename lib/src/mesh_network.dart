@@ -36,6 +36,8 @@ abstract class IMeshNetwork {
 
   Future<bool> updateProvisioner(Provisioner provisioner);
 
+  Future<bool> removeProvisioner(Provisioner provisioner);
+
   Future<bool> deleteNode(String uid);
 
   Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier);
@@ -159,6 +161,15 @@ class MeshNetwork implements IMeshNetwork {
         'globalTtl': provisioner.globalTtl,
         'lastSelected': provisioner.lastSelected
       });
+    } else {
+      throw UnsupportedError('Platform not supported');
+    }
+  }
+
+  @override
+  Future<bool> removeProvisioner(Provisioner provisioner) {
+    if (Platform.isAndroid) {
+      return _methodChannel.invokeMethod('removeProvisioner', {'provisioner': provisioner});
     } else {
       throw UnsupportedError('Platform not supported');
     }

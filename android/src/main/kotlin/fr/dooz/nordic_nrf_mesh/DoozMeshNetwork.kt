@@ -239,6 +239,10 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                     }
                 }
             }
+            "removeProvisioner" -> {
+                val provisioner = call.argument<Provisioner>("provisioner")!!
+                result.success(meshNetwork.removeProvisioner(provisioner))
+            }
             "deleteNode" -> {
                 val uid = call.argument<String>("uid")!!
                 var pNodeToDelete: ProvisionedMeshNode? = meshNetwork.getNode(uid)
