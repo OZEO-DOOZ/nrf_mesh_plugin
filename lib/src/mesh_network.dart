@@ -13,7 +13,6 @@ abstract class IMeshNetwork {
   Future<String> get name;
   Future<List<ProvisionedMeshNode>> get nodes;
   String get id;
-  Future<List<String>> get provisionersUUIDList;
   Future<List<Provisioner>> get provisionerList;
 
   Future<GroupData> addGroupWithName(String name);
@@ -36,7 +35,7 @@ abstract class IMeshNetwork {
 
   Future<bool> updateProvisioner(Provisioner provisioner);
 
-  Future<bool> removeProvisioner(Provisioner provisioner);
+  Future<bool> removeProvisioner(String provisionerUUID);
 
   Future<bool> deleteNode(String uid);
 
@@ -121,12 +120,6 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
 
   @override
-  Future<List<String>> get provisionersUUIDList async {
-    final result = await _methodChannel.invokeMethod<List>('getProvisionersUUID');
-    return result.cast<String>();
-  }
-
-  @override
   Future<List<Provisioner>> get provisionerList async {
     var provisioners = <Provisioner>[];
     final result = await _methodChannel.invokeMethod('getProvisionersAsJson');
@@ -167,9 +160,9 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<bool> removeProvisioner(Provisioner provisioner) {
+  Future<bool> removeProvisioner(String provisionerUUID) {
     if (Platform.isAndroid) {
-      return _methodChannel.invokeMethod('removeProvisioner', {'provisioner': provisioner});
+      return _methodChannel.invokeMethod('removeProvisioner', {'provisionerUUID': provisionerUUID});
     } else {
       throw UnsupportedError('Platform not supported');
     }
