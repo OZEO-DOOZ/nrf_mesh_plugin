@@ -206,6 +206,17 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                     ))
                 }
             }
+            is ConfigDefaultTtlStatus -> {
+                Log.d(tag, "received a ConfigDefaultTtlStatus")
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onConfigDefaultTtlStatus",
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst,
+                            "ttl" to meshMessage.ttl
+                    ))
+                }
+            }
             else -> {
                 Log.d(tag, "Unknown message received :" + meshMessage.javaClass.toString())
             }

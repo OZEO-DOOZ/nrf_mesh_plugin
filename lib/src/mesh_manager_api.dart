@@ -11,6 +11,7 @@ import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_m
 import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_network_transmit_status/config_network_transmit_status.dart';
+import 'package:nordic_nrf_mesh/src/events/data/config_default_ttl_status/config_default_ttl_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
 import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
@@ -54,6 +55,7 @@ class MeshManagerApi {
   final _onConfigModelPublicationStatusController = StreamController<ConfigModelPublicationStatus>.broadcast();
   final _onConfigNodeResetStatusController = StreamController<ConfigNodeResetStatus>.broadcast();
   final _onConfigNetworkTransmitStatusController = StreamController<ConfigNetworkTransmitStatus>.broadcast();
+  final _onConfigDefaultTtlStatusController = StreamController<ConfigDefaultTtlStatus>.broadcast();
 
   final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
   final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
@@ -80,6 +82,7 @@ class MeshManagerApi {
   StreamSubscription<ConfigModelPublicationStatus> _onConfigModelPublicationStatusSubscription;
   StreamSubscription<ConfigNodeResetStatus> _onConfigNodeResetStatusSubscription;
   StreamSubscription<ConfigNetworkTransmitStatus> _onConfigNetworkTransmitStatusSubscription;
+  StreamSubscription<ConfigDefaultTtlStatus> _onConfigDefaultTtlStatusSubscription;
 
   StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
   StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
@@ -192,6 +195,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configNetworkTransmitStatus.value)
         .map((event) => ConfigNetworkTransmitStatus.fromJson(event))
         .listen(_onConfigNetworkTransmitStatusController.add);
+    _onConfigDefaultTtlStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configDefaultTtlStatus.value)
+        .map((event) => ConfigDefaultTtlStatus.fromJson(event))
+        .listen(_onConfigDefaultTtlStatusController.add);
   }
 
   Stream<ConfigNetworkTransmitStatus> get onConfigNetworkTransmitStatus =>
@@ -290,6 +297,7 @@ class MeshManagerApi {
         _onLightHslStatusController.close(),
         _onConfigNodeResetStatusSubscription.cancel(),
         _onConfigNetworkTransmitStatusSubscription.cancel(),
+        _onConfigDefaultTtlStatusSubscription.cancel(),
         _onNetworkLoadedStreamController.close(),
         _onNetworkImportedController.close(),
         _onNetworkUpdatedController.close(),
@@ -309,6 +317,7 @@ class MeshManagerApi {
         _onV2MagicLevelGetStatusController.close(),
         _onConfigNodeResetStatusController.close(),
         _onConfigNetworkTransmitStatusController.close(),
+        _onConfigDefaultTtlStatusController.close()
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
@@ -619,7 +628,12 @@ class MeshManagerApi {
     }
   }
 
-  // Future getTtl(int address) {}
+  Future<ConfigDefaultTtlStatus> getTtl(int address) async {
+    final status = _onConfigDefaultTtlStatusController.stream
+        .firstWhere((element) => element.source == address, orElse: () => null);
+    await _methodChannel.invokeMethod('getDefaultTtl', {'address': address});
+    return status;
+  }
 
   // Future setTtl(int address, int ttl) {}
 
