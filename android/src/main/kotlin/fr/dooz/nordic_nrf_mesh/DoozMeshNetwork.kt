@@ -66,6 +66,9 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
             "nextAvailableUnicastAddress" -> {
                 result.success(meshNetwork.nextAvailableUnicastAddress(call.argument<Int>("elementSize")!!, meshNetwork.selectedProvisioner))
             }
+            "nextAvailableUnicastAddressWithMin" -> {
+                result.success(meshNetwork.nextAvailableUnicastAddressWithMin(call.argument<Int>("minAddress")!!, call.argument<Int>("elementSize")!!, meshNetwork.selectedProvisioner))
+            }
             "assignUnicastAddress" -> {
                 try {
                     meshNetwork.assignUnicastAddress(call.argument<Int>("unicastAddress")!!)

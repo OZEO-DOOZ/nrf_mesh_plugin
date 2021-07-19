@@ -24,6 +24,8 @@ abstract class IMeshNetwork {
 
   Future<int> nextAvailableUnicastAddress(int elementSize);
 
+  Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize);
+
   Future<bool> removeGroup(int id);
 
   Future<String> selectedProvisionerUuid();
@@ -97,6 +99,10 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<int> nextAvailableUnicastAddress(int elementSize) =>
       _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
+
+  @override
+  Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize) => _methodChannel
+      .invokeMethod('nextAvailableUnicastAddressWithMin', {'minAddress': minAddress, 'elementSize': elementSize});
 
   @override
   Future<bool> removeGroup(int groupAddress) =>
