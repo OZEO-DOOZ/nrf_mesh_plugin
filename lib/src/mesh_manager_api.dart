@@ -637,7 +637,7 @@ class MeshManagerApi {
     return status;
   }
 
-  Future<ConfigDefaultTtlStatus> setTtl(int address, int ttl) async {
+  Future<ConfigDefaultTtlStatus> setDefaultTtl(int address, int ttl) async {
     final status = _onConfigDefaultTtlStatusController.stream
         .firstWhere((element) => element.source == address, orElse: () => null);
     await _methodChannel.invokeMethod('setDefaultTtl', {
