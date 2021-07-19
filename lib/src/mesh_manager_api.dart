@@ -204,6 +204,8 @@ class MeshManagerApi {
   Stream<ConfigNetworkTransmitStatus> get onConfigNetworkTransmitStatus =>
       _onConfigNetworkTransmitStatusController.stream;
 
+  Stream<ConfigDefaultTtlStatus> get onConfigDefaultTtlStatus => _onConfigDefaultTtlStatusController.stream;
+
   Stream<ConfigNodeResetStatus> get onConfigNodeResetStatus => _onConfigNodeResetStatusController.stream;
 
   Stream<ConfigModelPublicationStatus> get onConfigModelPublicationStatus =>
