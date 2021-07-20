@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_deprovisioning.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_generic_on_off.dart';
@@ -15,17 +15,19 @@ import 'commands/send_generic_level.dart';
 import 'node.dart';
 
 class Module extends StatefulWidget {
-  final DiscoveredDevice device;
+  // final DiscoveredDevice device;
   final MeshManagerApi meshManagerApi;
 
-  const Module({Key key, this.device, this.meshManagerApi}) : super(key: key);
+  const Module({Key key,
+    // this.device,
+    this.meshManagerApi}) : super(key: key);
 
   @override
   _ModuleState createState() => _ModuleState();
 }
 
 class _ModuleState extends State<Module> {
-  final bleMeshManager = BleMeshManager();
+  // final bleMeshManager = BleMeshManager();
 
   bool isLoading = true;
   List<ProvisionedMeshNode> nodes;
@@ -35,7 +37,7 @@ class _ModuleState extends State<Module> {
   void initState() {
     super.initState();
 
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
+    // bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
 
     _init();
   }
@@ -43,8 +45,8 @@ class _ModuleState extends State<Module> {
   @override
   void dispose() async {
     super.dispose();
-    await bleMeshManager.disconnect();
-    await bleMeshManager.callbacks.dispose();
+    // await bleMeshManager.disconnect();
+    // await bleMeshManager.callbacks.dispose();
   }
 
   @override
@@ -107,7 +109,7 @@ class _ModuleState extends State<Module> {
   }
 
   Future<void> _init() async {
-    await bleMeshManager.connect(widget.device);
+    // await bleMeshManager.connect(widget.device);
     nodes = (await widget.meshManagerApi.meshNetwork.nodes).skip(1).toList();
     nodesName = await Future.wait(nodes.map((e) => e.name));
 
@@ -137,72 +139,72 @@ class _ModuleState extends State<Module> {
   }
 }
 
-class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
-  final MeshManagerApi meshManagerApi;
-  final BleMeshManager bleMeshManager;
-
-  StreamSubscription<DiscoveredDevice> onDeviceConnectingSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceDisconnectingSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceDisconnectedSubscription;
-  StreamSubscription<List<int>> onMeshPduCreatedSubscription;
-
-  DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
-    onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
-      print('onDeviceConnecting $event');
-    });
-    onDeviceConnectedSubscription = onDeviceConnected.listen((event) {
-      print('onDeviceConnected $event');
-    });
-
-    onServicesDiscoveredSubscription = onServicesDiscovered.listen((event) {
-      print('onServicesDiscovered');
-    });
-
-    onDeviceReadySubscription = onDeviceReady.listen((event) async {
-      print('onDeviceReady ${event.id}');
-    });
-
-    onDataReceivedSubscription = onDataReceived.listen((event) async {
-      print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
-      await meshManagerApi.handleNotifications(event.mtu, event.pdu);
-    });
-    onDataSentSubscription = onDataSent.listen((event) async {
-      print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
-      await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
-    });
-
-    onDeviceDisconnectingSubscription = onDeviceDisconnecting.listen((event) {
-      print('onDeviceDisconnecting $event');
-    });
-    onDeviceDisconnectedSubscription = onDeviceDisconnected.listen((event) {
-      print('onDeviceDisconnected $event');
-    });
-
-    onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
-      print('onMeshPduCreated $event');
-      await bleMeshManager.sendPdu(event);
-    });
-  }
-
-  @override
-  Future<void> dispose() => Future.wait([
-        onDeviceConnectingSubscription.cancel(),
-        onDeviceConnectedSubscription.cancel(),
-        onServicesDiscoveredSubscription.cancel(),
-        onDeviceReadySubscription.cancel(),
-        onDataReceivedSubscription.cancel(),
-        onDataSentSubscription.cancel(),
-        onDeviceDisconnectingSubscription.cancel(),
-        onDeviceDisconnectedSubscription.cancel(),
-        onMeshPduCreatedSubscription.cancel(),
-        super.dispose(),
-      ]);
-
-  @override
-  Future<void> sendMtuToMeshManagerApi(int mtu) => meshManagerApi.setMtu(mtu);
-}
+// class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
+//   final MeshManagerApi meshManagerApi;
+//   final BleMeshManager bleMeshManager;
+//
+//   StreamSubscription<DiscoveredDevice> onDeviceConnectingSubscription;
+//   StreamSubscription<DiscoveredDevice> onDeviceConnectedSubscription;
+//   StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
+//   StreamSubscription<DiscoveredDevice> onDeviceReadySubscription;
+//   StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
+//   StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
+//   StreamSubscription<DiscoveredDevice> onDeviceDisconnectingSubscription;
+//   StreamSubscription<DiscoveredDevice> onDeviceDisconnectedSubscription;
+//   StreamSubscription<List<int>> onMeshPduCreatedSubscription;
+//
+//   DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
+//     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {
+//       print('onDeviceConnecting $event');
+//     });
+//     onDeviceConnectedSubscription = onDeviceConnected.listen((event) {
+//       print('onDeviceConnected $event');
+//     });
+//
+//     onServicesDiscoveredSubscription = onServicesDiscovered.listen((event) {
+//       print('onServicesDiscovered');
+//     });
+//
+//     onDeviceReadySubscription = onDeviceReady.listen((event) async {
+//       print('onDeviceReady ${event.id}');
+//     });
+//
+//     onDataReceivedSubscription = onDataReceived.listen((event) async {
+//       print('onDataReceived ${event.device.id} ${event.pdu} ${event.mtu}');
+//       await meshManagerApi.handleNotifications(event.mtu, event.pdu);
+//     });
+//     onDataSentSubscription = onDataSent.listen((event) async {
+//       print('onDataSent ${event.device.id} ${event.pdu} ${event.mtu}');
+//       await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
+//     });
+//
+//     onDeviceDisconnectingSubscription = onDeviceDisconnecting.listen((event) {
+//       print('onDeviceDisconnecting $event');
+//     });
+//     onDeviceDisconnectedSubscription = onDeviceDisconnected.listen((event) {
+//       print('onDeviceDisconnected $event');
+//     });
+//
+//     onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+//       print('onMeshPduCreated $event');
+//       await bleMeshManager.sendPdu(event);
+//     });
+//   }
+//
+//   @override
+//   Future<void> dispose() => Future.wait([
+//         onDeviceConnectingSubscription.cancel(),
+//         onDeviceConnectedSubscription.cancel(),
+//         onServicesDiscoveredSubscription.cancel(),
+//         onDeviceReadySubscription.cancel(),
+//         onDataReceivedSubscription.cancel(),
+//         onDataSentSubscription.cancel(),
+//         onDeviceDisconnectingSubscription.cancel(),
+//         onDeviceDisconnectedSubscription.cancel(),
+//         onMeshPduCreatedSubscription.cancel(),
+//         super.dispose(),
+//       ]);
+//
+//   @override
+//   Future<void> sendMtuToMeshManagerApi(int mtu) => meshManagerApi.setMtu(mtu);
+// }

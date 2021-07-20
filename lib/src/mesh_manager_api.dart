@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
@@ -253,7 +253,7 @@ class MeshManagerApi {
 
   Stream<LightHslStatusData> get onLightHslStatus => _onLightHslStatusController.stream;
 
-  Uuid get meshProvisioningUuidServiceKey => meshProvisioningUuid;
+  // Uuid get meshProvisioningUuidServiceKey => meshProvisioningUuid;
 
   Future<bool> isAdvertisedWithNodeIdentity(final List<int> serviceData) async {
     return await _methodChannel.invokeMethod('isAdvertisedWithNodeIdentity', {'serviceData': serviceData});

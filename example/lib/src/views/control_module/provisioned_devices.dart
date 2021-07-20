@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/module.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
@@ -17,13 +17,13 @@ class ProvisionedDevices extends StatefulWidget {
 }
 
 class _ProvisionedDevicesState extends State<ProvisionedDevices> {
-  final flutterReactiveBle = FlutterReactiveBle();
-  final _devices = <DiscoveredDevice>{};
+  // final flutterReactiveBle = FlutterReactiveBle();
+  // final _devices = <DiscoveredDevice>{};
 
   MeshManagerApi _meshManagerApi;
   bool loading = true;
   bool isScanning = false;
-  StreamSubscription<DiscoveredDevice> _scanSubscription;
+  // StreamSubscription<DiscoveredDevice> _scanSubscription;
 //  final _serviceData = <String, Guid>{};
 
   @override
@@ -37,7 +37,7 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   @override
   void dispose() {
     super.dispose();
-    _scanSubscription?.cancel();
+    // _scanSubscription?.cancel();
   }
 
   @override
@@ -45,36 +45,36 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     return Column(
       children: [
         if (isScanning) LinearProgressIndicator(),
-        if (!isScanning && _devices.isEmpty)
-          Expanded(
-            child: Center(
-              child: Text('No module found'),
-            ),
-          ),
-        if (_devices.isNotEmpty)
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(8),
-              children: [
-                for (var i = 0; i < _devices.length; i++)
-                  Device(
-                    key: ValueKey('device-$i'),
-                    device: _devices.elementAt(i),
-                    onTap: () async {
-                      await _stopScan();
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return Module(device: _devices.elementAt(i), meshManagerApi: _meshManagerApi);
-                          },
-                        ),
-                      );
-                      unawaited(_scanProvisionned());
-                    },
-                  ),
-              ],
-            ),
-          ),
+        // if (!isScanning && _devices.isEmpty)
+        //   Expanded(
+        //     child: Center(
+        //       child: Text('No module found'),
+        //     ),
+        //   ),
+        // if (_devices.isNotEmpty)
+        //   Expanded(
+        //     child: ListView(
+        //       padding: EdgeInsets.all(8),
+        //       children: [
+        //         for (var i = 0; i < _devices.length; i++)
+        //           Device(
+        //             key: ValueKey('device-$i'),
+        //             device: _devices.elementAt(i),
+        //             onTap: () async {
+        //               await _stopScan();
+        //               await Navigator.of(context).push(
+        //                 MaterialPageRoute(
+        //                   builder: (context) {
+        //                     return Module(device: _devices.elementAt(i), meshManagerApi: _meshManagerApi);
+        //                   },
+        //                 ),
+        //               );
+        //               unawaited(_scanProvisionned());
+        //             },
+        //           ),
+        //       ],
+        //     ),
+        //   ),
       ],
     );
   }
@@ -91,19 +91,19 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
 
   Future<void> _scanProvisionned() async {
     setState(() {
-      _devices.clear();
+      // _devices.clear();
     });
 
     //  TODO: we should check if the device advertise with the good network id
-    _scanSubscription = flutterReactiveBle.scanForDevices(
-      withServices: [
-        meshProxyUuid,
-      ],
-    ).listen((device) async {
-      setState(() {
-        _devices.add(device);
-      });
-    });
+    // _scanSubscription = flutterReactiveBle.scanForDevices(
+    //   withServices: [
+    //     meshProxyUuid,
+    //   ],
+    // ).listen((device) async {
+    //   setState(() {
+    //     _devices.add(device);
+    //   });
+    // });
     setState(() {
       isScanning = true;
     });
@@ -115,9 +115,9 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     if (!mounted) {
       return;
     }
-    await _scanSubscription?.cancel();
-    setState(() {
-      isScanning = false;
-    });
+    // await _scanSubscription?.cancel();
+    // setState(() {
+    //   isScanning = false;
+    // });
   }
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+// import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 import 'package:pedantic/pedantic.dart';
@@ -17,7 +17,7 @@ class ScanningAndProvisioning extends StatefulWidget {
 }
 
 class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
-  final flutterReactiveBle = FlutterReactiveBle();
+  // final flutterReactiveBle = FlutterReactiveBle();
 
   bool loading = true;
   bool isScanning = true;
@@ -25,8 +25,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   StreamSubscription _scanSubscription;
   MeshManagerApi _meshManagerApi;
 
-  final _serviceData = <String, Uuid>{};
-  final _devices = <DiscoveredDevice>{};
+  // final _serviceData = <String, Uuid>{};
+  // final _devices = <DiscoveredDevice>{};
 
   @override
   void initState() {
@@ -53,25 +53,25 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   }
 
   Future<void> _scanUnprovisionned() async {
-    _serviceData.clear();
-    setState(() {
-      _devices.clear();
-    });
-
-    _scanSubscription = flutterReactiveBle.scanForDevices(
-      withServices: [
-        meshProvisioningUuid,
-      ],
-    ).listen((device) async {
-      _serviceData[device.id] =
-          Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
-      setState(() {
-        _devices.add(device);
-      });
-    });
-    setState(() {
-      isScanning = true;
-    });
+    // _serviceData.clear();
+    // setState(() {
+    //   _devices.clear();
+    // });
+    //
+    // _scanSubscription = flutterReactiveBle.scanForDevices(
+    //   withServices: [
+    //     meshProvisioningUuid,
+    //   ],
+    // ).listen((device) async {
+    //   _serviceData[device.id] =
+    //       Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
+    //   setState(() {
+    //     _devices.add(device);
+    //   });
+    // });
+    // setState(() {
+    //   isScanning = true;
+    // });
 
     return Future.delayed(Duration(seconds: 20)).then((_) => _stopScan());
   }
@@ -86,58 +86,58 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     });
   }
 
-  Future<void> provisionDevice(DiscoveredDevice device) async {
-    if (isScanning) {
-      await _stopScan();
-    }
-    if (isProvisioning) {
-      return;
-    }
-    isProvisioning = true;
-    try {
-      // Android is sending the mac Adress of the device, but Apple generates
-      // an UUID specific by smartphone.
-
-      String deviceUUID;
-
-      if (Platform.isAndroid) {
-        deviceUUID = _serviceData[device.id].toString();
-      } else if (Platform.isIOS) {
-        deviceUUID = device.id.toString();
-      }
-      final provisioningEvent = ProvisioningEvent();
-      final provisionedMeshNodeF = widget.nordicNrfMesh
-          .provisioning(
-            _meshManagerApi,
-            BleMeshManager(),
-            device,
-            deviceUUID,
-            events: provisioningEvent,
-          )
-          .timeout(Duration(minutes: 1));
-      final scaffoldState = Scaffold.of(context);
-
-      unawaited(provisionedMeshNodeF.then((node) async {
-        Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
-      }).catchError((_) {
-        Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning failed')));
-      }));
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        child: ProvisioningDialog(
-          provisioningEvent: provisioningEvent,
-        ),
-      );
-      unawaited(_scanUnprovisionned());
-    } catch (e) {
-      print(e);
-    } finally {
-      isProvisioning = false;
-    }
-  }
+  // Future<void> provisionDevice(DiscoveredDevice device) async {
+  //   if (isScanning) {
+  //     await _stopScan();
+  //   }
+  //   if (isProvisioning) {
+  //     return;
+  //   }
+  //   isProvisioning = true;
+  //   try {
+  //     // Android is sending the mac Adress of the device, but Apple generates
+  //     // an UUID specific by smartphone.
+  //
+  //     String deviceUUID;
+  //
+  //     if (Platform.isAndroid) {
+  //       deviceUUID = _serviceData[device.id].toString();
+  //     } else if (Platform.isIOS) {
+  //       deviceUUID = device.id.toString();
+  //     }
+  //     final provisioningEvent = ProvisioningEvent();
+  //     final provisionedMeshNodeF = widget.nordicNrfMesh
+  //         .provisioning(
+  //           _meshManagerApi,
+  //           BleMeshManager(),
+  //           device,
+  //           deviceUUID,
+  //           events: provisioningEvent,
+  //         )
+  //         .timeout(Duration(minutes: 1));
+  //     final scaffoldState = Scaffold.of(context);
+  //
+  //     unawaited(provisionedMeshNodeF.then((node) async {
+  //       Navigator.of(context).pop();
+  //       scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
+  //     }).catchError((_) {
+  //       Navigator.of(context).pop();
+  //       scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning failed')));
+  //     }));
+  //     await showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       child: ProvisioningDialog(
+  //         provisioningEvent: provisioningEvent,
+  //       ),
+  //     );
+  //     unawaited(_scanUnprovisionned());
+  //   } catch (e) {
+  //     print(e);
+  //   } finally {
+  //     isProvisioning = false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -156,26 +156,26 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       child: Column(
         children: [
           if (isScanning) LinearProgressIndicator(),
-          if (!isScanning && _devices.isEmpty)
-            Expanded(
-              child: Center(
-                child: Text('No module found'),
-              ),
-            ),
-          if (_devices.isNotEmpty)
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.all(8),
-                children: [
-                  for (var i = 0; i < _devices.length; i++)
-                    Device(
-                      key: ValueKey('device-$i'),
-                      device: _devices.elementAt(i),
-                      onTap: () => provisionDevice(_devices.elementAt(i)),
-                    ),
-                ],
-              ),
-            ),
+          // if (!isScanning && _devices.isEmpty)
+          //   Expanded(
+          //     child: Center(
+          //       child: Text('No module found'),
+          //     ),
+          //   ),
+          // if (_devices.isNotEmpty)
+          //   Expanded(
+          //     child: ListView(
+          //       padding: EdgeInsets.all(8),
+          //       children: [
+          //         for (var i = 0; i < _devices.length; i++)
+          //           Device(
+          //             key: ValueKey('device-$i'),
+          //             device: _devices.elementAt(i),
+          //             onTap: () => provisionDevice(_devices.elementAt(i)),
+          //           ),
+          //       ],
+          //     ),
+          //   ),
         ],
       ),
     );
