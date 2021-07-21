@@ -43,13 +43,15 @@ mixin _$MeshNetworkEventData {
 
 /// @nodoc
 abstract class $MeshNetworkEventDataCopyWith<$Res> {
-  factory $MeshNetworkEventDataCopyWith(MeshNetworkEventData value, $Res Function(MeshNetworkEventData) then) =
+  factory $MeshNetworkEventDataCopyWith(MeshNetworkEventData value,
+          $Res Function(MeshNetworkEventData) then) =
       _$MeshNetworkEventDataCopyWithImpl<$Res>;
   $Res call({String id});
 }
 
 /// @nodoc
-class _$MeshNetworkEventDataCopyWithImpl<$Res> implements $MeshNetworkEventDataCopyWith<$Res> {
+class _$MeshNetworkEventDataCopyWithImpl<$Res>
+    implements $MeshNetworkEventDataCopyWith<$Res> {
   _$MeshNetworkEventDataCopyWithImpl(this._value, this._then);
 
   final MeshNetworkEventData _value;
@@ -67,17 +69,21 @@ class _$MeshNetworkEventDataCopyWithImpl<$Res> implements $MeshNetworkEventDataC
 }
 
 /// @nodoc
-abstract class _$MeshNetworkEventDataCopyWith<$Res> implements $MeshNetworkEventDataCopyWith<$Res> {
-  factory _$MeshNetworkEventDataCopyWith(_MeshNetworkEventData value, $Res Function(_MeshNetworkEventData) then) =
+abstract class _$MeshNetworkEventDataCopyWith<$Res>
+    implements $MeshNetworkEventDataCopyWith<$Res> {
+  factory _$MeshNetworkEventDataCopyWith(_MeshNetworkEventData value,
+          $Res Function(_MeshNetworkEventData) then) =
       __$MeshNetworkEventDataCopyWithImpl<$Res>;
   @override
   $Res call({String id});
 }
 
 /// @nodoc
-class __$MeshNetworkEventDataCopyWithImpl<$Res> extends _$MeshNetworkEventDataCopyWithImpl<$Res>
+class __$MeshNetworkEventDataCopyWithImpl<$Res>
+    extends _$MeshNetworkEventDataCopyWithImpl<$Res>
     implements _$MeshNetworkEventDataCopyWith<$Res> {
-  __$MeshNetworkEventDataCopyWithImpl(_MeshNetworkEventData _value, $Res Function(_MeshNetworkEventData) _then)
+  __$MeshNetworkEventDataCopyWithImpl(
+      _MeshNetworkEventData _value, $Res Function(_MeshNetworkEventData) _then)
       : super(_value, (v) => _then(v as _MeshNetworkEventData));
 
   @override
@@ -99,7 +105,8 @@ class __$MeshNetworkEventDataCopyWithImpl<$Res> extends _$MeshNetworkEventDataCo
 class _$_MeshNetworkEventData implements _MeshNetworkEventData {
   const _$_MeshNetworkEventData(this.id) : assert(id != null);
 
-  factory _$_MeshNetworkEventData.fromJson(Map<String, dynamic> json) => _$_$_MeshNetworkEventDataFromJson(json);
+  factory _$_MeshNetworkEventData.fromJson(Map<String, dynamic> json) =>
+      _$_$_MeshNetworkEventDataFromJson(json);
 
   @override
   final String id;
@@ -113,15 +120,18 @@ class _$_MeshNetworkEventData implements _MeshNetworkEventData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _MeshNetworkEventData &&
-            (identical(other.id, id) || const DeepCollectionEquality().equals(other.id, id)));
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode ^ const DeepCollectionEquality().hash(id);
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(id);
 
   @override
   _$MeshNetworkEventDataCopyWith<_MeshNetworkEventData> get copyWith =>
-      __$MeshNetworkEventDataCopyWithImpl<_MeshNetworkEventData>(this, _$identity);
+      __$MeshNetworkEventDataCopyWithImpl<_MeshNetworkEventData>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -132,7 +142,8 @@ class _$_MeshNetworkEventData implements _MeshNetworkEventData {
 abstract class _MeshNetworkEventData implements MeshNetworkEventData {
   const factory _MeshNetworkEventData(String id) = _$_MeshNetworkEventData;
 
-  factory _MeshNetworkEventData.fromJson(Map<String, dynamic> json) = _$_MeshNetworkEventData.fromJson;
+  factory _MeshNetworkEventData.fromJson(Map<String, dynamic> json) =
+      _$_MeshNetworkEventData.fromJson;
 
   @override
   String get id;
@@ -140,7 +151,8 @@ abstract class _MeshNetworkEventData implements MeshNetworkEventData {
   _$MeshNetworkEventDataCopyWith<_MeshNetworkEventData> get copyWith;
 }
 
-MeshNetworkEventError _$MeshNetworkEventErrorFromJson(Map<String, dynamic> json) {
+MeshNetworkEventError _$MeshNetworkEventErrorFromJson(
+    Map<String, dynamic> json) {
   return _MeshNetworkEventError.fromJson(json);
 }
 
@@ -175,13 +187,15 @@ mixin _$MeshNetworkEventError {
 
 /// @nodoc
 abstract class $MeshNetworkEventErrorCopyWith<$Res> {
-  factory $MeshNetworkEventErrorCopyWith(MeshNetworkEventError value, $Res Function(MeshNetworkEventError) then) =
+  factory $MeshNetworkEventErrorCopyWith(MeshNetworkEventError value,
+          $Res Function(MeshNetworkEventError) then) =
       _$MeshNetworkEventErrorCopyWithImpl<$Res>;
   $Res call({String error});
 }
 
 /// @nodoc
-class _$MeshNetworkEventErrorCopyWithImpl<$Res> implements $MeshNetworkEventErrorCopyWith<$Res> {
+class _$MeshNetworkEventErrorCopyWithImpl<$Res>
+    implements $MeshNetworkEventErrorCopyWith<$Res> {
   _$MeshNetworkEventErrorCopyWithImpl(this._value, this._then);
 
   final MeshNetworkEventError _value;
@@ -199,17 +213,21 @@ class _$MeshNetworkEventErrorCopyWithImpl<$Res> implements $MeshNetworkEventErro
 }
 
 /// @nodoc
-abstract class _$MeshNetworkEventErrorCopyWith<$Res> implements $MeshNetworkEventErrorCopyWith<$Res> {
-  factory _$MeshNetworkEventErrorCopyWith(_MeshNetworkEventError value, $Res Function(_MeshNetworkEventError) then) =
+abstract class _$MeshNetworkEventErrorCopyWith<$Res>
+    implements $MeshNetworkEventErrorCopyWith<$Res> {
+  factory _$MeshNetworkEventErrorCopyWith(_MeshNetworkEventError value,
+          $Res Function(_MeshNetworkEventError) then) =
       __$MeshNetworkEventErrorCopyWithImpl<$Res>;
   @override
   $Res call({String error});
 }
 
 /// @nodoc
-class __$MeshNetworkEventErrorCopyWithImpl<$Res> extends _$MeshNetworkEventErrorCopyWithImpl<$Res>
+class __$MeshNetworkEventErrorCopyWithImpl<$Res>
+    extends _$MeshNetworkEventErrorCopyWithImpl<$Res>
     implements _$MeshNetworkEventErrorCopyWith<$Res> {
-  __$MeshNetworkEventErrorCopyWithImpl(_MeshNetworkEventError _value, $Res Function(_MeshNetworkEventError) _then)
+  __$MeshNetworkEventErrorCopyWithImpl(_MeshNetworkEventError _value,
+      $Res Function(_MeshNetworkEventError) _then)
       : super(_value, (v) => _then(v as _MeshNetworkEventError));
 
   @override
@@ -231,7 +249,8 @@ class __$MeshNetworkEventErrorCopyWithImpl<$Res> extends _$MeshNetworkEventError
 class _$_MeshNetworkEventError implements _MeshNetworkEventError {
   const _$_MeshNetworkEventError(this.error) : assert(error != null);
 
-  factory _$_MeshNetworkEventError.fromJson(Map<String, dynamic> json) => _$_$_MeshNetworkEventErrorFromJson(json);
+  factory _$_MeshNetworkEventError.fromJson(Map<String, dynamic> json) =>
+      _$_$_MeshNetworkEventErrorFromJson(json);
 
   @override
   final String error;
@@ -245,15 +264,18 @@ class _$_MeshNetworkEventError implements _MeshNetworkEventError {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _MeshNetworkEventError &&
-            (identical(other.error, error) || const DeepCollectionEquality().equals(other.error, error)));
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode ^ const DeepCollectionEquality().hash(error);
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(error);
 
   @override
   _$MeshNetworkEventErrorCopyWith<_MeshNetworkEventError> get copyWith =>
-      __$MeshNetworkEventErrorCopyWithImpl<_MeshNetworkEventError>(this, _$identity);
+      __$MeshNetworkEventErrorCopyWithImpl<_MeshNetworkEventError>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -264,7 +286,8 @@ class _$_MeshNetworkEventError implements _MeshNetworkEventError {
 abstract class _MeshNetworkEventError implements MeshNetworkEventError {
   const factory _MeshNetworkEventError(String error) = _$_MeshNetworkEventError;
 
-  factory _MeshNetworkEventError.fromJson(Map<String, dynamic> json) = _$_MeshNetworkEventError.fromJson;
+  factory _MeshNetworkEventError.fromJson(Map<String, dynamic> json) =
+      _$_MeshNetworkEventError.fromJson;
 
   @override
   String get error;

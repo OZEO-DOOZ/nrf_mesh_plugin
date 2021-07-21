@@ -6,7 +6,8 @@ part of 'generic_level_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_GenericLevelStatusData _$_$_GenericLevelStatusDataFromJson(Map<String, dynamic> json) {
+_$_GenericLevelStatusData _$_$_GenericLevelStatusDataFromJson(
+    Map<String, dynamic> json) {
   return _$_GenericLevelStatusData(
     json['level'] as int,
     json['targetLevel'] as int,
@@ -15,7 +16,9 @@ _$_GenericLevelStatusData _$_$_GenericLevelStatusDataFromJson(Map<String, dynami
   );
 }
 
-Map<String, dynamic> _$_$_GenericLevelStatusDataToJson(_$_GenericLevelStatusData instance) => <String, dynamic>{
+Map<String, dynamic> _$_$_GenericLevelStatusDataToJson(
+        _$_GenericLevelStatusData instance) =>
+    <String, dynamic>{
       'level': instance.level,
       'targetLevel': instance.targetLevel,
       'source': instance.source,
