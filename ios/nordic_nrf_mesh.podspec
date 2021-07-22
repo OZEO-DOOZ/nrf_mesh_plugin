@@ -19,6 +19,8 @@ A new flutter plugin project.
 
   s.platform = :ios, '10.0'
 
+  #remove below line after adding ios version of nrf lib as a sub module
+  s.static_framework = true
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
   s.swift_version = '5.0'

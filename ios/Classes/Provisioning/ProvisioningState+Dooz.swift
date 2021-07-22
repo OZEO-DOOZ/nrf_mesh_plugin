@@ -7,7 +7,7 @@
 
 import nRFMeshProvision
 
-extension ProvisionigState{
+extension ProvisioningState{
     
     func eventName() -> String{
         switch self {

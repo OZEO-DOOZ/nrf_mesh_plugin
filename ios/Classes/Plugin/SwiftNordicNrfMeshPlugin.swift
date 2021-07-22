@@ -5,9 +5,14 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
     
     //MARK: Public properties
     var meshManagerApi: DoozMeshManagerApi?
-    var messenger: FlutterBinaryMessenger?
+    var messenger: FlutterBinaryMessenger
     
     //MARK: Private properties
+    
+    init(messenger: FlutterBinaryMessenger) {
+        self.messenger = messenger
+        super.init()
+    }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         
@@ -16,33 +21,37 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
             binaryMessenger: registrar.messenger()
         )
         
-        let instance = SwiftNordicNrfMeshPlugin()
-        instance.messenger = registrar.messenger()
+        let instance = SwiftNordicNrfMeshPlugin(messenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: pluginMethodChannel)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         print("🥂 [SwiftNordicNrfMeshPlugin] Received flutter call : \(call.method)")
-        guard let _method = PluginMethodChannel(rawValue: call.method) else{
-            print("❌ Plugin method - \(call.method) - isn't implemented")
-            return
-        }
+        
+        let _method = PluginMethodChannel(call: call)
         
         switch _method {
+        case .error(let error):
+            switch error {
+            case FlutterCallError.notImplemented:
+                result(FlutterMethodNotImplemented)
+            case FlutterCallError.missingArguments:
+                result(FlutterError(code: "missingArguments", message: "The provided arguments does not match required", details: nil))
+            case FlutterCallError.errorDecoding:
+                result(FlutterError(code: "errorDecoding", message: "An error occured attempting to decode arguments", details: nil))
+            default:
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
         case .getPlatformVersion:
-            let systemVersion = "iOS " + UIDevice.current.systemVersion
+            let systemVersion = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
             result(systemVersion)
             break
         case .createMeshManagerApi:
-            guard let _messenger = self.messenger else{
-                return
-            }
-            
-            self.meshManagerApi = DoozMeshManagerApi(messenger: _messenger)
+            self.meshManagerApi = DoozMeshManagerApi(messenger: messenger)
             result(nil)
-            
             break
-            
         }
         
     }

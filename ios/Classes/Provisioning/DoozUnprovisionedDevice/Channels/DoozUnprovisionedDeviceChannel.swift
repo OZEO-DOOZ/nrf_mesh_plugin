@@ -11,19 +11,12 @@ enum DoozUnprovisionedMeshNodeChannel {
     case error(_ error: Error)
     
     init(call: FlutterMethodCall) {
-        //let arguments = call.arguments as? FlutterCallArguments
-
-        //do{
         switch call.method {
         case "getNumberOfElements":
             self = .getNumberOfElements
-        
         default:
             self = .error(FlutterCallError.notImplemented)
         }
-//        }catch{
-//            self = .error(error)
-//        }
         
     }
 }
