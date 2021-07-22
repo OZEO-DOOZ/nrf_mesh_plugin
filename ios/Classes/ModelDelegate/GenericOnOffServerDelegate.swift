@@ -34,7 +34,8 @@ import nRFMeshProvision
 class GenericOnOffServerDelegate: ModelDelegate {
     let messageTypes: [UInt32 : MeshMessage.Type]
     let isSubscriptionSupported: Bool = true
-    
+    var publicationMessageComposer: MessageComposer?
+
     /// Model state.
     private var state = GenericState<Bool>(false) {
         didSet {

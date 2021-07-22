@@ -13,7 +13,7 @@ enum DoozProvisioningManagerError: Error{
 }
 
 protocol DoozProvisioningManagerDelegate{
-    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState)
+    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisioningState)
     func provisioningBearerSendMessage(data: Data, bearer: DoozPBGattBearer)
 }
 
@@ -130,7 +130,7 @@ class DoozProvisioningManager: NSObject {
 
 extension DoozProvisioningManager: ProvisioningDelegate{
     
-    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisionigState) {
+    func provisioningState(of unprovisionedDevice: UnprovisionedDevice, didChangeTo state: ProvisioningState) {
         
         if let _messenger = self.messenger{
             if !(unprovisionedDevices.contains(where: { $0.unprovisionedDevice?.uuid == unprovisionedDevice.uuid })) {

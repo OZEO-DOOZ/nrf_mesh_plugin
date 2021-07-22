@@ -22,7 +22,7 @@ class DoozMeshNetwork: NSObject{
         
         super.init()
         
-        _initChannel(messenger: messenger, networkId: network.id)
+        _initChannel(messenger: messenger, networkId: network.uuid.uuidString)
     }
     
     
@@ -214,7 +214,7 @@ private extension DoozMeshNetwork{
     }
     
     func _getId() -> String?{
-        return meshNetwork.id
+        return meshNetwork.uuid.uuidString
     }
     
 }

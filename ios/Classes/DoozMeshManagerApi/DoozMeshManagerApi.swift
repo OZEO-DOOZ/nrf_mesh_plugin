@@ -32,7 +32,7 @@ class DoozMeshManagerApi: NSObject{
         
         self.meshNetworkManager = MeshNetworkManager(using: doozStorage)
         self.meshNetworkManager.acknowledgmentTimerInterval = 0.150
-        self.meshNetworkManager.transmissionTimerInteral = 0.600
+        self.meshNetworkManager.transmissionTimerInterval = 0.600
         self.meshNetworkManager.incompleteMessageTimeout = 10.0
         self.meshNetworkManager.retransmissionLimit = 2
         self.meshNetworkManager.acknowledgmentMessageInterval = 4.2
@@ -355,7 +355,7 @@ private extension DoozMeshManagerApi{
             let data = json.data(using: .utf8)!
             let _network = try meshNetworkManager.import(from: data)
             
-            if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != _network.id) {
+            if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.uuid != _network.uuid) {
                 doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: _network)
             } else {
                 doozMeshNetwork?.meshNetwork = _network
@@ -407,7 +407,7 @@ private extension DoozMeshManagerApi{
         }
         
         do{
-            try _deleteMeshNetworkFromDb(_meshNetwork.id)
+            try _deleteMeshNetworkFromDb(_meshNetwork.uuid.uuidString)
             let _ = _generateMeshNetwork()
         }catch{
             throw(error)
@@ -452,7 +452,7 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
     
     func onNetworkLoaded(_ network: MeshNetwork) {
         
-        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.id != network.id) {
+        if (doozMeshNetwork == nil || doozMeshNetwork?.meshNetwork.uuid != network.uuid) {
             doozMeshNetwork = DoozMeshNetwork(messenger: messenger, network: network)
         } else {
             doozMeshNetwork?.meshNetwork = network
@@ -461,7 +461,7 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         let message: FlutterMessage =
             [
                 EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkLoaded.rawValue,
-                EventSinkKeys.id.rawValue : network.id
+                EventSinkKeys.id.rawValue : network.uuid.uuidString
             ]
         _sendFlutterMessage(message)
         
@@ -484,7 +484,7 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         let message: FlutterMessage = [
             EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkUpdated.rawValue,
-            EventSinkKeys.id.rawValue : network.id
+            EventSinkKeys.id.rawValue : network.uuid.uuidString
         ]
         
         _sendFlutterMessage(message)
@@ -494,7 +494,7 @@ extension DoozMeshManagerApi: DoozMeshManagerApiDelegate{
         
         let message: FlutterMessage = [
             EventSinkKeys.eventName.rawValue : MeshNetworkApiEvent.onNetworkImported.rawValue,
-            EventSinkKeys.id.rawValue : network.id
+            EventSinkKeys.id.rawValue : network.uuid.uuidString
         ]
         
         _sendFlutterMessage(message)
@@ -529,7 +529,7 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
         
     }
     
-    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisionigState) {
+    func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisioningState) {
         let message: FlutterMessage = [
             EventSinkKeys.eventName.rawValue : state.eventName(),
             EventSinkKeys.state.rawValue : state.flutterState(),
