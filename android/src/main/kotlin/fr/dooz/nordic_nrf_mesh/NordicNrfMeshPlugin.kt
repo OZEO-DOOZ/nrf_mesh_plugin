@@ -39,7 +39,7 @@ class NordicNrfMeshPlugin: FlutterPlugin, MethodCallHandler {
               result.success("Android ${android.os.Build.VERSION.RELEASE}")
           }
           "createMeshManagerApi" -> {
-              meshManagerApi = DoozMeshManagerApi(flutterBinding.applicationContext,  binaryMessenger);
+              meshManagerApi = DoozMeshManagerApi(flutterBinding.applicationContext,  binaryMessenger)
               result.success(null)
           }
           else -> {

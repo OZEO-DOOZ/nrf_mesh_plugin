@@ -68,6 +68,18 @@ private extension DoozMeshNetwork {
         case .getMeshNetworkName:
             result(_getMeshNetworkName())
             break
+        case .selectProvisioner(let data):
+            
+            do{
+                let provisioner = meshNetwork.provisioners[data.provisionerIndex]
+                try meshNetwork.setLocalProvisioner(provisioner)
+                result(nil)
+            }catch{
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            
+            break
         case .highestAllocatableAddress:
             
             var maxAddress = 0

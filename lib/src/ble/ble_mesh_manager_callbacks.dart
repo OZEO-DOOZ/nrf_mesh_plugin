@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 
 abstract class _BleMeshManagerCallbacksEvent {
-  final BluetoothDevice device;
+  final DiscoveredDevice device;
   final int mtu;
   final List<int> pdu;
 
@@ -15,14 +15,14 @@ abstract class _BleMeshManagerCallbacksEvent {
 }
 
 class BleMeshManagerCallbacksDataReceived extends _BleMeshManagerCallbacksEvent {
-  const BleMeshManagerCallbacksDataReceived(BluetoothDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
+  const BleMeshManagerCallbacksDataReceived(DiscoveredDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
 
   @override
   String toString() => 'BleMeshManagerCallbacksDataReceived{ ${super.toString()} }';
 }
 
 class BleMeshManagerCallbacksDataSent extends _BleMeshManagerCallbacksEvent {
-  const BleMeshManagerCallbacksDataSent(BluetoothDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
+  const BleMeshManagerCallbacksDataSent(DiscoveredDevice device, int mtu, List<int> pdu) : super(device, mtu, pdu);
 
   @override
   String toString() => 'BleMeshManagerCallbacksDataSent{ ${super.toString()} }';
@@ -37,8 +37,8 @@ abstract class BleMeshManagerCallbacks extends BleManagerCallbacks {
 
   @override
   Future<void> dispose() => Future.wait([
-        super.dispose(),
         onDataReceivedController.close(),
         onDataSentController.close(),
+        super.dispose(),
       ]);
 }

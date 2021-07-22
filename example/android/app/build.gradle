@@ -40,7 +40,7 @@ android {
     
     defaultConfig {
         applicationId "fr.dooz.nordic_nrf_mesh_example"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -67,5 +67,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.multidex:multidex:2.0.1'
-
+    implementation project(':mesh')
 }

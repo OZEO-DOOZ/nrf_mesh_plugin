@@ -96,18 +96,15 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
       onPressed: () async {
         final scaffoldState = Scaffold.of(context);
         final target = 0;
-        final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
-        var sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
+        // final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
         try {
           final getBoardTypeStatus = await meshManagerApi
-              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber)
+              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte())
               .timeout(Duration(seconds: 40));
           final boardType = BoardData.decode(getBoardTypeStatus.level);
           if (boardType.payload == 0xA) {
-            sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
             final setupDimmerStatus = await meshManagerApi
-                .sendGenericLevelSet(
-                    await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte(), sequenceNumber)
+                .sendGenericLevelSet(await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte())
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
             scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
@@ -136,18 +133,14 @@ class ConfigureOuputAsLightOnOff extends StatelessWidget {
       onPressed: () async {
         final scaffoldState = Scaffold.of(context);
         final target = 0;
-        final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
-        var sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
         try {
           final getBoardTypeStatus = await meshManagerApi
-              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte(), sequenceNumber)
+              .sendGenericLevelSet(await node.unicastAddress, BoardData.configuration(target).toByte())
               .timeout(Duration(seconds: 40));
           final boardType = BoardData.decode(getBoardTypeStatus.level);
           if (boardType.payload == 0xA) {
-            sequenceNumber = await meshManagerApi.getSequenceNumber(provisioner);
             final setupDimmerStatus = await meshManagerApi
-                .sendGenericLevelSet(
-                    await node.unicastAddress, BoardData.lightOnOffOutput(target).toByte(), sequenceNumber)
+                .sendGenericLevelSet(await node.unicastAddress, BoardData.lightOnOffOutput(target).toByte())
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
             scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));

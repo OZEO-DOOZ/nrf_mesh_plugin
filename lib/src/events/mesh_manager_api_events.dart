@@ -30,8 +30,17 @@ class MeshManagerApiEvent {
   static const configAppKeyStatus = MeshManagerApiEvent._('onConfigAppKeyStatus');
   static const genericLevelStatus = MeshManagerApiEvent._('onGenericLevelStatus');
   static const genericOnOffStatus = MeshManagerApiEvent._('onGenericOnOffStatus');
+  static const v2MagicLevelSetStatus = MeshManagerApiEvent._('onMagicLevelSetStatus');
+  static const v2MagicLevelGetStatus = MeshManagerApiEvent._('onMagicLevelGetStatus');
+
+  static const lightLightnessStatus = MeshManagerApiEvent._('onLightLightnessStatus');
+  static const lightCtlStatus = MeshManagerApiEvent._('onLightCtlStatus');
+  static const lightHslStatus = MeshManagerApiEvent._('onLightHslStatus');
 
   static const configModelAppStatus = MeshManagerApiEvent._('onConfigModelAppStatus');
   static const configModelSubscriptionStatus = MeshManagerApiEvent._('onConfigModelSubscriptionStatus');
   static const configModelPublicationStatus = MeshManagerApiEvent._('onConfigModelPublicationStatus');
+  static const configNodeResetStatus = MeshManagerApiEvent._('onConfigNodeResetStatus');
+  static const configNetworkTransmitStatus = MeshManagerApiEvent._('onConfigNetworkTransmitStatus');
+  static const configDefaultTtlStatus = MeshManagerApiEvent._('onConfigDefaultTtlStatus');
 }

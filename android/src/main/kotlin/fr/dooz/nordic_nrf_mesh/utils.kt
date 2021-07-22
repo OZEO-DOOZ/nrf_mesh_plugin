@@ -1,5 +1,6 @@
 package fr.dooz.nordic_nrf_mesh
 
+import no.nordicsemi.android.mesh.MeshNetwork
 import java.nio.charset.StandardCharsets
 
 private val HEX_ARRAY = "0123456789ABCDEF".toByteArray()
@@ -19,4 +20,10 @@ fun arrayListToByteArray(pdu: ArrayList<Int>): ByteArray {
         bytes[index] = value.toByte()
     }
     return bytes
+}
+
+fun getSequenceNumber(meshNetwork: MeshNetwork?) : Int {
+    val prov = meshNetwork!!.selectedProvisioner!!.provisionerUuid
+    val pNode = meshNetwork!!.getNode(prov)
+    return pNode!!.sequenceNumber
 }

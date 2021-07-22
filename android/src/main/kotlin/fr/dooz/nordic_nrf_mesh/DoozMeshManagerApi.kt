@@ -17,16 +17,17 @@ import kotlin.collections.ArrayList
 
 class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : StreamHandler, MethodChannel.MethodCallHandler {
     private var mMeshManagerApi: MeshManagerApi = MeshManagerApi(context.applicationContext)
-    private var eventSink :EventSink? = null
+    private var eventSink: EventSink? = null
     private var doozMeshNetwork: DoozMeshNetwork? = null
     private val doozMeshManagerCallbacks: DoozMeshManagerCallbacks
     private val doozMeshProvisioningStatusCallbacks: DoozMeshProvisioningStatusCallbacks
     private var doozMeshStatusCallbacks: DoozMeshStatusCallbacks
     private val unProvisionedMeshNodes: ArrayList<DoozUnprovisionedMeshNode> = ArrayList()
     var currentProvisionedMeshNode: DoozProvisionedMeshNode? = null
+    private val tag: String = DoozMeshManagerApi::class.java.simpleName
 
     init {
-        EventChannel(binaryMessenger,"$namespace/mesh_manager_api/events").setStreamHandler(this)
+        EventChannel(binaryMessenger, "$namespace/mesh_manager_api/events").setStreamHandler(this)
         MethodChannel(binaryMessenger, "$namespace/mesh_manager_api/methods").setMethodCallHandler(this)
 
         doozMeshManagerCallbacks = DoozMeshManagerCallbacks(binaryMessenger, eventSink)
@@ -38,7 +39,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
         mMeshManagerApi.setMeshStatusCallbacks(doozMeshStatusCallbacks)
     }
 
-    private fun loadMeshNetwork()  {
+    private fun loadMeshNetwork() {
         mMeshManagerApi.loadMeshNetwork()
     }
 
@@ -66,7 +67,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     }
 
     override fun onListen(arguments: Any?, events: EventSink?) {
-        Log.d(this.javaClass.name, "onListen $arguments $events")
+        Log.d(tag, "onListen $arguments $events")
         this.eventSink = events
         doozMeshManagerCallbacks.eventSink = eventSink
         doozMeshProvisioningStatusCallbacks.eventSink = eventSink
@@ -116,7 +117,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "sendGenericLevelSet" -> {
-                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
                 val address = call.argument<Int>("address")!!
                 val level = call.argument<Int>("level")!!
                 val keyIndex = call.argument<Int>("keyIndex")!!
@@ -130,6 +131,15 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         delay,
                         level,
                         sequenceNumber
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "sendGenericLevelGet" -> {
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val meshMessage: MeshMessage = GenericLevelGet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex)
                 )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
@@ -153,36 +163,76 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
-            "sendConfigModelSubscriptionAdd" -> {
+            "setNetworkTransmitSettings" -> {
                 val address = call.argument<Int>("address")!!
+                val transmitCount = call.argument<Int>("transmitCount")!!
+                val transmitIntervalSteps = call.argument<Int>("transmitIntervalSteps")!!
+                val meshMessage: MeshMessage = ConfigNetworkTransmitSet(
+                    transmitCount,
+                    transmitIntervalSteps
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getNetworkTransmitSettings" -> {
+                val address = call.argument<Int>("address")!!
+                val meshMessage: MeshMessage = ConfigNetworkTransmitGet()
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getDefaultTtl" -> {
+                val address = call.argument<Int>("address")!!
+                val meshMessage: MeshMessage = ConfigDefaultTtlGet()
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "setDefaultTtl" -> {
+                val address = call.argument<Int>("address")!!
+                val ttl = call.argument<Int>("ttl")!!
+                val meshMessage: MeshMessage = ConfigDefaultTtlSet(ttl)
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "sendConfigModelSubscriptionAdd" -> {
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelSubscriptionAdd(elementAddress, subscriptionAddress, modelIdentifier)
-                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
                 result.success(null)
             }
             "sendConfigModelSubscriptionDelete" -> {
-                val address = call.argument<Int>("address")!!
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelSubscriptionDelete(elementAddress, subscriptionAddress, modelIdentifier)
-                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
+                result.success(null)
+            }
+            "sendConfigModelSubscriptionDeleteAll" -> {
+                val elementAddress = call.argument<Int>("elementAddress")!!
+                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val meshMessage = ConfigModelSubscriptionDeleteAll(elementAddress, modelIdentifier)
+                mMeshManagerApi.createMeshPdu(elementAddress, meshMessage)
                 result.success(null)
             }
             "sendConfigModelPublicationSet" -> {
-                val address = call.argument<Int>("address")!!
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val publishAddress = call.argument<Int>("publishAddress")!!
                 val appKeyIndex = call.argument<Int>("appKeyIndex")!!
                 val credentialFlag = call.argument<Boolean>("credentialFlag")!!
                 val publishTtl = call.argument<Int>("publishTtl")!!
-                val publicationSteps  = call.argument<Int>("publicationSteps")!!
+                val publicationSteps = call.argument<Int>("publicationSteps")!!
                 val publicationResolution = call.argument<Int>("publicationResolution")!!
                 val retransmitCount = call.argument<Int>("retransmitCount")!!
                 val retransmitIntervalSteps = call.argument<Int>("retransmitIntervalSteps")!!
                 val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
                 val meshMessage = ConfigModelPublicationSet(
                         elementAddress,
                         publishAddress,
@@ -195,7 +245,76 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         retransmitIntervalSteps,
                         modelIdentifier
                 )
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
+                result.success(null)
+            }
+            "sendV2MagicLevel" -> {
+                val io = call.argument<Int>("io")!!
+                val index = call.argument<Int>("index")!!
+                val value = call.argument<Int>("value")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
+                val meshMessage = MagicLevelSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        io, index, value, correlation, sequenceNumber
+                )
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getV2MagicLevel" -> {
+                val io = call.argument<Int>("io")!!
+                val index = call.argument<Int>("index")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
+                val meshMessage = MagicLevelGet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        io, index, correlation, sequenceNumber
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "sendLightLightness" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val lightnessSet = LightLightnessSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness,
+                        sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightnessSet)
+                result.success(null)
+            }
+            "sendLightCtl" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val temperature = call.argument<Int>("temperature")!!
+                val lightDeltaUV = call.argument<Int>("lightDeltaUV")!!
+                val lightCtlSet = LightCtlSet(
+                        mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness,
+                        temperature,
+                        lightDeltaUV,
+                        sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightCtlSet)
+                result.success(null)
+            }
+            "sendLightHsl" -> {
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val lightness = call.argument<Int>("lightness")!!
+                val hue = call.argument<Int>("hue")!!
+                val saturation = call.argument<Int>("saturation")!!
+                val lightHslSet = LightHslSet(mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                        lightness, hue, saturation, sequenceNumber)
+                mMeshManagerApi.createMeshPdu(address, lightHslSet)
                 result.success(null)
             }
             "getDeviceUuid" -> {
@@ -227,6 +346,32 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.startProvisioning(unProvisionedMeshNode.meshNode)
                 result.success(null)
             }
+            "cachedProvisionedMeshNodeUuid" -> {
+                if (null == currentProvisionedMeshNode) {
+                    result.success(null)
+                } else {
+                    val provisionedMeshNode = currentProvisionedMeshNode!!
+                    result.success(provisionedMeshNode.meshNode.getUuid())
+                }
+            }
+            "deprovision" -> {
+                try {
+                    val unicastAddress = call.argument<Int>("unicastAddress")!!
+                    val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                    val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(unicastAddress)
+                    if (pNode == null) {
+                        result.error("NOT_FOUND", "MeshNode with unicastAddress $unicastAddress doesn't exist", null)
+                    } else {
+                        Log.d(tag, "should unprovision the nodeId : " + unicastAddress)
+                        val configNodeReset = ConfigNodeReset()
+                        mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)
+                    }
+                } catch (ex: Exception) {
+                    Log.e(tag, ex.message)
+                    result.success(false)
+                }
+                result.success(true)
+            }
             "sendConfigCompositionDataGet" -> {
                 mMeshManagerApi.createMeshPdu(call.argument("dest")!!, ConfigCompositionDataGet())
                 result.success(null)
@@ -240,6 +385,40 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             "setMtuSize" -> {
                 doozMeshManagerCallbacks.mtuSize = call.argument<Int>("mtuSize")!!
                 result.success(null)
+            }
+            "nodeIdentityMatches" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                currentMeshNetwork.nodes.forEach { node ->
+                    if (mMeshManagerApi.nodeIdentityMatches(node, serviceData)) {
+                        result.success(true)
+                    }
+                }
+                result.success(false)
+            }
+            "networkIdMatches" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val networkKeys = currentMeshNetwork.getNetKeys()!!
+                val networkId = mMeshManagerApi.generateNetworkId(networkKeys.get(0).getKey())
+                var matches = mMeshManagerApi.networkIdMatches(networkId, serviceData)
+                result.success(matches)
+            }
+            "isAdvertisingWithNetworkIdentity" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                try {
+                    result.success(mMeshManagerApi.isAdvertisingWithNetworkIdentity(serviceData))
+                } catch (e: Exception) {
+                    result.error("101", e.message, "an error occured while checking service data")
+                }
+            }
+            "isAdvertisedWithNodeIdentity" -> {
+                val serviceData = call.argument<ByteArray>("serviceData")!!
+                try {
+                    result.success(mMeshManagerApi.isAdvertisedWithNodeIdentity(serviceData))
+                } catch (e: Exception) {
+                    result.error("102", e.message, "an error occured while checking service data")
+                }
             }
             else -> {
                 result.notImplemented()

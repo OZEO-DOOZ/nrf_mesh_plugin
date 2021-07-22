@@ -49,6 +49,9 @@ class ProvisionedMeshNode {
 
   Future<int> get sequenceNumber => _methodChannel.invokeMethod('getSequenceNumber');
 
+  Future<void> setSequenceNumber(int seqNum) =>
+      _methodChannel.invokeListMethod('setSequenceNumber', {'sequenceNumber': seqNum});
+
   Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
 
   Future<String> get name => _methodChannel.invokeMethod('name');

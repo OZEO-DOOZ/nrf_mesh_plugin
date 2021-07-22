@@ -16,8 +16,8 @@ _$_ConfigModelPublicationStatus _$_$_ConfigModelPublicationStatusFromJson(
     json['publishTtl'] as int,
     json['publicationSteps'] as int,
     json['publicationResolution'] as int,
-    json['publishRetransmitCount'] as int,
-    json['publishRetransmitIntervalSteps'] as int,
+    json['retransmitCount'] as int,
+    json['retransmitIntervalSteps'] as int,
     json['modelIdentifier'] as int,
     json['isSuccessful'] as bool,
   );
@@ -33,8 +33,8 @@ Map<String, dynamic> _$_$_ConfigModelPublicationStatusToJson(
       'publishTtl': instance.publishTtl,
       'publicationSteps': instance.publicationSteps,
       'publicationResolution': instance.publicationResolution,
-      'publishRetransmitCount': instance.publishRetransmitCount,
-      'publishRetransmitIntervalSteps': instance.publishRetransmitIntervalSteps,
+      'retransmitCount': instance.retransmitCount,
+      'retransmitIntervalSteps': instance.retransmitIntervalSteps,
       'modelIdentifier': instance.modelIdentifier,
       'isSuccessful': instance.isSuccessful,
     };
