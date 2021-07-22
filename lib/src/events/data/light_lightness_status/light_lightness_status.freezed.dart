@@ -8,7 +8,8 @@ part of 'light_lightness_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-LightLightnessStatusData _$LightLightnessStatusDataFromJson(Map<String, dynamic> json) {
+LightLightnessStatusData _$LightLightnessStatusDataFromJson(
+    Map<String, dynamic> json) {
   return _LightLightnessStatusData.fromJson(json);
 }
 
@@ -17,8 +18,13 @@ class _$LightLightnessStatusDataTearOff {
   const _$LightLightnessStatusDataTearOff();
 
 // ignore: unused_element
-  _LightLightnessStatusData call(int presentLightness, int targetLightness, int transitionSteps,
-      int transitionResolution, int source, int destination) {
+  _LightLightnessStatusData call(
+      int presentLightness,
+      int targetLightness,
+      int transitionSteps,
+      int transitionResolution,
+      int source,
+      int destination) {
     return _LightLightnessStatusData(
       presentLightness,
       targetLightness,
@@ -54,8 +60,8 @@ mixin _$LightLightnessStatusData {
 
 /// @nodoc
 abstract class $LightLightnessStatusDataCopyWith<$Res> {
-  factory $LightLightnessStatusDataCopyWith(
-          LightLightnessStatusData value, $Res Function(LightLightnessStatusData) then) =
+  factory $LightLightnessStatusDataCopyWith(LightLightnessStatusData value,
+          $Res Function(LightLightnessStatusData) then) =
       _$LightLightnessStatusDataCopyWithImpl<$Res>;
   $Res call(
       {int presentLightness,
@@ -67,7 +73,8 @@ abstract class $LightLightnessStatusDataCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$LightLightnessStatusDataCopyWithImpl<$Res> implements $LightLightnessStatusDataCopyWith<$Res> {
+class _$LightLightnessStatusDataCopyWithImpl<$Res>
+    implements $LightLightnessStatusDataCopyWith<$Res> {
   _$LightLightnessStatusDataCopyWithImpl(this._value, this._then);
 
   final LightLightnessStatusData _value;
@@ -84,20 +91,30 @@ class _$LightLightnessStatusDataCopyWithImpl<$Res> implements $LightLightnessSta
     Object destination = freezed,
   }) {
     return _then(_value.copyWith(
-      presentLightness: presentLightness == freezed ? _value.presentLightness : presentLightness as int,
-      targetLightness: targetLightness == freezed ? _value.targetLightness : targetLightness as int,
-      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      presentLightness: presentLightness == freezed
+          ? _value.presentLightness
+          : presentLightness as int,
+      targetLightness: targetLightness == freezed
+          ? _value.targetLightness
+          : targetLightness as int,
+      transitionSteps: transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps as int,
+      transitionResolution: transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution as int,
       source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      destination:
+          destination == freezed ? _value.destination : destination as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$LightLightnessStatusDataCopyWith<$Res> implements $LightLightnessStatusDataCopyWith<$Res> {
-  factory _$LightLightnessStatusDataCopyWith(
-          _LightLightnessStatusData value, $Res Function(_LightLightnessStatusData) then) =
+abstract class _$LightLightnessStatusDataCopyWith<$Res>
+    implements $LightLightnessStatusDataCopyWith<$Res> {
+  factory _$LightLightnessStatusDataCopyWith(_LightLightnessStatusData value,
+          $Res Function(_LightLightnessStatusData) then) =
       __$LightLightnessStatusDataCopyWithImpl<$Res>;
   @override
   $Res call(
@@ -110,14 +127,16 @@ abstract class _$LightLightnessStatusDataCopyWith<$Res> implements $LightLightne
 }
 
 /// @nodoc
-class __$LightLightnessStatusDataCopyWithImpl<$Res> extends _$LightLightnessStatusDataCopyWithImpl<$Res>
+class __$LightLightnessStatusDataCopyWithImpl<$Res>
+    extends _$LightLightnessStatusDataCopyWithImpl<$Res>
     implements _$LightLightnessStatusDataCopyWith<$Res> {
-  __$LightLightnessStatusDataCopyWithImpl(
-      _LightLightnessStatusData _value, $Res Function(_LightLightnessStatusData) _then)
+  __$LightLightnessStatusDataCopyWithImpl(_LightLightnessStatusData _value,
+      $Res Function(_LightLightnessStatusData) _then)
       : super(_value, (v) => _then(v as _LightLightnessStatusData));
 
   @override
-  _LightLightnessStatusData get _value => super._value as _LightLightnessStatusData;
+  _LightLightnessStatusData get _value =>
+      super._value as _LightLightnessStatusData;
 
   @override
   $Res call({
@@ -129,10 +148,18 @@ class __$LightLightnessStatusDataCopyWithImpl<$Res> extends _$LightLightnessStat
     Object destination = freezed,
   }) {
     return _then(_LightLightnessStatusData(
-      presentLightness == freezed ? _value.presentLightness : presentLightness as int,
-      targetLightness == freezed ? _value.targetLightness : targetLightness as int,
-      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      presentLightness == freezed
+          ? _value.presentLightness
+          : presentLightness as int,
+      targetLightness == freezed
+          ? _value.targetLightness
+          : targetLightness as int,
+      transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps as int,
+      transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution as int,
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
     ));
@@ -143,8 +170,13 @@ class __$LightLightnessStatusDataCopyWithImpl<$Res> extends _$LightLightnessStat
 
 /// @nodoc
 class _$_LightLightnessStatusData implements _LightLightnessStatusData {
-  const _$_LightLightnessStatusData(this.presentLightness, this.targetLightness, this.transitionSteps,
-      this.transitionResolution, this.source, this.destination)
+  const _$_LightLightnessStatusData(
+      this.presentLightness,
+      this.targetLightness,
+      this.transitionSteps,
+      this.transitionResolution,
+      this.source,
+      this.destination)
       : assert(presentLightness != null),
         assert(targetLightness != null),
         assert(transitionSteps != null),
@@ -178,16 +210,22 @@ class _$_LightLightnessStatusData implements _LightLightnessStatusData {
     return identical(this, other) ||
         (other is _LightLightnessStatusData &&
             (identical(other.presentLightness, presentLightness) ||
-                const DeepCollectionEquality().equals(other.presentLightness, presentLightness)) &&
+                const DeepCollectionEquality()
+                    .equals(other.presentLightness, presentLightness)) &&
             (identical(other.targetLightness, targetLightness) ||
-                const DeepCollectionEquality().equals(other.targetLightness, targetLightness)) &&
+                const DeepCollectionEquality()
+                    .equals(other.targetLightness, targetLightness)) &&
             (identical(other.transitionSteps, transitionSteps) ||
-                const DeepCollectionEquality().equals(other.transitionSteps, transitionSteps)) &&
+                const DeepCollectionEquality()
+                    .equals(other.transitionSteps, transitionSteps)) &&
             (identical(other.transitionResolution, transitionResolution) ||
-                const DeepCollectionEquality().equals(other.transitionResolution, transitionResolution)) &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+                const DeepCollectionEquality().equals(
+                    other.transitionResolution, transitionResolution)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality().equals(other.destination, destination)));
+                const DeepCollectionEquality()
+                    .equals(other.destination, destination)));
   }
 
   @override
@@ -202,7 +240,8 @@ class _$_LightLightnessStatusData implements _LightLightnessStatusData {
 
   @override
   _$LightLightnessStatusDataCopyWith<_LightLightnessStatusData> get copyWith =>
-      __$LightLightnessStatusDataCopyWithImpl<_LightLightnessStatusData>(this, _$identity);
+      __$LightLightnessStatusDataCopyWithImpl<_LightLightnessStatusData>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -211,10 +250,16 @@ class _$_LightLightnessStatusData implements _LightLightnessStatusData {
 }
 
 abstract class _LightLightnessStatusData implements LightLightnessStatusData {
-  const factory _LightLightnessStatusData(int presentLightness, int targetLightness, int transitionSteps,
-      int transitionResolution, int source, int destination) = _$_LightLightnessStatusData;
+  const factory _LightLightnessStatusData(
+      int presentLightness,
+      int targetLightness,
+      int transitionSteps,
+      int transitionResolution,
+      int source,
+      int destination) = _$_LightLightnessStatusData;
 
-  factory _LightLightnessStatusData.fromJson(Map<String, dynamic> json) = _$_LightLightnessStatusData.fromJson;
+  factory _LightLightnessStatusData.fromJson(Map<String, dynamic> json) =
+      _$_LightLightnessStatusData.fromJson;
 
   @override
   int get presentLightness;

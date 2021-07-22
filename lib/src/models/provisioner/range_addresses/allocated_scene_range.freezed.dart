@@ -45,13 +45,15 @@ mixin _$AllocatedSceneRange {
 
 /// @nodoc
 abstract class $AllocatedSceneRangeCopyWith<$Res> {
-  factory $AllocatedSceneRangeCopyWith(AllocatedSceneRange value, $Res Function(AllocatedSceneRange) then) =
+  factory $AllocatedSceneRangeCopyWith(
+          AllocatedSceneRange value, $Res Function(AllocatedSceneRange) then) =
       _$AllocatedSceneRangeCopyWithImpl<$Res>;
   $Res call({int firstScene, int lastScene});
 }
 
 /// @nodoc
-class _$AllocatedSceneRangeCopyWithImpl<$Res> implements $AllocatedSceneRangeCopyWith<$Res> {
+class _$AllocatedSceneRangeCopyWithImpl<$Res>
+    implements $AllocatedSceneRangeCopyWith<$Res> {
   _$AllocatedSceneRangeCopyWithImpl(this._value, this._then);
 
   final AllocatedSceneRange _value;
@@ -71,17 +73,21 @@ class _$AllocatedSceneRangeCopyWithImpl<$Res> implements $AllocatedSceneRangeCop
 }
 
 /// @nodoc
-abstract class _$AllocatedSceneRangeCopyWith<$Res> implements $AllocatedSceneRangeCopyWith<$Res> {
-  factory _$AllocatedSceneRangeCopyWith(_AllocatedSceneRange value, $Res Function(_AllocatedSceneRange) then) =
+abstract class _$AllocatedSceneRangeCopyWith<$Res>
+    implements $AllocatedSceneRangeCopyWith<$Res> {
+  factory _$AllocatedSceneRangeCopyWith(_AllocatedSceneRange value,
+          $Res Function(_AllocatedSceneRange) then) =
       __$AllocatedSceneRangeCopyWithImpl<$Res>;
   @override
   $Res call({int firstScene, int lastScene});
 }
 
 /// @nodoc
-class __$AllocatedSceneRangeCopyWithImpl<$Res> extends _$AllocatedSceneRangeCopyWithImpl<$Res>
+class __$AllocatedSceneRangeCopyWithImpl<$Res>
+    extends _$AllocatedSceneRangeCopyWithImpl<$Res>
     implements _$AllocatedSceneRangeCopyWith<$Res> {
-  __$AllocatedSceneRangeCopyWithImpl(_AllocatedSceneRange _value, $Res Function(_AllocatedSceneRange) _then)
+  __$AllocatedSceneRangeCopyWithImpl(
+      _AllocatedSceneRange _value, $Res Function(_AllocatedSceneRange) _then)
       : super(_value, (v) => _then(v as _AllocatedSceneRange));
 
   @override
@@ -107,7 +113,8 @@ class _$_AllocatedSceneRange implements _AllocatedSceneRange {
       : assert(firstScene != null),
         assert(lastScene != null);
 
-  factory _$_AllocatedSceneRange.fromJson(Map<String, dynamic> json) => _$_$_AllocatedSceneRangeFromJson(json);
+  factory _$_AllocatedSceneRange.fromJson(Map<String, dynamic> json) =>
+      _$_$_AllocatedSceneRangeFromJson(json);
 
   @override
   final int firstScene;
@@ -124,9 +131,11 @@ class _$_AllocatedSceneRange implements _AllocatedSceneRange {
     return identical(this, other) ||
         (other is _AllocatedSceneRange &&
             (identical(other.firstScene, firstScene) ||
-                const DeepCollectionEquality().equals(other.firstScene, firstScene)) &&
+                const DeepCollectionEquality()
+                    .equals(other.firstScene, firstScene)) &&
             (identical(other.lastScene, lastScene) ||
-                const DeepCollectionEquality().equals(other.lastScene, lastScene)));
+                const DeepCollectionEquality()
+                    .equals(other.lastScene, lastScene)));
   }
 
   @override
@@ -137,7 +146,8 @@ class _$_AllocatedSceneRange implements _AllocatedSceneRange {
 
   @override
   _$AllocatedSceneRangeCopyWith<_AllocatedSceneRange> get copyWith =>
-      __$AllocatedSceneRangeCopyWithImpl<_AllocatedSceneRange>(this, _$identity);
+      __$AllocatedSceneRangeCopyWithImpl<_AllocatedSceneRange>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -146,9 +156,11 @@ class _$_AllocatedSceneRange implements _AllocatedSceneRange {
 }
 
 abstract class _AllocatedSceneRange implements AllocatedSceneRange {
-  const factory _AllocatedSceneRange(int firstScene, int lastScene) = _$_AllocatedSceneRange;
+  const factory _AllocatedSceneRange(int firstScene, int lastScene) =
+      _$_AllocatedSceneRange;
 
-  factory _AllocatedSceneRange.fromJson(Map<String, dynamic> json) = _$_AllocatedSceneRange.fromJson;
+  factory _AllocatedSceneRange.fromJson(Map<String, dynamic> json) =
+      _$_AllocatedSceneRange.fromJson;
 
   @override
   int get firstScene;

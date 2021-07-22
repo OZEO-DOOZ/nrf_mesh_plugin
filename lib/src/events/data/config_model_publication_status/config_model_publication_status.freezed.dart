@@ -130,14 +130,23 @@ class _$ConfigModelPublicationStatusCopyWithImpl<$Res>
           ? _value.credentialFlag
           : credentialFlag as bool,
       publishTtl: publishTtl == freezed ? _value.publishTtl : publishTtl as int,
-      publicationSteps: publicationSteps == freezed ? _value.publicationSteps : publicationSteps as int,
-      publicationResolution:
-          publicationResolution == freezed ? _value.publicationResolution : publicationResolution as int,
-      retransmitCount: retransmitCount == freezed ? _value.retransmitCount : retransmitCount as int,
-      retransmitIntervalSteps:
-          retransmitIntervalSteps == freezed ? _value.retransmitIntervalSteps : retransmitIntervalSteps as int,
-      modelIdentifier: modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
-      isSuccessful: isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
+      publicationSteps: publicationSteps == freezed
+          ? _value.publicationSteps
+          : publicationSteps as int,
+      publicationResolution: publicationResolution == freezed
+          ? _value.publicationResolution
+          : publicationResolution as int,
+      retransmitCount: retransmitCount == freezed
+          ? _value.retransmitCount
+          : retransmitCount as int,
+      retransmitIntervalSteps: retransmitIntervalSteps == freezed
+          ? _value.retransmitIntervalSteps
+          : retransmitIntervalSteps as int,
+      modelIdentifier: modelIdentifier == freezed
+          ? _value.modelIdentifier
+          : modelIdentifier as int,
+      isSuccessful:
+          isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
 }
@@ -199,11 +208,21 @@ class __$ConfigModelPublicationStatusCopyWithImpl<$Res>
           ? _value.credentialFlag
           : credentialFlag as bool,
       publishTtl == freezed ? _value.publishTtl : publishTtl as int,
-      publicationSteps == freezed ? _value.publicationSteps : publicationSteps as int,
-      publicationResolution == freezed ? _value.publicationResolution : publicationResolution as int,
-      retransmitCount == freezed ? _value.retransmitCount : retransmitCount as int,
-      retransmitIntervalSteps == freezed ? _value.retransmitIntervalSteps : retransmitIntervalSteps as int,
-      modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
+      publicationSteps == freezed
+          ? _value.publicationSteps
+          : publicationSteps as int,
+      publicationResolution == freezed
+          ? _value.publicationResolution
+          : publicationResolution as int,
+      retransmitCount == freezed
+          ? _value.retransmitCount
+          : retransmitCount as int,
+      retransmitIntervalSteps == freezed
+          ? _value.retransmitIntervalSteps
+          : retransmitIntervalSteps as int,
+      modelIdentifier == freezed
+          ? _value.modelIdentifier
+          : modelIdentifier as int,
       isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
     ));
   }
@@ -291,13 +310,18 @@ class _$_ConfigModelPublicationStatus implements _ConfigModelPublicationStatus {
                 const DeepCollectionEquality()
                     .equals(other.publicationSteps, publicationSteps)) &&
             (identical(other.publicationResolution, publicationResolution) ||
-                const DeepCollectionEquality().equals(other.publicationResolution, publicationResolution)) &&
+                const DeepCollectionEquality().equals(
+                    other.publicationResolution, publicationResolution)) &&
             (identical(other.retransmitCount, retransmitCount) ||
-                const DeepCollectionEquality().equals(other.retransmitCount, retransmitCount)) &&
-            (identical(other.retransmitIntervalSteps, retransmitIntervalSteps) ||
-                const DeepCollectionEquality().equals(other.retransmitIntervalSteps, retransmitIntervalSteps)) &&
+                const DeepCollectionEquality()
+                    .equals(other.retransmitCount, retransmitCount)) &&
+            (identical(
+                    other.retransmitIntervalSteps, retransmitIntervalSteps) ||
+                const DeepCollectionEquality().equals(
+                    other.retransmitIntervalSteps, retransmitIntervalSteps)) &&
             (identical(other.modelIdentifier, modelIdentifier) ||
-                const DeepCollectionEquality().equals(other.modelIdentifier, modelIdentifier)) &&
+                const DeepCollectionEquality()
+                    .equals(other.modelIdentifier, modelIdentifier)) &&
             (identical(other.isSuccessful, isSuccessful) ||
                 const DeepCollectionEquality()
                     .equals(other.isSuccessful, isSuccessful)));

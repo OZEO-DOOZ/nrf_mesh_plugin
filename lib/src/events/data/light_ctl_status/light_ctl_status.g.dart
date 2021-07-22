@@ -6,7 +6,8 @@ part of 'light_ctl_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_LightCtlStatusData _$_$_LightCtlStatusDataFromJson(Map<String, dynamic> json) {
+_$_LightCtlStatusData _$_$_LightCtlStatusDataFromJson(
+    Map<String, dynamic> json) {
   return _$_LightCtlStatusData(
     json['presentLightness'] as int,
     json['targetLightness'] as int,
@@ -19,7 +20,9 @@ _$_LightCtlStatusData _$_$_LightCtlStatusDataFromJson(Map<String, dynamic> json)
   );
 }
 
-Map<String, dynamic> _$_$_LightCtlStatusDataToJson(_$_LightCtlStatusData instance) => <String, dynamic>{
+Map<String, dynamic> _$_$_LightCtlStatusDataToJson(
+        _$_LightCtlStatusData instance) =>
+    <String, dynamic>{
       'presentLightness': instance.presentLightness,
       'targetLightness': instance.targetLightness,
       'presentTemperature': instance.presentTemperature,

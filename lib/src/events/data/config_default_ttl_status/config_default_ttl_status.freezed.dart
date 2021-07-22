@@ -8,7 +8,8 @@ part of 'config_default_ttl_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-ConfigDefaultTtlStatus _$ConfigDefaultTtlStatusFromJson(Map<String, dynamic> json) {
+ConfigDefaultTtlStatus _$ConfigDefaultTtlStatusFromJson(
+    Map<String, dynamic> json) {
   return _ConfigDefaultTtlStatus.fromJson(json);
 }
 
@@ -47,13 +48,15 @@ mixin _$ConfigDefaultTtlStatus {
 
 /// @nodoc
 abstract class $ConfigDefaultTtlStatusCopyWith<$Res> {
-  factory $ConfigDefaultTtlStatusCopyWith(ConfigDefaultTtlStatus value, $Res Function(ConfigDefaultTtlStatus) then) =
+  factory $ConfigDefaultTtlStatusCopyWith(ConfigDefaultTtlStatus value,
+          $Res Function(ConfigDefaultTtlStatus) then) =
       _$ConfigDefaultTtlStatusCopyWithImpl<$Res>;
   $Res call({int source, int destination, int ttl});
 }
 
 /// @nodoc
-class _$ConfigDefaultTtlStatusCopyWithImpl<$Res> implements $ConfigDefaultTtlStatusCopyWith<$Res> {
+class _$ConfigDefaultTtlStatusCopyWithImpl<$Res>
+    implements $ConfigDefaultTtlStatusCopyWith<$Res> {
   _$ConfigDefaultTtlStatusCopyWithImpl(this._value, this._then);
 
   final ConfigDefaultTtlStatus _value;
@@ -68,24 +71,29 @@ class _$ConfigDefaultTtlStatusCopyWithImpl<$Res> implements $ConfigDefaultTtlSta
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      destination:
+          destination == freezed ? _value.destination : destination as int,
       ttl: ttl == freezed ? _value.ttl : ttl as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$ConfigDefaultTtlStatusCopyWith<$Res> implements $ConfigDefaultTtlStatusCopyWith<$Res> {
-  factory _$ConfigDefaultTtlStatusCopyWith(_ConfigDefaultTtlStatus value, $Res Function(_ConfigDefaultTtlStatus) then) =
+abstract class _$ConfigDefaultTtlStatusCopyWith<$Res>
+    implements $ConfigDefaultTtlStatusCopyWith<$Res> {
+  factory _$ConfigDefaultTtlStatusCopyWith(_ConfigDefaultTtlStatus value,
+          $Res Function(_ConfigDefaultTtlStatus) then) =
       __$ConfigDefaultTtlStatusCopyWithImpl<$Res>;
   @override
   $Res call({int source, int destination, int ttl});
 }
 
 /// @nodoc
-class __$ConfigDefaultTtlStatusCopyWithImpl<$Res> extends _$ConfigDefaultTtlStatusCopyWithImpl<$Res>
+class __$ConfigDefaultTtlStatusCopyWithImpl<$Res>
+    extends _$ConfigDefaultTtlStatusCopyWithImpl<$Res>
     implements _$ConfigDefaultTtlStatusCopyWith<$Res> {
-  __$ConfigDefaultTtlStatusCopyWithImpl(_ConfigDefaultTtlStatus _value, $Res Function(_ConfigDefaultTtlStatus) _then)
+  __$ConfigDefaultTtlStatusCopyWithImpl(_ConfigDefaultTtlStatus _value,
+      $Res Function(_ConfigDefaultTtlStatus) _then)
       : super(_value, (v) => _then(v as _ConfigDefaultTtlStatus));
 
   @override
@@ -114,7 +122,8 @@ class _$_ConfigDefaultTtlStatus implements _ConfigDefaultTtlStatus {
         assert(destination != null),
         assert(ttl != null);
 
-  factory _$_ConfigDefaultTtlStatus.fromJson(Map<String, dynamic> json) => _$_$_ConfigDefaultTtlStatusFromJson(json);
+  factory _$_ConfigDefaultTtlStatus.fromJson(Map<String, dynamic> json) =>
+      _$_$_ConfigDefaultTtlStatusFromJson(json);
 
   @override
   final int source;
@@ -132,10 +141,13 @@ class _$_ConfigDefaultTtlStatus implements _ConfigDefaultTtlStatus {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ConfigDefaultTtlStatus &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality().equals(other.destination, destination)) &&
-            (identical(other.ttl, ttl) || const DeepCollectionEquality().equals(other.ttl, ttl)));
+                const DeepCollectionEquality()
+                    .equals(other.destination, destination)) &&
+            (identical(other.ttl, ttl) ||
+                const DeepCollectionEquality().equals(other.ttl, ttl)));
   }
 
   @override
@@ -147,7 +159,8 @@ class _$_ConfigDefaultTtlStatus implements _ConfigDefaultTtlStatus {
 
   @override
   _$ConfigDefaultTtlStatusCopyWith<_ConfigDefaultTtlStatus> get copyWith =>
-      __$ConfigDefaultTtlStatusCopyWithImpl<_ConfigDefaultTtlStatus>(this, _$identity);
+      __$ConfigDefaultTtlStatusCopyWithImpl<_ConfigDefaultTtlStatus>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -156,9 +169,11 @@ class _$_ConfigDefaultTtlStatus implements _ConfigDefaultTtlStatus {
 }
 
 abstract class _ConfigDefaultTtlStatus implements ConfigDefaultTtlStatus {
-  const factory _ConfigDefaultTtlStatus(int source, int destination, int ttl) = _$_ConfigDefaultTtlStatus;
+  const factory _ConfigDefaultTtlStatus(int source, int destination, int ttl) =
+      _$_ConfigDefaultTtlStatus;
 
-  factory _ConfigDefaultTtlStatus.fromJson(Map<String, dynamic> json) = _$_ConfigDefaultTtlStatus.fromJson;
+  factory _ConfigDefaultTtlStatus.fromJson(Map<String, dynamic> json) =
+      _$_ConfigDefaultTtlStatus.fromJson;
 
   @override
   int get source;

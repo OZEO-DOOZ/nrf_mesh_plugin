@@ -18,8 +18,13 @@ class _$GenericLevelStatusDataTearOff {
   const _$GenericLevelStatusDataTearOff();
 
 // ignore: unused_element
-  _GenericLevelStatusData call(int level, @nullable int targetLevel, @nullable int transitionSteps,
-      @nullable int transitionResolution, int source, int destination) {
+  _GenericLevelStatusData call(
+      int level,
+      @nullable int targetLevel,
+      @nullable int transitionSteps,
+      @nullable int transitionResolution,
+      int source,
+      int destination) {
     return _GenericLevelStatusData(
       level,
       targetLevel,
@@ -90,9 +95,14 @@ class _$GenericLevelStatusDataCopyWithImpl<$Res>
   }) {
     return _then(_value.copyWith(
       level: level == freezed ? _value.level : level as int,
-      targetLevel: targetLevel == freezed ? _value.targetLevel : targetLevel as int,
-      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      targetLevel:
+          targetLevel == freezed ? _value.targetLevel : targetLevel as int,
+      transitionSteps: transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps as int,
+      transitionResolution: transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution as int,
       source: source == freezed ? _value.source : source as int,
       destination:
           destination == freezed ? _value.destination : destination as int,
@@ -139,8 +149,12 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res>
     return _then(_GenericLevelStatusData(
       level == freezed ? _value.level : level as int,
       targetLevel == freezed ? _value.targetLevel : targetLevel as int,
-      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
+      transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps as int,
+      transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution as int,
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
     ));
@@ -151,8 +165,13 @@ class __$GenericLevelStatusDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_GenericLevelStatusData implements _GenericLevelStatusData {
-  const _$_GenericLevelStatusData(this.level, @nullable this.targetLevel, @nullable this.transitionSteps,
-      @nullable this.transitionResolution, this.source, this.destination)
+  const _$_GenericLevelStatusData(
+      this.level,
+      @nullable this.targetLevel,
+      @nullable this.transitionSteps,
+      @nullable this.transitionResolution,
+      this.source,
+      this.destination)
       : assert(level != null),
         assert(source != null),
         assert(destination != null);
@@ -188,12 +207,16 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
             (identical(other.level, level) ||
                 const DeepCollectionEquality().equals(other.level, level)) &&
             (identical(other.targetLevel, targetLevel) ||
-                const DeepCollectionEquality().equals(other.targetLevel, targetLevel)) &&
+                const DeepCollectionEquality()
+                    .equals(other.targetLevel, targetLevel)) &&
             (identical(other.transitionSteps, transitionSteps) ||
-                const DeepCollectionEquality().equals(other.transitionSteps, transitionSteps)) &&
+                const DeepCollectionEquality()
+                    .equals(other.transitionSteps, transitionSteps)) &&
             (identical(other.transitionResolution, transitionResolution) ||
-                const DeepCollectionEquality().equals(other.transitionResolution, transitionResolution)) &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+                const DeepCollectionEquality().equals(
+                    other.transitionResolution, transitionResolution)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
                 const DeepCollectionEquality()
                     .equals(other.destination, destination)));
@@ -221,8 +244,13 @@ class _$_GenericLevelStatusData implements _GenericLevelStatusData {
 }
 
 abstract class _GenericLevelStatusData implements GenericLevelStatusData {
-  const factory _GenericLevelStatusData(int level, @nullable int targetLevel, @nullable int transitionSteps,
-      @nullable int transitionResolution, int source, int destination) = _$_GenericLevelStatusData;
+  const factory _GenericLevelStatusData(
+      int level,
+      @nullable int targetLevel,
+      @nullable int transitionSteps,
+      @nullable int transitionResolution,
+      int source,
+      int destination) = _$_GenericLevelStatusData;
 
   factory _GenericLevelStatusData.fromJson(Map<String, dynamic> json) =
       _$_GenericLevelStatusData.fromJson;

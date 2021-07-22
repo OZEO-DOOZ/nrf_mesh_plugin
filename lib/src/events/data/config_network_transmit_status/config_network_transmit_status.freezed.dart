@@ -8,7 +8,8 @@ part of 'config_network_transmit_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-ConfigNetworkTransmitStatus _$ConfigNetworkTransmitStatusFromJson(Map<String, dynamic> json) {
+ConfigNetworkTransmitStatus _$ConfigNetworkTransmitStatusFromJson(
+    Map<String, dynamic> json) {
   return _ConfigNetworkTransmitStatus.fromJson(json);
 }
 
@@ -17,7 +18,8 @@ class _$ConfigNetworkTransmitStatusTearOff {
   const _$ConfigNetworkTransmitStatusTearOff();
 
 // ignore: unused_element
-  _ConfigNetworkTransmitStatus call(int source, int destination, int transmitCount, int transmitIntervalSteps) {
+  _ConfigNetworkTransmitStatus call(int source, int destination,
+      int transmitCount, int transmitIntervalSteps) {
     return _ConfigNetworkTransmitStatus(
       source,
       destination,
@@ -44,19 +46,26 @@ mixin _$ConfigNetworkTransmitStatus {
   int get transmitIntervalSteps;
 
   Map<String, dynamic> toJson();
-  $ConfigNetworkTransmitStatusCopyWith<ConfigNetworkTransmitStatus> get copyWith;
+  $ConfigNetworkTransmitStatusCopyWith<ConfigNetworkTransmitStatus>
+      get copyWith;
 }
 
 /// @nodoc
 abstract class $ConfigNetworkTransmitStatusCopyWith<$Res> {
   factory $ConfigNetworkTransmitStatusCopyWith(
-          ConfigNetworkTransmitStatus value, $Res Function(ConfigNetworkTransmitStatus) then) =
+          ConfigNetworkTransmitStatus value,
+          $Res Function(ConfigNetworkTransmitStatus) then) =
       _$ConfigNetworkTransmitStatusCopyWithImpl<$Res>;
-  $Res call({int source, int destination, int transmitCount, int transmitIntervalSteps});
+  $Res call(
+      {int source,
+      int destination,
+      int transmitCount,
+      int transmitIntervalSteps});
 }
 
 /// @nodoc
-class _$ConfigNetworkTransmitStatusCopyWithImpl<$Res> implements $ConfigNetworkTransmitStatusCopyWith<$Res> {
+class _$ConfigNetworkTransmitStatusCopyWithImpl<$Res>
+    implements $ConfigNetworkTransmitStatusCopyWith<$Res> {
   _$ConfigNetworkTransmitStatusCopyWithImpl(this._value, this._then);
 
   final ConfigNetworkTransmitStatus _value;
@@ -72,32 +81,45 @@ class _$ConfigNetworkTransmitStatusCopyWithImpl<$Res> implements $ConfigNetworkT
   }) {
     return _then(_value.copyWith(
       source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
-      transmitCount: transmitCount == freezed ? _value.transmitCount : transmitCount as int,
-      transmitIntervalSteps:
-          transmitIntervalSteps == freezed ? _value.transmitIntervalSteps : transmitIntervalSteps as int,
+      destination:
+          destination == freezed ? _value.destination : destination as int,
+      transmitCount: transmitCount == freezed
+          ? _value.transmitCount
+          : transmitCount as int,
+      transmitIntervalSteps: transmitIntervalSteps == freezed
+          ? _value.transmitIntervalSteps
+          : transmitIntervalSteps as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$ConfigNetworkTransmitStatusCopyWith<$Res> implements $ConfigNetworkTransmitStatusCopyWith<$Res> {
+abstract class _$ConfigNetworkTransmitStatusCopyWith<$Res>
+    implements $ConfigNetworkTransmitStatusCopyWith<$Res> {
   factory _$ConfigNetworkTransmitStatusCopyWith(
-          _ConfigNetworkTransmitStatus value, $Res Function(_ConfigNetworkTransmitStatus) then) =
+          _ConfigNetworkTransmitStatus value,
+          $Res Function(_ConfigNetworkTransmitStatus) then) =
       __$ConfigNetworkTransmitStatusCopyWithImpl<$Res>;
   @override
-  $Res call({int source, int destination, int transmitCount, int transmitIntervalSteps});
+  $Res call(
+      {int source,
+      int destination,
+      int transmitCount,
+      int transmitIntervalSteps});
 }
 
 /// @nodoc
-class __$ConfigNetworkTransmitStatusCopyWithImpl<$Res> extends _$ConfigNetworkTransmitStatusCopyWithImpl<$Res>
+class __$ConfigNetworkTransmitStatusCopyWithImpl<$Res>
+    extends _$ConfigNetworkTransmitStatusCopyWithImpl<$Res>
     implements _$ConfigNetworkTransmitStatusCopyWith<$Res> {
   __$ConfigNetworkTransmitStatusCopyWithImpl(
-      _ConfigNetworkTransmitStatus _value, $Res Function(_ConfigNetworkTransmitStatus) _then)
+      _ConfigNetworkTransmitStatus _value,
+      $Res Function(_ConfigNetworkTransmitStatus) _then)
       : super(_value, (v) => _then(v as _ConfigNetworkTransmitStatus));
 
   @override
-  _ConfigNetworkTransmitStatus get _value => super._value as _ConfigNetworkTransmitStatus;
+  _ConfigNetworkTransmitStatus get _value =>
+      super._value as _ConfigNetworkTransmitStatus;
 
   @override
   $Res call({
@@ -110,7 +132,9 @@ class __$ConfigNetworkTransmitStatusCopyWithImpl<$Res> extends _$ConfigNetworkTr
       source == freezed ? _value.source : source as int,
       destination == freezed ? _value.destination : destination as int,
       transmitCount == freezed ? _value.transmitCount : transmitCount as int,
-      transmitIntervalSteps == freezed ? _value.transmitIntervalSteps : transmitIntervalSteps as int,
+      transmitIntervalSteps == freezed
+          ? _value.transmitIntervalSteps
+          : transmitIntervalSteps as int,
     ));
   }
 }
@@ -119,7 +143,8 @@ class __$ConfigNetworkTransmitStatusCopyWithImpl<$Res> extends _$ConfigNetworkTr
 
 /// @nodoc
 class _$_ConfigNetworkTransmitStatus implements _ConfigNetworkTransmitStatus {
-  const _$_ConfigNetworkTransmitStatus(this.source, this.destination, this.transmitCount, this.transmitIntervalSteps)
+  const _$_ConfigNetworkTransmitStatus(this.source, this.destination,
+      this.transmitCount, this.transmitIntervalSteps)
       : assert(source != null),
         assert(destination != null),
         assert(transmitCount != null),
@@ -146,13 +171,17 @@ class _$_ConfigNetworkTransmitStatus implements _ConfigNetworkTransmitStatus {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ConfigNetworkTransmitStatus &&
-            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.source, source) ||
+                const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality().equals(other.destination, destination)) &&
+                const DeepCollectionEquality()
+                    .equals(other.destination, destination)) &&
             (identical(other.transmitCount, transmitCount) ||
-                const DeepCollectionEquality().equals(other.transmitCount, transmitCount)) &&
+                const DeepCollectionEquality()
+                    .equals(other.transmitCount, transmitCount)) &&
             (identical(other.transmitIntervalSteps, transmitIntervalSteps) ||
-                const DeepCollectionEquality().equals(other.transmitIntervalSteps, transmitIntervalSteps)));
+                const DeepCollectionEquality().equals(
+                    other.transmitIntervalSteps, transmitIntervalSteps)));
   }
 
   @override
@@ -164,8 +193,9 @@ class _$_ConfigNetworkTransmitStatus implements _ConfigNetworkTransmitStatus {
       const DeepCollectionEquality().hash(transmitIntervalSteps);
 
   @override
-  _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus> get copyWith =>
-      __$ConfigNetworkTransmitStatusCopyWithImpl<_ConfigNetworkTransmitStatus>(this, _$identity);
+  _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus>
+      get copyWith => __$ConfigNetworkTransmitStatusCopyWithImpl<
+          _ConfigNetworkTransmitStatus>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -173,11 +203,16 @@ class _$_ConfigNetworkTransmitStatus implements _ConfigNetworkTransmitStatus {
   }
 }
 
-abstract class _ConfigNetworkTransmitStatus implements ConfigNetworkTransmitStatus {
+abstract class _ConfigNetworkTransmitStatus
+    implements ConfigNetworkTransmitStatus {
   const factory _ConfigNetworkTransmitStatus(
-      int source, int destination, int transmitCount, int transmitIntervalSteps) = _$_ConfigNetworkTransmitStatus;
+      int source,
+      int destination,
+      int transmitCount,
+      int transmitIntervalSteps) = _$_ConfigNetworkTransmitStatus;
 
-  factory _ConfigNetworkTransmitStatus.fromJson(Map<String, dynamic> json) = _$_ConfigNetworkTransmitStatus.fromJson;
+  factory _ConfigNetworkTransmitStatus.fromJson(Map<String, dynamic> json) =
+      _$_ConfigNetworkTransmitStatus.fromJson;
 
   @override
   int get source;
@@ -188,5 +223,6 @@ abstract class _ConfigNetworkTransmitStatus implements ConfigNetworkTransmitStat
   @override
   int get transmitIntervalSteps;
   @override
-  _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus> get copyWith;
+  _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus>
+      get copyWith;
 }

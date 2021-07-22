@@ -8,7 +8,8 @@ part of 'allocated_unicast_range.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-AllocatedUnicastRange _$AllocatedUnicastRangeFromJson(Map<String, dynamic> json) {
+AllocatedUnicastRange _$AllocatedUnicastRangeFromJson(
+    Map<String, dynamic> json) {
   return _AllocatedUnicastRange.fromJson(json);
 }
 
@@ -45,13 +46,15 @@ mixin _$AllocatedUnicastRange {
 
 /// @nodoc
 abstract class $AllocatedUnicastRangeCopyWith<$Res> {
-  factory $AllocatedUnicastRangeCopyWith(AllocatedUnicastRange value, $Res Function(AllocatedUnicastRange) then) =
+  factory $AllocatedUnicastRangeCopyWith(AllocatedUnicastRange value,
+          $Res Function(AllocatedUnicastRange) then) =
       _$AllocatedUnicastRangeCopyWithImpl<$Res>;
   $Res call({int lowAddress, int highAddress});
 }
 
 /// @nodoc
-class _$AllocatedUnicastRangeCopyWithImpl<$Res> implements $AllocatedUnicastRangeCopyWith<$Res> {
+class _$AllocatedUnicastRangeCopyWithImpl<$Res>
+    implements $AllocatedUnicastRangeCopyWith<$Res> {
   _$AllocatedUnicastRangeCopyWithImpl(this._value, this._then);
 
   final AllocatedUnicastRange _value;
@@ -65,23 +68,28 @@ class _$AllocatedUnicastRangeCopyWithImpl<$Res> implements $AllocatedUnicastRang
   }) {
     return _then(_value.copyWith(
       lowAddress: lowAddress == freezed ? _value.lowAddress : lowAddress as int,
-      highAddress: highAddress == freezed ? _value.highAddress : highAddress as int,
+      highAddress:
+          highAddress == freezed ? _value.highAddress : highAddress as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$AllocatedUnicastRangeCopyWith<$Res> implements $AllocatedUnicastRangeCopyWith<$Res> {
-  factory _$AllocatedUnicastRangeCopyWith(_AllocatedUnicastRange value, $Res Function(_AllocatedUnicastRange) then) =
+abstract class _$AllocatedUnicastRangeCopyWith<$Res>
+    implements $AllocatedUnicastRangeCopyWith<$Res> {
+  factory _$AllocatedUnicastRangeCopyWith(_AllocatedUnicastRange value,
+          $Res Function(_AllocatedUnicastRange) then) =
       __$AllocatedUnicastRangeCopyWithImpl<$Res>;
   @override
   $Res call({int lowAddress, int highAddress});
 }
 
 /// @nodoc
-class __$AllocatedUnicastRangeCopyWithImpl<$Res> extends _$AllocatedUnicastRangeCopyWithImpl<$Res>
+class __$AllocatedUnicastRangeCopyWithImpl<$Res>
+    extends _$AllocatedUnicastRangeCopyWithImpl<$Res>
     implements _$AllocatedUnicastRangeCopyWith<$Res> {
-  __$AllocatedUnicastRangeCopyWithImpl(_AllocatedUnicastRange _value, $Res Function(_AllocatedUnicastRange) _then)
+  __$AllocatedUnicastRangeCopyWithImpl(_AllocatedUnicastRange _value,
+      $Res Function(_AllocatedUnicastRange) _then)
       : super(_value, (v) => _then(v as _AllocatedUnicastRange));
 
   @override
@@ -107,7 +115,8 @@ class _$_AllocatedUnicastRange implements _AllocatedUnicastRange {
       : assert(lowAddress != null),
         assert(highAddress != null);
 
-  factory _$_AllocatedUnicastRange.fromJson(Map<String, dynamic> json) => _$_$_AllocatedUnicastRangeFromJson(json);
+  factory _$_AllocatedUnicastRange.fromJson(Map<String, dynamic> json) =>
+      _$_$_AllocatedUnicastRangeFromJson(json);
 
   @override
   final int lowAddress;
@@ -124,9 +133,11 @@ class _$_AllocatedUnicastRange implements _AllocatedUnicastRange {
     return identical(this, other) ||
         (other is _AllocatedUnicastRange &&
             (identical(other.lowAddress, lowAddress) ||
-                const DeepCollectionEquality().equals(other.lowAddress, lowAddress)) &&
+                const DeepCollectionEquality()
+                    .equals(other.lowAddress, lowAddress)) &&
             (identical(other.highAddress, highAddress) ||
-                const DeepCollectionEquality().equals(other.highAddress, highAddress)));
+                const DeepCollectionEquality()
+                    .equals(other.highAddress, highAddress)));
   }
 
   @override
@@ -137,7 +148,8 @@ class _$_AllocatedUnicastRange implements _AllocatedUnicastRange {
 
   @override
   _$AllocatedUnicastRangeCopyWith<_AllocatedUnicastRange> get copyWith =>
-      __$AllocatedUnicastRangeCopyWithImpl<_AllocatedUnicastRange>(this, _$identity);
+      __$AllocatedUnicastRangeCopyWithImpl<_AllocatedUnicastRange>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -146,9 +158,11 @@ class _$_AllocatedUnicastRange implements _AllocatedUnicastRange {
 }
 
 abstract class _AllocatedUnicastRange implements AllocatedUnicastRange {
-  const factory _AllocatedUnicastRange(int lowAddress, int highAddress) = _$_AllocatedUnicastRange;
+  const factory _AllocatedUnicastRange(int lowAddress, int highAddress) =
+      _$_AllocatedUnicastRange;
 
-  factory _AllocatedUnicastRange.fromJson(Map<String, dynamic> json) = _$_AllocatedUnicastRange.fromJson;
+  factory _AllocatedUnicastRange.fromJson(Map<String, dynamic> json) =
+      _$_AllocatedUnicastRange.fromJson;
 
   @override
   int get lowAddress;
