@@ -8,8 +8,7 @@ part of 'magic_level_set_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
-MagicLevelSetStatusData _$MagicLevelSetStatusDataFromJson(
-    Map<String, dynamic> json) {
+MagicLevelSetStatusData _$MagicLevelSetStatusDataFromJson(Map<String, dynamic> json) {
   return _MagicLevelSetStatusData.fromJson(json);
 }
 
@@ -18,8 +17,7 @@ class _$MagicLevelSetStatusDataTearOff {
   const _$MagicLevelSetStatusDataTearOff();
 
 // ignore: unused_element
-  _MagicLevelSetStatusData call(int io, int index, int value, int correlation,
-      int source, int destination) {
+  _MagicLevelSetStatusData call(int io, int index, int value, int correlation, int source, int destination) {
     return _MagicLevelSetStatusData(
       io,
       index,
@@ -55,21 +53,13 @@ mixin _$MagicLevelSetStatusData {
 
 /// @nodoc
 abstract class $MagicLevelSetStatusDataCopyWith<$Res> {
-  factory $MagicLevelSetStatusDataCopyWith(MagicLevelSetStatusData value,
-          $Res Function(MagicLevelSetStatusData) then) =
+  factory $MagicLevelSetStatusDataCopyWith(MagicLevelSetStatusData value, $Res Function(MagicLevelSetStatusData) then) =
       _$MagicLevelSetStatusDataCopyWithImpl<$Res>;
-  $Res call(
-      {int io,
-      int index,
-      int value,
-      int correlation,
-      int source,
-      int destination});
+  $Res call({int io, int index, int value, int correlation, int source, int destination});
 }
 
 /// @nodoc
-class _$MagicLevelSetStatusDataCopyWithImpl<$Res>
-    implements $MagicLevelSetStatusDataCopyWith<$Res> {
+class _$MagicLevelSetStatusDataCopyWithImpl<$Res> implements $MagicLevelSetStatusDataCopyWith<$Res> {
   _$MagicLevelSetStatusDataCopyWithImpl(this._value, this._then);
 
   final MagicLevelSetStatusData _value;
@@ -89,42 +79,30 @@ class _$MagicLevelSetStatusDataCopyWithImpl<$Res>
       io: io == freezed ? _value.io : io as int,
       index: index == freezed ? _value.index : index as int,
       value: value == freezed ? _value.value : value as int,
-      correlation:
-          correlation == freezed ? _value.correlation : correlation as int,
+      correlation: correlation == freezed ? _value.correlation : correlation as int,
       source: source == freezed ? _value.source : source as int,
-      destination:
-          destination == freezed ? _value.destination : destination as int,
+      destination: destination == freezed ? _value.destination : destination as int,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$MagicLevelSetStatusDataCopyWith<$Res>
-    implements $MagicLevelSetStatusDataCopyWith<$Res> {
-  factory _$MagicLevelSetStatusDataCopyWith(_MagicLevelSetStatusData value,
-          $Res Function(_MagicLevelSetStatusData) then) =
+abstract class _$MagicLevelSetStatusDataCopyWith<$Res> implements $MagicLevelSetStatusDataCopyWith<$Res> {
+  factory _$MagicLevelSetStatusDataCopyWith(
+          _MagicLevelSetStatusData value, $Res Function(_MagicLevelSetStatusData) then) =
       __$MagicLevelSetStatusDataCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {int io,
-      int index,
-      int value,
-      int correlation,
-      int source,
-      int destination});
+  $Res call({int io, int index, int value, int correlation, int source, int destination});
 }
 
 /// @nodoc
-class __$MagicLevelSetStatusDataCopyWithImpl<$Res>
-    extends _$MagicLevelSetStatusDataCopyWithImpl<$Res>
+class __$MagicLevelSetStatusDataCopyWithImpl<$Res> extends _$MagicLevelSetStatusDataCopyWithImpl<$Res>
     implements _$MagicLevelSetStatusDataCopyWith<$Res> {
-  __$MagicLevelSetStatusDataCopyWithImpl(_MagicLevelSetStatusData _value,
-      $Res Function(_MagicLevelSetStatusData) _then)
+  __$MagicLevelSetStatusDataCopyWithImpl(_MagicLevelSetStatusData _value, $Res Function(_MagicLevelSetStatusData) _then)
       : super(_value, (v) => _then(v as _MagicLevelSetStatusData));
 
   @override
-  _MagicLevelSetStatusData get _value =>
-      super._value as _MagicLevelSetStatusData;
+  _MagicLevelSetStatusData get _value => super._value as _MagicLevelSetStatusData;
 
   @override
   $Res call({
@@ -150,8 +128,7 @@ class __$MagicLevelSetStatusDataCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
-  const _$_MagicLevelSetStatusData(this.io, this.index, this.value,
-      this.correlation, this.source, this.destination)
+  const _$_MagicLevelSetStatusData(this.io, this.index, this.value, this.correlation, this.source, this.destination)
       : assert(io != null),
         assert(index != null),
         assert(value != null),
@@ -159,8 +136,7 @@ class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
         assert(source != null),
         assert(destination != null);
 
-  factory _$_MagicLevelSetStatusData.fromJson(Map<String, dynamic> json) =>
-      _$_$_MagicLevelSetStatusDataFromJson(json);
+  factory _$_MagicLevelSetStatusData.fromJson(Map<String, dynamic> json) => _$_$_MagicLevelSetStatusDataFromJson(json);
 
   @override
   final int io;
@@ -184,20 +160,14 @@ class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _MagicLevelSetStatusData &&
-            (identical(other.io, io) ||
-                const DeepCollectionEquality().equals(other.io, io)) &&
-            (identical(other.index, index) ||
-                const DeepCollectionEquality().equals(other.index, index)) &&
-            (identical(other.value, value) ||
-                const DeepCollectionEquality().equals(other.value, value)) &&
+            (identical(other.io, io) || const DeepCollectionEquality().equals(other.io, io)) &&
+            (identical(other.index, index) || const DeepCollectionEquality().equals(other.index, index)) &&
+            (identical(other.value, value) || const DeepCollectionEquality().equals(other.value, value)) &&
             (identical(other.correlation, correlation) ||
-                const DeepCollectionEquality()
-                    .equals(other.correlation, correlation)) &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
+                const DeepCollectionEquality().equals(other.correlation, correlation)) &&
+            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality()
-                    .equals(other.destination, destination)));
+                const DeepCollectionEquality().equals(other.destination, destination)));
   }
 
   @override
@@ -212,8 +182,7 @@ class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
 
   @override
   _$MagicLevelSetStatusDataCopyWith<_MagicLevelSetStatusData> get copyWith =>
-      __$MagicLevelSetStatusDataCopyWithImpl<_MagicLevelSetStatusData>(
-          this, _$identity);
+      __$MagicLevelSetStatusDataCopyWithImpl<_MagicLevelSetStatusData>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -222,16 +191,10 @@ class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
 }
 
 abstract class _MagicLevelSetStatusData implements MagicLevelSetStatusData {
-  const factory _MagicLevelSetStatusData(
-      int io,
-      int index,
-      int value,
-      int correlation,
-      int source,
-      int destination) = _$_MagicLevelSetStatusData;
+  const factory _MagicLevelSetStatusData(int io, int index, int value, int correlation, int source, int destination) =
+      _$_MagicLevelSetStatusData;
 
-  factory _MagicLevelSetStatusData.fromJson(Map<String, dynamic> json) =
-      _$_MagicLevelSetStatusData.fromJson;
+  factory _MagicLevelSetStatusData.fromJson(Map<String, dynamic> json) = _$_MagicLevelSetStatusData.fromJson;
 
   @override
   int get io;
