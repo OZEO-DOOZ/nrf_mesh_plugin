@@ -703,13 +703,15 @@ class MeshManagerApi {
   Future<String> cachedProvisionedMeshNodeUuid() => _methodChannel.invokeMethod('cachedProvisionedMeshNodeUuid');
 
   Future<int> getSequenceNumber(ProvisionedMeshNode node) async {
-    if (Platform.isIOS) {
+    if (Platform.isIOS || Platform.isAndroid) {
       return _methodChannel.invokeMethod('getSequenceNumberForAddress', {'address': await node.unicastAddress});
-    } else if (Platform.isAndroid) {
-      return node.sequenceNumber;
     }
     throw Exception('Platform not supported');
   }
+
+  Future<void> setSequenceNumber(ProvisionedMeshNode node, int seqNum) async =>
+      _methodChannel.invokeListMethod('setSequenceNumberForAddress', {'address': await node.unicastAddress, 'sequenceNumber': seqNum});
+
 
   String _digits(int val, int digits) {
     var hi = 1 << (digits * 4);

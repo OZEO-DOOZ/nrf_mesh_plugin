@@ -107,6 +107,18 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.identifyNode(UUID.fromString(call.argument<String>("serviceUuid")!!))
                 result.success(null)
             }
+            "getSequenceNumberForAddress" -> {
+                val address = call.argument<Int>("address")!!
+                result.success(mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address))
+            }
+            "setSequenceNumberForAddress" -> {
+                val address = call.argument<Int>("address")!!
+                val sequenceNumber = call.argument<Int>("sequenceNumber")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(address)
+                pNode.sequenceNumber = sequenceNumber
+                result.success(null)
+            }
             "sendConfigModelAppBind" -> {
                 val nodeId = call.argument<Int>("nodeId")!!
                 val elementId = call.argument<Int>("elementId")!!

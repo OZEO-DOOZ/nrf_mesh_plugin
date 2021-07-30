@@ -25,7 +25,8 @@ enum DoozMeshManagerApiChannel {
     case sendConfigModelSubscriptionAdd(_ data: SendConfigModelSubscriptionAddArguments)
     case sendConfigModelSubscriptionDelete(_ data: SendConfigModelSubscriptionDeleteArguments)
     case getSequenceNumberForAddress(_ data: GetSequenceNumberForAddressArguments)
-    
+    case setSequenceNumberForAddress(_ data: SetSequenceNumberForAddressArguments)
+
     case error(_ error: Error)
     
     init(call: FlutterMethodCall) {
@@ -69,7 +70,9 @@ enum DoozMeshManagerApiChannel {
                 self = .sendConfigModelSubscriptionDelete(try SendConfigModelSubscriptionDeleteArguments(arguments))
             case "getSequenceNumberForAddress":
                 self = .getSequenceNumberForAddress(try GetSequenceNumberForAddressArguments(arguments))
-            
+            case "setSequenceNumberForAddress":
+                            self = .setSequenceNumberForAddress(try SetSequenceNumberForAddressArguments(arguments))
+
             default:
                 self = .error(FlutterCallError.notImplemented)
             }

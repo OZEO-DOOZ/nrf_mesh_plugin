@@ -82,10 +82,6 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 meshNetwork.selectProvisioner(meshNetwork.provisioners[provisionerIndex])
                 result.success(null)
             }
-            "getSequenceNumberForAddress" -> {
-                val address = call.argument<Int>("address")!!
-                result.success(meshNetwork.sequenceNumbers.get(address))
-            }
             "addGroupWithName" -> {
                 val groupName = call.argument<String>("name")!!
                 val group = meshNetwork.createGroup(meshNetwork.selectedProvisioner, groupName)

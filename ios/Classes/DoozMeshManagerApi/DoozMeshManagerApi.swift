@@ -312,6 +312,20 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             break
+        case .setSequenceNumberForAddress(let data):
+            if
+                let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(bitPattern: data.address)),
+                _node.elements.count == 1,
+                let element = _node.elements.first {
+                meshNetworkManager.setSequenceNumber(data.sequenceNumber, forLocalElement: element)
+                result(nil)
+
+            }else{
+                let error = AccessError.invalidElement
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
         }
         
     }
@@ -330,7 +344,13 @@ private extension DoozMeshManagerApi{
             }else{
                 // No mesh network in database, we have to create one
                 let meshNetwork = _generateMeshNetwork()
-                try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "AppKey")
+                
+                try _ = meshNetwork.add(networkKey: Data.random128BitKey(), name: "Network Key 1")
+                
+                try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 1")
+                try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 2")
+                try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 3")
+
                 _ = meshNetworkManager.save()
             }
             
@@ -402,13 +422,21 @@ private extension DoozMeshManagerApi{
     
     /// Delete the existing network in local database and recreate a new / empty Mesh Network
     func _resetMeshNetwork() throws{
-        guard let _meshNetwork = meshNetworkManager.meshNetwork else{
-            return
-        }
+//        guard let _meshNetwork = meshNetworkManager.meshNetwork else{
+//            return
+//        }
         
         do{
-            try _deleteMeshNetworkFromDb(_meshNetwork.uuid.uuidString)
-            let _ = _generateMeshNetwork()
+//            try _deleteMeshNetworkFromDb(_meshNetwork.uuid.uuidString)
+//            let _ = _generateMeshNetwork()
+            let meshNetwork = _generateMeshNetwork()
+                        
+            try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 1")
+            try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 2")
+            try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 3")
+
+            _ = meshNetworkManager.save()
+            delegate?.onNetworkLoaded(meshNetwork)
         }catch{
             throw(error)
         }

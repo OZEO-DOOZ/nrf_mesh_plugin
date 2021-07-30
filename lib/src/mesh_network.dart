@@ -132,16 +132,12 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) {
-    if (Platform.isAndroid) {
-      return _methodChannel.invokeMethod('addProvisioner', {
-        'unicastAddressRange': unicastAddressRange,
-        'groupAddressRange': groupAddressRange,
-        'sceneAddressRange': sceneAddressRange,
-        'globalTtl': globalTtl,
-      });
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    return _methodChannel.invokeMethod('addProvisioner', {
+      'unicastAddressRange': unicastAddressRange,
+      'groupAddressRange': groupAddressRange,
+      'sceneAddressRange': sceneAddressRange,
+      'globalTtl': globalTtl,
+    });
   }
 
   @override

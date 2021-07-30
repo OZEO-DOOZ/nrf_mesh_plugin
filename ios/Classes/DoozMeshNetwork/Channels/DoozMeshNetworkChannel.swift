@@ -17,7 +17,11 @@ enum DoozMeshNetworkChannel {
     case removeGroup(_ data: RemoveGroupArguments)
     case getElementsForGroup(_ data: GetElementsForGroupArguments)
     case selectProvisioner(_ data: SelectProvisionerArguments)
-    
+    case getProvisionersAsJson
+    case getNodeUsingUUID(_ data: GetNodeArguments)
+    case nextAvailableUnicastAddress
+    case addProvisioner(_ data : AddProvisionerArguments)
+
     case error(_ error: Error)
     
     init(call: FlutterMethodCall) {
@@ -45,6 +49,14 @@ enum DoozMeshNetworkChannel {
                 self = .getElementsForGroup(try GetElementsForGroupArguments(arguments))
             case "selectProvisioner":
                 self = .selectProvisioner(try SelectProvisionerArguments(arguments))
+            case "getProvisionersAsJson":
+                self = .getProvisionersAsJson
+            case "getNodeUsingUUID":
+                self = .getNodeUsingUUID(try GetNodeArguments(arguments))
+            case "nextAvailableUnicastAddress":
+                self = .nextAvailableUnicastAddress
+            case "addProvisioner":
+                self = .addProvisioner(try AddProvisionerArguments(arguments))
             default:
                 self = .error(FlutterCallError.notImplemented)
             }
