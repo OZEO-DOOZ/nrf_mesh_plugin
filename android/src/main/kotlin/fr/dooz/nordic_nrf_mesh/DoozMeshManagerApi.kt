@@ -109,7 +109,8 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             }
             "getSequenceNumberForAddress" -> {
                 val address = call.argument<Int>("address")!!
-                result.success(mMeshManagerApi.meshNetwork!!.sequenceNumbers.get(address))
+                val pNode = mMeshManagerApi.meshNetwork!!.getNode(address)
+                result.success(pNode.sequenceNumber)
             }
             "setSequenceNumberForAddress" -> {
                 val address = call.argument<Int>("address")!!
