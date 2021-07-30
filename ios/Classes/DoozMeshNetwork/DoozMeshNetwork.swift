@@ -203,6 +203,80 @@ private extension DoozMeshNetwork {
             }else{
                 result(false)
             }
+
+        case .getProvisionersAsJson:
+
+            let provisionerList : [Provisioner] = meshNetwork.provisioners
+            var customProvisionerList = [CustomProvisioner]()
+            provisionerList.forEach { provisioner in
+                let provisionerNode = meshNetwork.node(for: provisioner)!
+
+                //unicastAddress
+                let lowUnicastAddress = provisioner.allocatedUnicastRange.first!.lowAddress
+                let highUnicastAddress = provisioner.allocatedUnicastRange.first!.highAddress
+
+                //groupAddress
+                let lowGroupAddress = provisioner.allocatedGroupRange.first!.lowAddress
+                let highGroupAddress = provisioner.allocatedGroupRange.first!.highAddress
+
+                //sceneAddress
+                let firstSceneAddress = provisioner.allocatedSceneRange.first!.firstScene
+                let lastSceneAddress = provisioner.allocatedSceneRange.first!.lastScene
+
+                customProvisionerList.append(CustomProvisioner.init(name: provisioner.name, uuid: provisioner.uuid.uuidString, globalTtl: Int(provisionerNode.defaultTTL ?? 0), unicastAddress: Int(provisionerNode.unicastAddress.description, radix: 16) ?? 0, isLocal: provisioner.isLocal, allocatedUnicastRange: [AllocatedUnicastAndGroupRange.init(lowAddress: lowUnicastAddress, highAddress: highUnicastAddress)], allocatedGroupRange: [AllocatedUnicastAndGroupRange.init(lowAddress: lowGroupAddress, highAddress: highGroupAddress)], allocatedSceneRange: [AllocatedSceneRange.init(firstScene: firstSceneAddress, lastScene: lastSceneAddress)]))
+            }
+
+            do{
+                let jsonEncoder = JSONEncoder()
+                let jsonData = try jsonEncoder.encode(customProvisionerList)
+                let json = String(data: jsonData, encoding: String.Encoding.utf8)
+
+                result(json)
+            } catch let error {
+                print(error.localizedDescription)
+            }
+            
+        case .getNodeUsingUUID(let data):
+
+            let provisionedMeshNode = meshNetwork.node(withUuid: UUID.init(uuidString: data.uuid)!)
+
+            _ = DoozProvisionedDevice.init(messenger: messenger, node: provisionedMeshNode!)
+//                            val pNode = DoozProvisionedMeshNode(binaryMessenger, provisionedMeshNode)
+            result(provisionedMeshNode?.uuid.uuidString)
+            
+        case .nextAvailableUnicastAddress:
+            
+//            let provisionerUnicastAddress = meshNetwork.localProvisioner?.unicastAddress
+            let nextAvailableUnicastAddress = meshNetwork.nextAvailableUnicastAddress(for: meshNetwork.localProvisioner!)
+            #warning("TODO: impl. nextAvailableUnicastAddressWithMin or complete the below workaround")
+//            if(Int(provisionerUnicastAddress!) >= Int(nextAvailableUnicastAddress!)){
+//                repeat{
+//                    nextAvailableUnicastAddress += 1
+//
+//                }while meshNetwork.isAddressRangeValid(nextAvailableUnicastAddress!, elementsCount: 1)
+//            }
+            
+            result(nextAvailableUnicastAddress)
+            
+        case .addProvisioner(let data):
+            do {
+                let provisionerUUID = UUID()
+                
+                let nextAvailableUnicastAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: UInt16(data.unicastAddressRange))!
+                let nextAvailableGroupAddressRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: UInt16(data.groupAddressRange))!
+                let nextAvailableSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: UInt16(data.sceneAddressRange))!
+                
+                let mProvisioner = Provisioner.init(name: UIDevice.current.name, uuid: provisionerUUID, allocatedUnicastRange: [nextAvailableUnicastAddressRange], allocatedGroupRange: [nextAvailableGroupAddressRange], allocatedSceneRange: [nextAvailableSceneRange])
+                
+                try meshNetwork.add(provisioner: mProvisioner)
+                
+                let provisionerNode = meshNetwork.node(withUuid: provisionerUUID)
+                provisionerNode?.defaultTTL = UInt8(data.globalTtl)
+                result(true)
+            } catch let error {
+                print(error.localizedDescription)
+            }
+
         }
     }
 }
@@ -217,4 +291,57 @@ private extension DoozMeshNetwork{
         return meshNetwork.uuid.uuidString
     }
     
+}
+
+public class CustomProvisioner : Codable{
+
+    public let provisionerUuid: String
+    public let lastSelected: Bool
+    public let globalTtl: Int
+    public let provisionerAddress: Int
+//    public let uuid: UUID
+    /// UTF-8 string, which should be a human readable name of the Provisioner.
+    public var provisionerName: String
+    /// An array of unicast range objects.
+    public internal(set) var allocatedUnicastRanges: [AllocatedUnicastAndGroupRange]
+    /// An array of group range objects.
+    public internal(set) var allocatedGroupRanges:   [AllocatedUnicastAndGroupRange]
+    /// An array of scene range objects.
+    public internal(set) var allocatedSceneRanges:   [AllocatedSceneRange]
+
+    init(name: String,
+         uuid: String, globalTtl : Int,
+         unicastAddress: Int,
+         isLocal: Bool,
+         allocatedUnicastRange: [AllocatedUnicastAndGroupRange],
+         allocatedGroupRange:   [AllocatedUnicastAndGroupRange],
+         allocatedSceneRange:   [AllocatedSceneRange]) {
+        self.provisionerName = name
+        self.provisionerUuid = uuid
+        self.globalTtl = globalTtl
+        self.provisionerAddress = unicastAddress
+        self.lastSelected = isLocal
+        self.allocatedUnicastRanges = allocatedUnicastRange
+        self.allocatedGroupRanges   = allocatedGroupRange
+        self.allocatedSceneRanges   = allocatedSceneRange
+
+    }
+}
+
+public class AllocatedUnicastAndGroupRange: Codable{
+    public var lowAddress: UInt16
+    public var highAddress: UInt16
+    init(lowAddress: UInt16, highAddress: UInt16 ) {
+        self.lowAddress = lowAddress
+        self.highAddress = highAddress
+    }
+}
+
+public class AllocatedSceneRange: Codable{
+    public var firstScene: UInt16
+    public var lastScene: UInt16
+    init(firstScene: UInt16, lastScene: UInt16 ) {
+        self.firstScene = firstScene
+        self.lastScene = lastScene
+    }
 }
