@@ -709,9 +709,8 @@ class MeshManagerApi {
     throw Exception('Platform not supported');
   }
 
-  Future<void> setSequenceNumber(ProvisionedMeshNode node, int seqNum) async =>
-      _methodChannel.invokeListMethod('setSequenceNumberForAddress', {'address': await node.unicastAddress, 'sequenceNumber': seqNum});
-
+  Future<void> setSequenceNumber(ProvisionedMeshNode node, int seqNum) async => _methodChannel.invokeListMethod(
+      'setSequenceNumberForAddress', {'address': await node.unicastAddress, 'sequenceNumber': seqNum});
 
   String _digits(int val, int digits) {
     var hi = 1 << (digits * 4);
