@@ -11,8 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  firebase_core: ^0.5.0+1
-  firebase_crashlytics: ^0.2.1+1
+  firebase_core : ^1.4.0
+  firebase_crashlytics: ^2.1.1
 
   nordic_nrf_mesh:
     path: ../

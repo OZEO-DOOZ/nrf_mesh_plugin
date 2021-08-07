@@ -1,7 +1,7 @@
 name: nordic_nrf_mesh
 description: A new flutter plugin project.
-version: 0.0.1
-author:
+version: 0.1.0
+author: contact@dooz-domotique.com
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -12,10 +12,10 @@ dependencies:
     sdk: flutter
   flutter_reactive_ble: ^2.7.3
   json_annotation: ^3.1.0
-  file_picker: ^2.0.6
+  file_picker: ^3.0.4
   freezed_annotation: ^0.12.0
   meta: ^1.1.8
-  rxdart: ^0.24.1
+  rxdart: ^0.27.1
   pedantic: ^1.9.2
   retry: ^3.0.0+1
 
