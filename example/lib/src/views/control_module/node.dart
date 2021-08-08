@@ -11,7 +11,7 @@ class Node extends StatefulWidget {
   final ProvisionedMeshNode node;
   final MeshManagerApi meshManagerApi;
 
-  const Node({Key key, this.node, this.meshManagerApi, this.name}) : super(key: key);
+  const Node({Key? key, required this.node, required this.meshManagerApi, required this.name}) : super(key: key);
 
   @override
   _NodeState createState() => _NodeState();
@@ -19,8 +19,8 @@ class Node extends StatefulWidget {
 
 class _NodeState extends State<Node> {
   bool isLoading = true;
-  int nodeAddress;
-  List<ElementData> elements;
+  late int nodeAddress;
+  late List<ElementData> elements;
 
   @override
   void initState() {
@@ -87,14 +87,14 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
   final MeshManagerApi meshManagerApi;
   final ProvisionedMeshNode node;
 
-  const ConfigureOutputAsLightDimmer({Key key, this.meshManagerApi, this.node}) : super(key: key);
+  const ConfigureOutputAsLightDimmer({Key? key, required this.meshManagerApi, required this.node}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ConfigureAs(
       text: 'Configure output as light dimmer',
       onPressed: () async {
-        final scaffoldState = Scaffold.of(context);
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
         final target = 0;
         // final provisioner = (await meshManagerApi.meshNetwork.nodes).first;
         try {
@@ -107,13 +107,13 @@ class ConfigureOutputAsLightDimmer extends StatelessWidget {
                 .sendGenericLevelSet(await node.unicastAddress, BoardData.lightDimmerOutput(target).toByte())
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
-            scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
+            scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board successfully configured')));
           } else {
-            scaffoldState.showSnackBar(
+            scaffoldMessenger.showSnackBar(
                 SnackBar(content: Text('Board type ${boardType.payload} not supported as dimmer (for now)')));
           }
         } on TimeoutException catch (_) {
-          scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+          scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
         }
       },
     );
@@ -124,14 +124,14 @@ class ConfigureOuputAsLightOnOff extends StatelessWidget {
   final MeshManagerApi meshManagerApi;
   final ProvisionedMeshNode node;
 
-  const ConfigureOuputAsLightOnOff({Key key, @required this.meshManagerApi, @required this.node}) : super(key: key);
+  const ConfigureOuputAsLightOnOff({Key? key, required this.meshManagerApi, required this.node}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ConfigureAs(
       text: 'Configure output as light On/Off',
       onPressed: () async {
-        final scaffoldState = Scaffold.of(context);
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
         final target = 0;
         try {
           final getBoardTypeStatus = await meshManagerApi
@@ -143,13 +143,13 @@ class ConfigureOuputAsLightOnOff extends StatelessWidget {
                 .sendGenericLevelSet(await node.unicastAddress, BoardData.lightOnOffOutput(target).toByte())
                 .timeout(Duration(seconds: 40));
             BoardData.decode(setupDimmerStatus.level);
-            scaffoldState.showSnackBar(SnackBar(content: Text('Board successfully configured')));
+            scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board successfully configured')));
           } else {
-            scaffoldState.showSnackBar(
+            scaffoldMessenger.showSnackBar(
                 SnackBar(content: Text('Board type ${boardType.payload} not supported as on/off (for now)')));
           }
         } on TimeoutException catch (_) {
-          scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+          scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
         }
       },
     );
@@ -160,13 +160,13 @@ class ConfigureAs extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
 
-  const ConfigureAs({Key key, this.onPressed, this.text}) : super(key: key);
+  const ConfigureAs({Key? key, required this.onPressed, required this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: RaisedButton(
+      child: TextButton(
         onPressed: onPressed,
         child: Text(text),
       ),

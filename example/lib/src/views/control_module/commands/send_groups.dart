@@ -19,22 +19,22 @@ class _SendGroupsState extends State<SendGroups> {
     return ExpansionTile(
       title: Text('Send a groups command'),
       children: <Widget>[
-        RaisedButton(
-          child: Text('get groups'),
+        TextButton(
           onPressed: () async {
-            final scaffoldState = Scaffold.of(context);
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
               final status = await widget.meshManagerApi.meshNetwork.groups.timeout(Duration(seconds: 40));
               print(status);
-              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
             } catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
             }
           },
+          child: Text('get groups'),
         )
       ],
     );

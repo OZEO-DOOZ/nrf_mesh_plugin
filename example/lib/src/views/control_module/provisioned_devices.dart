@@ -10,7 +10,7 @@ import 'package:pedantic/pedantic.dart';
 class ProvisionedDevices extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
 
-  const ProvisionedDevices({Key key, this.nordicNrfMesh}) : super(key: key);
+  const ProvisionedDevices({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   @override
   _ProvisionedDevicesState createState() => _ProvisionedDevicesState();
@@ -20,10 +20,10 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   final flutterReactiveBle = FlutterReactiveBle();
   final _devices = <DiscoveredDevice>{};
 
-  MeshManagerApi _meshManagerApi;
+  late MeshManagerApi _meshManagerApi;
   bool loading = true;
   bool isScanning = false;
-  StreamSubscription<DiscoveredDevice> _scanSubscription;
+  StreamSubscription<DiscoveredDevice>? _scanSubscription;
 //  final _serviceData = <String, Guid>{};
 
   @override

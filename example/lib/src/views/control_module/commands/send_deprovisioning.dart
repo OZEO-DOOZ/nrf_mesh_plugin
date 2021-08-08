@@ -7,14 +7,14 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 class SendDeprovisioning extends StatefulWidget {
   final MeshManagerApi meshManagerApi;
 
-  const SendDeprovisioning({Key key, this.meshManagerApi}) : super(key: key);
+  const SendDeprovisioning({Key? key, required this.meshManagerApi}) : super(key: key);
 
   @override
   _SendDeprovisioningState createState() => _SendDeprovisioningState();
 }
 
 class _SendDeprovisioningState extends State<SendDeprovisioning> {
-  int selectedElementAddress;
+  int? selectedElementAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -31,27 +31,28 @@ class _SendDeprovisioningState extends State<SendDeprovisioning> {
             });
           },
         ),
-        RaisedButton(
-          child: Text('Send on off'),
+        TextButton(
           onPressed: selectedElementAddress != null
               ? () async {
-                  final scaffoldState = Scaffold.of(context);
-                  final node = await widget.meshManagerApi.meshNetwork.getNode(selectedElementAddress);
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  final node = await widget.meshManagerApi.meshNetwork.getNode(selectedElementAddress!);
                   final nodes = await widget.meshManagerApi.meshNetwork.nodes;
-
-                  final provisionedNode = nodes.firstWhere((element) => element.uuid == node.uuid, orElse: () => null);
                   try {
+                    final provisionedNode = nodes.firstWhere((element) => element.uuid == node.uuid);
                     await widget.meshManagerApi.deprovision(provisionedNode).timeout(Duration(seconds: 40));
-                    scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
                   } on TimeoutException catch (_) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
                   } on PlatformException catch (e) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                  } on StateError catch (_) {
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('No node found with this uuid')));
                   } catch (e) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
                   }
                 }
               : null,
+          child: Text('Send on off'),
         )
       ],
     );

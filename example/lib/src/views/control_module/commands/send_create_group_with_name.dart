@@ -14,7 +14,7 @@ class SendCreateGroupWithName extends StatefulWidget {
 }
 
 class _SendCreateGroupWithNameState extends State<SendCreateGroupWithName> {
-  String _name;
+  late String _name;
 
   @override
   Widget build(BuildContext context) {
@@ -27,21 +27,21 @@ class _SendCreateGroupWithNameState extends State<SendCreateGroupWithName> {
             _name = text;
           },
         ),
-        RaisedButton(
-          child: Text('Send create group'),
+        TextButton(
           onPressed: () async {
-            final scaffoldState = Scaffold.of(context);
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
               await widget.meshManagerApi.meshNetwork.addGroupWithName(_name).timeout(Duration(seconds: 40));
-              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
             } catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
             }
           },
+          child: Text('Send create group'),
         )
       ],
     );
