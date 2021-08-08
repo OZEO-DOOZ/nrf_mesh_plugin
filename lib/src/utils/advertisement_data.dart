@@ -1,4 +1,4 @@
-String _toMacAddress(final List<int> bytes) => bytes?.map((e) => e.toRadixString(16).padLeft(2, '0'))?.join(':');
+String? _toMacAddress(final List<int>? bytes) => bytes?.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
 
 List<int> _maskAddress(final List<int> address) => [
       address.first | 0xc0,
@@ -15,7 +15,7 @@ bool addressIsInAdvertisementData(final List<int> address, final List<int> adver
     _toMacAddress(_maskAddress(_macAddressBytesFromAdvertisementData(advertisementData)));
 
 /// Generate all the possible addresses from the [advertisementData]
-Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) async* {
+Stream<String?> macAddressesFromAdvertisementData(final List<int> advertisementData) async* {
   final broadcastMac = _macAddressBytesFromAdvertisementData(advertisementData);
   final targetMac = broadcastMac;
   for (var i = 0; i < 4; i++) {
