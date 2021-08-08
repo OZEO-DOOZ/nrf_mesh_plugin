@@ -8,14 +8,14 @@ import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
 
-  const Home({Key key, @required this.nordicNrfMesh}) : super(key: key);
+  const Home({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  IMeshNetwork _meshNetwork;
+  IMeshNetwork? _meshNetwork;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
             },
           ),
           Divider(),
-          if (_meshNetwork != null) MeshNetworkWidget(meshNetwork: _meshNetwork) else Text('No meshNetwork loaded'),
+          if (_meshNetwork != null) MeshNetworkWidget(meshNetwork: _meshNetwork!) else Text('No meshNetwork loaded'),
         ],
       ),
     );
@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
 }
 
 class PlatformVersion extends StatefulWidget {
-  const PlatformVersion({Key key, this.nordicNrfMesh}) : super(key: key);
+  const PlatformVersion({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   final NordicNrfMesh nordicNrfMesh;
   @override
@@ -51,21 +51,21 @@ class PlatformVersion extends StatefulWidget {
 }
 
 class _PlatformVersion extends State<PlatformVersion> {
-  String _platformVersion;
+  String? _platformVersion;
 
   @override
   Widget build(BuildContext context) {
     if (_platformVersion != null) {
       return Text('Run on $_platformVersion');
     } else {
-      return RaisedButton(
-        child: Text('Get Platform Version'),
+      return TextButton(
         onPressed: () async {
           var version = await widget.nordicNrfMesh.platformVersion;
           setState(() {
             _platformVersion = version;
           });
         },
+        child: Text('Get Platform Version'),
       );
     }
   }
@@ -75,16 +75,15 @@ class MeshManagerApiWidget extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
   final ValueChanged<IMeshNetwork> onNewMeshNetwork;
 
-  const MeshManagerApiWidget({Key key, @required this.nordicNrfMesh, @required this.onNewMeshNetwork})
-      : super(key: key);
+  const MeshManagerApiWidget({Key? key, required this.nordicNrfMesh, required this.onNewMeshNetwork}) : super(key: key);
 
   @override
   _MeshManagerApiWidgetState createState() => _MeshManagerApiWidgetState();
 }
 
 class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
-  MeshManagerApi _meshManagerApi;
-  IMeshNetwork _meshNetwork;
+  MeshManagerApi? _meshManagerApi;
+  IMeshNetwork? _meshNetwork;
 
   @override
   void initState() {
@@ -94,83 +93,80 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final scaffoldState = Scaffold.of(context);
     if (_meshManagerApi == null) {
       return CircularProgressIndicator();
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RaisedButton(
-          child: Text('import MeshNetwork Json'),
+        TextButton(
           onPressed: () async {
             final filePath = await FilePicker.platform.pickFiles(type: FileType.any);
             if (filePath == null) return;
-            final file = await File(filePath.paths.first);
-            if (file == null) return;
+            final file = File(filePath.paths.first!);
             final json = await file.readAsString();
-            if (json == null) return;
-            _meshNetwork = await _meshManagerApi.importMeshNetworkJson(json);
-            widget.onNewMeshNetwork(_meshNetwork);
+            _meshNetwork = await _meshManagerApi!.importMeshNetworkJson(json);
+            widget.onNewMeshNetwork(_meshNetwork!);
           },
+          child: Text('import MeshNetwork Json'),
         ),
-        RaisedButton(
-          child: Text('Load MeshNetwork'),
+        TextButton(
           onPressed: () async {
-            _meshNetwork = await _meshManagerApi.loadMeshNetwork();
+            _meshNetwork = await _meshManagerApi!.loadMeshNetwork();
 
-            widget.onNewMeshNetwork(_meshNetwork);
+            widget.onNewMeshNetwork(_meshNetwork!);
           },
+          child: Text('Load MeshNetwork'),
         ),
-        RaisedButton(
-          child: Text('add provisioner'),
+        TextButton(
           onPressed: () async {
             //13 provisioners are maximum with the below given ranges and the default ttl is 5
             //above that, will throw error
-            final result = await _meshNetwork.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
-            debugPrint('provisioner added : ${result}');
+            final result = await _meshNetwork!.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
+            debugPrint('provisioner added : $result');
           },
+          child: Text('add provisioner'),
         ),
-        RaisedButton(
-          child: Text('get provisioner list'),
+        TextButton(
           onPressed: () async {
-            final provisionerList = await _meshNetwork.provisionerList;
+            final provisionerList = await _meshNetwork!.provisionerList;
             debugPrint('# of provs : ${provisionerList.length}');
           },
-        ),
-        RaisedButton(
           child: Text('get provisioner list'),
+        ),
+        TextButton(
           onPressed: () async {
-            var provUUIDs = await _meshNetwork.provisionerList;
+            var provUUIDs = await _meshNetwork!.provisionerList;
             provUUIDs.forEach((value) {
-              print('${value}');
+              print('$value');
             });
           },
+          child: Text('get provisioner list'),
         ),
-        RaisedButton(
-          child: Text('Export MeshNetwork'),
+        TextButton(
           onPressed: _meshNetwork != null
               ? () async {
-                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
+                  final meshNetworkJson = await _meshManagerApi!.exportMeshNetwork();
                   debugPrint(meshNetworkJson);
                 }
               : null,
+          child: Text('Export MeshNetwork'),
         ),
-        RaisedButton(
-          child: Text('Reset MeshNetwork'),
+        TextButton(
           onPressed: _meshNetwork != null
               ? () async {
                   try {
-                    await _meshManagerApi.resetMeshNetwork();
+                    await _meshManagerApi!.resetMeshNetwork();
                     setState(() {
                       _meshNetwork = null;
                     });
-                    widget.onNewMeshNetwork(_meshNetwork);
+                    widget.onNewMeshNetwork(_meshNetwork!);
                   } catch (err) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text('Caught error: $err')));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Caught error: $err')));
                   }
                 }
               : null,
+          child: Text('Reset MeshNetwork'),
         )
       ],
     );

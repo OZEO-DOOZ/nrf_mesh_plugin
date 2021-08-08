@@ -10,7 +10,7 @@ import 'package:pedantic/pedantic.dart';
 class ScanningAndProvisioning extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
 
-  const ScanningAndProvisioning({Key key, @required this.nordicNrfMesh}) : super(key: key);
+  const ScanningAndProvisioning({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   @override
   _ScanningAndProvisioningState createState() => _ScanningAndProvisioningState();
@@ -22,8 +22,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   bool loading = true;
   bool isScanning = true;
   bool isProvisioning = false;
-  StreamSubscription _scanSubscription;
-  MeshManagerApi _meshManagerApi;
+  StreamSubscription? _scanSubscription;
+  late MeshManagerApi _meshManagerApi;
 
   final _serviceData = <String, Uuid>{};
   final _devices = <DiscoveredDevice>{};
@@ -31,9 +31,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   @override
   void initState() {
     super.initState();
-
-    _scanUnprovisionned();
     _init();
+    _scanUnprovisionned();
   }
 
   @override
@@ -63,8 +62,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         meshProvisioningUuid,
       ],
     ).listen((device) async {
-      _serviceData[device.id] =
-          Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]));
+      _serviceData[device.id] = Uuid.parse(
+          _meshManagerApi.getDeviceUuid(device.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]!.toList()));
       setState(() {
         _devices.add(device);
       });
@@ -95,7 +94,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     }
     isProvisioning = true;
 
-    final scaffoldState = Scaffold.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
       // Android is sending the mac Adress of the device, but Apple generates
@@ -107,6 +106,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         deviceUUID = _serviceData[device.id].toString();
       } else if (Platform.isIOS) {
         deviceUUID = device.id.toString();
+      } else {
+        throw UnimplementedError('device uuid on platform : ${Platform.operatingSystem}');
       }
       final provisioningEvent = ProvisioningEvent();
       final provisionedMeshNodeF = widget.nordicNrfMesh
@@ -121,22 +122,22 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
       }).catchError((_) {
         Navigator.of(context).pop();
-        scaffoldState.showSnackBar(SnackBar(content: Text('Provisionning failed')));
+        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Provisionning failed')));
       }));
       await showDialog(
         context: context,
         barrierDismissible: false,
-        child: ProvisioningDialog(
+        builder: (_) => ProvisioningDialog(
           provisioningEvent: provisioningEvent,
         ),
       );
       unawaited(_scanUnprovisionned());
     } catch (e) {
       print(e);
-      scaffoldState.showSnackBar(SnackBar(content: Text('Caught error: $e')));
+      scaffoldMessenger.showSnackBar(SnackBar(content: Text('Caught error: $e')));
     } finally {
       isProvisioning = false;
     }
@@ -188,7 +189,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 class ProvisioningDialog extends StatelessWidget {
   final ProvisioningEvent provisioningEvent;
 
-  const ProvisioningDialog({Key key, @required this.provisioningEvent}) : super(key: key);
+  const ProvisioningDialog({Key? key, required this.provisioningEvent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -243,11 +244,11 @@ class ProvisioningState extends StatelessWidget {
   final Stream<bool> stream;
   final String text;
 
-  const ProvisioningState({Key key, @required this.stream, @required this.text}) : super(key: key);
+  const ProvisioningState({Key? key, required this.stream, required this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<bool>(
       initialData: false,
       stream: stream,
       builder: (context, snapshot) {
