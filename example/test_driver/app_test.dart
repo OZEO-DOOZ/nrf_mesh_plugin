@@ -3,7 +3,7 @@ import 'package:pedantic/pedantic.dart';
 import 'package:test/test.dart';
 
 void main() {
-  FlutterDriver driver;
+  late FlutterDriver driver;
 
   // Connect to the Flutter driver before running any tests.
   setUpAll(() async {
@@ -12,9 +12,7 @@ void main() {
 
   // Close the connection to the driver after the tests have completed.
   tearDownAll(() async {
-    if (driver != null) {
-      unawaited(driver.close());
-    }
+    unawaited(driver.close());
   });
 
   test('go to provisioning page', () async {
