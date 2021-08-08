@@ -16,7 +16,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body;
+    Widget body = const SizedBox.shrink();
 
     if (_bottomNavigationBarIndex == 0) {
       //  home
