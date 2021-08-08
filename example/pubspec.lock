@@ -105,7 +105,7 @@ packages:
       name: cupertino_icons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -168,7 +168,7 @@ packages:
       name: fixnum
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.11"
+    version: "1.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -192,7 +192,7 @@ packages:
       name: flutter_reactive_ble
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.7.3"
+    version: "3.1.1+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -209,7 +209,7 @@ packages:
       name: freezed_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.0"
+    version: "0.14.2"
   fuchsia_remote_debug_protocol:
     dependency: transitive
     description: flutter
@@ -221,7 +221,7 @@ packages:
       name: functional_data
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "1.0.0"
   glob:
     dependency: transitive
     description:
@@ -263,7 +263,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.1"
+    version: "4.0.1"
   logging:
     dependency: transitive
     description:
@@ -327,13 +327,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.11.1"
-  plain_optional:
-    dependency: transitive
-    description:
-      name: plain_optional
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.3"
   platform:
     dependency: transitive
     description:
@@ -368,7 +361,7 @@ packages:
       name: protobuf
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.3"
+    version: "2.0.0"
   pub_semver:
     dependency: transitive
     description:
@@ -382,7 +375,7 @@ packages:
       name: retry
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.1.0"
   rxdart:
     dependency: transitive
     description:
@@ -558,4 +551,4 @@ packages:
     version: "3.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.20.0"
+  flutter: ">=2.0.0"
