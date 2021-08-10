@@ -43,7 +43,7 @@ class _ModuleState extends State<Module> {
   void dispose() async {
     super.dispose();
     await bleMeshManager.disconnect();
-    await bleMeshManager.callbacks.dispose();
+    await bleMeshManager.callbacks!.dispose();
   }
 
   @override
@@ -145,8 +145,8 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   late StreamSubscription<DiscoveredDevice> onDeviceReadySubscription;
   late StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
   late StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
-  late StreamSubscription<DiscoveredDevice> onDeviceDisconnectingSubscription;
-  late StreamSubscription<DiscoveredDevice> onDeviceDisconnectedSubscription;
+  late StreamSubscription<DiscoveredDevice?> onDeviceDisconnectingSubscription;
+  late StreamSubscription<DiscoveredDevice?> onDeviceDisconnectedSubscription;
   late StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
   DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
