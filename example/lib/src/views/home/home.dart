@@ -88,14 +88,11 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
   @override
   void initState() {
     super.initState();
-    widget.nordicNrfMesh.meshManagerApi.then((value) => setState(() => _meshManagerApi = value));
+    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_meshManagerApi == null) {
-      return CircularProgressIndicator();
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

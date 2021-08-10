@@ -31,7 +31,7 @@ class _SendCreateGroupWithNameState extends State<SendCreateGroupWithName> {
           onPressed: () async {
             final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
-              await widget.meshManagerApi.meshNetwork.addGroupWithName(_name).timeout(Duration(seconds: 40));
+              await widget.meshManagerApi.meshNetwork!.addGroupWithName(_name).timeout(Duration(seconds: 40));
               scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
               scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));

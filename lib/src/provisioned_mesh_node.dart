@@ -43,16 +43,16 @@ class ProvisionedMeshNode {
   final MethodChannel _methodChannel;
   final String uuid;
 
-  ProvisionedMeshNode(this.uuid) : _methodChannel = MethodChannel('$namespace/provisioned_mesh_node/${uuid}/methods');
+  ProvisionedMeshNode(this.uuid) : _methodChannel = MethodChannel('$namespace/provisioned_mesh_node/$uuid/methods');
 
-  Future<int> get unicastAddress => _methodChannel.invokeMethod('unicastAddress');
+  Future<int> get unicastAddress async => (await _methodChannel.invokeMethod<int>('unicastAddress'))!;
 
-  Future<void> nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
+  set nodeName(String name) => _methodChannel.invokeMethod('nodeName', {'name': name});
 
-  Future<String> get name => _methodChannel.invokeMethod('name');
+  Future<String> get name async => (await _methodChannel.invokeMethod<String>('name'))!;
 
   Future<List<ElementData>> get elements async {
     final _elements = await _methodChannel.invokeMethod<List>('elements');
-    return _elements.map((e) => ElementData.fromJson(e)).toList();
+    return _elements!.map((e) => ElementData.fromJson(e)).toList();
   }
 }

@@ -11,11 +11,11 @@ class UnprovisionedMeshNode {
   final List<int> provisionerPublicKeyXY;
 
   UnprovisionedMeshNode(this.uuid, this.provisionerPublicKeyXY)
-      : _methodChannel = MethodChannel('$namespace/unprovisioned_mesh_node/${uuid}/methods');
+      : _methodChannel = MethodChannel('$namespace/unprovisioned_mesh_node/$uuid/methods');
 
   factory UnprovisionedMeshNode.fromJson(Map json) => _$UnprovisionedMeshNodeFromJson(json.cast<String, dynamic>());
 
-  Future<int> getNumberOfElements() => _methodChannel.invokeMethod('getNumberOfElements');
+  Future<int> getNumberOfElements() async => (await _methodChannel.invokeMethod<int>('getNumberOfElements'))!;
 
   Map<String, dynamic> toJson() => _$UnprovisionedMeshNodeToJson(this);
 }

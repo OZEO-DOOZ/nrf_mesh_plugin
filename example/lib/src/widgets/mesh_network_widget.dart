@@ -20,16 +20,13 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
 
   @override
   void initState() {
+    super.initState();
     widget.meshNetwork.nodes.then((value) => setState(() => _nodes = value));
     widget.meshNetwork.groups.then((value) => setState(() => _groups = value));
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.meshNetwork == null) {
-      return Text('No mesh network');
-    }
     return Column(
       children: <Widget>[
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),

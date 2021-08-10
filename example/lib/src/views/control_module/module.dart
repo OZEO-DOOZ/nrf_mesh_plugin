@@ -107,7 +107,7 @@ class _ModuleState extends State<Module> {
 
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
-    nodes = (await widget.meshManagerApi.meshNetwork.nodes).skip(1).toList();
+    nodes = (await widget.meshManagerApi.meshNetwork!.nodes).skip(1).toList();
 
     for (final node in nodes) {
       final elements = await node.elements;

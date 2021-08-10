@@ -35,8 +35,8 @@ class _SendDeprovisioningState extends State<SendDeprovisioning> {
           onPressed: selectedElementAddress != null
               ? () async {
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  final node = await widget.meshManagerApi.meshNetwork.getNode(selectedElementAddress!);
-                  final nodes = await widget.meshManagerApi.meshNetwork.nodes;
+                  final node = await widget.meshManagerApi.meshNetwork!.getNode(selectedElementAddress!);
+                  final nodes = await widget.meshManagerApi.meshNetwork!.nodes;
                   try {
                     final provisionedNode = nodes.firstWhere((element) => element.uuid == node.uuid);
                     await widget.meshManagerApi.deprovision(provisionedNode).timeout(Duration(seconds: 40));

@@ -32,7 +32,7 @@ class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
             final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
               final result =
-                  await widget.meshManagerApi.meshNetwork.elementsForGroup(_id).timeout(Duration(seconds: 40));
+                  await widget.meshManagerApi.meshNetwork!.elementsForGroup(_id).timeout(Duration(seconds: 40));
               print(result);
               scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {

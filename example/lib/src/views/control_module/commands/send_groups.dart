@@ -23,7 +23,7 @@ class _SendGroupsState extends State<SendGroups> {
           onPressed: () async {
             final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
-              final status = await widget.meshManagerApi.meshNetwork.groups.timeout(Duration(seconds: 40));
+              final status = await widget.meshManagerApi.meshNetwork!.groups.timeout(Duration(seconds: 40));
               print(status);
               scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {

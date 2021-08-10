@@ -47,8 +47,8 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
               ? () async {
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
                   print('send level $onOff to $selectedElementAddress');
-                  final provisionerUuid = await widget.meshManagerApi.meshNetwork.selectedProvisionerUuid();
-                  final nodes = await widget.meshManagerApi.meshNetwork.nodes;
+                  final provisionerUuid = await widget.meshManagerApi.meshNetwork!.selectedProvisionerUuid();
+                  final nodes = await widget.meshManagerApi.meshNetwork!.nodes;
                   try {
                     final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid);
                     final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);

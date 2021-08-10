@@ -61,7 +61,7 @@ void main() {
     final configureAsDimmer = find.text('Configure output as light dimmer');
     await driver.tap(configureAsDimmer);
     await driver.waitFor(find.text('Board successfully configured'));
-    final backPage = await find.pageBack();
+    final backPage = find.pageBack();
     await driver.tap(backPage);
   }, timeout: Timeout(Duration(minutes: 1)));
 

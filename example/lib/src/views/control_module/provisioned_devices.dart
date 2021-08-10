@@ -80,7 +80,7 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   }
 
   Future<void> _init() async {
-    _meshManagerApi = await widget.nordicNrfMesh.meshManagerApi;
+    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
 
     await _meshManagerApi.loadMeshNetwork();
 
