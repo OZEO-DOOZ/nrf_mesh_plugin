@@ -15,7 +15,7 @@ abstract class IMeshNetwork {
   String get id;
   Future<List<Provisioner>> get provisionerList;
 
-  Future<GroupData> addGroupWithName(String name);
+  Future<GroupData?> addGroupWithName(String name);
 
   Future<void> assignUnicastAddress(int unicastAddress);
 
@@ -49,45 +49,44 @@ abstract class IMeshNetwork {
 }
 
 class MeshNetwork implements IMeshNetwork {
-  MethodChannel _methodChannel;
+  final MethodChannel _methodChannel;
 
   final String _id;
 
-  MeshNetwork(this._id) {
-    _methodChannel = MethodChannel('$namespace/mesh_network/$id/methods');
-  }
+  MeshNetwork(this._id) : _methodChannel = MethodChannel('$namespace/mesh_network/$_id/methods');
 
   @override
   Future<List<GroupData>> get groups async {
     final _groups = await _methodChannel.invokeMethod<List>('groups');
-    return _groups.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
+    return _groups!.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
   @override
-  Future<int> get highestAllocatableAddress => _methodChannel.invokeMethod('highestAllocatableAddress');
+  Future<int> get highestAllocatableAddress async =>
+      (await _methodChannel.invokeMethod<int>('highestAllocatableAddress'))!;
 
   @override
   Future<List<ElementData>> elementsForGroup(int groupAddress) async {
-    final result = await _methodChannel.invokeMethod('getElementsForGroup', {'groupAddress': groupAddress}) as List;
-    return result.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
+    final _elements = await _methodChannel.invokeMethod<List>('getElementsForGroup', {'groupAddress': groupAddress});
+    return _elements!.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
   @override
   String get id => _id;
 
   @override
-  Future<String> get name => _methodChannel.invokeMethod('getMeshNetworkName');
+  Future<String> get name async => (await _methodChannel.invokeMethod<String>('getMeshNetworkName'))!;
 
   @override
   Future<List<ProvisionedMeshNode>> get nodes async {
     final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
-    return _nodes.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
+    return _nodes!.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
   }
 
   @override
-  Future<GroupData> addGroupWithName(String name) async {
+  Future<GroupData?> addGroupWithName(String name) async {
     final result = await _methodChannel.invokeMethod<Map>('addGroupWithName', {'name': name});
-    if (result['successfullyAdded'] == false) {
+    if (result!['successfullyAdded'] == false) {
       return null;
     }
     return GroupData.fromJson((result.cast<String, dynamic>()['group'] as Map).cast<String, dynamic>());
@@ -95,29 +94,31 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<void> assignUnicastAddress(int unicastAddress) =>
-      _methodChannel.invokeMethod('assignUnicastAddress', {'unicastAddress': unicastAddress});
+      _methodChannel.invokeMethod<void>('assignUnicastAddress', {'unicastAddress': unicastAddress});
 
   @override
-  Future<int> nextAvailableUnicastAddress(int elementSize) =>
-      _methodChannel.invokeMethod('nextAvailableUnicastAddress', {'elementSize': elementSize});
+  Future<int> nextAvailableUnicastAddress(int elementSize) async =>
+      (await _methodChannel.invokeMethod<int>('nextAvailableUnicastAddress', {'elementSize': elementSize}))!;
 
   @override
-  Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize) => _methodChannel
-      .invokeMethod('nextAvailableUnicastAddressWithMin', {'minAddress': minAddress, 'elementSize': elementSize});
+  Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize) async =>
+      (await _methodChannel.invokeMethod<int>(
+          'nextAvailableUnicastAddressWithMin', {'minAddress': minAddress, 'elementSize': elementSize}))!;
 
   @override
-  Future<bool> removeGroup(int groupAddress) =>
-      _methodChannel.invokeMethod('removeGroup', {'groupAddress': groupAddress});
+  Future<bool> removeGroup(int groupAddress) async =>
+      (await _methodChannel.invokeMethod<bool>('removeGroup', {'groupAddress': groupAddress}))!;
 
   @override
-  Future<String> selectedProvisionerUuid() => _methodChannel.invokeMethod('selectedProvisionerUuid');
+  Future<String> selectedProvisionerUuid() async =>
+      (await _methodChannel.invokeMethod<String>('selectedProvisionerUuid'))!;
 
   @override
-  String toString() => 'MeshNetwork{ $_id }';
+  String toString() => 'MeshNetwork{$_id}';
 
   @override
   Future<void> selectProvisioner(int provisionerIndex) =>
-      _methodChannel.invokeMethod('selectProvisioner', {'provisionerIndex': provisionerIndex});
+      _methodChannel.invokeMethod<void>('selectProvisioner', {'provisionerIndex': provisionerIndex});
 
   @override
   Future<List<Provisioner>> get provisionerList async {
@@ -131,46 +132,54 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) {
-    return _methodChannel.invokeMethod('addProvisioner', {
-      'unicastAddressRange': unicastAddressRange,
-      'groupAddressRange': groupAddressRange,
-      'sceneAddressRange': sceneAddressRange,
-      'globalTtl': globalTtl,
-    });
-  }
-
-  @override
-  Future<bool> updateProvisioner(Provisioner provisioner) {
-    if (Platform.isAndroid) {
-      return _methodChannel.invokeMethod('updateProvisioner', {
-        'provisionerUuid': provisioner.provisionerUuid,
-        'provisionerName': provisioner.provisionerName,
-        'provisionerAddress': provisioner.provisionerAddress,
-        'globalTtl': provisioner.globalTtl,
-        'lastSelected': provisioner.lastSelected
-      });
+  Future<bool> addProvisioner(
+      int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) async {
+    if (Platform.isIOS || Platform.isAndroid) {
+      return (await _methodChannel.invokeMethod<bool>(
+        'addProvisioner',
+        {
+          'unicastAddressRange': unicastAddressRange,
+          'groupAddressRange': groupAddressRange,
+          'sceneAddressRange': sceneAddressRange,
+          'globalTtl': globalTtl,
+        },
+      ))!;
     } else {
-      throw UnsupportedError('Platform not supported');
+      throw UnsupportedError('Platform "${Platform.operatingSystem}" not supported');
     }
   }
 
   @override
-  Future<bool> removeProvisioner(String provisionerUUID) {
-    if (Platform.isAndroid) {
-      return _methodChannel.invokeMethod('removeProvisioner', {'provisionerUUID': provisionerUUID});
+  Future<bool> updateProvisioner(Provisioner provisioner) async {
+    if (Platform.isIOS || Platform.isAndroid) {
+      return (await _methodChannel.invokeMethod<bool>(
+        'updateProvisioner',
+        {
+          'provisionerUuid': provisioner.provisionerUuid,
+          'provisionerName': provisioner.provisionerName,
+          'provisionerAddress': provisioner.provisionerAddress,
+          'globalTtl': provisioner.globalTtl,
+          'lastSelected': provisioner.lastSelected
+        },
+      ))!;
     } else {
-      throw UnsupportedError('Platform not supported');
+      throw UnsupportedError('Platform "${Platform.operatingSystem}" not supported');
+    }
+  }
+
+  @override
+  Future<bool> removeProvisioner(String provisionerUUID) async {
+    if (Platform.isIOS || Platform.isAndroid) {
+      return (await _methodChannel.invokeMethod<bool>('removeProvisioner', {'provisionerUUID': provisionerUUID}))!;
+    } else {
+      throw UnsupportedError('Platform "${Platform.operatingSystem}" not supported');
     }
   }
 
   @override
   Future<bool> deleteNode(String uid) async {
     if (Platform.isIOS || Platform.isAndroid) {
-      var status = await _methodChannel.invokeMethod('deleteNode', {
-        'uid': uid,
-      });
-      return status;
+      return (await _methodChannel.invokeMethod<bool>('deleteNode', {'uid': uid}))!;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
@@ -178,32 +187,45 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier) async {
-    return await _methodChannel.invokeMethod('getMeshModelSubscriptions', {
-      'elementAddress': elementAddress,
-      'modelIdentifier': modelIdentifier,
-    });
+    if (Platform.isIOS || Platform.isAndroid) {
+      return (await _methodChannel.invokeMethod<Map>(
+        'getMeshModelSubscriptions',
+        {
+          'elementAddress': elementAddress,
+          'modelIdentifier': modelIdentifier,
+        },
+      ))!;
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
   }
 
   @override
   Future<Map> getGroupElementIds(int groupAddress) async {
-    return await _methodChannel.invokeMethod('getGroupElementIds', {
-      'groupAddress': groupAddress,
-    });
+    if (Platform.isIOS || Platform.isAndroid) {
+      return (await _methodChannel.invokeMethod<Map>('getGroupElementIds', {'groupAddress': groupAddress}))!;
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
   }
 
   @override
   Future<ProvisionedMeshNode> getNode(int address) async {
-    final _node = await _methodChannel.invokeMethod<String>('getNode', {
-      'address': address,
-    });
-    return ProvisionedMeshNode(_node);
+    if (Platform.isIOS || Platform.isAndroid) {
+      final _node = await _methodChannel.invokeMethod<String>('getNode', {'address': address});
+      return ProvisionedMeshNode(_node!);
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
   }
 
   @override
   Future<ProvisionedMeshNode> getNodeUsingUUID(String uuid) async {
-    final _node = await _methodChannel.invokeMethod<String>('getNodeUsingUUID', {
-      'uuid': uuid,
-    });
-    return ProvisionedMeshNode(_node);
+    if (Platform.isIOS || Platform.isAndroid) {
+      final _node = await _methodChannel.invokeMethod<String>('getNodeUsingUUID', {'uuid': uuid});
+      return ProvisionedMeshNode(_node!);
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
   }
 }

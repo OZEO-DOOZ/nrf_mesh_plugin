@@ -350,31 +350,31 @@ class MeshManagerApi {
     return future;
   }
 
-  Future<Null> setMtu(final int mtuSize) => _methodChannel.invokeMethod<Null>('setMtuSize', {'mtuSize': mtuSize});
+  Future<void> setMtu(final int mtuSize) => _methodChannel.invokeMethod<void>('setMtuSize', {'mtuSize': mtuSize});
 
   Future<String> exportMeshNetwork() async {
     final json = await _methodChannel.invokeMethod<String>('exportMeshNetwork');
     return json!;
   }
 
-  Future<Null> resetMeshNetwork() => _methodChannel.invokeMethod<Null>('resetMeshNetwork');
+  Future<void> resetMeshNetwork() => _methodChannel.invokeMethod<void>('resetMeshNetwork');
 
-  Future<Null> handleNotifications(int mtu, List<int> pdu) => _methodChannel.invokeMethod<Null>(
+  Future<void> handleNotifications(int mtu, List<int> pdu) => _methodChannel.invokeMethod<void>(
         'handleNotifications',
         {'mtu': mtu, 'pdu': pdu},
       );
 
-  Future<Null> handleWriteCallbacks(int mtu, List<int> pdu) => _methodChannel.invokeMethod<Null>(
+  Future<void> handleWriteCallbacks(int mtu, List<int> pdu) => _methodChannel.invokeMethod<void>(
         'handleWriteCallbacks',
         {'mtu': mtu, 'pdu': pdu},
       );
 
-  Future<Null> identifyNode(String serviceUuid) => _methodChannel.invokeMethod<Null>(
+  Future<void> identifyNode(String serviceUuid) => _methodChannel.invokeMethod<void>(
         'identifyNode',
         {'serviceUuid': serviceUuid},
       );
 
-  Future<Null> cleanProvisioningData() => _methodChannel.invokeMethod<Null>('cleanProvisioningData');
+  Future<void> cleanProvisioningData() => _methodChannel.invokeMethod<void>('cleanProvisioningData');
 
   Future<GenericLevelStatusData> sendGenericLevelSet(
     int address,
@@ -767,7 +767,7 @@ class MeshManagerApi {
     throw Exception('Platform not supported');
   }
 
-  Future<Null> setSequenceNumber(ProvisionedMeshNode node, int seqNum) async => _methodChannel.invokeMethod<Null>(
+  Future<void> setSequenceNumber(ProvisionedMeshNode node, int seqNum) async => _methodChannel.invokeMethod<void>(
         'setSequenceNumberForAddress',
         {'address': await node.unicastAddress, 'sequenceNumber': seqNum},
       );
