@@ -9,11 +9,7 @@ part of 'config_composition_data_status.dart';
 _$_ConfigCompositionDataStatusData _$_$_ConfigCompositionDataStatusDataFromJson(Map json) {
   return _$_ConfigCompositionDataStatusData(
     json['source'] as int,
-    json['meshMessage'] == null
-        ? null
-        : ConfigCompositionDataStatusMeshMessage.fromJson((json['meshMessage'] as Map)?.map(
-            (k, e) => MapEntry(k as String, e),
-          )),
+    ConfigCompositionDataStatusMeshMessage.fromJson(Map<String, dynamic>.from(json['meshMessage'] as Map)),
   );
 }
 
@@ -27,7 +23,7 @@ _$_ConfigCompositionDataStatusMeshMessage _$_$_ConfigCompositionDataStatusMeshMe
     Map<String, dynamic> json) {
   return _$_ConfigCompositionDataStatusMeshMessage(
     json['source'] as int,
-    json['aszmic'] as int,
+    json['aszmic'] as int?,
     json['destination'] as int,
   );
 }

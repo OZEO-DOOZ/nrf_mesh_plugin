@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'provisioner.dart';
 
@@ -8,6 +8,10 @@ part of 'provisioner.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 Provisioner _$ProvisionerFromJson(Map<String, dynamic> json) {
   return _Provisioner.fromJson(json);
 }
@@ -16,7 +20,6 @@ Provisioner _$ProvisionerFromJson(Map<String, dynamic> json) {
 class _$ProvisionerTearOff {
   const _$ProvisionerTearOff();
 
-// ignore: unused_element
   _Provisioner call(
       String provisionerName,
       String provisionerUuid,
@@ -38,29 +41,28 @@ class _$ProvisionerTearOff {
     );
   }
 
-// ignore: unused_element
   Provisioner fromJson(Map<String, Object> json) {
     return Provisioner.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $Provisioner = _$ProvisionerTearOff();
 
 /// @nodoc
 mixin _$Provisioner {
-  String get provisionerName;
-  String get provisionerUuid;
-  int get globalTtl;
-  int get provisionerAddress;
-  List<AllocatedUnicastRange> get allocatedUnicastRanges;
-  List<AllocatedGroupRange> get allocatedGroupRanges;
-  List<AllocatedSceneRange> get allocatedSceneRanges;
-  bool get lastSelected;
+  String get provisionerName => throw _privateConstructorUsedError;
+  String get provisionerUuid => throw _privateConstructorUsedError;
+  int get globalTtl => throw _privateConstructorUsedError;
+  int get provisionerAddress => throw _privateConstructorUsedError;
+  List<AllocatedUnicastRange> get allocatedUnicastRanges => throw _privateConstructorUsedError;
+  List<AllocatedGroupRange> get allocatedGroupRanges => throw _privateConstructorUsedError;
+  List<AllocatedSceneRange> get allocatedSceneRanges => throw _privateConstructorUsedError;
+  bool get lastSelected => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ProvisionerCopyWith<Provisioner> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ProvisionerCopyWith<Provisioner> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -87,30 +89,48 @@ class _$ProvisionerCopyWithImpl<$Res> implements $ProvisionerCopyWith<$Res> {
 
   @override
   $Res call({
-    Object provisionerName = freezed,
-    Object provisionerUuid = freezed,
-    Object globalTtl = freezed,
-    Object provisionerAddress = freezed,
-    Object allocatedUnicastRanges = freezed,
-    Object allocatedGroupRanges = freezed,
-    Object allocatedSceneRanges = freezed,
-    Object lastSelected = freezed,
+    Object? provisionerName = freezed,
+    Object? provisionerUuid = freezed,
+    Object? globalTtl = freezed,
+    Object? provisionerAddress = freezed,
+    Object? allocatedUnicastRanges = freezed,
+    Object? allocatedGroupRanges = freezed,
+    Object? allocatedSceneRanges = freezed,
+    Object? lastSelected = freezed,
   }) {
     return _then(_value.copyWith(
-      provisionerName: provisionerName == freezed ? _value.provisionerName : provisionerName as String,
-      provisionerUuid: provisionerUuid == freezed ? _value.provisionerUuid : provisionerUuid as String,
-      globalTtl: globalTtl == freezed ? _value.globalTtl : globalTtl as int,
-      provisionerAddress: provisionerAddress == freezed ? _value.provisionerAddress : provisionerAddress as int,
+      provisionerName: provisionerName == freezed
+          ? _value.provisionerName
+          : provisionerName // ignore: cast_nullable_to_non_nullable
+              as String,
+      provisionerUuid: provisionerUuid == freezed
+          ? _value.provisionerUuid
+          : provisionerUuid // ignore: cast_nullable_to_non_nullable
+              as String,
+      globalTtl: globalTtl == freezed
+          ? _value.globalTtl
+          : globalTtl // ignore: cast_nullable_to_non_nullable
+              as int,
+      provisionerAddress: provisionerAddress == freezed
+          ? _value.provisionerAddress
+          : provisionerAddress // ignore: cast_nullable_to_non_nullable
+              as int,
       allocatedUnicastRanges: allocatedUnicastRanges == freezed
           ? _value.allocatedUnicastRanges
-          : allocatedUnicastRanges as List<AllocatedUnicastRange>,
+          : allocatedUnicastRanges // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedUnicastRange>,
       allocatedGroupRanges: allocatedGroupRanges == freezed
           ? _value.allocatedGroupRanges
-          : allocatedGroupRanges as List<AllocatedGroupRange>,
+          : allocatedGroupRanges // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedGroupRange>,
       allocatedSceneRanges: allocatedSceneRanges == freezed
           ? _value.allocatedSceneRanges
-          : allocatedSceneRanges as List<AllocatedSceneRange>,
-      lastSelected: lastSelected == freezed ? _value.lastSelected : lastSelected as bool,
+          : allocatedSceneRanges // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedSceneRange>,
+      lastSelected: lastSelected == freezed
+          ? _value.lastSelected
+          : lastSelected // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -141,44 +161,57 @@ class __$ProvisionerCopyWithImpl<$Res> extends _$ProvisionerCopyWithImpl<$Res> i
 
   @override
   $Res call({
-    Object provisionerName = freezed,
-    Object provisionerUuid = freezed,
-    Object globalTtl = freezed,
-    Object provisionerAddress = freezed,
-    Object allocatedUnicastRanges = freezed,
-    Object allocatedGroupRanges = freezed,
-    Object allocatedSceneRanges = freezed,
-    Object lastSelected = freezed,
+    Object? provisionerName = freezed,
+    Object? provisionerUuid = freezed,
+    Object? globalTtl = freezed,
+    Object? provisionerAddress = freezed,
+    Object? allocatedUnicastRanges = freezed,
+    Object? allocatedGroupRanges = freezed,
+    Object? allocatedSceneRanges = freezed,
+    Object? lastSelected = freezed,
   }) {
     return _then(_Provisioner(
-      provisionerName == freezed ? _value.provisionerName : provisionerName as String,
-      provisionerUuid == freezed ? _value.provisionerUuid : provisionerUuid as String,
-      globalTtl == freezed ? _value.globalTtl : globalTtl as int,
-      provisionerAddress == freezed ? _value.provisionerAddress : provisionerAddress as int,
+      provisionerName == freezed
+          ? _value.provisionerName
+          : provisionerName // ignore: cast_nullable_to_non_nullable
+              as String,
+      provisionerUuid == freezed
+          ? _value.provisionerUuid
+          : provisionerUuid // ignore: cast_nullable_to_non_nullable
+              as String,
+      globalTtl == freezed
+          ? _value.globalTtl
+          : globalTtl // ignore: cast_nullable_to_non_nullable
+              as int,
+      provisionerAddress == freezed
+          ? _value.provisionerAddress
+          : provisionerAddress // ignore: cast_nullable_to_non_nullable
+              as int,
       allocatedUnicastRanges == freezed
           ? _value.allocatedUnicastRanges
-          : allocatedUnicastRanges as List<AllocatedUnicastRange>,
-      allocatedGroupRanges == freezed ? _value.allocatedGroupRanges : allocatedGroupRanges as List<AllocatedGroupRange>,
-      allocatedSceneRanges == freezed ? _value.allocatedSceneRanges : allocatedSceneRanges as List<AllocatedSceneRange>,
-      lastSelected == freezed ? _value.lastSelected : lastSelected as bool,
+          : allocatedUnicastRanges // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedUnicastRange>,
+      allocatedGroupRanges == freezed
+          ? _value.allocatedGroupRanges
+          : allocatedGroupRanges // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedGroupRange>,
+      allocatedSceneRanges == freezed
+          ? _value.allocatedSceneRanges
+          : allocatedSceneRanges // ignore: cast_nullable_to_non_nullable
+              as List<AllocatedSceneRange>,
+      lastSelected == freezed
+          ? _value.lastSelected
+          : lastSelected // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_Provisioner implements _Provisioner {
   const _$_Provisioner(this.provisionerName, this.provisionerUuid, this.globalTtl, this.provisionerAddress,
-      this.allocatedUnicastRanges, this.allocatedGroupRanges, this.allocatedSceneRanges, this.lastSelected)
-      : assert(provisionerName != null),
-        assert(provisionerUuid != null),
-        assert(globalTtl != null),
-        assert(provisionerAddress != null),
-        assert(allocatedUnicastRanges != null),
-        assert(allocatedGroupRanges != null),
-        assert(allocatedSceneRanges != null),
-        assert(lastSelected != null);
+      this.allocatedUnicastRanges, this.allocatedGroupRanges, this.allocatedSceneRanges, this.lastSelected);
 
   factory _$_Provisioner.fromJson(Map<String, dynamic> json) => _$_$_ProvisionerFromJson(json);
 
@@ -238,6 +271,7 @@ class _$_Provisioner implements _Provisioner {
       const DeepCollectionEquality().hash(allocatedSceneRanges) ^
       const DeepCollectionEquality().hash(lastSelected);
 
+  @JsonKey(ignore: true)
   @override
   _$ProvisionerCopyWith<_Provisioner> get copyWith => __$ProvisionerCopyWithImpl<_Provisioner>(this, _$identity);
 
@@ -261,21 +295,22 @@ abstract class _Provisioner implements Provisioner {
   factory _Provisioner.fromJson(Map<String, dynamic> json) = _$_Provisioner.fromJson;
 
   @override
-  String get provisionerName;
+  String get provisionerName => throw _privateConstructorUsedError;
   @override
-  String get provisionerUuid;
+  String get provisionerUuid => throw _privateConstructorUsedError;
   @override
-  int get globalTtl;
+  int get globalTtl => throw _privateConstructorUsedError;
   @override
-  int get provisionerAddress;
+  int get provisionerAddress => throw _privateConstructorUsedError;
   @override
-  List<AllocatedUnicastRange> get allocatedUnicastRanges;
+  List<AllocatedUnicastRange> get allocatedUnicastRanges => throw _privateConstructorUsedError;
   @override
-  List<AllocatedGroupRange> get allocatedGroupRanges;
+  List<AllocatedGroupRange> get allocatedGroupRanges => throw _privateConstructorUsedError;
   @override
-  List<AllocatedSceneRange> get allocatedSceneRanges;
+  List<AllocatedSceneRange> get allocatedSceneRanges => throw _privateConstructorUsedError;
   @override
-  bool get lastSelected;
+  bool get lastSelected => throw _privateConstructorUsedError;
   @override
-  _$ProvisionerCopyWith<_Provisioner> get copyWith;
+  @JsonKey(ignore: true)
+  _$ProvisionerCopyWith<_Provisioner> get copyWith => throw _privateConstructorUsedError;
 }

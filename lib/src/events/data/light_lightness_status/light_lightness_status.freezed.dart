@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'light_lightness_status.dart';
 
@@ -8,6 +8,10 @@ part of 'light_lightness_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 LightLightnessStatusData _$LightLightnessStatusDataFromJson(Map<String, dynamic> json) {
   return _LightLightnessStatusData.fromJson(json);
 }
@@ -16,7 +20,6 @@ LightLightnessStatusData _$LightLightnessStatusDataFromJson(Map<String, dynamic>
 class _$LightLightnessStatusDataTearOff {
   const _$LightLightnessStatusDataTearOff();
 
-// ignore: unused_element
   _LightLightnessStatusData call(int presentLightness, int targetLightness, int transitionSteps,
       int transitionResolution, int source, int destination) {
     return _LightLightnessStatusData(
@@ -29,27 +32,26 @@ class _$LightLightnessStatusDataTearOff {
     );
   }
 
-// ignore: unused_element
   LightLightnessStatusData fromJson(Map<String, Object> json) {
     return LightLightnessStatusData.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $LightLightnessStatusData = _$LightLightnessStatusDataTearOff();
 
 /// @nodoc
 mixin _$LightLightnessStatusData {
-  int get presentLightness;
-  int get targetLightness;
-  int get transitionSteps;
-  int get transitionResolution;
-  int get source;
-  int get destination;
+  int get presentLightness => throw _privateConstructorUsedError;
+  int get targetLightness => throw _privateConstructorUsedError;
+  int get transitionSteps => throw _privateConstructorUsedError;
+  int get transitionResolution => throw _privateConstructorUsedError;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $LightLightnessStatusDataCopyWith<LightLightnessStatusData> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LightLightnessStatusDataCopyWith<LightLightnessStatusData> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -76,20 +78,38 @@ class _$LightLightnessStatusDataCopyWithImpl<$Res> implements $LightLightnessSta
 
   @override
   $Res call({
-    Object presentLightness = freezed,
-    Object targetLightness = freezed,
-    Object transitionSteps = freezed,
-    Object transitionResolution = freezed,
-    Object source = freezed,
-    Object destination = freezed,
+    Object? presentLightness = freezed,
+    Object? targetLightness = freezed,
+    Object? transitionSteps = freezed,
+    Object? transitionResolution = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_value.copyWith(
-      presentLightness: presentLightness == freezed ? _value.presentLightness : presentLightness as int,
-      targetLightness: targetLightness == freezed ? _value.targetLightness : targetLightness as int,
-      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      presentLightness: presentLightness == freezed
+          ? _value.presentLightness
+          : presentLightness // ignore: cast_nullable_to_non_nullable
+              as int,
+      targetLightness: targetLightness == freezed
+          ? _value.targetLightness
+          : targetLightness // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionSteps: transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionResolution: transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution // ignore: cast_nullable_to_non_nullable
+              as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -121,36 +141,47 @@ class __$LightLightnessStatusDataCopyWithImpl<$Res> extends _$LightLightnessStat
 
   @override
   $Res call({
-    Object presentLightness = freezed,
-    Object targetLightness = freezed,
-    Object transitionSteps = freezed,
-    Object transitionResolution = freezed,
-    Object source = freezed,
-    Object destination = freezed,
+    Object? presentLightness = freezed,
+    Object? targetLightness = freezed,
+    Object? transitionSteps = freezed,
+    Object? transitionResolution = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_LightLightnessStatusData(
-      presentLightness == freezed ? _value.presentLightness : presentLightness as int,
-      targetLightness == freezed ? _value.targetLightness : targetLightness as int,
-      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
+      presentLightness == freezed
+          ? _value.presentLightness
+          : presentLightness // ignore: cast_nullable_to_non_nullable
+              as int,
+      targetLightness == freezed
+          ? _value.targetLightness
+          : targetLightness // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution // ignore: cast_nullable_to_non_nullable
+              as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_LightLightnessStatusData implements _LightLightnessStatusData {
   const _$_LightLightnessStatusData(this.presentLightness, this.targetLightness, this.transitionSteps,
-      this.transitionResolution, this.source, this.destination)
-      : assert(presentLightness != null),
-        assert(targetLightness != null),
-        assert(transitionSteps != null),
-        assert(transitionResolution != null),
-        assert(source != null),
-        assert(destination != null);
+      this.transitionResolution, this.source, this.destination);
 
   factory _$_LightLightnessStatusData.fromJson(Map<String, dynamic> json) =>
       _$_$_LightLightnessStatusDataFromJson(json);
@@ -200,6 +231,7 @@ class _$_LightLightnessStatusData implements _LightLightnessStatusData {
       const DeepCollectionEquality().hash(source) ^
       const DeepCollectionEquality().hash(destination);
 
+  @JsonKey(ignore: true)
   @override
   _$LightLightnessStatusDataCopyWith<_LightLightnessStatusData> get copyWith =>
       __$LightLightnessStatusDataCopyWithImpl<_LightLightnessStatusData>(this, _$identity);
@@ -217,17 +249,18 @@ abstract class _LightLightnessStatusData implements LightLightnessStatusData {
   factory _LightLightnessStatusData.fromJson(Map<String, dynamic> json) = _$_LightLightnessStatusData.fromJson;
 
   @override
-  int get presentLightness;
+  int get presentLightness => throw _privateConstructorUsedError;
   @override
-  int get targetLightness;
+  int get targetLightness => throw _privateConstructorUsedError;
   @override
-  int get transitionSteps;
+  int get transitionSteps => throw _privateConstructorUsedError;
   @override
-  int get transitionResolution;
+  int get transitionResolution => throw _privateConstructorUsedError;
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  _$LightLightnessStatusDataCopyWith<_LightLightnessStatusData> get copyWith;
+  @JsonKey(ignore: true)
+  _$LightLightnessStatusDataCopyWith<_LightLightnessStatusData> get copyWith => throw _privateConstructorUsedError;
 }

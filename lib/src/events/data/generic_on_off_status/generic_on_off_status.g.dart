@@ -10,7 +10,7 @@ _$_GenericOnOffStatusData _$_$_GenericOnOffStatusDataFromJson(Map<String, dynami
   return _$_GenericOnOffStatusData(
     json['source'] as int,
     json['presentState'] as bool,
-    json['targetState'] as bool,
+    json['targetState'] as bool?,
     json['transitionResolution'] as int,
     json['transitionSteps'] as int,
   );

@@ -10,8 +10,8 @@ ModelData _$ModelDataFromJson(Map json) {
   return ModelData(
     json['key'] as int,
     json['modelId'] as int,
-    (json['subscribedAddresses'] as List)?.map((e) => e as int)?.toList(),
-    (json['boundAppKey'] as List)?.map((e) => e as int)?.toList(),
+    (json['subscribedAddresses'] as List<dynamic>).map((e) => e as int).toList(),
+    (json['boundAppKey'] as List<dynamic>).map((e) => e as int).toList(),
   );
 }
 
@@ -28,7 +28,7 @@ ElementData _$ElementDataFromJson(Map json) {
     json['name'] as String,
     json['address'] as int,
     json['locationDescriptor'] as int,
-    (json['models'] as List)?.map((e) => e == null ? null : ModelData.fromJson(e as Map))?.toList(),
+    (json['models'] as List<dynamic>).map((e) => ModelData.fromJson(e as Map)).toList(),
   );
 }
 

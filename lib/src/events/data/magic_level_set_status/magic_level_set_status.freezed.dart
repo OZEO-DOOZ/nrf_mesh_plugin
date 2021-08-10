@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'magic_level_set_status.dart';
 
@@ -8,6 +8,10 @@ part of 'magic_level_set_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 MagicLevelSetStatusData _$MagicLevelSetStatusDataFromJson(Map<String, dynamic> json) {
   return _MagicLevelSetStatusData.fromJson(json);
 }
@@ -16,7 +20,6 @@ MagicLevelSetStatusData _$MagicLevelSetStatusDataFromJson(Map<String, dynamic> j
 class _$MagicLevelSetStatusDataTearOff {
   const _$MagicLevelSetStatusDataTearOff();
 
-// ignore: unused_element
   _MagicLevelSetStatusData call(int io, int index, int value, int correlation, int source, int destination) {
     return _MagicLevelSetStatusData(
       io,
@@ -28,27 +31,26 @@ class _$MagicLevelSetStatusDataTearOff {
     );
   }
 
-// ignore: unused_element
   MagicLevelSetStatusData fromJson(Map<String, Object> json) {
     return MagicLevelSetStatusData.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $MagicLevelSetStatusData = _$MagicLevelSetStatusDataTearOff();
 
 /// @nodoc
 mixin _$MagicLevelSetStatusData {
-  int get io;
-  int get index;
-  int get value;
-  int get correlation;
-  int get source;
-  int get destination;
+  int get io => throw _privateConstructorUsedError;
+  int get index => throw _privateConstructorUsedError;
+  int get value => throw _privateConstructorUsedError;
+  int get correlation => throw _privateConstructorUsedError;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $MagicLevelSetStatusDataCopyWith<MagicLevelSetStatusData> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $MagicLevelSetStatusDataCopyWith<MagicLevelSetStatusData> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -68,20 +70,38 @@ class _$MagicLevelSetStatusDataCopyWithImpl<$Res> implements $MagicLevelSetStatu
 
   @override
   $Res call({
-    Object io = freezed,
-    Object index = freezed,
-    Object value = freezed,
-    Object correlation = freezed,
-    Object source = freezed,
-    Object destination = freezed,
+    Object? io = freezed,
+    Object? index = freezed,
+    Object? value = freezed,
+    Object? correlation = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_value.copyWith(
-      io: io == freezed ? _value.io : io as int,
-      index: index == freezed ? _value.index : index as int,
-      value: value == freezed ? _value.value : value as int,
-      correlation: correlation == freezed ? _value.correlation : correlation as int,
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      io: io == freezed
+          ? _value.io
+          : io // ignore: cast_nullable_to_non_nullable
+              as int,
+      index: index == freezed
+          ? _value.index
+          : index // ignore: cast_nullable_to_non_nullable
+              as int,
+      value: value == freezed
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as int,
+      correlation: correlation == freezed
+          ? _value.correlation
+          : correlation // ignore: cast_nullable_to_non_nullable
+              as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -106,35 +126,46 @@ class __$MagicLevelSetStatusDataCopyWithImpl<$Res> extends _$MagicLevelSetStatus
 
   @override
   $Res call({
-    Object io = freezed,
-    Object index = freezed,
-    Object value = freezed,
-    Object correlation = freezed,
-    Object source = freezed,
-    Object destination = freezed,
+    Object? io = freezed,
+    Object? index = freezed,
+    Object? value = freezed,
+    Object? correlation = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_MagicLevelSetStatusData(
-      io == freezed ? _value.io : io as int,
-      index == freezed ? _value.index : index as int,
-      value == freezed ? _value.value : value as int,
-      correlation == freezed ? _value.correlation : correlation as int,
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
+      io == freezed
+          ? _value.io
+          : io // ignore: cast_nullable_to_non_nullable
+              as int,
+      index == freezed
+          ? _value.index
+          : index // ignore: cast_nullable_to_non_nullable
+              as int,
+      value == freezed
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as int,
+      correlation == freezed
+          ? _value.correlation
+          : correlation // ignore: cast_nullable_to_non_nullable
+              as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
-  const _$_MagicLevelSetStatusData(this.io, this.index, this.value, this.correlation, this.source, this.destination)
-      : assert(io != null),
-        assert(index != null),
-        assert(value != null),
-        assert(correlation != null),
-        assert(source != null),
-        assert(destination != null);
+  const _$_MagicLevelSetStatusData(this.io, this.index, this.value, this.correlation, this.source, this.destination);
 
   factory _$_MagicLevelSetStatusData.fromJson(Map<String, dynamic> json) => _$_$_MagicLevelSetStatusDataFromJson(json);
 
@@ -180,6 +211,7 @@ class _$_MagicLevelSetStatusData implements _MagicLevelSetStatusData {
       const DeepCollectionEquality().hash(source) ^
       const DeepCollectionEquality().hash(destination);
 
+  @JsonKey(ignore: true)
   @override
   _$MagicLevelSetStatusDataCopyWith<_MagicLevelSetStatusData> get copyWith =>
       __$MagicLevelSetStatusDataCopyWithImpl<_MagicLevelSetStatusData>(this, _$identity);
@@ -197,17 +229,18 @@ abstract class _MagicLevelSetStatusData implements MagicLevelSetStatusData {
   factory _MagicLevelSetStatusData.fromJson(Map<String, dynamic> json) = _$_MagicLevelSetStatusData.fromJson;
 
   @override
-  int get io;
+  int get io => throw _privateConstructorUsedError;
   @override
-  int get index;
+  int get index => throw _privateConstructorUsedError;
   @override
-  int get value;
+  int get value => throw _privateConstructorUsedError;
   @override
-  int get correlation;
+  int get correlation => throw _privateConstructorUsedError;
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  _$MagicLevelSetStatusDataCopyWith<_MagicLevelSetStatusData> get copyWith;
+  @JsonKey(ignore: true)
+  _$MagicLevelSetStatusDataCopyWith<_MagicLevelSetStatusData> get copyWith => throw _privateConstructorUsedError;
 }

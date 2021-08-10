@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'config_app_key_status.dart';
 
@@ -8,6 +8,10 @@ part of 'config_app_key_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 ConfigAppKeyStatusData _$ConfigAppKeyStatusDataFromJson(Map<String, dynamic> json) {
   return _ConfigAppKeyStatusData.fromJson(json);
 }
@@ -16,29 +20,27 @@ ConfigAppKeyStatusData _$ConfigAppKeyStatusDataFromJson(Map<String, dynamic> jso
 class _$ConfigAppKeyStatusDataTearOff {
   const _$ConfigAppKeyStatusDataTearOff();
 
-// ignore: unused_element
   _ConfigAppKeyStatusData call(int source) {
     return _ConfigAppKeyStatusData(
       source,
     );
   }
 
-// ignore: unused_element
   ConfigAppKeyStatusData fromJson(Map<String, Object> json) {
     return ConfigAppKeyStatusData.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ConfigAppKeyStatusData = _$ConfigAppKeyStatusDataTearOff();
 
 /// @nodoc
 mixin _$ConfigAppKeyStatusData {
-  int get source;
+  int get source => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ConfigAppKeyStatusDataCopyWith<ConfigAppKeyStatusData> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ConfigAppKeyStatusDataCopyWith<ConfigAppKeyStatusData> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -58,10 +60,13 @@ class _$ConfigAppKeyStatusDataCopyWithImpl<$Res> implements $ConfigAppKeyStatusD
 
   @override
   $Res call({
-    Object source = freezed,
+    Object? source = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -85,19 +90,21 @@ class __$ConfigAppKeyStatusDataCopyWithImpl<$Res> extends _$ConfigAppKeyStatusDa
 
   @override
   $Res call({
-    Object source = freezed,
+    Object? source = freezed,
   }) {
     return _then(_ConfigAppKeyStatusData(
-      source == freezed ? _value.source : source as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ConfigAppKeyStatusData implements _ConfigAppKeyStatusData {
-  const _$_ConfigAppKeyStatusData(this.source) : assert(source != null);
+  const _$_ConfigAppKeyStatusData(this.source);
 
   factory _$_ConfigAppKeyStatusData.fromJson(Map<String, dynamic> json) => _$_$_ConfigAppKeyStatusDataFromJson(json);
 
@@ -119,6 +126,7 @@ class _$_ConfigAppKeyStatusData implements _ConfigAppKeyStatusData {
   @override
   int get hashCode => runtimeType.hashCode ^ const DeepCollectionEquality().hash(source);
 
+  @JsonKey(ignore: true)
   @override
   _$ConfigAppKeyStatusDataCopyWith<_ConfigAppKeyStatusData> get copyWith =>
       __$ConfigAppKeyStatusDataCopyWithImpl<_ConfigAppKeyStatusData>(this, _$identity);
@@ -135,9 +143,10 @@ abstract class _ConfigAppKeyStatusData implements ConfigAppKeyStatusData {
   factory _ConfigAppKeyStatusData.fromJson(Map<String, dynamic> json) = _$_ConfigAppKeyStatusData.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  _$ConfigAppKeyStatusDataCopyWith<_ConfigAppKeyStatusData> get copyWith;
+  @JsonKey(ignore: true)
+  _$ConfigAppKeyStatusDataCopyWith<_ConfigAppKeyStatusData> get copyWith => throw _privateConstructorUsedError;
 }
 
 ConfigAppKeyStatusMeshMessage _$ConfigAppKeyStatusMeshMessageFromJson(Map<String, dynamic> json) {
@@ -148,7 +157,6 @@ ConfigAppKeyStatusMeshMessage _$ConfigAppKeyStatusMeshMessageFromJson(Map<String
 class _$ConfigAppKeyStatusMeshMessageTearOff {
   const _$ConfigAppKeyStatusMeshMessageTearOff();
 
-// ignore: unused_element
   _ConfigAppKeyStatusMeshMessage call(int source, int destination) {
     return _ConfigAppKeyStatusMeshMessage(
       source,
@@ -156,23 +164,23 @@ class _$ConfigAppKeyStatusMeshMessageTearOff {
     );
   }
 
-// ignore: unused_element
   ConfigAppKeyStatusMeshMessage fromJson(Map<String, Object> json) {
     return ConfigAppKeyStatusMeshMessage.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ConfigAppKeyStatusMeshMessage = _$ConfigAppKeyStatusMeshMessageTearOff();
 
 /// @nodoc
 mixin _$ConfigAppKeyStatusMeshMessage {
-  int get source;
-  int get destination;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ConfigAppKeyStatusMeshMessageCopyWith<ConfigAppKeyStatusMeshMessage> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ConfigAppKeyStatusMeshMessageCopyWith<ConfigAppKeyStatusMeshMessage> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -193,12 +201,18 @@ class _$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res> implements $ConfigAppKey
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -224,23 +238,26 @@ class __$ConfigAppKeyStatusMeshMessageCopyWithImpl<$Res> extends _$ConfigAppKeyS
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_ConfigAppKeyStatusMeshMessage(
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ConfigAppKeyStatusMeshMessage implements _ConfigAppKeyStatusMeshMessage {
-  const _$_ConfigAppKeyStatusMeshMessage(this.source, this.destination)
-      : assert(source != null),
-        assert(destination != null);
+  const _$_ConfigAppKeyStatusMeshMessage(this.source, this.destination);
 
   factory _$_ConfigAppKeyStatusMeshMessage.fromJson(Map<String, dynamic> json) =>
       _$_$_ConfigAppKeyStatusMeshMessageFromJson(json);
@@ -270,6 +287,7 @@ class _$_ConfigAppKeyStatusMeshMessage implements _ConfigAppKeyStatusMeshMessage
       const DeepCollectionEquality().hash(source) ^
       const DeepCollectionEquality().hash(destination);
 
+  @JsonKey(ignore: true)
   @override
   _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage> get copyWith =>
       __$ConfigAppKeyStatusMeshMessageCopyWithImpl<_ConfigAppKeyStatusMeshMessage>(this, _$identity);
@@ -287,9 +305,11 @@ abstract class _ConfigAppKeyStatusMeshMessage implements ConfigAppKeyStatusMeshM
       _$_ConfigAppKeyStatusMeshMessage.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage> get copyWith;
+  @JsonKey(ignore: true)
+  _$ConfigAppKeyStatusMeshMessageCopyWith<_ConfigAppKeyStatusMeshMessage> get copyWith =>
+      throw _privateConstructorUsedError;
 }

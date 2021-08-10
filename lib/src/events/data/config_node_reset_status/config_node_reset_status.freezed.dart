@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'config_node_reset_status.dart';
 
@@ -8,6 +8,10 @@ part of 'config_node_reset_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 ConfigNodeResetStatus _$ConfigNodeResetStatusFromJson(Map<String, dynamic> json) {
   return _ConfigNodeResetStatus.fromJson(json);
 }
@@ -16,7 +20,6 @@ ConfigNodeResetStatus _$ConfigNodeResetStatusFromJson(Map<String, dynamic> json)
 class _$ConfigNodeResetStatusTearOff {
   const _$ConfigNodeResetStatusTearOff();
 
-// ignore: unused_element
   _ConfigNodeResetStatus call(int source, int destination, bool success) {
     return _ConfigNodeResetStatus(
       source,
@@ -25,24 +28,23 @@ class _$ConfigNodeResetStatusTearOff {
     );
   }
 
-// ignore: unused_element
   ConfigNodeResetStatus fromJson(Map<String, Object> json) {
     return ConfigNodeResetStatus.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ConfigNodeResetStatus = _$ConfigNodeResetStatusTearOff();
 
 /// @nodoc
 mixin _$ConfigNodeResetStatus {
-  int get source;
-  int get destination;
-  bool get success;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
+  bool get success => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ConfigNodeResetStatusCopyWith<ConfigNodeResetStatus> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ConfigNodeResetStatusCopyWith<ConfigNodeResetStatus> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -62,14 +64,23 @@ class _$ConfigNodeResetStatusCopyWithImpl<$Res> implements $ConfigNodeResetStatu
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object success = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? success = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
-      success: success == freezed ? _value.success : success as bool,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      success: success == freezed
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -93,26 +104,31 @@ class __$ConfigNodeResetStatusCopyWithImpl<$Res> extends _$ConfigNodeResetStatus
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object success = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? success = freezed,
   }) {
     return _then(_ConfigNodeResetStatus(
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
-      success == freezed ? _value.success : success as bool,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      success == freezed
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ConfigNodeResetStatus implements _ConfigNodeResetStatus {
-  const _$_ConfigNodeResetStatus(this.source, this.destination, this.success)
-      : assert(source != null),
-        assert(destination != null),
-        assert(success != null);
+  const _$_ConfigNodeResetStatus(this.source, this.destination, this.success);
 
   factory _$_ConfigNodeResetStatus.fromJson(Map<String, dynamic> json) => _$_$_ConfigNodeResetStatusFromJson(json);
 
@@ -145,6 +161,7 @@ class _$_ConfigNodeResetStatus implements _ConfigNodeResetStatus {
       const DeepCollectionEquality().hash(destination) ^
       const DeepCollectionEquality().hash(success);
 
+  @JsonKey(ignore: true)
   @override
   _$ConfigNodeResetStatusCopyWith<_ConfigNodeResetStatus> get copyWith =>
       __$ConfigNodeResetStatusCopyWithImpl<_ConfigNodeResetStatus>(this, _$identity);
@@ -161,11 +178,12 @@ abstract class _ConfigNodeResetStatus implements ConfigNodeResetStatus {
   factory _ConfigNodeResetStatus.fromJson(Map<String, dynamic> json) = _$_ConfigNodeResetStatus.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  bool get success;
+  bool get success => throw _privateConstructorUsedError;
   @override
-  _$ConfigNodeResetStatusCopyWith<_ConfigNodeResetStatus> get copyWith;
+  @JsonKey(ignore: true)
+  _$ConfigNodeResetStatusCopyWith<_ConfigNodeResetStatus> get copyWith => throw _privateConstructorUsedError;
 }

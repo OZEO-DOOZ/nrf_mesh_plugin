@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'config_default_ttl_status.dart';
 
@@ -8,6 +8,10 @@ part of 'config_default_ttl_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 ConfigDefaultTtlStatus _$ConfigDefaultTtlStatusFromJson(Map<String, dynamic> json) {
   return _ConfigDefaultTtlStatus.fromJson(json);
 }
@@ -16,7 +20,6 @@ ConfigDefaultTtlStatus _$ConfigDefaultTtlStatusFromJson(Map<String, dynamic> jso
 class _$ConfigDefaultTtlStatusTearOff {
   const _$ConfigDefaultTtlStatusTearOff();
 
-// ignore: unused_element
   _ConfigDefaultTtlStatus call(int source, int destination, int ttl) {
     return _ConfigDefaultTtlStatus(
       source,
@@ -25,24 +28,23 @@ class _$ConfigDefaultTtlStatusTearOff {
     );
   }
 
-// ignore: unused_element
   ConfigDefaultTtlStatus fromJson(Map<String, Object> json) {
     return ConfigDefaultTtlStatus.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ConfigDefaultTtlStatus = _$ConfigDefaultTtlStatusTearOff();
 
 /// @nodoc
 mixin _$ConfigDefaultTtlStatus {
-  int get source;
-  int get destination;
-  int get ttl;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
+  int get ttl => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ConfigDefaultTtlStatusCopyWith<ConfigDefaultTtlStatus> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ConfigDefaultTtlStatusCopyWith<ConfigDefaultTtlStatus> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -62,14 +64,23 @@ class _$ConfigDefaultTtlStatusCopyWithImpl<$Res> implements $ConfigDefaultTtlSta
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object ttl = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? ttl = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
-      ttl: ttl == freezed ? _value.ttl : ttl as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      ttl: ttl == freezed
+          ? _value.ttl
+          : ttl // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -93,26 +104,31 @@ class __$ConfigDefaultTtlStatusCopyWithImpl<$Res> extends _$ConfigDefaultTtlStat
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object ttl = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? ttl = freezed,
   }) {
     return _then(_ConfigDefaultTtlStatus(
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
-      ttl == freezed ? _value.ttl : ttl as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      ttl == freezed
+          ? _value.ttl
+          : ttl // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ConfigDefaultTtlStatus implements _ConfigDefaultTtlStatus {
-  const _$_ConfigDefaultTtlStatus(this.source, this.destination, this.ttl)
-      : assert(source != null),
-        assert(destination != null),
-        assert(ttl != null);
+  const _$_ConfigDefaultTtlStatus(this.source, this.destination, this.ttl);
 
   factory _$_ConfigDefaultTtlStatus.fromJson(Map<String, dynamic> json) => _$_$_ConfigDefaultTtlStatusFromJson(json);
 
@@ -145,6 +161,7 @@ class _$_ConfigDefaultTtlStatus implements _ConfigDefaultTtlStatus {
       const DeepCollectionEquality().hash(destination) ^
       const DeepCollectionEquality().hash(ttl);
 
+  @JsonKey(ignore: true)
   @override
   _$ConfigDefaultTtlStatusCopyWith<_ConfigDefaultTtlStatus> get copyWith =>
       __$ConfigDefaultTtlStatusCopyWithImpl<_ConfigDefaultTtlStatus>(this, _$identity);
@@ -161,11 +178,12 @@ abstract class _ConfigDefaultTtlStatus implements ConfigDefaultTtlStatus {
   factory _ConfigDefaultTtlStatus.fromJson(Map<String, dynamic> json) = _$_ConfigDefaultTtlStatus.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  int get ttl;
+  int get ttl => throw _privateConstructorUsedError;
   @override
-  _$ConfigDefaultTtlStatusCopyWith<_ConfigDefaultTtlStatus> get copyWith;
+  @JsonKey(ignore: true)
+  _$ConfigDefaultTtlStatusCopyWith<_ConfigDefaultTtlStatus> get copyWith => throw _privateConstructorUsedError;
 }

@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'config_network_transmit_status.dart';
 
@@ -8,6 +8,10 @@ part of 'config_network_transmit_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 ConfigNetworkTransmitStatus _$ConfigNetworkTransmitStatusFromJson(Map<String, dynamic> json) {
   return _ConfigNetworkTransmitStatus.fromJson(json);
 }
@@ -16,7 +20,6 @@ ConfigNetworkTransmitStatus _$ConfigNetworkTransmitStatusFromJson(Map<String, dy
 class _$ConfigNetworkTransmitStatusTearOff {
   const _$ConfigNetworkTransmitStatusTearOff();
 
-// ignore: unused_element
   _ConfigNetworkTransmitStatus call(int source, int destination, int transmitCount, int transmitIntervalSteps) {
     return _ConfigNetworkTransmitStatus(
       source,
@@ -26,25 +29,24 @@ class _$ConfigNetworkTransmitStatusTearOff {
     );
   }
 
-// ignore: unused_element
   ConfigNetworkTransmitStatus fromJson(Map<String, Object> json) {
     return ConfigNetworkTransmitStatus.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ConfigNetworkTransmitStatus = _$ConfigNetworkTransmitStatusTearOff();
 
 /// @nodoc
 mixin _$ConfigNetworkTransmitStatus {
-  int get source;
-  int get destination;
-  int get transmitCount;
-  int get transmitIntervalSteps;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
+  int get transmitCount => throw _privateConstructorUsedError;
+  int get transmitIntervalSteps => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ConfigNetworkTransmitStatusCopyWith<ConfigNetworkTransmitStatus> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ConfigNetworkTransmitStatusCopyWith<ConfigNetworkTransmitStatus> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -65,17 +67,28 @@ class _$ConfigNetworkTransmitStatusCopyWithImpl<$Res> implements $ConfigNetworkT
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object transmitCount = freezed,
-    Object transmitIntervalSteps = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? transmitCount = freezed,
+    Object? transmitIntervalSteps = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
-      transmitCount: transmitCount == freezed ? _value.transmitCount : transmitCount as int,
-      transmitIntervalSteps:
-          transmitIntervalSteps == freezed ? _value.transmitIntervalSteps : transmitIntervalSteps as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      transmitCount: transmitCount == freezed
+          ? _value.transmitCount
+          : transmitCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      transmitIntervalSteps: transmitIntervalSteps == freezed
+          ? _value.transmitIntervalSteps
+          : transmitIntervalSteps // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -101,29 +114,36 @@ class __$ConfigNetworkTransmitStatusCopyWithImpl<$Res> extends _$ConfigNetworkTr
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object transmitCount = freezed,
-    Object transmitIntervalSteps = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? transmitCount = freezed,
+    Object? transmitIntervalSteps = freezed,
   }) {
     return _then(_ConfigNetworkTransmitStatus(
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
-      transmitCount == freezed ? _value.transmitCount : transmitCount as int,
-      transmitIntervalSteps == freezed ? _value.transmitIntervalSteps : transmitIntervalSteps as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      transmitCount == freezed
+          ? _value.transmitCount
+          : transmitCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      transmitIntervalSteps == freezed
+          ? _value.transmitIntervalSteps
+          : transmitIntervalSteps // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ConfigNetworkTransmitStatus implements _ConfigNetworkTransmitStatus {
-  const _$_ConfigNetworkTransmitStatus(this.source, this.destination, this.transmitCount, this.transmitIntervalSteps)
-      : assert(source != null),
-        assert(destination != null),
-        assert(transmitCount != null),
-        assert(transmitIntervalSteps != null);
+  const _$_ConfigNetworkTransmitStatus(this.source, this.destination, this.transmitCount, this.transmitIntervalSteps);
 
   factory _$_ConfigNetworkTransmitStatus.fromJson(Map<String, dynamic> json) =>
       _$_$_ConfigNetworkTransmitStatusFromJson(json);
@@ -163,6 +183,7 @@ class _$_ConfigNetworkTransmitStatus implements _ConfigNetworkTransmitStatus {
       const DeepCollectionEquality().hash(transmitCount) ^
       const DeepCollectionEquality().hash(transmitIntervalSteps);
 
+  @JsonKey(ignore: true)
   @override
   _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus> get copyWith =>
       __$ConfigNetworkTransmitStatusCopyWithImpl<_ConfigNetworkTransmitStatus>(this, _$identity);
@@ -180,13 +201,15 @@ abstract class _ConfigNetworkTransmitStatus implements ConfigNetworkTransmitStat
   factory _ConfigNetworkTransmitStatus.fromJson(Map<String, dynamic> json) = _$_ConfigNetworkTransmitStatus.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  int get transmitCount;
+  int get transmitCount => throw _privateConstructorUsedError;
   @override
-  int get transmitIntervalSteps;
+  int get transmitIntervalSteps => throw _privateConstructorUsedError;
   @override
-  _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus> get copyWith;
+  @JsonKey(ignore: true)
+  _$ConfigNetworkTransmitStatusCopyWith<_ConfigNetworkTransmitStatus> get copyWith =>
+      throw _privateConstructorUsedError;
 }
