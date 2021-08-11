@@ -16,11 +16,11 @@ class BleScannerError {
 }
 
 class BleScanner {
-  static late final BleScanner? _instance = BleScanner._();
+  static late final BleScanner _instance = BleScanner._();
 
   BleScanner._();
 
-  factory BleScanner() => _instance as BleScanner;
+  factory BleScanner() => _instance;
 
   final FlutterReactiveBle _flutterReactiveBle = FlutterReactiveBle();
 

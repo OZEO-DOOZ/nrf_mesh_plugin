@@ -52,7 +52,7 @@ class _SendDeprovisioningState extends State<SendDeprovisioning> {
                   }
                 }
               : null,
-          child: Text('Send on off'),
+          child: Text('Send node reset'),
         )
       ],
     );

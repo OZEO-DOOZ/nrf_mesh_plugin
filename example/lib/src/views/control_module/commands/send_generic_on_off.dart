@@ -16,7 +16,7 @@ class SendGenericOnOff extends StatefulWidget {
 class _SendGenericOnOffState extends State<SendGenericOnOff> {
   int? selectedElementAddress;
 
-  bool? onOff = false;
+  bool onOff = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
           value: onOff,
           onChanged: (value) {
             setState(() {
-              onOff = value;
+              onOff = value!;
             });
           },
         ),
@@ -53,7 +53,7 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
                     final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid);
                     final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
                     await widget.meshManagerApi
-                        .sendGenericOnOffSet(selectedElementAddress!, onOff!, sequenceNumber)
+                        .sendGenericOnOffSet(selectedElementAddress!, onOff, sequenceNumber)
                         .timeout(Duration(seconds: 40));
                     scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
                   } on TimeoutException catch (_) {
