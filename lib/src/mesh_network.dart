@@ -43,9 +43,9 @@ abstract class IMeshNetwork {
 
   Future<Map> getGroupElementIds(int groupAddress);
 
-  Future<ProvisionedMeshNode> getNode(int address);
+  Future<ProvisionedMeshNode?> getNode(int address);
 
-  Future<ProvisionedMeshNode> getNodeUsingUUID(String uuid);
+  Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -210,20 +210,30 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<ProvisionedMeshNode> getNode(int address) async {
+  Future<ProvisionedMeshNode?> getNode(int address) async {
     if (Platform.isIOS || Platform.isAndroid) {
       final _node = await _methodChannel.invokeMethod<String>('getNode', {'address': address});
-      return ProvisionedMeshNode(_node!);
+      if (_node != null) {
+        return ProvisionedMeshNode(_node);
+      } else {
+        print('node not found');
+        return null;
+      }
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
   }
 
   @override
-  Future<ProvisionedMeshNode> getNodeUsingUUID(String uuid) async {
+  Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid) async {
     if (Platform.isIOS || Platform.isAndroid) {
       final _node = await _methodChannel.invokeMethod<String>('getNodeUsingUUID', {'uuid': uuid});
-      return ProvisionedMeshNode(_node!);
+      if (_node != null) {
+        return ProvisionedMeshNode(_node);
+      } else {
+        print('node not found');
+        return null;
+      }
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
