@@ -352,9 +352,9 @@ class MeshManagerApi {
 
   Future<void> setMtu(final int mtuSize) => _methodChannel.invokeMethod<void>('setMtuSize', {'mtuSize': mtuSize});
 
-  Future<String> exportMeshNetwork() async {
+  Future<String?> exportMeshNetwork() async {
     final json = await _methodChannel.invokeMethod<String>('exportMeshNetwork');
-    return json!;
+    return json;
   }
 
   Future<void> resetMeshNetwork() => _methodChannel.invokeMethod<void>('resetMeshNetwork');
