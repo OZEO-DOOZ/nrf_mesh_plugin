@@ -380,7 +380,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                         mMeshManagerApi.createMeshPdu(unicastAddress, configNodeReset)
                     }
                 } catch (ex: Exception) {
-                    Log.e(tag, ex.message)
+                    Log.e(tag, ex.message.toString())
                     result.success(false)
                 }
                 result.success(true)
