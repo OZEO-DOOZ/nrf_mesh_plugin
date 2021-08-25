@@ -62,14 +62,24 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<void> initGatt() async {
-    var discoveredService;
+    DiscoveredService? discoveredService;
     if (isProvisioningCompleted) {
-      discoveredService = hasExpectedService(meshProxyUuid);
+      discoveredService = hasExpectedService(meshProxyUuid)
+          ? _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid)
+          : null;
+      if (discoveredService == null) {
+        throw 'could not find the appropriate service on device..aborting';
+      }
       await _meshProxyDataOutSubscription?.cancel();
       _meshProxyDataOutSubscription =
           getDataOutSubscription(getQualifiedCharacteristic(meshProxyDataOut, discoveredService.serviceId));
     } else {
-      discoveredService = hasExpectedService(meshProvisioningUuid);
+      discoveredService = hasExpectedService(meshProvisioningUuid)
+          ? _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid)
+          : null;
+      if (discoveredService == null) {
+        throw 'could not find the appropriate service on device..aborting';
+      }
       await _meshProvisioningDataOutSubscription?.cancel();
       _meshProvisioningDataOutSubscription =
           getDataOutSubscription(getQualifiedCharacteristic(meshProvisioningDataOut, discoveredService.serviceId));
