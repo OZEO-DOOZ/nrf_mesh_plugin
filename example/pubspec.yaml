@@ -14,6 +14,7 @@ dependencies:
 
   firebase_core: ^1.4.0
   firebase_crashlytics: ^2.1.1
+  file_picker: ^3.0.4
 
   nordic_nrf_mesh:
     path: ../
