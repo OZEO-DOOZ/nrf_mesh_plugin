@@ -8,7 +8,7 @@ part 'unprovisioned_mesh_node.g.dart';
 class UnprovisionedMeshNode {
   final MethodChannel _methodChannel;
   final String uuid;
-  final List<int> provisionerPublicKeyXY;
+  final List<int>? provisionerPublicKeyXY;
 
   UnprovisionedMeshNode(this.uuid, this.provisionerPublicKeyXY)
       : _methodChannel = MethodChannel('$namespace/unprovisioned_mesh_node/$uuid/methods');
