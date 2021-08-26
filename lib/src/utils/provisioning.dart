@@ -81,7 +81,7 @@ Future<ProvisionedMeshNode> _provisioning(
   late final ProvisionedMeshNode provisionedMeshNode;
 
   //'Undocumented scan throttle' error caught here
-  onBleScannerError = bleScanner.onError.listen((event) {
+  onBleScannerError = bleScanner.onScanErrorStream.listen((event) {
     debugPrint('Scanner Error : ${event.error}');
   });
 

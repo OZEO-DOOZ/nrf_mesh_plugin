@@ -26,12 +26,12 @@ class BleScanner {
 
   Stream<BleStatus> get bleStatus => _flutterReactiveBle.statusStream;
 
-  late final StreamController<BleScannerError> onErrorController = StreamController<BleScannerError>();
+  late final StreamController<BleScannerError> _onScanErrorController = StreamController<BleScannerError>();
 
-  Stream<BleScannerError> get onError => onErrorController.stream;
+  Stream<BleScannerError> get onScanErrorStream => _onScanErrorController.stream.asBroadcastStream();
 
   void dispose() {
-    onErrorController.close();
+    _onScanErrorController.close();
   }
 
   /// Will begin a ble scan with the given parameters or defaults and wait for [timeoutDuration].
@@ -52,8 +52,8 @@ class BleScanner {
         scanMode: scanMode,
       )
           .listen((device) => scanResults.add(device), onError: (onError) {
-        if (!onErrorController.isClosed && onErrorController.hasListener) {
-          onErrorController.add(BleScannerError('Scanner Error', onError));
+        if (!_onScanErrorController.isClosed && _onScanErrorController.hasListener) {
+          _onScanErrorController.add(BleScannerError('Scanner Error', onError));
         }
       });
       await Future.delayed(timeoutDuration, () => streamSub.cancel());
