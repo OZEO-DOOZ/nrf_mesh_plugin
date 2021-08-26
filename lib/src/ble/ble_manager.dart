@@ -125,19 +125,26 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   Future<void> initGatt();
 
   Future<void> disconnect() async {
-    if (callbacks != null) {
-      final _callbacks = callbacks as E;
-      if (!_callbacks.onDeviceDisconnectingController.isClosed &&
-          _callbacks.onDeviceDisconnectingController.hasListener) {
-        _callbacks.onDeviceDisconnectingController.add(_device!);
-      }
-      await _connectedDeviceStatusStream?.cancel();
-      if (!_callbacks.onDeviceDisconnectedController.isClosed &&
-          _callbacks.onDeviceDisconnectedController.hasListener) {
-        _callbacks.onDeviceDisconnectedController.add(_device!);
+    if (_device != null) {
+      // we are connected
+      if (callbacks != null) {
+        // callbacks are defined, add events and cancel connection stream
+        final _callbacks = callbacks as E;
+        if (!_callbacks.onDeviceDisconnectingController.isClosed &&
+            _callbacks.onDeviceDisconnectingController.hasListener) {
+          _callbacks.onDeviceDisconnectingController.add(_device!);
+        }
+        await _connectedDeviceStatusStream?.cancel();
+        if (!_callbacks.onDeviceDisconnectedController.isClosed &&
+            _callbacks.onDeviceDisconnectedController.hasListener) {
+          _callbacks.onDeviceDisconnectedController.add(_device!);
+        }
+      } else {
+        // no callbacks, just cancel connection stream
+        await _connectedDeviceStatusStream?.cancel();
       }
     } else {
-      await _connectedDeviceStatusStream?.cancel();
+      print('calling disconnect without connected device');
     }
   }
 }
