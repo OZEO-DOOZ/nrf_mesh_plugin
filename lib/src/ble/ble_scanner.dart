@@ -26,9 +26,9 @@ class BleScanner {
 
   Stream<BleStatus> get bleStatus => _flutterReactiveBle.statusStream;
 
-  late final StreamController<BleScannerError> _onScanErrorController = StreamController<BleScannerError>();
+  late final StreamController<BleScannerError> _onScanErrorController = StreamController<BleScannerError>.broadcast();
 
-  Stream<BleScannerError> get onScanErrorStream => _onScanErrorController.stream.asBroadcastStream();
+  Stream<BleScannerError> get onScanErrorStream => _onScanErrorController.stream;
 
   void dispose() {
     _onScanErrorController.close();
