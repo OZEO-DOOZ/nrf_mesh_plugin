@@ -120,19 +120,19 @@ private extension DoozMeshNetwork {
             if
                 let provisioner = meshNetwork.localProvisioner,
                 let address = meshNetwork.nextAvailableGroupAddress(for: provisioner){
-                
+                print("🥂 [\(self.classForCoder)] the next available group address : \(address)")
                 do{
                     let group = try Group(name: data.name, address: address)
                     try meshNetwork.add(group: group)
-                    
                     result(
                         [
                             "group" : [
                                 "name" : group.name,
-                                "address" : group.address,
+                                "address" : address,
                                 "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
-                                "parentAddress" : group.parent?.address ?? "",
-                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
+                                "parentAddress" : group.parent?.address.address ?? 0,
+                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? "",
+                                "meshUuid" : meshNetwork.uuid.uuidString,
                             ],
                             "successfullyAdded" : true
                             
@@ -149,17 +149,20 @@ private extension DoozMeshNetwork {
             let groups = meshNetwork.groups.map({ group in
                 return [
                     "name" : group.name,
-                    "address" : group.address,
+                    "address" : group.address.address,
                     "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
-                    "parentAddress" : group.parent?.address ?? "",
-                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
+                    "parentAddress" : group.parent?.address.address ?? 0,
+                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? "",
+                    "meshUuid" : meshNetwork.uuid.uuidString,
                 ]
             })
             
             result(groups)
             
         case .removeGroup(let data):
-            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress))) {
+            #warning("TODO: impl. meshAddress hex in most cases")
+            let groupAddress = String(format:"%02X", data.groupAddress)
+            if let group = meshNetwork.group(withAddress: MeshAddress(hex: groupAddress)!) {
                 
                 do{
                     try meshNetwork.remove(group: group)
@@ -167,7 +170,9 @@ private extension DoozMeshNetwork {
                 }
                 catch{
                     let nsError = error as NSError
-                    result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                    print(nsError)
+                    //result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                    result(false)
                 }
                 
             }else{

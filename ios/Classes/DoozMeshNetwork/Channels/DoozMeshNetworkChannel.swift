@@ -50,6 +50,7 @@ enum DoozMeshNetworkChannel {
             case "groups":
                 self = .groups
             case "removeGroup":
+                print("🥂  Received flutter call for removeGroup with the args: \(String(describing: arguments))")
                 self = .removeGroup(try RemoveGroupArguments(arguments))
             case "getElementsForGroup":
                 self = .getElementsForGroup(try GetElementsForGroupArguments(arguments))
