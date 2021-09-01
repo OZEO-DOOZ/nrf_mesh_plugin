@@ -142,8 +142,6 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<bool> updateProvisioner(Provisioner provisioner) {
-
-
     return _methodChannel.invokeMethod('updateProvisioner', {
       'provisionerUuid': provisioner.provisionerUuid,
       'provisionerName': provisioner.provisionerName,
