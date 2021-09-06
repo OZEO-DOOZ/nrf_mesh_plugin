@@ -14,7 +14,6 @@ class UnprovisionedMeshNodeData with _$UnprovisionedMeshNodeData {
 
 @freezed
 class ProvisionedMeshNodeData with _$ProvisionedMeshNodeData {
-  // TODO make sure provisioning completed event is not broken
   const factory ProvisionedMeshNodeData(String uuid) = _ProvisionedMeshNodeData;
 
   factory ProvisionedMeshNodeData.fromJson(Map json) => _$ProvisionedMeshNodeDataFromJson(json.cast<String, dynamic>());
