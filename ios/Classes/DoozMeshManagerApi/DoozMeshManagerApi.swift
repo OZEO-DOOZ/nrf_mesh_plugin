@@ -326,6 +326,158 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             break
+        case .sendGenericLevelGet(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            
+            let message = GenericLevelGet()
+            do{
+                
+                _ = try meshNetworkManager.send(
+                    message,
+                    to: MeshAddress(Address(bitPattern: data.address)),
+                    using: appKey
+                )
+                
+                result(nil)
+                
+            }catch{
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .setNetworkTransmitSettings(let data):
+            let message = ConfigNetworkTransmitSet(count: UInt8(data.transmitCount), steps: UInt8(data.transmitIntervalSteps))
+            do {
+                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .getNetworkTransmitSettings(let data):
+            let message = ConfigNetworkTransmitGet()
+            do {
+                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .getDefaultTtl(let data):
+            let message = ConfigDefaultTtlGet()
+            do {
+                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .setDefaultTtl(let data):
+            let message = ConfigDefaultTtlSet(ttl: UInt8(data.ttl))
+            do {
+                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .sendConfigModelSubscriptionDeleteAll(let data):
+            if
+                
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.elementAddress)),
+                let element = node.element(withAddress: Address(bitPattern: data.elementAddress)),
+                let model = element.model(withModelId: UInt32(data.modelIdentifier)){
+                
+                let message: ConfigMessage = ConfigModelSubscriptionDeleteAll(from: model)!
+                do {
+                    _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.elementAddress))
+                    result(nil)
+                } catch {
+                    let nsError = error as NSError
+                    result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                }
+            }
+            break
+        case .sendConfigModelPublicationSet(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.appKeyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            let retransmit = Publish.Retransmit.init(publishRetransmitCount: UInt8(data.retransmitCount), intervalSteps: UInt8(data.retransmitIntervalSteps))
+            let stepResolution = StepResolution.init(rawValue: UInt8(data.publicationResolution))
+            let period = Publish.Period.init(steps: UInt8(data.retransmitIntervalSteps), resolution: stepResolution!)
+            let publish = Publish.init(to: MeshAddress(Address(bitPattern: Int16(data.publishAddress))), using: appKey, usingFriendshipMaterial: data.credentialFlag, ttl: UInt8(data.publishTtl), period: period, retransmit: retransmit)
+            let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.elementAddress))
+            let element = node!.element(withAddress: Address(bitPattern: data.elementAddress))
+            let model = element!.model(withModelId: UInt32(data.modelIdentifier))
+            let message: ConfigModelPublicationSet = ConfigModelPublicationSet(publish, to: model!)!
+            do {
+                _ = try meshNetworkManager.send(message, to: node!.unicastAddress)
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .sendLightLightness(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            let message: LightLightnessSet = LightLightnessSet(lightness: UInt16(data.lightness))
+            do {
+                _ = try meshNetworkManager.send(message, to: MeshAddress(Address(bitPattern: data.address)), using: appKey)
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .sendLightCtl(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            let message = LightCTLSet(lightness: UInt16(data.lightness), temperature: UInt16(data.temperature), deltaUV: data.lightDeltaUV)
+            do {
+                _ = try meshNetworkManager.send(message, to: MeshAddress(Address(bitPattern: data.address)), using: appKey)
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .sendLightHsl(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            let message = LightHSLSet(lightness: UInt16(data.lightness), hue: UInt16(data.hue), saturation: UInt16(data.saturation))
+            do {
+                _ = try meshNetworkManager.send(message, to: MeshAddress(Address(bitPattern: data.address)), using: appKey)
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
         }
         
     }

@@ -142,17 +142,13 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<bool> updateProvisioner(Provisioner provisioner) {
-    if (Platform.isAndroid) {
-      return _methodChannel.invokeMethod('updateProvisioner', {
-        'provisionerUuid': provisioner.provisionerUuid,
-        'provisionerName': provisioner.provisionerName,
-        'provisionerAddress': provisioner.provisionerAddress,
-        'globalTtl': provisioner.globalTtl,
-        'lastSelected': provisioner.lastSelected
-      });
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    return _methodChannel.invokeMethod('updateProvisioner', {
+      'provisionerUuid': provisioner.provisionerUuid,
+      'provisionerName': provisioner.provisionerName,
+      'provisionerAddress': provisioner.provisionerAddress,
+      'globalTtl': provisioner.globalTtl,
+      'lastSelected': provisioner.lastSelected
+    });
   }
 
   @override

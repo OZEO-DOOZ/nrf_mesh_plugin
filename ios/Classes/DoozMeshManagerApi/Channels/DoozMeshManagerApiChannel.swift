@@ -26,6 +26,16 @@ enum DoozMeshManagerApiChannel {
     case sendConfigModelSubscriptionDelete(_ data: SendConfigModelSubscriptionDeleteArguments)
     case getSequenceNumberForAddress(_ data: GetSequenceNumberForAddressArguments)
     case setSequenceNumberForAddress(_ data: SetSequenceNumberForAddressArguments)
+    case sendGenericLevelGet(_ data: SendGenericLevelGetArguments)
+    case setNetworkTransmitSettings(_ data: SetNetworkTransmitSettingsArguments)
+    case getNetworkTransmitSettings(_ data: GetNetworkTransmitSettingsArguments)
+    case getDefaultTtl(_ data: GetDefaultTtlArguments)
+    case setDefaultTtl(_ data: SetDefaultTtlArguments)
+    case sendConfigModelSubscriptionDeleteAll(_ data: SendConfigModelSubscriptionDeleteAllArguments)
+    case sendConfigModelPublicationSet(_ data: SendConfigModelPublicationSetArguments)
+    case sendLightLightness(_ data: SendLightLightnessArguments)
+    case sendLightCtl(_ data: SendLightCtlArguments)
+    case sendLightHsl(_ data: SendLightHslArguments)
 
     case error(_ error: Error)
     
@@ -71,8 +81,40 @@ enum DoozMeshManagerApiChannel {
             case "getSequenceNumberForAddress":
                 self = .getSequenceNumberForAddress(try GetSequenceNumberForAddressArguments(arguments))
             case "setSequenceNumberForAddress":
-                            self = .setSequenceNumberForAddress(try SetSequenceNumberForAddressArguments(arguments))
-
+                self = .setSequenceNumberForAddress(try SetSequenceNumberForAddressArguments(arguments))
+            case "sendGenericLevelGet":
+                self = .sendGenericLevelGet(try SendGenericLevelGetArguments(arguments))
+            case "setNetworkTransmitSettings":
+                self = .setNetworkTransmitSettings(try SetNetworkTransmitSettingsArguments(arguments))
+            case "getNetworkTransmitSettings":
+                self = .getNetworkTransmitSettings(try GetNetworkTransmitSettingsArguments(arguments))
+            case "getDefaultTtl":
+                self = .getDefaultTtl(try GetDefaultTtlArguments(arguments))
+            case "setDefaultTtl":
+                self = .setDefaultTtl(try SetDefaultTtlArguments(arguments))
+            case "sendConfigModelSubscriptionDeleteAll":
+                self = .sendConfigModelSubscriptionDeleteAll(try SendConfigModelSubscriptionDeleteAllArguments(arguments))
+            case "sendConfigModelPublicationSet":
+                self = .sendConfigModelPublicationSet(try SendConfigModelPublicationSetArguments(arguments))
+            case "sendLightLightness":
+                self = .sendLightLightness(try SendLightLightnessArguments(arguments))
+            case "sendLightCtl":
+                self = .sendLightCtl(try SendLightCtlArguments(arguments))
+            case "sendLightHsl":
+                self = .sendLightHsl(try SendLightHslArguments(arguments))
+            //sendV2MagicLevel
+            //getV2MagicLevel
+            
+            //getDeviceUuid
+            //handleWriteCallbacks
+            
+            
+            //cachedProvisionedMeshNodeUuid
+            //deprovision
+            //nodeIdentityMatches
+            //networkIdMatches
+            //isAdvertisingWithNetworkIdentity
+            //isAdvertisedWithNodeIdentity
             default:
                 self = .error(FlutterCallError.notImplemented)
             }
