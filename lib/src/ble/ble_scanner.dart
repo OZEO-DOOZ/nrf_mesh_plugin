@@ -16,26 +16,22 @@ class BleScannerError {
 }
 
 class BleScanner {
-  static BleScanner _instance;
+  static late final BleScanner _instance = BleScanner._();
 
   BleScanner._();
 
-  factory BleScanner() => _instance ??= BleScanner._();
+  factory BleScanner() => _instance;
 
   final FlutterReactiveBle _flutterReactiveBle = FlutterReactiveBle();
 
   Stream<BleStatus> get bleStatus => _flutterReactiveBle.statusStream;
 
-  StreamController<BleScannerError> onErrorController;
+  late final StreamController<BleScannerError> _onScanErrorController = StreamController<BleScannerError>.broadcast();
 
-  Stream<BleScannerError> get onError => onErrorController.stream;
-
-  void initStream() {
-    onErrorController = StreamController<BleScannerError>();
-  }
+  Stream<BleScannerError> get onScanErrorStream => _onScanErrorController.stream;
 
   void dispose() {
-    onErrorController?.close();
+    _onScanErrorController.close();
   }
 
   /// Will begin a ble scan with the given parameters or defaults and wait for [timeoutDuration].
@@ -56,8 +52,8 @@ class BleScanner {
         scanMode: scanMode,
       )
           .listen((device) => scanResults.add(device), onError: (onError) {
-        if (!onErrorController.isClosed && onErrorController.hasListener) {
-          onErrorController.add(BleScannerError('Scanner Error', onError));
+        if (!_onScanErrorController.isClosed && _onScanErrorController.hasListener) {
+          _onScanErrorController.add(BleScannerError('Scanner Error', onError));
         }
       });
       await Future.delayed(timeoutDuration, () => streamSub.cancel());
@@ -88,10 +84,15 @@ class BleScanner {
     }
   }
 
-  Future<DiscoveredDevice> searchForSpecificUID(String uid, {bool forProxy = false}) async {
-    final result = _scanWithParamsAsStream(
-      withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
-    ).firstWhere((s) => validScanResult(s, uid), orElse: () => null);
+  Future<DiscoveredDevice?> searchForSpecificUID(String uid, {bool forProxy = false}) async {
+    var result;
+    try {
+      result = _scanWithParamsAsStream(
+        withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
+      ).firstWhere((s) => validScanResult(s, uid));
+    } on StateError catch (e) {
+      print('[BleScanner] no device found with UUID : $uid\n$e\n${e.message}');
+    }
     return result;
   }
 

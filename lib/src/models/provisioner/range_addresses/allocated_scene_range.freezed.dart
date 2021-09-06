@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'allocated_scene_range.dart';
 
@@ -8,6 +8,10 @@ part of 'allocated_scene_range.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 AllocatedSceneRange _$AllocatedSceneRangeFromJson(Map<String, dynamic> json) {
   return _AllocatedSceneRange.fromJson(json);
 }
@@ -16,7 +20,6 @@ AllocatedSceneRange _$AllocatedSceneRangeFromJson(Map<String, dynamic> json) {
 class _$AllocatedSceneRangeTearOff {
   const _$AllocatedSceneRangeTearOff();
 
-// ignore: unused_element
   _AllocatedSceneRange call(int firstScene, int lastScene) {
     return _AllocatedSceneRange(
       firstScene,
@@ -24,23 +27,22 @@ class _$AllocatedSceneRangeTearOff {
     );
   }
 
-// ignore: unused_element
   AllocatedSceneRange fromJson(Map<String, Object> json) {
     return AllocatedSceneRange.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $AllocatedSceneRange = _$AllocatedSceneRangeTearOff();
 
 /// @nodoc
 mixin _$AllocatedSceneRange {
-  int get firstScene;
-  int get lastScene;
+  int get firstScene => throw _privateConstructorUsedError;
+  int get lastScene => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $AllocatedSceneRangeCopyWith<AllocatedSceneRange> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AllocatedSceneRangeCopyWith<AllocatedSceneRange> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -60,12 +62,18 @@ class _$AllocatedSceneRangeCopyWithImpl<$Res> implements $AllocatedSceneRangeCop
 
   @override
   $Res call({
-    Object firstScene = freezed,
-    Object lastScene = freezed,
+    Object? firstScene = freezed,
+    Object? lastScene = freezed,
   }) {
     return _then(_value.copyWith(
-      firstScene: firstScene == freezed ? _value.firstScene : firstScene as int,
-      lastScene: lastScene == freezed ? _value.lastScene : lastScene as int,
+      firstScene: firstScene == freezed
+          ? _value.firstScene
+          : firstScene // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastScene: lastScene == freezed
+          ? _value.lastScene
+          : lastScene // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -89,23 +97,26 @@ class __$AllocatedSceneRangeCopyWithImpl<$Res> extends _$AllocatedSceneRangeCopy
 
   @override
   $Res call({
-    Object firstScene = freezed,
-    Object lastScene = freezed,
+    Object? firstScene = freezed,
+    Object? lastScene = freezed,
   }) {
     return _then(_AllocatedSceneRange(
-      firstScene == freezed ? _value.firstScene : firstScene as int,
-      lastScene == freezed ? _value.lastScene : lastScene as int,
+      firstScene == freezed
+          ? _value.firstScene
+          : firstScene // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastScene == freezed
+          ? _value.lastScene
+          : lastScene // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_AllocatedSceneRange implements _AllocatedSceneRange {
-  const _$_AllocatedSceneRange(this.firstScene, this.lastScene)
-      : assert(firstScene != null),
-        assert(lastScene != null);
+  const _$_AllocatedSceneRange(this.firstScene, this.lastScene);
 
   factory _$_AllocatedSceneRange.fromJson(Map<String, dynamic> json) => _$_$_AllocatedSceneRangeFromJson(json);
 
@@ -135,6 +146,7 @@ class _$_AllocatedSceneRange implements _AllocatedSceneRange {
       const DeepCollectionEquality().hash(firstScene) ^
       const DeepCollectionEquality().hash(lastScene);
 
+  @JsonKey(ignore: true)
   @override
   _$AllocatedSceneRangeCopyWith<_AllocatedSceneRange> get copyWith =>
       __$AllocatedSceneRangeCopyWithImpl<_AllocatedSceneRange>(this, _$identity);
@@ -151,9 +163,10 @@ abstract class _AllocatedSceneRange implements AllocatedSceneRange {
   factory _AllocatedSceneRange.fromJson(Map<String, dynamic> json) = _$_AllocatedSceneRange.fromJson;
 
   @override
-  int get firstScene;
+  int get firstScene => throw _privateConstructorUsedError;
   @override
-  int get lastScene;
+  int get lastScene => throw _privateConstructorUsedError;
   @override
-  _$AllocatedSceneRangeCopyWith<_AllocatedSceneRange> get copyWith;
+  @JsonKey(ignore: true)
+  _$AllocatedSceneRangeCopyWith<_AllocatedSceneRange> get copyWith => throw _privateConstructorUsedError;
 }

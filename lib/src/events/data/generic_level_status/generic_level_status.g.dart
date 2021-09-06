@@ -9,9 +9,9 @@ part of 'generic_level_status.dart';
 _$_GenericLevelStatusData _$_$_GenericLevelStatusDataFromJson(Map<String, dynamic> json) {
   return _$_GenericLevelStatusData(
     json['level'] as int,
-    json['targetLevel'] as int,
-    json['transitionSteps'] as int,
-    json['transitionResolution'] as int,
+    json['targetLevel'] as int?,
+    json['transitionSteps'] as int?,
+    json['transitionResolution'] as int?,
     json['source'] as int,
     json['destination'] as int,
   );

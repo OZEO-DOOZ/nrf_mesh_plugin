@@ -12,15 +12,15 @@ _$_Provisioner _$_$_ProvisionerFromJson(Map<String, dynamic> json) {
     json['provisionerUuid'] as String,
     json['globalTtl'] as int,
     json['provisionerAddress'] as int,
-    (json['allocatedUnicastRanges'] as List)
-        ?.map((e) => e == null ? null : AllocatedUnicastRange.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    (json['allocatedGroupRanges'] as List)
-        ?.map((e) => e == null ? null : AllocatedGroupRange.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    (json['allocatedSceneRanges'] as List)
-        ?.map((e) => e == null ? null : AllocatedSceneRange.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    (json['allocatedUnicastRanges'] as List<dynamic>)
+        .map((e) => AllocatedUnicastRange.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    (json['allocatedGroupRanges'] as List<dynamic>)
+        .map((e) => AllocatedGroupRange.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    (json['allocatedSceneRanges'] as List<dynamic>)
+        .map((e) => AllocatedSceneRange.fromJson(e as Map<String, dynamic>))
+        .toList(),
     json['lastSelected'] as bool,
   );
 }

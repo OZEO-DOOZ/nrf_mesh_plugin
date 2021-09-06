@@ -4,7 +4,7 @@ part 'config_network_transmit_status.freezed.dart';
 part 'config_network_transmit_status.g.dart';
 
 @freezed
-abstract class ConfigNetworkTransmitStatus with _$ConfigNetworkTransmitStatus {
+class ConfigNetworkTransmitStatus with _$ConfigNetworkTransmitStatus {
   const factory ConfigNetworkTransmitStatus(int source, int destination, int transmitCount, int transmitIntervalSteps) =
       _ConfigNetworkTransmitStatus;
 

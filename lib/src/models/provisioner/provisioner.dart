@@ -7,7 +7,7 @@ part 'provisioner.freezed.dart';
 part 'provisioner.g.dart';
 
 @freezed
-abstract class Provisioner with _$Provisioner {
+class Provisioner with _$Provisioner {
   const factory Provisioner(
       String provisionerName,
       String provisionerUuid,

@@ -38,13 +38,13 @@ class BoardData {
         payload = 0;
 
   factory BoardData.decode(int level) {
-    final payload = (level & 0x1FF).toString();
-    final offset = ((level >> 9) & 0x1F).toString();
+    final payload = (level & 0x1FF);
+    final offset = ((level >> 9) & 0x1F);
     var io = (level >> (9 + 5)) & 0x3;
     if (level < 0) {
       io = io | 0x2;
     }
-    return BoardData(io, int.tryParse(offset), int.tryParse(payload));
+    return BoardData(io, offset, payload);
   }
 
   int toByte() {

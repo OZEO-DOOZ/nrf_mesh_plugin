@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'light_hsl_status.dart';
 
@@ -8,6 +8,10 @@ part of 'light_hsl_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 LightHslStatusData _$LightHslStatusDataFromJson(Map<String, dynamic> json) {
   return _LightHslStatusData.fromJson(json);
 }
@@ -16,7 +20,6 @@ LightHslStatusData _$LightHslStatusDataFromJson(Map<String, dynamic> json) {
 class _$LightHslStatusDataTearOff {
   const _$LightHslStatusDataTearOff();
 
-// ignore: unused_element
   _LightHslStatusData call(int presentLightness, int presentHue, int presentSaturation, int transitionSteps,
       int transitionResolution, int source, int destination) {
     return _LightHslStatusData(
@@ -30,28 +33,27 @@ class _$LightHslStatusDataTearOff {
     );
   }
 
-// ignore: unused_element
   LightHslStatusData fromJson(Map<String, Object> json) {
     return LightHslStatusData.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $LightHslStatusData = _$LightHslStatusDataTearOff();
 
 /// @nodoc
 mixin _$LightHslStatusData {
-  int get presentLightness;
-  int get presentHue;
-  int get presentSaturation;
-  int get transitionSteps;
-  int get transitionResolution;
-  int get source;
-  int get destination;
+  int get presentLightness => throw _privateConstructorUsedError;
+  int get presentHue => throw _privateConstructorUsedError;
+  int get presentSaturation => throw _privateConstructorUsedError;
+  int get transitionSteps => throw _privateConstructorUsedError;
+  int get transitionResolution => throw _privateConstructorUsedError;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $LightHslStatusDataCopyWith<LightHslStatusData> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LightHslStatusDataCopyWith<LightHslStatusData> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -78,22 +80,43 @@ class _$LightHslStatusDataCopyWithImpl<$Res> implements $LightHslStatusDataCopyW
 
   @override
   $Res call({
-    Object presentLightness = freezed,
-    Object presentHue = freezed,
-    Object presentSaturation = freezed,
-    Object transitionSteps = freezed,
-    Object transitionResolution = freezed,
-    Object source = freezed,
-    Object destination = freezed,
+    Object? presentLightness = freezed,
+    Object? presentHue = freezed,
+    Object? presentSaturation = freezed,
+    Object? transitionSteps = freezed,
+    Object? transitionResolution = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_value.copyWith(
-      presentLightness: presentLightness == freezed ? _value.presentLightness : presentLightness as int,
-      presentHue: presentHue == freezed ? _value.presentHue : presentHue as int,
-      presentSaturation: presentSaturation == freezed ? _value.presentSaturation : presentSaturation as int,
-      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
+      presentLightness: presentLightness == freezed
+          ? _value.presentLightness
+          : presentLightness // ignore: cast_nullable_to_non_nullable
+              as int,
+      presentHue: presentHue == freezed
+          ? _value.presentHue
+          : presentHue // ignore: cast_nullable_to_non_nullable
+              as int,
+      presentSaturation: presentSaturation == freezed
+          ? _value.presentSaturation
+          : presentSaturation // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionSteps: transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionResolution: transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution // ignore: cast_nullable_to_non_nullable
+              as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -124,39 +147,52 @@ class __$LightHslStatusDataCopyWithImpl<$Res> extends _$LightHslStatusDataCopyWi
 
   @override
   $Res call({
-    Object presentLightness = freezed,
-    Object presentHue = freezed,
-    Object presentSaturation = freezed,
-    Object transitionSteps = freezed,
-    Object transitionResolution = freezed,
-    Object source = freezed,
-    Object destination = freezed,
+    Object? presentLightness = freezed,
+    Object? presentHue = freezed,
+    Object? presentSaturation = freezed,
+    Object? transitionSteps = freezed,
+    Object? transitionResolution = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
   }) {
     return _then(_LightHslStatusData(
-      presentLightness == freezed ? _value.presentLightness : presentLightness as int,
-      presentHue == freezed ? _value.presentHue : presentHue as int,
-      presentSaturation == freezed ? _value.presentSaturation : presentSaturation as int,
-      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
-      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
+      presentLightness == freezed
+          ? _value.presentLightness
+          : presentLightness // ignore: cast_nullable_to_non_nullable
+              as int,
+      presentHue == freezed
+          ? _value.presentHue
+          : presentHue // ignore: cast_nullable_to_non_nullable
+              as int,
+      presentSaturation == freezed
+          ? _value.presentSaturation
+          : presentSaturation // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution // ignore: cast_nullable_to_non_nullable
+              as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_LightHslStatusData implements _LightHslStatusData {
   const _$_LightHslStatusData(this.presentLightness, this.presentHue, this.presentSaturation, this.transitionSteps,
-      this.transitionResolution, this.source, this.destination)
-      : assert(presentLightness != null),
-        assert(presentHue != null),
-        assert(presentSaturation != null),
-        assert(transitionSteps != null),
-        assert(transitionResolution != null),
-        assert(source != null),
-        assert(destination != null);
+      this.transitionResolution, this.source, this.destination);
 
   factory _$_LightHslStatusData.fromJson(Map<String, dynamic> json) => _$_$_LightHslStatusDataFromJson(json);
 
@@ -210,6 +246,7 @@ class _$_LightHslStatusData implements _LightHslStatusData {
       const DeepCollectionEquality().hash(source) ^
       const DeepCollectionEquality().hash(destination);
 
+  @JsonKey(ignore: true)
   @override
   _$LightHslStatusDataCopyWith<_LightHslStatusData> get copyWith =>
       __$LightHslStatusDataCopyWithImpl<_LightHslStatusData>(this, _$identity);
@@ -227,19 +264,20 @@ abstract class _LightHslStatusData implements LightHslStatusData {
   factory _LightHslStatusData.fromJson(Map<String, dynamic> json) = _$_LightHslStatusData.fromJson;
 
   @override
-  int get presentLightness;
+  int get presentLightness => throw _privateConstructorUsedError;
   @override
-  int get presentHue;
+  int get presentHue => throw _privateConstructorUsedError;
   @override
-  int get presentSaturation;
+  int get presentSaturation => throw _privateConstructorUsedError;
   @override
-  int get transitionSteps;
+  int get transitionSteps => throw _privateConstructorUsedError;
   @override
-  int get transitionResolution;
+  int get transitionResolution => throw _privateConstructorUsedError;
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  _$LightHslStatusDataCopyWith<_LightHslStatusData> get copyWith;
+  @JsonKey(ignore: true)
+  _$LightHslStatusDataCopyWith<_LightHslStatusData> get copyWith => throw _privateConstructorUsedError;
 }

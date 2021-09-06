@@ -9,7 +9,7 @@ part of 'unprovisioned_mesh_node.dart';
 UnprovisionedMeshNode _$UnprovisionedMeshNodeFromJson(Map<String, dynamic> json) {
   return UnprovisionedMeshNode(
     json['uuid'] as String,
-    (json['provisionerPublicKeyXY'] as List)?.map((e) => e as int)?.toList(),
+    (json['provisionerPublicKeyXY'] as List<dynamic>?)?.map((e) => e as int).toList(),
   );
 }
 

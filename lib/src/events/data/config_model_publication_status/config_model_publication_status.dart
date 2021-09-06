@@ -4,7 +4,7 @@ part 'config_model_publication_status.freezed.dart';
 part 'config_model_publication_status.g.dart';
 
 @freezed
-abstract class ConfigModelPublicationStatus with _$ConfigModelPublicationStatus {
+class ConfigModelPublicationStatus with _$ConfigModelPublicationStatus {
   const factory ConfigModelPublicationStatus(
     int elementAddress,
     int publishAddress,

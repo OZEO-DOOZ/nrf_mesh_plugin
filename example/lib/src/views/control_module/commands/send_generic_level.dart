@@ -7,16 +7,16 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 class SendGenericLevel extends StatefulWidget {
   final MeshManagerApi meshManagerApi;
 
-  const SendGenericLevel({Key key, this.meshManagerApi}) : super(key: key);
+  const SendGenericLevel({Key? key, required this.meshManagerApi}) : super(key: key);
 
   @override
   _SendGenericLevelState createState() => _SendGenericLevelState();
 }
 
 class _SendGenericLevelState extends State<SendGenericLevel> {
-  int selectedElementAddress;
+  int? selectedElementAddress;
 
-  int selectedLevel;
+  int? selectedLevel;
 
   @override
   Widget build(BuildContext context) {
@@ -40,26 +40,26 @@ class _SendGenericLevelState extends State<SendGenericLevel> {
             });
           },
         ),
-        RaisedButton(
-          child: Text('Send level'),
+        TextButton(
           onPressed: selectedLevel != null
               ? () async {
-                  final scaffoldState = Scaffold.of(context);
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
                   print('send level $selectedLevel to $selectedElementAddress');
                   try {
                     await widget.meshManagerApi
-                        .sendGenericLevelSet(selectedElementAddress, selectedLevel)
+                        .sendGenericLevelSet(selectedElementAddress!, selectedLevel!)
                         .timeout(Duration(seconds: 40));
-                    scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
                   } on TimeoutException catch (_) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
                   } on PlatformException catch (e) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
                   } catch (e) {
-                    scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+                    scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
                   }
                 }
               : null,
+          child: Text('Send level'),
         )
       ],
     );

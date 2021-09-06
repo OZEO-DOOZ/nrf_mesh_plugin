@@ -3,7 +3,7 @@ import 'package:pedantic/pedantic.dart';
 import 'package:test/test.dart';
 
 void main() {
-  FlutterDriver driver;
+  late FlutterDriver driver;
 
   // Connect to the Flutter driver before running any tests.
   setUpAll(() async {
@@ -12,9 +12,7 @@ void main() {
 
   // Close the connection to the driver after the tests have completed.
   tearDownAll(() async {
-    if (driver != null) {
-      unawaited(driver.close());
-    }
+    unawaited(driver.close());
   });
 
   test('go to provisioning page', () async {
@@ -63,7 +61,7 @@ void main() {
     final configureAsDimmer = find.text('Configure output as light dimmer');
     await driver.tap(configureAsDimmer);
     await driver.waitFor(find.text('Board successfully configured'));
-    final backPage = await find.pageBack();
+    final backPage = find.pageBack();
     await driver.tap(backPage);
   }, timeout: Timeout(Duration(minutes: 1)));
 

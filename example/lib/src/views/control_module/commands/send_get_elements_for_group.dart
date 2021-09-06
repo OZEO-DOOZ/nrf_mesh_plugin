@@ -14,7 +14,7 @@ class SendGetElementsForGroup extends StatefulWidget {
 }
 
 class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
-  int _id;
+  late int _id;
 
   @override
   Widget build(BuildContext context) {
@@ -27,23 +27,23 @@ class _SendGetElementsForGroupState extends State<SendGetElementsForGroup> {
             _id = int.parse(text);
           },
         ),
-        RaisedButton(
-          child: Text('Send get elements for group'),
+        TextButton(
           onPressed: () async {
-            final scaffoldState = Scaffold.of(context);
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
               final result =
-                  await widget.meshManagerApi.meshNetwork.elementsForGroup(_id).timeout(Duration(seconds: 40));
+                  await widget.meshManagerApi.meshNetwork!.elementsForGroup(_id).timeout(Duration(seconds: 40));
               print(result);
-              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
             } catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
             }
           },
+          child: Text('Send get elements for group'),
         )
       ],
     );

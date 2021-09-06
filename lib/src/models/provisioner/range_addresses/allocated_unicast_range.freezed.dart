@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'allocated_unicast_range.dart';
 
@@ -8,6 +8,10 @@ part of 'allocated_unicast_range.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 AllocatedUnicastRange _$AllocatedUnicastRangeFromJson(Map<String, dynamic> json) {
   return _AllocatedUnicastRange.fromJson(json);
 }
@@ -16,7 +20,6 @@ AllocatedUnicastRange _$AllocatedUnicastRangeFromJson(Map<String, dynamic> json)
 class _$AllocatedUnicastRangeTearOff {
   const _$AllocatedUnicastRangeTearOff();
 
-// ignore: unused_element
   _AllocatedUnicastRange call(int lowAddress, int highAddress) {
     return _AllocatedUnicastRange(
       lowAddress,
@@ -24,23 +27,22 @@ class _$AllocatedUnicastRangeTearOff {
     );
   }
 
-// ignore: unused_element
   AllocatedUnicastRange fromJson(Map<String, Object> json) {
     return AllocatedUnicastRange.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $AllocatedUnicastRange = _$AllocatedUnicastRangeTearOff();
 
 /// @nodoc
 mixin _$AllocatedUnicastRange {
-  int get lowAddress;
-  int get highAddress;
+  int get lowAddress => throw _privateConstructorUsedError;
+  int get highAddress => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $AllocatedUnicastRangeCopyWith<AllocatedUnicastRange> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AllocatedUnicastRangeCopyWith<AllocatedUnicastRange> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -60,12 +62,18 @@ class _$AllocatedUnicastRangeCopyWithImpl<$Res> implements $AllocatedUnicastRang
 
   @override
   $Res call({
-    Object lowAddress = freezed,
-    Object highAddress = freezed,
+    Object? lowAddress = freezed,
+    Object? highAddress = freezed,
   }) {
     return _then(_value.copyWith(
-      lowAddress: lowAddress == freezed ? _value.lowAddress : lowAddress as int,
-      highAddress: highAddress == freezed ? _value.highAddress : highAddress as int,
+      lowAddress: lowAddress == freezed
+          ? _value.lowAddress
+          : lowAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      highAddress: highAddress == freezed
+          ? _value.highAddress
+          : highAddress // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -89,23 +97,26 @@ class __$AllocatedUnicastRangeCopyWithImpl<$Res> extends _$AllocatedUnicastRange
 
   @override
   $Res call({
-    Object lowAddress = freezed,
-    Object highAddress = freezed,
+    Object? lowAddress = freezed,
+    Object? highAddress = freezed,
   }) {
     return _then(_AllocatedUnicastRange(
-      lowAddress == freezed ? _value.lowAddress : lowAddress as int,
-      highAddress == freezed ? _value.highAddress : highAddress as int,
+      lowAddress == freezed
+          ? _value.lowAddress
+          : lowAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      highAddress == freezed
+          ? _value.highAddress
+          : highAddress // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_AllocatedUnicastRange implements _AllocatedUnicastRange {
-  const _$_AllocatedUnicastRange(this.lowAddress, this.highAddress)
-      : assert(lowAddress != null),
-        assert(highAddress != null);
+  const _$_AllocatedUnicastRange(this.lowAddress, this.highAddress);
 
   factory _$_AllocatedUnicastRange.fromJson(Map<String, dynamic> json) => _$_$_AllocatedUnicastRangeFromJson(json);
 
@@ -135,6 +146,7 @@ class _$_AllocatedUnicastRange implements _AllocatedUnicastRange {
       const DeepCollectionEquality().hash(lowAddress) ^
       const DeepCollectionEquality().hash(highAddress);
 
+  @JsonKey(ignore: true)
   @override
   _$AllocatedUnicastRangeCopyWith<_AllocatedUnicastRange> get copyWith =>
       __$AllocatedUnicastRangeCopyWithImpl<_AllocatedUnicastRange>(this, _$identity);
@@ -151,9 +163,10 @@ abstract class _AllocatedUnicastRange implements AllocatedUnicastRange {
   factory _AllocatedUnicastRange.fromJson(Map<String, dynamic> json) = _$_AllocatedUnicastRange.fromJson;
 
   @override
-  int get lowAddress;
+  int get lowAddress => throw _privateConstructorUsedError;
   @override
-  int get highAddress;
+  int get highAddress => throw _privateConstructorUsedError;
   @override
-  _$AllocatedUnicastRangeCopyWith<_AllocatedUnicastRange> get copyWith;
+  @JsonKey(ignore: true)
+  _$AllocatedUnicastRangeCopyWith<_AllocatedUnicastRange> get copyWith => throw _privateConstructorUsedError;
 }

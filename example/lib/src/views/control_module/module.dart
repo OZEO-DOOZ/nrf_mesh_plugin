@@ -18,7 +18,7 @@ class Module extends StatefulWidget {
   final DiscoveredDevice device;
   final MeshManagerApi meshManagerApi;
 
-  const Module({Key key, this.device, this.meshManagerApi}) : super(key: key);
+  const Module({Key? key, required this.device, required this.meshManagerApi}) : super(key: key);
 
   @override
   _ModuleState createState() => _ModuleState();
@@ -28,8 +28,7 @@ class _ModuleState extends State<Module> {
   final bleMeshManager = BleMeshManager();
 
   bool isLoading = true;
-  List<ProvisionedMeshNode> nodes;
-  List<String> nodesName = [];
+  late List<ProvisionedMeshNode> nodes;
 
   @override
   void initState() {
@@ -44,7 +43,7 @@ class _ModuleState extends State<Module> {
   void dispose() async {
     super.dispose();
     await bleMeshManager.disconnect();
-    await bleMeshManager.callbacks.dispose();
+    await bleMeshManager.callbacks!.dispose();
   }
 
   @override
@@ -108,8 +107,7 @@ class _ModuleState extends State<Module> {
 
   Future<void> _init() async {
     await bleMeshManager.connect(widget.device);
-    nodes = (await widget.meshManagerApi.meshNetwork.nodes).skip(1).toList();
-    nodesName = await Future.wait(nodes.map((e) => e.name));
+    nodes = (await widget.meshManagerApi.meshNetwork!.nodes).skip(1).toList();
 
     for (final node in nodes) {
       final elements = await node.elements;
@@ -141,15 +139,15 @@ class DoozProvisionedBleMeshManagerCallbacks extends BleMeshManagerCallbacks {
   final MeshManagerApi meshManagerApi;
   final BleMeshManager bleMeshManager;
 
-  StreamSubscription<DiscoveredDevice> onDeviceConnectingSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceConnectedSubscription;
-  StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceReadySubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
-  StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceDisconnectingSubscription;
-  StreamSubscription<DiscoveredDevice> onDeviceDisconnectedSubscription;
-  StreamSubscription<List<int>> onMeshPduCreatedSubscription;
+  late StreamSubscription<DiscoveredDevice> onDeviceConnectingSubscription;
+  late StreamSubscription<DiscoveredDevice> onDeviceConnectedSubscription;
+  late StreamSubscription<BleManagerCallbacksDiscoveredServices> onServicesDiscoveredSubscription;
+  late StreamSubscription<DiscoveredDevice> onDeviceReadySubscription;
+  late StreamSubscription<BleMeshManagerCallbacksDataReceived> onDataReceivedSubscription;
+  late StreamSubscription<BleMeshManagerCallbacksDataSent> onDataSentSubscription;
+  late StreamSubscription<DiscoveredDevice?> onDeviceDisconnectingSubscription;
+  late StreamSubscription<DiscoveredDevice?> onDeviceDisconnectedSubscription;
+  late StreamSubscription<List<int>> onMeshPduCreatedSubscription;
 
   DoozProvisionedBleMeshManagerCallbacks(this.meshManagerApi, this.bleMeshManager) {
     onDeviceConnectingSubscription = onDeviceConnecting.listen((event) {

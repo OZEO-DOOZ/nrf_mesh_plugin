@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'group.dart';
 
@@ -8,6 +8,10 @@ part of 'group.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 GroupData _$GroupDataFromJson(Map<String, dynamic> json) {
   return _GroupData.fromJson(json);
 }
@@ -16,9 +20,8 @@ GroupData _$GroupDataFromJson(Map<String, dynamic> json) {
 class _$GroupDataTearOff {
   const _$GroupDataTearOff();
 
-// ignore: unused_element
-  _GroupData call(String name, int address, @nullable String addressLabel, String meshUuid, int parentAddress,
-      @nullable String parentAddressLabel) {
+  _GroupData call(
+      String name, int address, String? addressLabel, String meshUuid, int parentAddress, String? parentAddressLabel) {
     return _GroupData(
       name,
       address,
@@ -29,41 +32,33 @@ class _$GroupDataTearOff {
     );
   }
 
-// ignore: unused_element
   GroupData fromJson(Map<String, Object> json) {
     return GroupData.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $GroupData = _$GroupDataTearOff();
 
 /// @nodoc
 mixin _$GroupData {
-  String get name;
-  int get address;
-  @nullable
-  String get addressLabel;
-  String get meshUuid;
-  int get parentAddress;
-  @nullable
-  String get parentAddressLabel;
+  String get name => throw _privateConstructorUsedError;
+  int get address => throw _privateConstructorUsedError;
+  String? get addressLabel => throw _privateConstructorUsedError;
+  String get meshUuid => throw _privateConstructorUsedError;
+  int get parentAddress => throw _privateConstructorUsedError;
+  String? get parentAddressLabel => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $GroupDataCopyWith<GroupData> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GroupDataCopyWith<GroupData> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $GroupDataCopyWith<$Res> {
   factory $GroupDataCopyWith(GroupData value, $Res Function(GroupData) then) = _$GroupDataCopyWithImpl<$Res>;
   $Res call(
-      {String name,
-      int address,
-      @nullable String addressLabel,
-      String meshUuid,
-      int parentAddress,
-      @nullable String parentAddressLabel});
+      {String name, int address, String? addressLabel, String meshUuid, int parentAddress, String? parentAddressLabel});
 }
 
 /// @nodoc
@@ -76,20 +71,38 @@ class _$GroupDataCopyWithImpl<$Res> implements $GroupDataCopyWith<$Res> {
 
   @override
   $Res call({
-    Object name = freezed,
-    Object address = freezed,
-    Object addressLabel = freezed,
-    Object meshUuid = freezed,
-    Object parentAddress = freezed,
-    Object parentAddressLabel = freezed,
+    Object? name = freezed,
+    Object? address = freezed,
+    Object? addressLabel = freezed,
+    Object? meshUuid = freezed,
+    Object? parentAddress = freezed,
+    Object? parentAddressLabel = freezed,
   }) {
     return _then(_value.copyWith(
-      name: name == freezed ? _value.name : name as String,
-      address: address == freezed ? _value.address : address as int,
-      addressLabel: addressLabel == freezed ? _value.addressLabel : addressLabel as String,
-      meshUuid: meshUuid == freezed ? _value.meshUuid : meshUuid as String,
-      parentAddress: parentAddress == freezed ? _value.parentAddress : parentAddress as int,
-      parentAddressLabel: parentAddressLabel == freezed ? _value.parentAddressLabel : parentAddressLabel as String,
+      name: name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: address == freezed
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as int,
+      addressLabel: addressLabel == freezed
+          ? _value.addressLabel
+          : addressLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      meshUuid: meshUuid == freezed
+          ? _value.meshUuid
+          : meshUuid // ignore: cast_nullable_to_non_nullable
+              as String,
+      parentAddress: parentAddress == freezed
+          ? _value.parentAddress
+          : parentAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      parentAddressLabel: parentAddressLabel == freezed
+          ? _value.parentAddressLabel
+          : parentAddressLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -99,12 +112,7 @@ abstract class _$GroupDataCopyWith<$Res> implements $GroupDataCopyWith<$Res> {
   factory _$GroupDataCopyWith(_GroupData value, $Res Function(_GroupData) then) = __$GroupDataCopyWithImpl<$Res>;
   @override
   $Res call(
-      {String name,
-      int address,
-      @nullable String addressLabel,
-      String meshUuid,
-      int parentAddress,
-      @nullable String parentAddressLabel});
+      {String name, int address, String? addressLabel, String meshUuid, int parentAddress, String? parentAddressLabel});
 }
 
 /// @nodoc
@@ -117,34 +125,47 @@ class __$GroupDataCopyWithImpl<$Res> extends _$GroupDataCopyWithImpl<$Res> imple
 
   @override
   $Res call({
-    Object name = freezed,
-    Object address = freezed,
-    Object addressLabel = freezed,
-    Object meshUuid = freezed,
-    Object parentAddress = freezed,
-    Object parentAddressLabel = freezed,
+    Object? name = freezed,
+    Object? address = freezed,
+    Object? addressLabel = freezed,
+    Object? meshUuid = freezed,
+    Object? parentAddress = freezed,
+    Object? parentAddressLabel = freezed,
   }) {
     return _then(_GroupData(
-      name == freezed ? _value.name : name as String,
-      address == freezed ? _value.address : address as int,
-      addressLabel == freezed ? _value.addressLabel : addressLabel as String,
-      meshUuid == freezed ? _value.meshUuid : meshUuid as String,
-      parentAddress == freezed ? _value.parentAddress : parentAddress as int,
-      parentAddressLabel == freezed ? _value.parentAddressLabel : parentAddressLabel as String,
+      name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address == freezed
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as int,
+      addressLabel == freezed
+          ? _value.addressLabel
+          : addressLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      meshUuid == freezed
+          ? _value.meshUuid
+          : meshUuid // ignore: cast_nullable_to_non_nullable
+              as String,
+      parentAddress == freezed
+          ? _value.parentAddress
+          : parentAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      parentAddressLabel == freezed
+          ? _value.parentAddressLabel
+          : parentAddressLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_GroupData implements _GroupData {
-  const _$_GroupData(this.name, this.address, @nullable this.addressLabel, this.meshUuid, this.parentAddress,
-      @nullable this.parentAddressLabel)
-      : assert(name != null),
-        assert(address != null),
-        assert(meshUuid != null),
-        assert(parentAddress != null);
+  const _$_GroupData(
+      this.name, this.address, this.addressLabel, this.meshUuid, this.parentAddress, this.parentAddressLabel);
 
   factory _$_GroupData.fromJson(Map<String, dynamic> json) => _$_$_GroupDataFromJson(json);
 
@@ -153,15 +174,13 @@ class _$_GroupData implements _GroupData {
   @override
   final int address;
   @override
-  @nullable
-  final String addressLabel;
+  final String? addressLabel;
   @override
   final String meshUuid;
   @override
   final int parentAddress;
   @override
-  @nullable
-  final String parentAddressLabel;
+  final String? parentAddressLabel;
 
   @override
   String toString() {
@@ -193,6 +212,7 @@ class _$_GroupData implements _GroupData {
       const DeepCollectionEquality().hash(parentAddress) ^
       const DeepCollectionEquality().hash(parentAddressLabel);
 
+  @JsonKey(ignore: true)
   @override
   _$GroupDataCopyWith<_GroupData> get copyWith => __$GroupDataCopyWithImpl<_GroupData>(this, _$identity);
 
@@ -203,25 +223,24 @@ class _$_GroupData implements _GroupData {
 }
 
 abstract class _GroupData implements GroupData {
-  const factory _GroupData(String name, int address, @nullable String addressLabel, String meshUuid, int parentAddress,
-      @nullable String parentAddressLabel) = _$_GroupData;
+  const factory _GroupData(String name, int address, String? addressLabel, String meshUuid, int parentAddress,
+      String? parentAddressLabel) = _$_GroupData;
 
   factory _GroupData.fromJson(Map<String, dynamic> json) = _$_GroupData.fromJson;
 
   @override
-  String get name;
+  String get name => throw _privateConstructorUsedError;
   @override
-  int get address;
+  int get address => throw _privateConstructorUsedError;
   @override
-  @nullable
-  String get addressLabel;
+  String? get addressLabel => throw _privateConstructorUsedError;
   @override
-  String get meshUuid;
+  String get meshUuid => throw _privateConstructorUsedError;
   @override
-  int get parentAddress;
+  int get parentAddress => throw _privateConstructorUsedError;
   @override
-  @nullable
-  String get parentAddressLabel;
+  String? get parentAddressLabel => throw _privateConstructorUsedError;
   @override
-  _$GroupDataCopyWith<_GroupData> get copyWith;
+  @JsonKey(ignore: true)
+  _$GroupDataCopyWith<_GroupData> get copyWith => throw _privateConstructorUsedError;
 }

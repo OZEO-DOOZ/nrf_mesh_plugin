@@ -1,4 +1,4 @@
-String _toMacAddress(final List<int> bytes) => bytes?.map((e) => e.toRadixString(16).padLeft(2, '0'))?.join(':');
+String _toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
 
 List<int> _maskAddress(final List<int> address) => [
       address.first | 0xc0,

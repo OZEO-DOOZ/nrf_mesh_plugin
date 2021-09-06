@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'generic_on_off_status.dart';
 
@@ -8,6 +8,10 @@ part of 'generic_on_off_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 GenericOnOffStatusData _$GenericOnOffStatusDataFromJson(Map<String, dynamic> json) {
   return _GenericOnOffStatusData.fromJson(json);
 }
@@ -16,9 +20,8 @@ GenericOnOffStatusData _$GenericOnOffStatusDataFromJson(Map<String, dynamic> jso
 class _$GenericOnOffStatusDataTearOff {
   const _$GenericOnOffStatusDataTearOff();
 
-// ignore: unused_element
   _GenericOnOffStatusData call(
-      int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps) {
+      int source, bool presentState, bool? targetState, int transitionResolution, int transitionSteps) {
     return _GenericOnOffStatusData(
       source,
       presentState,
@@ -28,34 +31,32 @@ class _$GenericOnOffStatusDataTearOff {
     );
   }
 
-// ignore: unused_element
   GenericOnOffStatusData fromJson(Map<String, Object> json) {
     return GenericOnOffStatusData.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $GenericOnOffStatusData = _$GenericOnOffStatusDataTearOff();
 
 /// @nodoc
 mixin _$GenericOnOffStatusData {
-  int get source;
-  bool get presentState;
-  @nullable
-  bool get targetState;
-  int get transitionResolution;
-  int get transitionSteps;
+  int get source => throw _privateConstructorUsedError;
+  bool get presentState => throw _privateConstructorUsedError;
+  bool? get targetState => throw _privateConstructorUsedError;
+  int get transitionResolution => throw _privateConstructorUsedError;
+  int get transitionSteps => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $GenericOnOffStatusDataCopyWith<GenericOnOffStatusData> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GenericOnOffStatusDataCopyWith<GenericOnOffStatusData> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $GenericOnOffStatusDataCopyWith<$Res> {
   factory $GenericOnOffStatusDataCopyWith(GenericOnOffStatusData value, $Res Function(GenericOnOffStatusData) then) =
       _$GenericOnOffStatusDataCopyWithImpl<$Res>;
-  $Res call({int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps});
+  $Res call({int source, bool presentState, bool? targetState, int transitionResolution, int transitionSteps});
 }
 
 /// @nodoc
@@ -68,18 +69,33 @@ class _$GenericOnOffStatusDataCopyWithImpl<$Res> implements $GenericOnOffStatusD
 
   @override
   $Res call({
-    Object source = freezed,
-    Object presentState = freezed,
-    Object targetState = freezed,
-    Object transitionResolution = freezed,
-    Object transitionSteps = freezed,
+    Object? source = freezed,
+    Object? presentState = freezed,
+    Object? targetState = freezed,
+    Object? transitionResolution = freezed,
+    Object? transitionSteps = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
-      presentState: presentState == freezed ? _value.presentState : presentState as bool,
-      targetState: targetState == freezed ? _value.targetState : targetState as bool,
-      transitionResolution: transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
-      transitionSteps: transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      presentState: presentState == freezed
+          ? _value.presentState
+          : presentState // ignore: cast_nullable_to_non_nullable
+              as bool,
+      targetState: targetState == freezed
+          ? _value.targetState
+          : targetState // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      transitionResolution: transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionSteps: transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -89,7 +105,7 @@ abstract class _$GenericOnOffStatusDataCopyWith<$Res> implements $GenericOnOffSt
   factory _$GenericOnOffStatusDataCopyWith(_GenericOnOffStatusData value, $Res Function(_GenericOnOffStatusData) then) =
       __$GenericOnOffStatusDataCopyWithImpl<$Res>;
   @override
-  $Res call({int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps});
+  $Res call({int source, bool presentState, bool? targetState, int transitionResolution, int transitionSteps});
 }
 
 /// @nodoc
@@ -103,32 +119,42 @@ class __$GenericOnOffStatusDataCopyWithImpl<$Res> extends _$GenericOnOffStatusDa
 
   @override
   $Res call({
-    Object source = freezed,
-    Object presentState = freezed,
-    Object targetState = freezed,
-    Object transitionResolution = freezed,
-    Object transitionSteps = freezed,
+    Object? source = freezed,
+    Object? presentState = freezed,
+    Object? targetState = freezed,
+    Object? transitionResolution = freezed,
+    Object? transitionSteps = freezed,
   }) {
     return _then(_GenericOnOffStatusData(
-      source == freezed ? _value.source : source as int,
-      presentState == freezed ? _value.presentState : presentState as bool,
-      targetState == freezed ? _value.targetState : targetState as bool,
-      transitionResolution == freezed ? _value.transitionResolution : transitionResolution as int,
-      transitionSteps == freezed ? _value.transitionSteps : transitionSteps as int,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      presentState == freezed
+          ? _value.presentState
+          : presentState // ignore: cast_nullable_to_non_nullable
+              as bool,
+      targetState == freezed
+          ? _value.targetState
+          : targetState // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      transitionResolution == freezed
+          ? _value.transitionResolution
+          : transitionResolution // ignore: cast_nullable_to_non_nullable
+              as int,
+      transitionSteps == freezed
+          ? _value.transitionSteps
+          : transitionSteps // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
   const _$_GenericOnOffStatusData(
-      this.source, this.presentState, @nullable this.targetState, this.transitionResolution, this.transitionSteps)
-      : assert(source != null),
-        assert(presentState != null),
-        assert(transitionResolution != null),
-        assert(transitionSteps != null);
+      this.source, this.presentState, this.targetState, this.transitionResolution, this.transitionSteps);
 
   factory _$_GenericOnOffStatusData.fromJson(Map<String, dynamic> json) => _$_$_GenericOnOffStatusDataFromJson(json);
 
@@ -137,8 +163,7 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
   @override
   final bool presentState;
   @override
-  @nullable
-  final bool targetState;
+  final bool? targetState;
   @override
   final int transitionResolution;
   @override
@@ -173,6 +198,7 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
       const DeepCollectionEquality().hash(transitionResolution) ^
       const DeepCollectionEquality().hash(transitionSteps);
 
+  @JsonKey(ignore: true)
   @override
   _$GenericOnOffStatusDataCopyWith<_GenericOnOffStatusData> get copyWith =>
       __$GenericOnOffStatusDataCopyWithImpl<_GenericOnOffStatusData>(this, _$identity);
@@ -185,22 +211,22 @@ class _$_GenericOnOffStatusData implements _GenericOnOffStatusData {
 
 abstract class _GenericOnOffStatusData implements GenericOnOffStatusData {
   const factory _GenericOnOffStatusData(
-          int source, bool presentState, @nullable bool targetState, int transitionResolution, int transitionSteps) =
+          int source, bool presentState, bool? targetState, int transitionResolution, int transitionSteps) =
       _$_GenericOnOffStatusData;
 
   factory _GenericOnOffStatusData.fromJson(Map<String, dynamic> json) = _$_GenericOnOffStatusData.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  bool get presentState;
+  bool get presentState => throw _privateConstructorUsedError;
   @override
-  @nullable
-  bool get targetState;
+  bool? get targetState => throw _privateConstructorUsedError;
   @override
-  int get transitionResolution;
+  int get transitionResolution => throw _privateConstructorUsedError;
   @override
-  int get transitionSteps;
+  int get transitionSteps => throw _privateConstructorUsedError;
   @override
-  _$GenericOnOffStatusDataCopyWith<_GenericOnOffStatusData> get copyWith;
+  @JsonKey(ignore: true)
+  _$GenericOnOffStatusDataCopyWith<_GenericOnOffStatusData> get copyWith => throw _privateConstructorUsedError;
 }

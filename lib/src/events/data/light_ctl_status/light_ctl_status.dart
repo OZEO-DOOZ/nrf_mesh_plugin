@@ -5,7 +5,7 @@ part 'light_ctl_status.freezed.dart';
 part 'light_ctl_status.g.dart';
 
 @freezed
-abstract class LightCtlStatusData with _$LightCtlStatusData {
+class LightCtlStatusData with _$LightCtlStatusData {
   const factory LightCtlStatusData(
       int presentLightness,
       int targetLightness,

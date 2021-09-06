@@ -11,9 +11,9 @@ class BleManagerCallbacksDiscoveredServices {
 }
 
 class BleManagerCallbacksError {
-  final DiscoveredDevice device;
+  final DiscoveredDevice? device;
   final String message;
-  final Object error;
+  final Object? error;
 
   const BleManagerCallbacksError(this.device, this.message, this.error);
 }
@@ -25,11 +25,11 @@ abstract class BleManagerCallbacks {
   final onDeviceConnectedController = StreamController<DiscoveredDevice>();
   Stream<DiscoveredDevice> get onDeviceConnected => onDeviceConnectedController.stream;
 
-  final onDeviceDisconnectingController = StreamController<DiscoveredDevice>();
-  Stream<DiscoveredDevice> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
+  final onDeviceDisconnectingController = StreamController<DiscoveredDevice?>();
+  Stream<DiscoveredDevice?> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
 
-  final onDeviceDisconnectedController = StreamController<DiscoveredDevice>();
-  Stream<DiscoveredDevice> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
+  final onDeviceDisconnectedController = StreamController<DiscoveredDevice?>();
+  Stream<DiscoveredDevice?> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
 
   // Stream<BluetoothDevice> onLinkLossOccurred;
 

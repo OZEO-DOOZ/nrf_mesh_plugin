@@ -16,7 +16,7 @@ void main() {
       'FB:80:1B:67:45:B3': '55959A8F-DB79-8343-B345-671B803BBABE'
     };
     for (final key in data.keys) {
-      final rawData = Uuid().parse(data[key]);
+      final rawData = Uuid.parse(data[key] as String, validate: false);
       expect(
         addressIsInAdvertisementData(key.split(':').map((e) => int.parse(e, radix: 16)).toList(), rawData),
         isTrue,

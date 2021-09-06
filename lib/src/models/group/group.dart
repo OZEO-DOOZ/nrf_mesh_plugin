@@ -4,9 +4,9 @@ part 'group.freezed.dart';
 part 'group.g.dart';
 
 @freezed
-abstract class GroupData with _$GroupData {
-  const factory GroupData(String name, int address, @nullable String addressLabel, String meshUuid, int parentAddress,
-      @nullable String parentAddressLabel) = _GroupData;
+class GroupData with _$GroupData {
+  const factory GroupData(String name, int address, String? addressLabel, String meshUuid, int parentAddress,
+      String? parentAddressLabel) = _GroupData;
 
   factory GroupData.fromJson(Map<String, dynamic> json) => _$GroupDataFromJson(json);
 }

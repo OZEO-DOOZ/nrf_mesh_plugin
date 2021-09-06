@@ -10,28 +10,19 @@ import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:retry/retry.dart';
 
 class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
-  static BleMeshManager _instance;
+  static late final BleMeshManager _instance = BleMeshManager._(FlutterReactiveBle());
 
-  Uuid _meshProxyDataInCharacteristicUuid;
-  Uuid _meshProxyDataOutCharacteristicUuid;
-  Uuid _meshProvisioningDataInCharacteristicUuid;
-  Uuid _meshProvisioningDataOutCharacteristicUuid;
+  late List<DiscoveredService> _discoveredServices;
 
-  List<DiscoveredService> _discoveredServices;
-
-  StreamSubscription<List<int>> _meshProxyDataOutSubscription;
-  StreamSubscription<List<int>> _meshProvisioningDataOutSubscription;
+  StreamSubscription<List<int>>? _meshProxyDataOutSubscription;
+  StreamSubscription<List<int>>? _meshProvisioningDataOutSubscription;
 
   BleMeshManager._(FlutterReactiveBle _bleInstance) : super(_bleInstance);
 
-  factory BleMeshManager() => _instance ??= BleMeshManager._(FlutterReactiveBle());
+  factory BleMeshManager() => _instance as BleMeshManager<T>;
 
-  void onDeviceDisconnected(final DiscoveredDevice device) async {
+  void onDeviceDisconnected() async {
     isProvisioningCompleted = false;
-    _meshProvisioningDataInCharacteristicUuid = null;
-    _meshProvisioningDataOutCharacteristicUuid = null;
-    _meshProxyDataInCharacteristicUuid = null;
-    _meshProxyDataOutCharacteristicUuid = null;
     await _meshProxyDataOutSubscription?.cancel();
     _meshProxyDataOutSubscription = null;
     await _meshProvisioningDataOutSubscription?.cancel();
@@ -40,29 +31,27 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<void> disconnect() {
-    onDeviceDisconnected(device);
+    onDeviceDisconnected();
     return super.disconnect();
   }
 
   @override
-  Future<DiscoveredService> isRequiredServiceSupported() async {
-    _discoveredServices = await bleInstance.discoverServices(device.id);
-    var service = getDiscoveredService(meshProxyUuid);
-    if (service != null) {
+  Future<DiscoveredService?> isRequiredServiceSupported() async {
+    _discoveredServices = await bleInstance.discoverServices(device!.id);
+    if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;
-      _meshProxyDataInCharacteristicUuid = getCharacteristicUuid(service, meshProxyDataIn);
-      _meshProxyDataOutCharacteristicUuid = getCharacteristicUuid(service, meshProxyDataOut);
-      if (_meshProxyDataInCharacteristicUuid != null && _meshProxyDataOutCharacteristicUuid != null) {
+      final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
+      if (hasExpectedCharacteristicUuid(service, meshProxyDataIn) &&
+          hasExpectedCharacteristicUuid(service, meshProxyDataOut)) {
         return service;
       }
       return null;
     } else {
-      service = getDiscoveredService(meshProvisioningUuid);
-      if (service != null) {
+      if (hasExpectedService(meshProvisioningUuid)) {
         isProvisioningCompleted = false;
-        _meshProvisioningDataInCharacteristicUuid = getCharacteristicUuid(service, meshProvisioningDataIn);
-        _meshProvisioningDataOutCharacteristicUuid = getCharacteristicUuid(service, meshProvisioningDataOut);
-        if (_meshProvisioningDataInCharacteristicUuid != null && _meshProvisioningDataOutCharacteristicUuid != null) {
+        final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid);
+        if (hasExpectedCharacteristicUuid(service, meshProvisioningDataIn) &&
+            hasExpectedCharacteristicUuid(service, meshProvisioningDataOut)) {
           return service;
         }
         return null;
@@ -73,39 +62,49 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<void> initGatt() async {
-    var discoveredService;
+    DiscoveredService? discoveredService;
     if (isProvisioningCompleted) {
-      discoveredService = getDiscoveredService(meshProxyUuid);
+      discoveredService = hasExpectedService(meshProxyUuid)
+          ? _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid)
+          : null;
+      if (discoveredService == null) {
+        throw 'could not find the appropriate service on device..aborting';
+      }
       await _meshProxyDataOutSubscription?.cancel();
-      _meshProxyDataOutSubscription = getDataOutSubscription(
-          getQualifiedCharacteristic(_meshProxyDataOutCharacteristicUuid, discoveredService.serviceId));
+      _meshProxyDataOutSubscription =
+          getDataOutSubscription(getQualifiedCharacteristic(meshProxyDataOut, discoveredService.serviceId));
     } else {
-      discoveredService = getDiscoveredService(meshProvisioningUuid);
+      discoveredService = hasExpectedService(meshProvisioningUuid)
+          ? _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid)
+          : null;
+      if (discoveredService == null) {
+        throw 'could not find the appropriate service on device..aborting';
+      }
       await _meshProvisioningDataOutSubscription?.cancel();
-      _meshProvisioningDataOutSubscription = getDataOutSubscription(
-          getQualifiedCharacteristic(_meshProvisioningDataOutCharacteristicUuid, discoveredService.serviceId));
+      _meshProvisioningDataOutSubscription =
+          getDataOutSubscription(getQualifiedCharacteristic(meshProvisioningDataOut, discoveredService.serviceId));
     }
   }
 
-  DiscoveredService getDiscoveredService(Uuid serviceUuid) {
-    return _discoveredServices.firstWhere((service) => service.serviceId == serviceUuid, orElse: () => null);
+  bool hasExpectedService(Uuid serviceUuid) {
+    return _discoveredServices.any((service) => service.serviceId == serviceUuid);
   }
 
-  Uuid getCharacteristicUuid(DiscoveredService discoveredService, Uuid characteristicId) {
-    return discoveredService.characteristicIds.firstWhere((uuid) => uuid == characteristicId, orElse: () => null);
+  bool hasExpectedCharacteristicUuid(DiscoveredService discoveredService, Uuid expectedCharacteristicId) {
+    return discoveredService.characteristicIds.any((uuid) => uuid == expectedCharacteristicId);
   }
 
   QualifiedCharacteristic getQualifiedCharacteristic(Uuid characteristicId, Uuid serviceId) {
     return QualifiedCharacteristic(
       characteristicId: characteristicId,
       serviceId: serviceId,
-      deviceId: device.id,
+      deviceId: device!.id,
     );
   }
 
   StreamSubscription<List<int>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) =>
-      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data?.isNotEmpty == true).listen(
-          (data) => callbacks.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device, mtuSize, data)));
+      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen((data) =>
+          callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data)));
 
   Future<void> sendPdu(final List<int> pdu) async {
     final chunks = ((pdu.length / (mtuSize - 1)) + 1).floor();
@@ -128,36 +127,30 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       return;
     }
     if (isProvisioningCompleted) {
-      if (_meshProxyDataInCharacteristicUuid == null) {
-        return;
-      }
       try {
         await retry(
           () async {
-            final service = getDiscoveredService(meshProxyUuid);
+            final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
             await bleInstance.writeCharacteristicWithoutResponse(
-                getQualifiedCharacteristic(_meshProxyDataInCharacteristicUuid, service.serviceId),
+                getQualifiedCharacteristic(meshProxyDataIn, service.serviceId),
                 value: data);
           },
           retryIf: (e) => e is PlatformException,
         );
-        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+        callbacks!.onDataSentController.add(BleMeshManagerCallbacksDataSent(device!, mtuSize, data));
       } catch (_) {}
     } else {
-      if (_meshProvisioningDataInCharacteristicUuid == null) {
-        return;
-      }
       try {
         await retry(
           () async {
-            final service = getDiscoveredService(meshProvisioningUuid);
+            final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid);
             await bleInstance.writeCharacteristicWithoutResponse(
-                getQualifiedCharacteristic(_meshProvisioningDataInCharacteristicUuid, service.serviceId),
+                getQualifiedCharacteristic(meshProvisioningDataIn, service.serviceId),
                 value: data);
           },
           retryIf: (e) => e is PlatformException,
         );
-        callbacks.onDataSentController.add(BleMeshManagerCallbacksDataSent(device, mtuSize, data));
+        callbacks!.onDataSentController.add(BleMeshManagerCallbacksDataSent(device!, mtuSize, data));
       } catch (_) {}
     }
   }
@@ -166,7 +159,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     if (Platform.isAndroid) {
       if (device != null) {
         try {
-          return await bleInstance.clearGattCache(device.id);
+          return await bleInstance.clearGattCache(device!.id);
         } on Exception catch (e) {
           if (e.toString().toLowerCase().contains('not connected')) {
             print('cannot clear gatt cache because not connected');

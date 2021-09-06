@@ -23,11 +23,11 @@ class NordicNrfMesh {
     return version;
   }
 
-  Future<MeshManagerApi> _meshManagerApi;
-  Future<MeshManagerApi> get meshManagerApi => _meshManagerApi ??= _createMeshManagerApi();
+  late final MeshManagerApi _meshManagerApi = _createMeshManagerApi();
+  MeshManagerApi get meshManagerApi => _meshManagerApi;
 
-  Future<MeshManagerApi> _createMeshManagerApi() async {
-    await _methodChannel.invokeMethod('createMeshManagerApi');
+  MeshManagerApi _createMeshManagerApi() {
+    _methodChannel.invokeMethod('createMeshManagerApi');
     final meshManagerApi = MeshManagerApi();
     return meshManagerApi;
   }
@@ -51,7 +51,7 @@ class NordicNrfMesh {
     final BleMeshManager bleMeshManager,
     final DiscoveredDevice device,
     final String serviceDataUuid, {
-    final utils_provisioning.ProvisioningEvent events,
+    final utils_provisioning.ProvisioningEvent? events,
   }) =>
       utils_provisioning.provisioning(meshManagerApi, bleMeshManager, _bleScanner, device, serviceDataUuid,
           events: events);
@@ -124,7 +124,7 @@ class NordicNrfMesh {
   /// Returns a [DiscoveredDevice] or null if not found.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<DiscoveredDevice> searchForSpecificUID(String uid, {bool forProxy = false}) =>
+  Future<DiscoveredDevice?> searchForSpecificUID(String uid, {bool forProxy = false}) =>
       _bleScanner.searchForSpecificUID(uid, forProxy: forProxy);
 
   /// Provide a [Stream] of the current [BleStatus] of the host device.

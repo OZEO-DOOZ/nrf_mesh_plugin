@@ -3,9 +3,9 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class Device extends StatelessWidget {
   final DiscoveredDevice device;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
-  const Device({Key key, this.device, this.onTap}) : super(key: key);
+  const Device({Key? key, required this.device, this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

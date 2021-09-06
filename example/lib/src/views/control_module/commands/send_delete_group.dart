@@ -14,7 +14,7 @@ class SendDeleteGroup extends StatefulWidget {
 }
 
 class _SendDeleteGroupState extends State<SendDeleteGroup> {
-  int _id;
+  int? _id;
 
   @override
   Widget build(BuildContext context) {
@@ -24,24 +24,24 @@ class _SendDeleteGroupState extends State<SendDeleteGroup> {
         TextField(
           decoration: InputDecoration(hintText: 'id'),
           onChanged: (text) {
-            _id = int.parse(text);
+            _id = int.tryParse(text);
           },
         ),
-        RaisedButton(
-          child: Text('Send delete group'),
+        TextButton(
           onPressed: () async {
-            final scaffoldState = Scaffold.of(context);
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
-              await widget.meshManagerApi.meshNetwork.removeGroup(_id).timeout(Duration(seconds: 40));
-              scaffoldState.showSnackBar(SnackBar(content: Text('OK')));
+              await widget.meshManagerApi.meshNetwork!.removeGroup(_id!).timeout(Duration(seconds: 40));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldState.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.message)));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
             } catch (e) {
-              scaffoldState.showSnackBar(SnackBar(content: Text(e.toString())));
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
             }
           },
+          child: Text('Send delete group'),
         )
       ],
     );

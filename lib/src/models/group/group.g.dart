@@ -10,10 +10,10 @@ _$_GroupData _$_$_GroupDataFromJson(Map<String, dynamic> json) {
   return _$_GroupData(
     json['name'] as String,
     json['address'] as int,
-    json['addressLabel'] as String,
+    json['addressLabel'] as String?,
     json['meshUuid'] as String,
     json['parentAddress'] as int,
-    json['parentAddressLabel'] as String,
+    json['parentAddressLabel'] as String?,
   );
 }
 

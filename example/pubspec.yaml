@@ -5,19 +5,21 @@ version: 1.0.2
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  firebase_core: ^0.5.0+1
-  firebase_crashlytics: ^0.2.1+1
+  firebase_core: ^1.4.0
+  firebase_crashlytics: ^2.1.1
+  file_picker: ^3.0.4
 
   nordic_nrf_mesh:
     path: ../
 
-  cupertino_icons: ^1.0.0
+  cupertino_icons: ^1.0.3
 
 dev_dependencies:
   flutter_test:

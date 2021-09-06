@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'config_model_subscription_status.dart';
 
@@ -8,6 +8,10 @@ part of 'config_model_subscription_status.dart';
 // **************************************************************************
 
 T _$identity<T>(T value) => value;
+
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+
 ConfigModelSubscriptionStatus _$ConfigModelSubscriptionStatusFromJson(Map<String, dynamic> json) {
   return _ConfigModelSubscriptionStatus.fromJson(json);
 }
@@ -16,7 +20,6 @@ ConfigModelSubscriptionStatus _$ConfigModelSubscriptionStatusFromJson(Map<String
 class _$ConfigModelSubscriptionStatusTearOff {
   const _$ConfigModelSubscriptionStatusTearOff();
 
-// ignore: unused_element
   _ConfigModelSubscriptionStatus call(int source, int destination, int elementAddress, int subscriptionAddress,
       int modelIdentifier, bool isSuccessful) {
     return _ConfigModelSubscriptionStatus(
@@ -29,27 +32,27 @@ class _$ConfigModelSubscriptionStatusTearOff {
     );
   }
 
-// ignore: unused_element
   ConfigModelSubscriptionStatus fromJson(Map<String, Object> json) {
     return ConfigModelSubscriptionStatus.fromJson(json);
   }
 }
 
 /// @nodoc
-// ignore: unused_element
 const $ConfigModelSubscriptionStatus = _$ConfigModelSubscriptionStatusTearOff();
 
 /// @nodoc
 mixin _$ConfigModelSubscriptionStatus {
-  int get source;
-  int get destination;
-  int get elementAddress;
-  int get subscriptionAddress;
-  int get modelIdentifier;
-  bool get isSuccessful;
+  int get source => throw _privateConstructorUsedError;
+  int get destination => throw _privateConstructorUsedError;
+  int get elementAddress => throw _privateConstructorUsedError;
+  int get subscriptionAddress => throw _privateConstructorUsedError;
+  int get modelIdentifier => throw _privateConstructorUsedError;
+  bool get isSuccessful => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson();
-  $ConfigModelSubscriptionStatusCopyWith<ConfigModelSubscriptionStatus> get copyWith;
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ConfigModelSubscriptionStatusCopyWith<ConfigModelSubscriptionStatus> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -76,20 +79,38 @@ class _$ConfigModelSubscriptionStatusCopyWithImpl<$Res> implements $ConfigModelS
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object elementAddress = freezed,
-    Object subscriptionAddress = freezed,
-    Object modelIdentifier = freezed,
-    Object isSuccessful = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? elementAddress = freezed,
+    Object? subscriptionAddress = freezed,
+    Object? modelIdentifier = freezed,
+    Object? isSuccessful = freezed,
   }) {
     return _then(_value.copyWith(
-      source: source == freezed ? _value.source : source as int,
-      destination: destination == freezed ? _value.destination : destination as int,
-      elementAddress: elementAddress == freezed ? _value.elementAddress : elementAddress as int,
-      subscriptionAddress: subscriptionAddress == freezed ? _value.subscriptionAddress : subscriptionAddress as int,
-      modelIdentifier: modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
-      isSuccessful: isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
+      source: source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination: destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      elementAddress: elementAddress == freezed
+          ? _value.elementAddress
+          : elementAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      subscriptionAddress: subscriptionAddress == freezed
+          ? _value.subscriptionAddress
+          : subscriptionAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      modelIdentifier: modelIdentifier == freezed
+          ? _value.modelIdentifier
+          : modelIdentifier // ignore: cast_nullable_to_non_nullable
+              as int,
+      isSuccessful: isSuccessful == freezed
+          ? _value.isSuccessful
+          : isSuccessful // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -121,36 +142,47 @@ class __$ConfigModelSubscriptionStatusCopyWithImpl<$Res> extends _$ConfigModelSu
 
   @override
   $Res call({
-    Object source = freezed,
-    Object destination = freezed,
-    Object elementAddress = freezed,
-    Object subscriptionAddress = freezed,
-    Object modelIdentifier = freezed,
-    Object isSuccessful = freezed,
+    Object? source = freezed,
+    Object? destination = freezed,
+    Object? elementAddress = freezed,
+    Object? subscriptionAddress = freezed,
+    Object? modelIdentifier = freezed,
+    Object? isSuccessful = freezed,
   }) {
     return _then(_ConfigModelSubscriptionStatus(
-      source == freezed ? _value.source : source as int,
-      destination == freezed ? _value.destination : destination as int,
-      elementAddress == freezed ? _value.elementAddress : elementAddress as int,
-      subscriptionAddress == freezed ? _value.subscriptionAddress : subscriptionAddress as int,
-      modelIdentifier == freezed ? _value.modelIdentifier : modelIdentifier as int,
-      isSuccessful == freezed ? _value.isSuccessful : isSuccessful as bool,
+      source == freezed
+          ? _value.source
+          : source // ignore: cast_nullable_to_non_nullable
+              as int,
+      destination == freezed
+          ? _value.destination
+          : destination // ignore: cast_nullable_to_non_nullable
+              as int,
+      elementAddress == freezed
+          ? _value.elementAddress
+          : elementAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      subscriptionAddress == freezed
+          ? _value.subscriptionAddress
+          : subscriptionAddress // ignore: cast_nullable_to_non_nullable
+              as int,
+      modelIdentifier == freezed
+          ? _value.modelIdentifier
+          : modelIdentifier // ignore: cast_nullable_to_non_nullable
+              as int,
+      isSuccessful == freezed
+          ? _value.isSuccessful
+          : isSuccessful // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
-@JsonSerializable()
-
 /// @nodoc
+@JsonSerializable()
 class _$_ConfigModelSubscriptionStatus implements _ConfigModelSubscriptionStatus {
   const _$_ConfigModelSubscriptionStatus(this.source, this.destination, this.elementAddress, this.subscriptionAddress,
-      this.modelIdentifier, this.isSuccessful)
-      : assert(source != null),
-        assert(destination != null),
-        assert(elementAddress != null),
-        assert(subscriptionAddress != null),
-        assert(modelIdentifier != null),
-        assert(isSuccessful != null);
+      this.modelIdentifier, this.isSuccessful);
 
   factory _$_ConfigModelSubscriptionStatus.fromJson(Map<String, dynamic> json) =>
       _$_$_ConfigModelSubscriptionStatusFromJson(json);
@@ -200,6 +232,7 @@ class _$_ConfigModelSubscriptionStatus implements _ConfigModelSubscriptionStatus
       const DeepCollectionEquality().hash(modelIdentifier) ^
       const DeepCollectionEquality().hash(isSuccessful);
 
+  @JsonKey(ignore: true)
   @override
   _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus> get copyWith =>
       __$ConfigModelSubscriptionStatusCopyWithImpl<_ConfigModelSubscriptionStatus>(this, _$identity);
@@ -218,17 +251,19 @@ abstract class _ConfigModelSubscriptionStatus implements ConfigModelSubscription
       _$_ConfigModelSubscriptionStatus.fromJson;
 
   @override
-  int get source;
+  int get source => throw _privateConstructorUsedError;
   @override
-  int get destination;
+  int get destination => throw _privateConstructorUsedError;
   @override
-  int get elementAddress;
+  int get elementAddress => throw _privateConstructorUsedError;
   @override
-  int get subscriptionAddress;
+  int get subscriptionAddress => throw _privateConstructorUsedError;
   @override
-  int get modelIdentifier;
+  int get modelIdentifier => throw _privateConstructorUsedError;
   @override
-  bool get isSuccessful;
+  bool get isSuccessful => throw _privateConstructorUsedError;
   @override
-  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus> get copyWith;
+  @JsonKey(ignore: true)
+  _$ConfigModelSubscriptionStatusCopyWith<_ConfigModelSubscriptionStatus> get copyWith =>
+      throw _privateConstructorUsedError;
 }
