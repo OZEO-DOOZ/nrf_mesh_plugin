@@ -6,5 +6,5 @@
 //
 
 struct RemoveGroupArguments: BaseFlutterArguments {
-    let groupAddress: Int16
+    let groupAddress: Int
 }

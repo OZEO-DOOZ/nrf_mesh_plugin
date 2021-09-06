@@ -18,9 +18,15 @@ enum DoozMeshNetworkChannel {
     case getElementsForGroup(_ data: GetElementsForGroupArguments)
     case selectProvisioner(_ data: SelectProvisionerArguments)
     case getProvisionersAsJson
-    case getNodeUsingUUID(_ data: GetNodeArguments)
+    case getNodeUsingUUID(_ data: GetNodeUsingUUIDArguments)
     case nextAvailableUnicastAddress
     case addProvisioner(_ data : AddProvisionerArguments)
+    case updateProvisioner(_ data : UpdateProvisionerArguments)
+    case removeProvisioner(_ data : RemoveProvisionerArguments)
+    case deleteNode(_ data : DeleteNodeArguments)
+    case getMeshModelSubscriptions(_ data : MeshModelSubscriptionsArguments)
+    case getNode(_ data : GetNodeArguments)
+    case getGroupElementIds(_ data : GetGroupElementIdsArguments)
 
     case error(_ error: Error)
     
@@ -44,6 +50,7 @@ enum DoozMeshNetworkChannel {
             case "groups":
                 self = .groups
             case "removeGroup":
+                print("🥂  Received flutter call for removeGroup with the args: \(String(describing: arguments))")
                 self = .removeGroup(try RemoveGroupArguments(arguments))
             case "getElementsForGroup":
                 self = .getElementsForGroup(try GetElementsForGroupArguments(arguments))
@@ -52,11 +59,23 @@ enum DoozMeshNetworkChannel {
             case "getProvisionersAsJson":
                 self = .getProvisionersAsJson
             case "getNodeUsingUUID":
-                self = .getNodeUsingUUID(try GetNodeArguments(arguments))
+                self = .getNodeUsingUUID(try GetNodeUsingUUIDArguments(arguments))
             case "nextAvailableUnicastAddress":
                 self = .nextAvailableUnicastAddress
             case "addProvisioner":
                 self = .addProvisioner(try AddProvisionerArguments(arguments))
+            case "updateProvisioner":
+                self = .updateProvisioner(try UpdateProvisionerArguments(arguments))
+            case "removeProvisioner":
+                self = .removeProvisioner(try RemoveProvisionerArguments(arguments))
+            case "deleteNode":
+                self = .deleteNode(try DeleteNodeArguments(arguments))
+            case "getMeshModelSubscriptions":
+                self = .getMeshModelSubscriptions(try MeshModelSubscriptionsArguments(arguments))
+            case "getNode":
+                self = .getNode(try GetNodeArguments(arguments))
+            case "getGroupElementIds":
+                self = .getGroupElementIds(try GetGroupElementIdsArguments(arguments))
             default:
                 self = .error(FlutterCallError.notImplemented)
             }

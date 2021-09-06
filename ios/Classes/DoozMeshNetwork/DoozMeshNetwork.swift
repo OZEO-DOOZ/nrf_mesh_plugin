@@ -120,19 +120,19 @@ private extension DoozMeshNetwork {
             if
                 let provisioner = meshNetwork.localProvisioner,
                 let address = meshNetwork.nextAvailableGroupAddress(for: provisioner){
-                
+                print("🥂 [\(self.classForCoder)] the next available group address : \(address)")
                 do{
                     let group = try Group(name: data.name, address: address)
                     try meshNetwork.add(group: group)
-                    
                     result(
                         [
                             "group" : [
                                 "name" : group.name,
-                                "address" : group.address,
+                                "address" : address,
                                 "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
-                                "parentAddress" : group.parent?.address ?? "",
-                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
+                                "parentAddress" : group.parent?.address.address ?? 0,
+                                "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? "",
+                                "meshUuid" : meshNetwork.uuid.uuidString,
                             ],
                             "successfullyAdded" : true
                             
@@ -149,17 +149,20 @@ private extension DoozMeshNetwork {
             let groups = meshNetwork.groups.map({ group in
                 return [
                     "name" : group.name,
-                    "address" : group.address,
+                    "address" : group.address.address,
                     "addressLabel" : group.address.virtualLabel?.uuidString ?? "",
-                    "parentAddress" : group.parent?.address ?? "",
-                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? ""
+                    "parentAddress" : group.parent?.address.address ?? 0,
+                    "parentAddressLabel" : group.parent?.address.virtualLabel?.uuidString ?? "",
+                    "meshUuid" : meshNetwork.uuid.uuidString,
                 ]
             })
             
             result(groups)
             
         case .removeGroup(let data):
-            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress))) {
+            #warning("TODO: impl. meshAddress hex in most cases")
+            let groupAddress = String(format:"%02X", data.groupAddress)
+            if let group = meshNetwork.group(withAddress: MeshAddress(hex: groupAddress)!) {
                 
                 do{
                     try meshNetwork.remove(group: group)
@@ -167,7 +170,9 @@ private extension DoozMeshNetwork {
                 }
                 catch{
                     let nsError = error as NSError
-                    result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                    print(nsError)
+                    //result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                    result(false)
                 }
                 
             }else{
@@ -237,11 +242,8 @@ private extension DoozMeshNetwork {
             }
             
         case .getNodeUsingUUID(let data):
-
             let provisionedMeshNode = meshNetwork.node(withUuid: UUID.init(uuidString: data.uuid)!)
-
             _ = DoozProvisionedDevice.init(messenger: messenger, node: provisionedMeshNode!)
-//                            val pNode = DoozProvisionedMeshNode(binaryMessenger, provisionedMeshNode)
             result(provisionedMeshNode?.uuid.uuidString)
             
         case .nextAvailableUnicastAddress:
@@ -277,6 +279,87 @@ private extension DoozMeshNetwork {
                 print(error.localizedDescription)
             }
 
+        case .updateProvisioner(let data):
+            
+            #warning("INFO: cannot change provisioner's name")
+            let provisioner = meshNetwork.provisioners.first { $0.uuid == UUID.init(uuidString: data.provisionerUuid)};
+            
+            let provisionerNode = meshNetwork.node(for: provisioner!)
+
+            do {
+                try meshNetwork.assign(unicastAddress: Address(data.provisionerAddress), for: provisioner!)
+                if(data.lastSelected){
+                    try meshNetwork.setLocalProvisioner(provisioner!)
+                }
+                provisionerNode?.defaultTTL = UInt8(data.globalTtl)
+        
+                result(true)
+            } catch let error{
+                print(error.localizedDescription)
+                result(false)
+            }
+            
+            
+        case .removeProvisioner(let data):
+            let provisioner = meshNetwork.provisioners.first { $0.uuid == UUID.init(uuidString: data.provisionerUuid)};
+            do {
+                try meshNetwork.remove(provisioner: provisioner!)
+                result(true)
+            } catch let error {
+                print(error.localizedDescription)
+                result(false)
+            }
+            
+        case .deleteNode(let data):
+            let pNode = meshNetwork.node(withUuid: UUID.init(uuidString: data.uid)!)
+            if(pNode != nil){
+                meshNetwork.remove(node: pNode!)
+                result(true)
+            }else{
+                result(false)
+            }
+            
+        case .getMeshModelSubscriptions(let data):
+            let element = meshNetwork.node(withAddress: Address(data.elementAddress))?.element(withAddress: Address(data.elementAddress))
+            let groups = element?.model(withModelId: UInt32(data.modelIdentifier))?.subscriptions
+            var groupAddresses = [Int]();
+            groups?.forEach({ group in
+                groupAddresses.append(Int(group.address.address))
+            })
+            
+            var map = [String:AnyObject]()
+            map["elementId"] = data.elementAddress as AnyObject
+            map["modelId"] = data.modelIdentifier as AnyObject
+            map["addresses"] = groupAddresses as AnyObject
+            map["name"] = "ModelSubscriptionAddresses" as AnyObject
+            
+            result(map)
+            
+        case .getNode(let data):
+            let provisionedMeshNode = meshNetwork.node(withAddress: Address(data.address))
+            _ = DoozProvisionedDevice.init(messenger: messenger, node: provisionedMeshNode!)
+            result(provisionedMeshNode?.uuid.uuidString)
+            
+        case .getGroupElementIds(let data):
+            let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress)))!
+            let modelsList = meshNetwork.models(subscribedTo: group)
+            let elements = modelsList.compactMap { model in
+                return model.parentElement
+            }
+            
+            let mappedElements = elements.map { element in
+                return [
+                    element.unicastAddress : modelsList.filter({$0.parentElement == element}).map({ m in
+                        return [
+                            m.modelIdentifier : m.subscriptions.map({ s in
+                                return s.address
+                            }),
+                        ]
+                    })
+                ]
+            }
+            result(mappedElements)
+            
         }
     }
 }
