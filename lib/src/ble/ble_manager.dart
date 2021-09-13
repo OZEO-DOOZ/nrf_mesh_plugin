@@ -145,6 +145,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       }
     } else {
       print('calling disconnect without connected device');
+      await _connectedDeviceStatusStream?.cancel();
     }
   }
 }
