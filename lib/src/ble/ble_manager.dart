@@ -47,6 +47,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
       _callbacks.onDeviceConnectingController.add(device);
     }
+    final waitForConnect = Completer<void>();
     _connectedDeviceStatusStream = _bleInstance
         .connectToDevice(id: device.id, connectionTimeout: kConnectionTimeout)
         .listen((connectionStateUpdate) async {
@@ -61,6 +62,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           if (!_callbacks.onDeviceConnectedController.isClosed && _callbacks.onDeviceConnectedController.hasListener) {
             _callbacks.onDeviceConnectedController.add(device);
           }
+          waitForConnect.complete();
           _device = device;
           await Future.delayed(Duration(milliseconds: 500));
           await _negotiateAndInitGatt();
@@ -85,6 +87,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'ERROR CAUGHT IN CONNECTION STREAM', error));
       }
     });
+    await waitForConnect.future;
   }
 
   Future<void> _negotiateAndInitGatt() async {
