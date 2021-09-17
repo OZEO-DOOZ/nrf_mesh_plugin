@@ -7,8 +7,8 @@ List<int> _maskAddress(final List<int> address) => [
     ];
 
 List<int> _macAddressBytesFromAdvertisementData(final List<int> advertisementData) =>
-    advertisementData.sublist(2).reversed.toList().sublist(2, 8);
-
+    advertisementData.sublist(2).reversed.toList().sublist(2, 7);
+//subList was (2, 8)
 /// Check if the [address] correspond to the one in [advertisementData]
 bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
     _toMacAddress(_maskAddress(address)) ==
@@ -23,8 +23,9 @@ Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementDa
       final testMac = [
         (targetMac[0] & 0x3f) + (i << 6),
         ...targetMac.sublist(1, 5),
-        (targetMac[5] & 0x3f) + (j << 6),
+        (targetMac[4] & 0x3f) + (j << 6),
       ];
+      //targetMac was [5]
       if (_toMacAddress(_maskAddress(broadcastMac)) == _toMacAddress(_maskAddress(testMac))) {
         yield _toMacAddress(testMac);
       }

@@ -36,6 +36,10 @@ enum DoozMeshManagerApiChannel {
     case sendLightLightness(_ data: SendLightLightnessArguments)
     case sendLightCtl(_ data: SendLightCtlArguments)
     case sendLightHsl(_ data: SendLightHslArguments)
+    case isAdvertisingWithNetworkIdentity(_ data: IsAdvertisingWithNetworkIdentityArguments)
+    case isAdvertisedWithNodeIdentity(_ data: IsAdvertisingWithNodeIdentityArguments)
+    case nodeIdentityMatches(_ data: NodeIdentityMatchesArguments)
+    case networkIdMatches(_ data: NetworkIdMatchesArguments)
 
     case error(_ error: Error)
     
@@ -102,6 +106,14 @@ enum DoozMeshManagerApiChannel {
                 self = .sendLightCtl(try SendLightCtlArguments(arguments))
             case "sendLightHsl":
                 self = .sendLightHsl(try SendLightHslArguments(arguments))
+            case "isAdvertisingWithNetworkIdentity":
+                self = .isAdvertisingWithNetworkIdentity(try IsAdvertisingWithNetworkIdentityArguments(arguments))
+            case "isAdvertisedWithNodeIdentity":
+                self = .isAdvertisedWithNodeIdentity(try IsAdvertisingWithNodeIdentityArguments(arguments))
+            case "nodeIdentityMatches":
+                self = .nodeIdentityMatches(try NodeIdentityMatchesArguments(arguments))
+            case "networkIdMatches":
+                self = .networkIdMatches(try NetworkIdMatchesArguments(arguments))
             //sendV2MagicLevel
             //getV2MagicLevel
             
@@ -111,10 +123,6 @@ enum DoozMeshManagerApiChannel {
             
             //cachedProvisionedMeshNodeUuid
             //deprovision
-            //nodeIdentityMatches
-            //networkIdMatches
-            //isAdvertisingWithNetworkIdentity
-            //isAdvertisedWithNodeIdentity
             default:
                 self = .error(FlutterCallError.notImplemented)
             }

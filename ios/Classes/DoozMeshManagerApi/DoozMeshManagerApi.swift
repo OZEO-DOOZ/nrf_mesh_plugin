@@ -101,6 +101,7 @@ private extension DoozMeshManagerApi {
             do {
                 let network = try _loadMeshNetwork()
                 delegate?.onNetworkLoaded(network)
+                delegate?.onNetworkUpdated(network)
                 result(nil)
             }catch {
                 delegate?.onNetworkLoadFailed(error)
@@ -110,6 +111,7 @@ private extension DoozMeshManagerApi {
             do{
                 let network = try _importMeshNetworkJson(data.json)
                 delegate?.onNetworkImported(network)
+                delegate?.onNetworkUpdated(network)
                 result(nil)
             }catch{
                 delegate?.onNetworkImportFailed(error)
@@ -478,6 +480,15 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             break
+        case .isAdvertisingWithNetworkIdentity(let data):
+            result(isAdvertisingWithNetworkIdentity(data: data.serviceData.data))
+        case .isAdvertisedWithNodeIdentity(let data):
+            result(isAdvertisedWithNodeIdentity(data: data.serviceData.data))
+        case .nodeIdentityMatches(let data):
+            let hastAndRandom = nodeIdentityMatches(data: data.serviceData.data)
+            result(meshNetworkManager.meshNetwork?.matches(hash: hastAndRandom!.hash, random: hastAndRandom!.random))
+        case .networkIdMatches(let data):
+            result(networkIdMatches(data: data.serviceData.data))
         }
         
     }
@@ -486,6 +497,37 @@ private extension DoozMeshManagerApi {
 
 
 private extension DoozMeshManagerApi{
+    
+    func isAdvertisingWithNetworkIdentity(data: Data) -> Bool{
+        guard data.count == 9, data[0] == 0x00 else {
+            return false
+        }
+        return true
+    }
+    
+    func isAdvertisedWithNodeIdentity(data: Data) -> Bool{
+        guard data.count == 17, data[0] == 0x01 else {
+            return false
+        }
+        return true
+    }
+    
+    func nodeIdentityMatches(data: Data) -> (hash: Data, random: Data)?{
+        guard data.count == 17, data[0] == 0x01 else {
+            return nil
+        }
+        return (hash: data.subdata(in: 1..<9), random: data.subdata(in: 9..<17))
+    }
+    
+    func networkIdMatches(data: Data) -> Bool{
+        let nId = data.subdata(in: 1..<9);
+        let nKeys = meshNetworkManager.meshNetwork?.networkKeys
+        let generatedNetworkId = nKeys![0].networkId!
+        guard nId.hex == generatedNetworkId.hex else {
+            return false
+        }
+        return true
+    }
     
     func _loadMeshNetwork() throws -> MeshNetwork {
         
