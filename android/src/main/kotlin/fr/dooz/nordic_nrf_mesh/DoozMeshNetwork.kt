@@ -264,19 +264,29 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
 
                 for (element in elements) {
                     val models = element.meshModels
-                    val onOffServer = models[GENERIC_ONOFF_SERVER]
-                    val levelServer = models[GENERIC_LEVEL_SERVER]
-                    val onOffClient = models[GENERIC_ONOFF_CLIENT]
-                    val levelClient = models[GENERIC_LEVEL_CLIENT]
-                    val onOffServerSubscribedAddresses = onOffServer!!.subscribedAddresses
-                    val levelServerSubscribedAddresses = levelServer!!.subscribedAddresses
-                    val onOffClientSubscribedAddresses = onOffClient!!.subscribedAddresses
-                    val levelClientSubscribedAddresses = levelClient!!.subscribedAddresses
                     val modelIds: MutableMap<Int, List<Int>> = HashMap()
-                    modelIds[GENERIC_ONOFF_SERVER] = onOffServerSubscribedAddresses
-                    modelIds[GENERIC_LEVEL_SERVER] = levelServerSubscribedAddresses
-                    modelIds[GENERIC_ONOFF_CLIENT] = onOffClientSubscribedAddresses
-                    modelIds[GENERIC_LEVEL_CLIENT] = levelClientSubscribedAddresses
+                    Log.d(tag, "element $element ---- models $models")
+                    val onOffServer = models[GENERIC_ONOFF_SERVER]
+                    if (onOffServer != null) {
+                        val onOffServerSubscribedAddresses = onOffServer!!.subscribedAddresses
+                        modelIds[GENERIC_ONOFF_SERVER] = onOffServerSubscribedAddresses
+                    }
+                    val levelServer = models[GENERIC_LEVEL_SERVER]
+                    if (levelServer != null) {
+                        val levelServerSubscribedAddresses = levelServer!!.subscribedAddresses
+                        modelIds[GENERIC_LEVEL_SERVER] = levelServerSubscribedAddresses
+                    }
+                    val onOffClient = models[GENERIC_ONOFF_CLIENT]
+                    if (onOffClient != null) {
+                        val onOffClientSubscribedAddresses = onOffClient!!.subscribedAddresses
+                        modelIds[GENERIC_ONOFF_CLIENT] = onOffClientSubscribedAddresses
+                    }
+                    val levelClient = models[GENERIC_LEVEL_CLIENT]
+                    if (levelClient != null) {
+                        val levelClientSubscribedAddresses = levelClient!!.subscribedAddresses
+                        modelIds[GENERIC_LEVEL_CLIENT] = levelClientSubscribedAddresses
+                    }
+                    Log.d(tag, "modelIds $modelIds")
                     subscribedAddresses[element.elementAddress] = modelIds
                 }
                 result.success(subscribedAddresses)
