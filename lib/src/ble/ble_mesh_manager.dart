@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
@@ -162,7 +163,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           return await bleInstance.clearGattCache(device!.id);
         } on Exception catch (e) {
           if (e.toString().toLowerCase().contains('not connected')) {
-            print('cannot clear gatt cache because not connected');
+            debugPrint('cannot clear gatt cache because not connected');
           } else {
             rethrow;
           }

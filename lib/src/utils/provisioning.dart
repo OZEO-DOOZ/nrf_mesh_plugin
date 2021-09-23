@@ -96,16 +96,16 @@ Future<ProvisionedMeshNode> _provisioning(
       var scanTries = 0;
       while (device == null && scanTries < 6) {
         scanTries++;
-        print('attempt #$scanTries to scan for ${deviceToProvision.id}');
+        debugPrint('attempt #$scanTries to scan for ${deviceToProvision.id}');
         final scanResults = await bleScanner.provisionedNodesInRange(
-            timeoutDuration: Duration(seconds: 5)); //increase in time reduces 'Undocumented scan throttle' error
+            timeoutDuration: const Duration(seconds: 5)); //increase in time reduces 'Undocumented scan throttle' error
         try {
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id);
         } on StateError catch (e) {
-          print('not found in scan results\n$e');
+          debugPrint('not found in scan results\n$e');
         }
         if (device != null) break;
-        await Future.delayed(Duration(milliseconds: 1500));
+        await Future.delayed(const Duration(milliseconds: 1500));
       }
       if (device == null) {
         completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
@@ -201,7 +201,7 @@ Future<ProvisionedMeshNode> _provisioning(
     await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
     //Added a 1,5 seconds to wait for a refreshDeviceCache.
-    await Future.delayed(Duration(milliseconds: 1500));
+    await Future.delayed(const Duration(seconds: 1));
     await bleMeshManager.disconnect();
     cancelProvisioningCallbackSubscription(bleMeshManager);
     return provisionedMeshNode;
@@ -230,24 +230,25 @@ void cancelProvisioningCallbackSubscription(BleMeshManager bleMeshManager) {
 Future<bool> cancelProvisioning(
     MeshManagerApi meshManagerApi, BleScanner bleScanner, BleMeshManager bleMeshManager) async {
   if (Platform.isIOS || Platform.isAndroid) {
-    print('should cancel provisioning');
+    debugPrint('should cancel provisioning');
     try {
       bleScanner.dispose();
 
       final cachedProvisionedMeshNodeUuid = await meshManagerApi.cachedProvisionedMeshNodeUuid();
       if (bleMeshManager.isProvisioningCompleted && cachedProvisionedMeshNodeUuid != null) {
         final nodes = await meshManagerApi.meshNetwork!.nodes;
-        var nodeToDelete;
+        ProvisionedMeshNode? nodeToDelete;
         try {
           nodeToDelete = nodes.firstWhere((element) => element.uuid == cachedProvisionedMeshNodeUuid);
         } on StateError catch (e) {
-          print('node not found in network\n$e');
+          debugPrint('node not found in network\n$e');
         }
 
         if (nodeToDelete != null) {
-          await meshManagerApi.deprovision(nodeToDelete);
-          //TODO: check if the deprov delete the node and remove the below code
-          await meshManagerApi.meshNetwork!.deleteNode(cachedProvisionedMeshNodeUuid);
+          final status = await meshManagerApi.deprovision(nodeToDelete);
+          if (status.success == false) {
+            await meshManagerApi.meshNetwork!.deleteNode(cachedProvisionedMeshNodeUuid);
+          }
         }
       }
       await meshManagerApi.cleanProvisioningData();
@@ -256,7 +257,7 @@ Future<bool> cancelProvisioning(
       cancelProvisioningCallbackSubscription(bleMeshManager);
       return true;
     } catch (e) {
-      print('ERROR - $e');
+      debugPrint('ERROR - $e');
       return false;
     }
   } else {
