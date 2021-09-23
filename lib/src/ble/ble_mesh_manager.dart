@@ -39,6 +39,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   @override
   Future<DiscoveredService?> isRequiredServiceSupported() async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
+    isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;
       final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
@@ -49,7 +50,6 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       return null;
     } else {
       if (hasExpectedService(meshProvisioningUuid)) {
-        isProvisioningCompleted = false;
         final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid);
         if (hasExpectedCharacteristicUuid(service, meshProvisioningDataIn) &&
             hasExpectedCharacteristicUuid(service, meshProvisioningDataOut)) {

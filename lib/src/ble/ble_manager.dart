@@ -149,7 +149,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       if (service == null) {
         throw Exception('Required service not found');
       }
-      isProvisioningCompleted = service.serviceId == meshProxyUuid;
       await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
       if (!_callbacks.onServicesDiscoveredController.isClosed &&
           _callbacks.onServicesDiscoveredController.hasListener) {
