@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
@@ -84,14 +85,20 @@ class BleScanner {
     }
   }
 
-  Future<DiscoveredDevice?> searchForSpecificUID(String uid, {bool forProxy = false}) async {
-    var result;
+  Future<DiscoveredDevice?> searchForSpecificUID(
+    String uid,
+    Duration scanTimeout, {
+    bool forProxy = false,
+  }) async {
+    DiscoveredDevice? result;
     try {
-      result = _scanWithParamsAsStream(
+      result = await _scanWithParamsAsStream(
         withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
-      ).firstWhere((s) => validScanResult(s, uid));
+      ).firstWhere((s) => validScanResult(s, uid)).timeout(scanTimeout);
     } on StateError catch (e) {
-      print('[BleScanner] no device found with UUID : $uid\n$e\n${e.message}');
+      debugPrint('[BleScanner] StateError -- no device found with UUID : $uid\n$e\n${e.message}');
+    } on TimeoutException catch (e) {
+      debugPrint('[BleScanner] TimeoutException -- no device found with UUID : $uid\n$e\n${e.message}');
     }
     return result;
   }
