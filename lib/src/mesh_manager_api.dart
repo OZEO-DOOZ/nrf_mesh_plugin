@@ -93,12 +93,10 @@ class MeshManagerApi {
   MeshNetwork? _lastMeshNetwork;
 
   MeshManagerApi() {
+    _eventChannelStream =
+        _eventChannel.receiveBroadcastStream().cast<Map>().map((event) => event.cast<String, dynamic>());
     if (kDebugMode) {
-      _eventChannelStream = _eventChannel
-          .receiveBroadcastStream()
-          .cast<Map>()
-          .map((event) => event.cast<String, dynamic>())
-          .doOnData((data) => debugPrint('$data'));
+      _eventChannelStream.doOnData((data) => debugPrint('$data'));
     }
 
     _onNetworkLoadedSubscription =
