@@ -9,4 +9,4 @@ export 'src/ble/ble_manager.dart';
 export 'src/ble/ble_manager_callbacks.dart';
 export 'src/ble/ble_mesh_manager.dart';
 export 'src/ble/ble_mesh_manager_callbacks.dart';
-export 'src/utils/provisioning.dart' show ProvisioningEvent, NrfMeshProvisioningException;
+export 'src/utils/provisioning.dart' show ProvisioningEvent, NrfMeshProvisioningException, ProvisioningFailureCode;

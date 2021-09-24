@@ -108,21 +108,24 @@ Future<ProvisionedMeshNode> _provisioning(
         await Future.delayed(const Duration(milliseconds: 1500));
       }
       if (device == null) {
-        completer.completeError(NrfMeshProvisioningException('Didn\'t find module'));
+        completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.notFound, 'Didn\'t find module'));
       }
       events?._provisioningReconnectController.add(null);
       try {
         await bleMeshManager.connect(device!);
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode!.uuid);
       } catch (e) {
-        completer.completeError(NrfMeshProvisioningException('Error in connection during provisioning process'));
+        completer.completeError(NrfMeshProvisioningException(
+            ProvisioningFailureCode.reconnection, 'Error in connection during provisioning process'));
       }
     } catch (e) {
-      completer.completeError(NrfMeshProvisioningException('error during provisioning completed listener'));
+      completer.completeError(NrfMeshProvisioningException(
+          ProvisioningFailureCode.provisioningCompleted, 'error during provisioning completed listener'));
     }
   });
   onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
-    completer.completeError(NrfMeshProvisioningException('Failed to provision device ${deviceToProvision.id}'));
+    completer.completeError(NrfMeshProvisioningException(
+        ProvisioningFailureCode.mesh, 'Failed to provision device ${deviceToProvision.id}'));
   });
   onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
@@ -131,8 +134,8 @@ Future<ProvisionedMeshNode> _provisioning(
           UnprovisionedMeshNode(event.meshNode!.uuid, event.meshNode!.provisionerPublicKeyXY!);
       final elementSize = await unprovisionedMeshNode.getNumberOfElements();
       if (elementSize == 0) {
-        completer
-            .completeError(NrfMeshProvisioningException('Provisioning is failed. Module does not have any elements.'));
+        completer.completeError(NrfMeshProvisioningException(
+            ProvisioningFailureCode.nodeComposition, 'Provisioning is failed. Module does not have any elements.'));
         return;
       }
       if (Platform.isAndroid) {
@@ -146,8 +149,10 @@ Future<ProvisionedMeshNode> _provisioning(
             assigned = true;
           } catch (e) {
             unicast += 1;
+            debugPrint('[Provisioning] error, incrementing unicast to $unicast');
           }
         }
+        debugPrint('[Provisioning] successfully assigned $unicast to node !');
       }
       events?._provisioningController.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
@@ -200,7 +205,7 @@ Future<ProvisionedMeshNode> _provisioning(
     await completer.future;
     await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
-    //Added a 1,5 seconds to wait for a refreshDeviceCache.
+    // Added a 1 second to wait for a refreshDeviceCache.
     await Future.delayed(const Duration(seconds: 1));
     await bleMeshManager.disconnect();
     cancelProvisioningCallbackSubscription(bleMeshManager);
@@ -274,8 +279,26 @@ Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, Provisi
 }
 
 class NrfMeshProvisioningException implements Exception {
+  final ProvisioningFailureCode? code;
   final String? message;
-  NrfMeshProvisioningException([this.message]) : super();
+  NrfMeshProvisioningException([this.code, this.message]) : super();
+}
+
+enum ProvisioningFailureCode {
+  /// when an error occurs in the callback of  `PROVISIONING_COMPLETE` event
+  provisioningCompleted,
+
+  /// when the node isn't found during BLE scan upon `PROVISIONING_COMPLETE` event
+  notFound,
+
+  /// when the phone could not reconnect to node upon `PROVISIONING_COMPLETE` event
+  reconnection,
+
+  /// when the found node has unexpected node composition (nb of elements)
+  nodeComposition,
+
+  /// when `PROVISIONING_FAILED` event is triggered
+  mesh,
 }
 
 class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
