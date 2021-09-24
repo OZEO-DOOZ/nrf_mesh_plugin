@@ -85,11 +85,11 @@ class BleScanner {
     }
   }
 
-  Future<DiscoveredDevice?> searchForSpecificUID(
+  Future<DiscoveredDevice?> searchForSpecificNode(
     String uid,
-    Duration scanTimeout, {
-    bool forProxy = false,
-  }) async {
+    Duration scanTimeout,
+    bool forProxy,
+  ) async {
     DiscoveredDevice? result;
     try {
       result = await _scanWithParamsAsStream(

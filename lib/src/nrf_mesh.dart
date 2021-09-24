@@ -119,17 +119,17 @@ class NordicNrfMesh {
 
   /// Will scan for the given node uid.
   ///
-  /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [forProxy] bool flag.
+  /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [isProxy] bool flag.
   ///
-  /// Returns a [DiscoveredDevice] or null if not found after [timeoutDuration].
+  /// Returns a [DiscoveredDevice] or null if not found after [timeoutDuration] (defaults to 5sec).
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Future<DiscoveredDevice?> searchForSpecificUID(
+  Future<DiscoveredDevice?> searchForSpecificNode(
     String uid, {
-    bool forProxy = false,
+    bool isProxy = false,
     Duration timeoutDuration = defaultScanDuration,
   }) =>
-      _bleScanner.searchForSpecificUID(uid, timeoutDuration, forProxy: forProxy);
+      _bleScanner.searchForSpecificNode(uid, timeoutDuration, isProxy);
 
   /// Provide a [Stream] of the current [BleStatus] of the host device.
   Stream<BleStatus> get bleStatus => _bleScanner.bleStatus;
