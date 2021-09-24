@@ -1,6 +1,7 @@
-include: package:pedantic/analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
 
 analyzer:
   exclude:
-    - lib/**.g.dart
-    - lib/**.freezed.dart
+    - lib/**/*.g.dart
+    - lib/**/*.freezed.dart
+    - example/ # TODO fix the sample app

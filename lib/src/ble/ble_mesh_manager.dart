@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
@@ -38,6 +39,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   @override
   Future<DiscoveredService?> isRequiredServiceSupported() async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
+    isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;
       final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
@@ -48,7 +50,6 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       return null;
     } else {
       if (hasExpectedService(meshProvisioningUuid)) {
-        isProvisioningCompleted = false;
         final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid);
         if (hasExpectedCharacteristicUuid(service, meshProvisioningDataIn) &&
             hasExpectedCharacteristicUuid(service, meshProvisioningDataOut)) {
@@ -162,7 +163,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           return await bleInstance.clearGattCache(device!.id);
         } on Exception catch (e) {
           if (e.toString().toLowerCase().contains('not connected')) {
-            print('cannot clear gatt cache because not connected');
+            debugPrint('cannot clear gatt cache because not connected');
           } else {
             rethrow;
           }

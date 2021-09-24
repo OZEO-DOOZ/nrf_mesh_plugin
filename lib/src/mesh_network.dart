@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/models/group/group.dart';
@@ -125,9 +126,9 @@ class MeshNetwork implements IMeshNetwork {
     var provisioners = <Provisioner>[];
     final result = await _methodChannel.invokeMethod('getProvisionersAsJson');
     var prov = json.decode(result) as List;
-    prov.forEach((value) {
+    for (final value in prov) {
       provisioners.add(Provisioner.fromJson(value));
-    });
+    }
     return provisioners;
   }
 
@@ -216,7 +217,7 @@ class MeshNetwork implements IMeshNetwork {
       if (_node != null) {
         return ProvisionedMeshNode(_node);
       } else {
-        print('node not found');
+        debugPrint('node not found');
         return null;
       }
     } else {
@@ -231,7 +232,7 @@ class MeshNetwork implements IMeshNetwork {
       if (_node != null) {
         return ProvisionedMeshNode(_node);
       } else {
-        print('node not found');
+        debugPrint('node not found');
         return null;
       }
     } else {

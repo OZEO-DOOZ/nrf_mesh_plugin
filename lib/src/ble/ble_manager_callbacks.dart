@@ -16,6 +16,12 @@ class BleManagerCallbacksError {
   final Object? error;
 
   const BleManagerCallbacksError(this.device, this.message, this.error);
+
+  @override
+  String toString() => 'BleManagerCallbacksError(message: $message, '
+      'error: $error, '
+      'device id: ${device?.id}, '
+      'device name: ${device?.name})';
 }
 
 abstract class BleManagerCallbacks {
