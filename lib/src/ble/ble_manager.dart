@@ -59,7 +59,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     final waitForConnect = Completer<void>();
     final connectTimeout = Timer(connectionTimeout, () {
       if (!waitForConnect.isCompleted) {
-        debugPrint('[BleManager] connect took ${watch.elapsedMilliseconds}ms');
+        debugPrint('[BleManager] connect failed ${watch.elapsedMilliseconds}ms');
         waitForConnect.completeError(TimeoutException('connection timed out', connectionTimeout));
       }
       _connectedDeviceStatusStream!.cancel();
@@ -94,7 +94,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   }
                   _negotiateAndInitGatt().then((_) => waitForConnect.complete()).catchError(
                     (e, s) {
-                      disconnect(); // make sure stream sub is canceled
                       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
                         _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', e));
                       }
@@ -152,7 +151,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             },
             cancelOnError: true,
             onError: (Object error) {
-              disconnect(); // make sure stream sub is canceled
               if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
                 _callbacks.onErrorController
                     .add(BleManagerCallbacksError(_device, 'ERROR CAUGHT IN CONNECTION STREAM', error));
