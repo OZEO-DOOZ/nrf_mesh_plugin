@@ -6,6 +6,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
+import 'package:nordic_nrf_mesh/src/contants.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
@@ -144,33 +145,29 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   Future<void> _negotiateAndInitGatt() async {
     final _callbacks = callbacks as E;
+    DiscoveredService? service;
     try {
-      final service = await isRequiredServiceSupported();
-      if (service == null) {
-        throw Exception('Required service not found');
-      }
-      await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
-      if (!_callbacks.onServicesDiscoveredController.isClosed &&
-          _callbacks.onServicesDiscoveredController.hasListener) {
-        _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service, false));
-      }
-      await initGatt();
-      final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
-      if (Platform.isAndroid) {
-        mtuSize = negotiatedMtu - 3;
-      } else if (Platform.isIOS) {
-        mtuSize = negotiatedMtu;
-      }
-      await _callbacks.sendMtuToMeshManagerApi(mtuSize);
-      if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
-        _callbacks.onDeviceReadyController.add(_device!);
-      }
+      service = await isRequiredServiceSupported();
     } catch (e) {
-      if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
-        _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', e));
-      }
-      debugPrint('error caught during GATT negotiation $e...Disconnecting...');
-      disconnect();
+      debugPrint('[BleManager] caught error $e');
+    }
+    if (service == null) {
+      throw const BleManagerException(BleManagerFailureCode.serviceNotFound, 'Required service not found');
+    }
+    await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
+    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
+      _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service, false));
+    }
+    await initGatt();
+    final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
+    if (Platform.isAndroid) {
+      mtuSize = negotiatedMtu - 3;
+    } else if (Platform.isIOS) {
+      mtuSize = negotiatedMtu;
+    }
+    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
+    if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
+      _callbacks.onDeviceReadyController.add(_device!);
     }
   }
 
