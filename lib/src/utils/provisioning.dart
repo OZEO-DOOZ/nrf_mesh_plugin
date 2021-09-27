@@ -6,7 +6,9 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
+import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
+import 'package:nordic_nrf_mesh/src/exceptions/exceptions.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
@@ -276,29 +278,6 @@ Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, Provisi
   } else {
     throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
   }
-}
-
-class NrfMeshProvisioningException implements Exception {
-  final ProvisioningFailureCode? code;
-  final String? message;
-  NrfMeshProvisioningException([this.code, this.message]) : super();
-}
-
-enum ProvisioningFailureCode {
-  /// when an error occurs in the callback of  `PROVISIONING_COMPLETE` event
-  provisioningCompleted,
-
-  /// when the node isn't found during BLE scan upon `PROVISIONING_COMPLETE` event
-  notFound,
-
-  /// when the phone could not reconnect to node upon `PROVISIONING_COMPLETE` event
-  reconnection,
-
-  /// when the found node has unexpected node composition (nb of elements)
-  nodeComposition,
-
-  /// when `PROVISIONING_FAILED` event is triggered
-  mesh,
 }
 
 class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
