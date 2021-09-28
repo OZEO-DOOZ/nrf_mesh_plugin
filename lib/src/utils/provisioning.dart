@@ -209,8 +209,6 @@ Future<ProvisionedMeshNode> _provisioning(
     await completer.future;
     await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
-    // Added a 1 second to wait for a refreshDeviceCache.
-    await Future.delayed(const Duration(seconds: 1));
     await bleMeshManager.disconnect();
     cancelProvisioningCallbackSubscription(bleMeshManager);
     return provisionedMeshNode;
