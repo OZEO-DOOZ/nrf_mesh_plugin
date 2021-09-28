@@ -118,12 +118,15 @@ Future<ProvisionedMeshNode> _provisioning(
         await _connect(bleMeshManager, device!);
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode!.uuid);
       } catch (e) {
-        completer.completeError(NrfMeshProvisioningException(
-            ProvisioningFailureCode.reconnection, 'Error in connection during provisioning process'));
+        const _msg = 'Error in connection during provisioning process';
+        _log('$_msg $e');
+        completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.reconnection, _msg));
       }
     } catch (e) {
       completer.completeError(NrfMeshProvisioningException(
-          ProvisioningFailureCode.provisioningCompleted, 'error during provisioning completed listener'));
+        ProvisioningFailureCode.provisioningCompleted,
+        'unexpected error during provisioning completed listener',
+      ));
     }
   });
   onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
@@ -214,7 +217,22 @@ Future<ProvisionedMeshNode> _provisioning(
     return provisionedMeshNode;
   } catch (e) {
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
-    rethrow;
+    if (e is NrfMeshProvisioningException) {
+      rethrow;
+    } else if (e is GenericFailure || e is BleManagerException || e is TimeoutException) {
+      String? message;
+      if (e is GenericFailure) {
+        message = e.message;
+      } else if (e is BleManagerException) {
+        message = e.message;
+      } else if (e is TimeoutException) {
+        message = e.message;
+      }
+      throw NrfMeshProvisioningException(ProvisioningFailureCode.initialConnection, message);
+    } else {
+      // unknown error that should be diagnosed
+      throw NrfMeshProvisioningException(ProvisioningFailureCode.unknown, '$e');
+    }
   }
 }
 

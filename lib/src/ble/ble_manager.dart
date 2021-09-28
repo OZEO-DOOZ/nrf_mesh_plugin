@@ -169,23 +169,33 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     } catch (e) {
       _log('caught error $e');
     }
-    if (service == null) {
+
+    if (service != null) {
+      // valid mesh node
+      try {
+        await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
+        if (!_callbacks.onServicesDiscoveredController.isClosed &&
+            _callbacks.onServicesDiscoveredController.hasListener) {
+          _callbacks.onServicesDiscoveredController
+              .add(BleManagerCallbacksDiscoveredServices(_device!, service, false));
+        }
+        await initGatt();
+        final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
+        if (Platform.isAndroid) {
+          mtuSize = negotiatedMtu - 3;
+        } else if (Platform.isIOS) {
+          mtuSize = negotiatedMtu;
+        }
+        await _callbacks.sendMtuToMeshManagerApi(mtuSize);
+        if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
+          _callbacks.onDeviceReadyController.add(_device!);
+        }
+      } catch (e) {
+        _log('caught error $e');
+        throw BleManagerException(BleManagerFailureCode.negociation, '$e');
+      }
+    } else {
       throw const BleManagerException(BleManagerFailureCode.serviceNotFound, 'Required service not found');
-    }
-    await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
-    if (!_callbacks.onServicesDiscoveredController.isClosed && _callbacks.onServicesDiscoveredController.hasListener) {
-      _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service, false));
-    }
-    await initGatt();
-    final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
-    if (Platform.isAndroid) {
-      mtuSize = negotiatedMtu - 3;
-    } else if (Platform.isIOS) {
-      mtuSize = negotiatedMtu;
-    }
-    await _callbacks.sendMtuToMeshManagerApi(mtuSize);
-    if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
-      _callbacks.onDeviceReadyController.add(_device!);
     }
   }
 
