@@ -114,6 +114,7 @@ Future<ProvisionedMeshNode> _provisioning(
       }
       events?._provisioningReconnectController.add(null);
       try {
+        _connectRetryCount = 0;
         await _connect(bleMeshManager, device!);
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode!.uuid);
       } catch (e) {
@@ -203,6 +204,7 @@ Future<ProvisionedMeshNode> _provisioning(
   try {
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
+    _connectRetryCount = 0;
     await _connect(bleMeshManager, deviceToProvision);
     await completer.future;
     await meshManagerApi.cleanProvisioningData();
@@ -220,7 +222,7 @@ Future<ProvisionedMeshNode> _provisioning(
 
 late int _connectRetryCount;
 Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
-  _connectRetryCount = 0;
+  _connectRetryCount++;
   await bleMeshManager
       .connect(deviceToConnect)
       .catchError((e) async => await _onConnectError(e, bleMeshManager, deviceToConnect));
