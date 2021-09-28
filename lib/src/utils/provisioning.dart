@@ -20,7 +20,7 @@ class _ProvisioningEvent {
   final _provisioningReconnectController = StreamController<void>();
   final _onConfigCompositionDataStatusController = StreamController<void>();
   final _onConfigAppKeyStatusController = StreamController<void>();
-  final _provisioningGattErrorController = StreamController<ProvisionedMeshNode>();
+  final _provisioningGattErrorController = StreamController<DiscoveredDevice?>();
 }
 
 class ProvisioningEvent extends _ProvisioningEvent {
@@ -35,7 +35,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
 
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
-  Stream<ProvisionedMeshNode> get onProvisioningGattError => _provisioningGattErrorController.stream;
+  Stream<DiscoveredDevice?> get onProvisioningGattError => _provisioningGattErrorController.stream;
 
   Future<void> dispose() => Future.wait([
         _provisioningController.close(),
@@ -190,7 +190,7 @@ Future<ProvisionedMeshNode> _provisioning(
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
   onGattErrorSubscription = bleMeshManager.callbacks!.onError.listen((event) {
-    events?._provisioningGattErrorController.add(provisionedMeshNode);
+    events?._provisioningGattErrorController.add(event.device);
   });
   onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController.add(null);
