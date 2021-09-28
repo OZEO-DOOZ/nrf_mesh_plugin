@@ -72,13 +72,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         )
         .listen(
             (connectionStateUpdate) async {
-              debugPrint('\n-----------------\n'
-                  'received event from philipps at ${DateTime.now().millisecondsSinceEpoch}!\n'
-                  'plain : $connectionStateUpdate\n'
-                  'connect state : ${connectionStateUpdate.connectionState}\n'
-                  'deviceID : ${connectionStateUpdate.deviceId}\n'
-                  'error : ${connectionStateUpdate.failure}\n'
-                  '-----------------\n\n');
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
                   if (!_callbacks.onDeviceConnectingController.isClosed &&

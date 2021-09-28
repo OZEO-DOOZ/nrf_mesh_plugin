@@ -114,7 +114,7 @@ Future<ProvisionedMeshNode> _provisioning(
       }
       events?._provisioningReconnectController.add(null);
       try {
-        await bleMeshManager.connect(device!);
+        await _connect(bleMeshManager, device!);
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode!.uuid);
       } catch (e) {
         completer.completeError(NrfMeshProvisioningException(
@@ -203,7 +203,7 @@ Future<ProvisionedMeshNode> _provisioning(
   try {
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
-    await bleMeshManager.connect(deviceToProvision);
+    await _connect(bleMeshManager, deviceToProvision);
     await completer.future;
     await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
@@ -215,6 +215,54 @@ Future<ProvisionedMeshNode> _provisioning(
   } catch (e) {
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
     rethrow;
+  }
+}
+
+late int _connectRetryCount;
+Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
+  _connectRetryCount = 0;
+  await bleMeshManager
+      .connect(deviceToConnect)
+      .catchError((e) async => await _onConnectError(e, bleMeshManager, deviceToConnect));
+}
+
+Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
+  debugPrint('caught error during connect $e');
+  if (e is GenericFailure) {
+    if (_connectRetryCount < 3 &&
+        e.code == ConnectionError.failedToConnect &&
+        e.message.contains('status') &&
+        e.message.contains('133')) {
+      debugPrint('will retry to connect after $_connectRetryCount tries');
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _connect(bleMeshManager, deviceToConnect);
+    } else {
+      debugPrint(_connectRetryCount >= 3
+          ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
+          : 'unhandled GenericFailure $e');
+      throw e;
+    }
+  } else if (e is BleManagerException) {
+    if (_connectRetryCount < 3 && e.code == BleManagerFailureCode.serviceNotFound) {
+      debugPrint('will retry to connect after $_connectRetryCount tries');
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _connect(bleMeshManager, deviceToConnect);
+    } else {
+      debugPrint(_connectRetryCount >= 3
+          ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
+          : 'unhandled BleManagerException $e');
+      throw e;
+    }
+  } else {
+    if (e is TimeoutException && _connectRetryCount < 2) {
+      debugPrint('timeout ! will retry to connect after $_connectRetryCount tries');
+      await _connect(bleMeshManager, deviceToConnect);
+    } else {
+      debugPrint(_connectRetryCount >= 2
+          ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
+          : 'unhandled error $e');
+      throw e;
+    }
   }
 }
 
