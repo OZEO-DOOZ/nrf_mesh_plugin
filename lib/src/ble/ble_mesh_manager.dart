@@ -22,6 +22,8 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   factory BleMeshManager() => _instance as BleMeshManager<T>;
 
+  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
+
   void onDeviceDisconnected() async {
     isProvisioningCompleted = false;
     await _meshProxyDataOutSubscription?.cancel();
@@ -153,7 +155,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           return await bleInstance.clearGattCache(device!.id);
         } on Exception catch (e) {
           if (e.toString().toLowerCase().contains('not connected')) {
-            debugPrint('cannot clear gatt cache because not connected');
+            _log('cannot clear gatt cache because not connected');
           } else {
             rethrow;
           }

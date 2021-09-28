@@ -84,7 +84,7 @@ Future<ProvisionedMeshNode> _provisioning(
 
   //'Undocumented scan throttle' error caught here
   onBleScannerError = bleScanner.onScanErrorStream.listen((event) {
-    debugPrint('Scanner Error : ${event.error}');
+    _log('Scanner Error : ${event.error}');
   });
 
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
@@ -98,13 +98,13 @@ Future<ProvisionedMeshNode> _provisioning(
       var scanTries = 0;
       while (device == null && scanTries < 6) {
         scanTries++;
-        debugPrint('attempt #$scanTries to scan for ${deviceToProvision.id}');
+        _log('attempt #$scanTries to scan for ${deviceToProvision.id}');
         final scanResults = await bleScanner.provisionedNodesInRange(
             timeoutDuration: const Duration(seconds: 5)); //increase in time reduces 'Undocumented scan throttle' error
         try {
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id);
         } on StateError catch (e) {
-          debugPrint('not found in scan results\n$e');
+          _log('not found in scan results\n$e');
         }
         if (device != null) break;
         await Future.delayed(const Duration(milliseconds: 1500));
@@ -152,10 +152,10 @@ Future<ProvisionedMeshNode> _provisioning(
             assigned = true;
           } catch (e) {
             unicast += 1;
-            debugPrint('[Provisioning] error, incrementing unicast to $unicast');
+            _log('error, incrementing unicast to $unicast');
           }
         }
-        debugPrint('[Provisioning] successfully assigned $unicast to node !');
+        _log('successfully assigned $unicast to node !');
       }
       events?._provisioningController.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
@@ -229,38 +229,38 @@ Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToCo
 }
 
 Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
-  debugPrint('caught error during connect $e');
+  _log('caught error during connect $e');
   if (e is GenericFailure) {
     if (_connectRetryCount < 3 &&
         e.code == ConnectionError.failedToConnect &&
         e.message.contains('status') &&
         e.message.contains('133')) {
-      debugPrint('will retry to connect after $_connectRetryCount tries');
+      _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
     } else {
-      debugPrint(_connectRetryCount >= 3
+      _log(_connectRetryCount >= 3
           ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
           : 'unhandled GenericFailure $e');
       throw e;
     }
   } else if (e is BleManagerException) {
     if (_connectRetryCount < 3 && e.code == BleManagerFailureCode.serviceNotFound) {
-      debugPrint('will retry to connect after $_connectRetryCount tries');
+      _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
     } else {
-      debugPrint(_connectRetryCount >= 3
+      _log(_connectRetryCount >= 3
           ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
           : 'unhandled BleManagerException $e');
       throw e;
     }
   } else {
     if (e is TimeoutException && _connectRetryCount < 2) {
-      debugPrint('timeout ! will retry to connect after $_connectRetryCount tries');
+      _log('timeout ! will retry to connect after $_connectRetryCount tries');
       await _connect(bleMeshManager, deviceToConnect);
     } else {
-      debugPrint(_connectRetryCount >= 2
+      _log(_connectRetryCount >= 2
           ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
           : 'unhandled error $e');
       throw e;
@@ -287,7 +287,7 @@ void cancelProvisioningCallbackSubscription(BleMeshManager bleMeshManager) {
 Future<bool> cancelProvisioning(
     MeshManagerApi meshManagerApi, BleScanner bleScanner, BleMeshManager bleMeshManager) async {
   if (Platform.isIOS || Platform.isAndroid) {
-    debugPrint('should cancel provisioning');
+    _log('should cancel provisioning');
     try {
       bleScanner.dispose();
 
@@ -298,7 +298,7 @@ Future<bool> cancelProvisioning(
         try {
           nodeToDelete = nodes.firstWhere((element) => element.uuid == cachedProvisionedMeshNodeUuid);
         } on StateError catch (e) {
-          debugPrint('node not found in network\n$e');
+          _log('node not found in network\n$e');
         }
 
         if (nodeToDelete != null) {
@@ -314,7 +314,7 @@ Future<bool> cancelProvisioning(
       cancelProvisioningCallbackSubscription(bleMeshManager);
       return true;
     } catch (e) {
-      debugPrint('ERROR - $e');
+      _log('ERROR - $e');
       return false;
     }
   } else {
@@ -338,3 +338,5 @@ class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
   @override
   Future<void> sendMtuToMeshManagerApi(int mtu) => meshManagerApi.setMtu(mtu);
 }
+
+void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');

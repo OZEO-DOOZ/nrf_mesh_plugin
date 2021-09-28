@@ -36,6 +36,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   BleManager(this._bleInstance);
 
+  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
+
   Future<void> dispose() async {
     await callbacks?.dispose();
     await _connectedDeviceStatusStream?.cancel();
@@ -59,7 +61,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     final waitForConnect = Completer<void>();
     final connectTimeout = Timer(connectionTimeout, () {
       if (!waitForConnect.isCompleted) {
-        debugPrint('[BleManager] connect failed ${watch.elapsedMilliseconds}ms');
+        _log('connect failed ${watch.elapsedMilliseconds}ms');
         waitForConnect.completeError(TimeoutException('connection timed out', connectionTimeout));
       }
       _connectedDeviceStatusStream!.cancel();
@@ -92,7 +94,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                       }
                       if (!waitForConnect.isCompleted) {
                         // will notify for error as the connection could not be properly established
-                        debugPrint('[BleManager] connect failed after ${watch.elapsedMilliseconds}ms');
+                        _log('connect failed after ${watch.elapsedMilliseconds}ms');
                         waitForConnect.completeError(e);
                       }
                     },
@@ -150,13 +152,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               }
               if (!waitForConnect.isCompleted) {
                 // will notify for error as the connection could not be properly established
-                debugPrint('[BleManager] connect failed after ${watch.elapsedMilliseconds}ms');
+                _log('connect failed after ${watch.elapsedMilliseconds}ms');
                 waitForConnect.completeError(error);
               }
             });
     await waitForConnect.future;
     connectTimeout.cancel();
-    debugPrint('[BleManager] connect took ${watch.elapsedMilliseconds}ms');
+    _log('connect took ${watch.elapsedMilliseconds}ms');
   }
 
   Future<void> _negotiateAndInitGatt() async {
@@ -165,7 +167,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     try {
       service = await isRequiredServiceSupported();
     } catch (e) {
-      debugPrint('[BleManager] caught error $e');
+      _log('caught error $e');
     }
     if (service == null) {
       throw const BleManagerException(BleManagerFailureCode.serviceNotFound, 'Required service not found');
@@ -195,7 +197,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   Future<void> disconnect() async {
     if (_device == null) {
-      debugPrint('calling disconnect without connected device');
+      _log('calling disconnect without connected device');
     }
     final _callbacks = callbacks;
     if (!(_callbacks?.onDeviceDisconnectingController.isClosed == true) &&
