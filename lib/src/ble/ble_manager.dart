@@ -26,6 +26,14 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   E? callbacks;
   StreamSubscription<ConnectionStateUpdate>? _connectedDeviceStatusStream;
 
+  /// A [Completer] used to handle the async behavior of [connect] method
+  late Completer<void> _connectCompleter;
+
+  @protected
+  Completer<void> get connectCompleter => _connectCompleter;
+
+  late final StreamSubscription<ConnectionStateUpdate> _deviceStatusStream;
+
   int mtuSize = maxPacketSize;
 
   DiscoveredDevice? get device => _device;
@@ -34,13 +42,73 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   FlutterReactiveBle get bleInstance => _bleInstance;
 
-  BleManager(this._bleInstance);
+  BleManager(this._bleInstance) {
+    _deviceStatusStream = _bleInstance.connectedDeviceStream.listen((connectionStateUpdate) {
+      final _callbacks = callbacks;
+      switch (connectionStateUpdate.connectionState) {
+        case DeviceConnectionState.connecting:
+          if (connectionStateUpdate.deviceId == _device?.id) {
+            _log('connecting to expected device');
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+        case DeviceConnectionState.connected:
+          if (connectionStateUpdate.deviceId == _device?.id) {
+            _log('connected to expected device');
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+        case DeviceConnectionState.disconnecting:
+          if (connectionStateUpdate.deviceId == _device?.id) {
+            _log('disconnecting from previous device ${_device!.name}');
+            if (!(_callbacks?.onDeviceDisconnectingController.isClosed == true) &&
+                _callbacks!.onDeviceDisconnectingController.hasListener) {
+              _callbacks.onDeviceDisconnectingController.add(_device);
+            }
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+        case DeviceConnectionState.disconnected:
+          if (connectionStateUpdate.deviceId == _device?.id) {
+            _log(
+                'disconnected from previous device ${_device!.name}'); // error may have been caught upon connection initialization or during connection
+            GenericFailure? maybeError = connectionStateUpdate.failure;
+            // determine if callbacks are set
+            final _hasDeviceDisconnectedCallback = !(_callbacks?.onDeviceDisconnectedController.isClosed == true) &&
+                _callbacks!.onDeviceDisconnectedController.hasListener;
+            final _hasErrorCallback =
+                !(_callbacks?.onErrorController.isClosed == true) && _callbacks!.onErrorController.hasListener;
+            if (_hasDeviceDisconnectedCallback) {
+              if (_hasErrorCallback) {
+                // if every callbacks, will prioritize error callback if the event contains any non null error Object
+                if (maybeError != null) {
+                  _callbacks!.onErrorController.add(BleManagerCallbacksError(device, maybeError.message, maybeError));
+                } else {
+                  _callbacks!.onDeviceDisconnectedController.add(_device);
+                }
+              } else {
+                // if only listening to disconnect events
+                _callbacks!.onDeviceDisconnectedController.add(_device);
+              }
+            }
+            _device = null;
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+      }
+    });
+  }
 
   void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
 
   Future<void> dispose() async {
     await callbacks?.dispose();
     await _connectedDeviceStatusStream?.cancel();
+    await _deviceStatusStream.cancel();
   }
 
   /// Will connect to the provided [DiscoveredDevice] using its [id] as identifier.
@@ -51,7 +119,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return a [TimeoutException] if connection is not established after [connectionTimeout]
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
-  Future<void> connect(final DiscoveredDevice device, {Duration connectionTimeout = kConnectionTimeout}) async {
+  Future<void> connect(final DiscoveredDevice discoveredDevice,
+      {Duration connectionTimeout = kConnectionTimeout}) async {
     if (callbacks == null) {
       throw const BleManagerException(
           BleManagerFailureCode.callbacks, 'You have to set callbacks using callbacks(E callbacks) before connecting');
@@ -60,17 +129,17 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _device = null;
     final watch = Stopwatch()..start();
     final _callbacks = callbacks as E;
-    final waitForConnect = Completer<void>();
+    _connectCompleter = Completer<void>();
     final connectTimeout = Timer(connectionTimeout, () {
-      if (!waitForConnect.isCompleted) {
+      if (!_connectCompleter.isCompleted) {
         _log('connect failed ${watch.elapsedMilliseconds}ms');
-        waitForConnect.completeError(TimeoutException('connection timed out', connectionTimeout));
+        _connectCompleter.completeError(TimeoutException('connection timed out', connectionTimeout));
       }
       _connectedDeviceStatusStream!.cancel();
     });
     _connectedDeviceStatusStream = _bleInstance
         .connectToDevice(
-          id: device.id,
+          id: discoveredDevice.id,
           // added here so the library sets autoconnect flag to false, but timeout duration seems ignored
           connectionTimeout: connectionTimeout,
         )
@@ -78,26 +147,26 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             (connectionStateUpdate) async {
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
+                  _device = device;
                   if (!_callbacks.onDeviceConnectingController.isClosed &&
                       _callbacks.onDeviceConnectingController.hasListener) {
-                    _callbacks.onDeviceConnectingController.add(device);
+                    _callbacks.onDeviceConnectingController.add(_device!);
                   }
-                  _device = device;
                   break;
                 case DeviceConnectionState.connected:
                   if (!_callbacks.onDeviceConnectedController.isClosed &&
                       _callbacks.onDeviceConnectedController.hasListener) {
-                    _callbacks.onDeviceConnectedController.add(device);
+                    _callbacks.onDeviceConnectedController.add(_device!);
                   }
-                  _negotiateAndInitGatt().then((_) => waitForConnect.complete()).catchError(
+                  _negotiateAndInitGatt().then((_) => _connectCompleter.complete()).catchError(
                     (e, s) {
                       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
                         _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', e));
                       }
-                      if (!waitForConnect.isCompleted) {
+                      if (!_connectCompleter.isCompleted) {
                         // will notify for error as the connection could not be properly established
                         _log('connect failed after ${watch.elapsedMilliseconds}ms');
-                        waitForConnect.completeError(e);
+                        _connectCompleter.completeError(e);
                       }
                     },
                     test: (e) => e is BleManagerException,
@@ -106,7 +175,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                 case DeviceConnectionState.disconnecting:
                   if (!_callbacks.onDeviceDisconnectingController.isClosed &&
                       _callbacks.onDeviceDisconnectingController.hasListener) {
-                    _callbacks.onDeviceDisconnectingController.add(device);
+                    _callbacks.onDeviceDisconnectingController.add(_device);
                   }
                   break;
                 case DeviceConnectionState.disconnected:
@@ -125,19 +194,19 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                           _callbacks.onErrorController
                               .add(BleManagerCallbacksError(device, maybeError.message, maybeError));
                         } else {
-                          _callbacks.onDeviceDisconnectedController.add(device);
+                          _callbacks.onDeviceDisconnectedController.add(_device);
                         }
                       } else {
                         // if only listening to disconnect events
-                        _callbacks.onDeviceDisconnectedController.add(device);
+                        _callbacks.onDeviceDisconnectedController.add(_device);
                       }
                     }
-                    if (!waitForConnect.isCompleted) {
+                    if (!_connectCompleter.isCompleted) {
                       if (maybeError != null) {
                         // will notify for error as the connection could not be properly established
-                        waitForConnect.completeError(maybeError);
+                        _connectCompleter.completeError(maybeError);
                       } else {
-                        waitForConnect.complete();
+                        _connectCompleter.complete();
                       }
                     }
                     _device = null;
@@ -154,13 +223,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                 _callbacks.onErrorController
                     .add(BleManagerCallbacksError(_device, 'ERROR CAUGHT IN CONNECTION STREAM', error));
               }
-              if (!waitForConnect.isCompleted) {
+              if (!_connectCompleter.isCompleted) {
                 // will notify for error as the connection could not be properly established
                 _log('connect failed after ${watch.elapsedMilliseconds}ms');
-                waitForConnect.completeError(error);
+                _connectCompleter.completeError(error);
               }
             });
-    await waitForConnect.future;
+    await _connectCompleter.future;
     connectTimeout.cancel();
     _log('connect took ${watch.elapsedMilliseconds}ms');
   }
@@ -213,16 +282,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     if (_device == null) {
       _log('calling disconnect without connected device');
     }
-    final _callbacks = callbacks;
-    if (!(_callbacks?.onDeviceDisconnectingController.isClosed == true) &&
-        _callbacks!.onDeviceDisconnectingController.hasListener) {
-      _callbacks.onDeviceDisconnectingController.add(_device);
-    }
     await _connectedDeviceStatusStream?.cancel();
-    _device = null;
-    if (!(_callbacks?.onDeviceDisconnectedController.isClosed == true) &&
-        _callbacks!.onDeviceDisconnectedController.hasListener) {
-      _callbacks.onDeviceDisconnectedController.add(_device);
-    }
   }
 }

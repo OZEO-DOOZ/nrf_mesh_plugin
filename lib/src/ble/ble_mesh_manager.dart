@@ -96,8 +96,20 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   StreamSubscription<List<int>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) =>
-      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen((data) =>
-          callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data)));
+      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen(
+          (data) =>
+              callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data)),
+          onError: (e, s) {
+        const _msg = 'error in device data stream';
+        _log('$_msg : $e\n$s');
+        if (!(callbacks?.onErrorController.isClosed == true) && callbacks!.onErrorController.hasListener) {
+          callbacks!.onErrorController.add(BleManagerCallbacksError(device, _msg, e));
+        }
+        if (!connectCompleter.isCompleted) {
+          // will notify for error as the connection could not be properly established
+          connectCompleter.completeError(e);
+        }
+      });
 
   Future<void> sendPdu(final List<int> pdu) async {
     final chunks = ((pdu.length / (mtuSize - 1)) + 1).floor();
