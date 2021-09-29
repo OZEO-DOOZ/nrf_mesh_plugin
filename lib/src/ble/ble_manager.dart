@@ -112,7 +112,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               } else {
                 _log('received $connectionStateUpdate');
               }
-              _device = null;
+              if (_device!.id == connectionStateUpdate.deviceId) {
+                _device = null;
+              }
             } else {
               _log('received unexpected connection state update : $connectionStateUpdate');
             }
@@ -150,7 +152,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       throw const BleManagerException(
           BleManagerFailureCode.callbacks, 'You have to set callbacks using callbacks(E callbacks) before connecting');
     }
-    _device = discoveredDevice; // set before calling cancel
     // cancel any existing sub, if connected to any device,
     // events will be handled by [_deviceStatusStream] or by
     // [_connectedDeviceStatusStream] first if same device as [discoveredDevice]
@@ -158,7 +159,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     final watch = Stopwatch()..start();
     final _callbacks = callbacks as E;
     _connectCompleter = Completer<void>();
-    bool _isConnectionInitiated = false; // helps to handle calls to this method with device same as currently connected
     final connectTimeout = Timer(connectionTimeout, () {
       if (!_connectCompleter.isCompleted) {
         _log('connect failed ${watch.elapsedMilliseconds}ms');
@@ -176,7 +176,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             (connectionStateUpdate) async {
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
-                  _isConnectionInitiated = true;
+                  _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
                   _negotiateAndInitGatt().then((_) => _connectCompleter.complete()).catchError(
@@ -197,7 +197,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   // handled by _deviceStatusStream
                   break;
                 case DeviceConnectionState.disconnected:
-                  if (!_isConnectionInitiated) {
+                  if (_device != null) {
                     // error may have been caught upon connection initialization or during connection
                     GenericFailure? maybeError = connectionStateUpdate.failure;
                     if (!_connectCompleter.isCompleted) {
