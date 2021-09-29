@@ -75,6 +75,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           if (connectionStateUpdate.deviceId == _device?.id) {
             _log(
                 'disconnected from previous device ${_device!.name}'); // error may have been caught upon connection initialization or during connection
+            _device = null;
             GenericFailure? maybeError = connectionStateUpdate.failure;
             // determine if callbacks are set
             final _hasDeviceDisconnectedCallback = !(_callbacks?.onDeviceDisconnectedController.isClosed == true) &&
@@ -94,7 +95,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                 _callbacks!.onDeviceDisconnectedController.add(_device);
               }
             }
-            _device = null;
           } else {
             _log('received unexpected connection state update : $connectionStateUpdate');
           }
@@ -126,10 +126,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           BleManagerFailureCode.callbacks, 'You have to set callbacks using callbacks(E callbacks) before connecting');
     }
     await _connectedDeviceStatusStream?.cancel(); // cancel any existing sub
-    _device = null;
     final watch = Stopwatch()..start();
     final _callbacks = callbacks as E;
     _connectCompleter = Completer<void>();
+    bool _isConnectionInitiated = false; // helps to handle calls to this method with device same as currently connected
     final connectTimeout = Timer(connectionTimeout, () {
       if (!_connectCompleter.isCompleted) {
         _log('connect failed ${watch.elapsedMilliseconds}ms');
@@ -148,6 +148,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
                   _device = device;
+                  _isConnectionInitiated = true;
                   if (!_callbacks.onDeviceConnectingController.isClosed &&
                       _callbacks.onDeviceConnectingController.hasListener) {
                     _callbacks.onDeviceConnectingController.add(_device!);
@@ -179,7 +180,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   }
                   break;
                 case DeviceConnectionState.disconnected:
-                  if (_device != null) {
+                  if (!_isConnectionInitiated) {
+                    _device = null;
                     // error may have been caught upon connection initialization or during connection
                     GenericFailure? maybeError = connectionStateUpdate.failure;
                     // determine if callbacks are set
@@ -209,7 +211,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                         _connectCompleter.complete();
                       }
                     }
-                    _device = null;
                   } else {
                     _log('seems that you were already connected to that node..'
                         'ignoring connection state: $connectionStateUpdate');
