@@ -57,6 +57,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           BleManagerFailureCode.callbacks, 'You have to set callbacks using callbacks(E callbacks) before connecting');
     }
     await _connectedDeviceStatusStream?.cancel(); // cancel any existing sub
+    _device = null;
     final watch = Stopwatch()..start();
     final _callbacks = callbacks as E;
     final waitForConnect = Completer<void>();
