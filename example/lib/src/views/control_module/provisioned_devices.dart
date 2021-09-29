@@ -44,9 +44,9 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (isScanning) LinearProgressIndicator(),
+        if (isScanning) const LinearProgressIndicator(),
         if (!isScanning && _devices.isEmpty)
-          Expanded(
+          const Expanded(
             child: Center(
               child: Text('No module found'),
             ),
@@ -54,7 +54,7 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
         if (_devices.isNotEmpty)
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               children: [
                 for (var i = 0; i < _devices.length; i++)
                   Device(
@@ -108,7 +108,7 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
       isScanning = true;
     });
 
-    return Future.delayed(Duration(seconds: 20)).then((_) => _stopScan());
+    return Future.delayed(const Duration(seconds: 20)).then((_) => _stopScan());
   }
 
   Future<void> _stopScan() async {

@@ -13,7 +13,7 @@ class Device extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Text('${device.name} : ${device.id}'),
         ),
       ),

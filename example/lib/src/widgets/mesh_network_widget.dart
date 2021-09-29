@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh/src/models/group/group.dart';
 
 import 'group.dart';
 import 'node.dart';
@@ -31,11 +30,11 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
       children: <Widget>[
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
         if (_nodes.isNotEmpty) ...[
-          Text('Nodes: '),
+          const Text('Nodes: '),
           ..._nodes.map((e) => Node(e, widget.meshNetwork, 'node-${_nodes.indexOf(e)}')),
         ],
         if (_groups.isNotEmpty) ...[
-          Text('Groups: '),
+          const Text('Groups: '),
           ..._groups.map((e) => Group(e, widget.meshNetwork)),
         ]
       ],

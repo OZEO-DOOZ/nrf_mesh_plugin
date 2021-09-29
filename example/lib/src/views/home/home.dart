@@ -25,7 +25,7 @@ class _HomeState extends State<Home> {
           PlatformVersion(
             nordicNrfMesh: widget.nordicNrfMesh,
           ),
-          Divider(),
+          const Divider(),
           MeshManagerApiWidget(
             nordicNrfMesh: widget.nordicNrfMesh,
             onNewMeshNetwork: (meshNetwork) {
@@ -34,8 +34,11 @@ class _HomeState extends State<Home> {
               });
             },
           ),
-          Divider(),
-          if (_meshNetwork != null) MeshNetworkWidget(meshNetwork: _meshNetwork!) else Text('No meshNetwork loaded'),
+          const Divider(),
+          if (_meshNetwork != null)
+            MeshNetworkWidget(meshNetwork: _meshNetwork!)
+          else
+            const Text('No meshNetwork loaded'),
         ],
       ),
     );
@@ -65,7 +68,7 @@ class _PlatformVersion extends State<PlatformVersion> {
             _platformVersion = version;
           });
         },
-        child: Text('Get Platform Version'),
+        child: const Text('Get Platform Version'),
       );
     }
   }
@@ -105,7 +108,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
             _meshNetwork = await _meshManagerApi!.importMeshNetworkJson(json);
             widget.onNewMeshNetwork(_meshNetwork!);
           },
-          child: Text('import MeshNetwork Json'),
+          child: const Text('import MeshNetwork Json'),
         ),
         TextButton(
           onPressed: () async {
@@ -113,7 +116,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
 
             widget.onNewMeshNetwork(_meshNetwork!);
           },
-          child: Text('Load MeshNetwork'),
+          child: const Text('Load MeshNetwork'),
         ),
         TextButton(
           onPressed: () async {
@@ -122,23 +125,23 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
             final result = await _meshNetwork!.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
             debugPrint('provisioner added : $result');
           },
-          child: Text('add provisioner'),
+          child: const Text('add provisioner'),
         ),
         TextButton(
           onPressed: () async {
             final provisionerList = await _meshNetwork!.provisionerList;
             debugPrint('# of provs : ${provisionerList.length}');
           },
-          child: Text('get provisioner list'),
+          child: const Text('get provisioner list'),
         ),
         TextButton(
           onPressed: () async {
             var provUUIDs = await _meshNetwork!.provisionerList;
-            provUUIDs.forEach((value) {
-              print('$value');
-            });
+            for (var value in provUUIDs) {
+              debugPrint('$value');
+            }
           },
-          child: Text('get provisioner list'),
+          child: const Text('get provisioner list'),
         ),
         TextButton(
           onPressed: _meshNetwork != null
@@ -147,7 +150,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
                   debugPrint(meshNetworkJson);
                 }
               : null,
-          child: Text('Export MeshNetwork'),
+          child: const Text('Export MeshNetwork'),
         ),
         TextButton(
           onPressed: _meshNetwork != null
@@ -163,7 +166,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
                   }
                 }
               : null,
-          child: Text('Reset MeshNetwork'),
+          child: const Text('Reset MeshNetwork'),
         )
       ],
     );

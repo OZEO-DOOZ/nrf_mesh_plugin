@@ -4,4 +4,3 @@ analyzer:
   exclude:
     - lib/**/*.g.dart
     - lib/**/*.freezed.dart
-    - example/ # TODO fix the sample app

@@ -72,7 +72,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       isScanning = true;
     });
 
-    return Future.delayed(Duration(seconds: 20)).then((_) => _stopScan());
+    return Future.delayed(const Duration(seconds: 20)).then((_) => _stopScan());
   }
 
   Future<void> _stopScan() async {
@@ -118,14 +118,14 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
             deviceUUID,
             events: provisioningEvent,
           )
-          .timeout(Duration(minutes: 1));
+          .timeout(const Duration(minutes: 1));
 
       unawaited(provisionedMeshNodeF.then((node) async {
         Navigator.of(context).pop();
-        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Provisionning succeed')));
+        scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Provisionning succeed')));
       }).catchError((_) {
         Navigator.of(context).pop();
-        scaffoldMessenger.showSnackBar(SnackBar(content: Text('Provisionning failed')));
+        scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Provisionning failed')));
       }));
       await showDialog(
         context: context,
@@ -136,7 +136,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       );
       unawaited(_scanUnprovisionned());
     } catch (e) {
-      print(e);
+      debugPrint('$e');
       scaffoldMessenger.showSnackBar(SnackBar(content: Text('Caught error: $e')));
     } finally {
       isProvisioning = false;
@@ -146,7 +146,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -159,9 +159,9 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       },
       child: Column(
         children: [
-          if (isScanning) LinearProgressIndicator(),
+          if (isScanning) const LinearProgressIndicator(),
           if (!isScanning && _devices.isEmpty)
-            Expanded(
+            const Expanded(
               child: Center(
                 child: Text('No module found'),
               ),
@@ -169,7 +169,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
           if (_devices.isNotEmpty)
             Expanded(
               child: ListView(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 children: [
                   for (var i = 0; i < _devices.length; i++)
                     Device(
@@ -195,17 +195,17 @@ class ProvisioningDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            LinearProgressIndicator(),
+            const LinearProgressIndicator(),
             Padding(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 children: [
-                  Text('Steps :'),
+                  const Text('Steps :'),
                   Column(
                     children: [
                       ProvisioningState(
@@ -255,7 +255,7 @@ class ProvisioningState extends StatelessWidget {
         return Row(
           children: [
             Text(text),
-            Spacer(),
+            const Spacer(),
             Checkbox(
               value: snapshot.data,
               onChanged: null,
