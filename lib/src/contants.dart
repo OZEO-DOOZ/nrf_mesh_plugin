@@ -29,4 +29,7 @@ enum BleManagerFailureCode {
 
   /// negociation failure
   negociation,
+
+  /// missing callbacks (Flutter layer)
+  callbacks,
 }

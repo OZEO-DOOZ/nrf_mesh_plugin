@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
@@ -20,7 +21,7 @@ class _ProvisioningEvent {
   final _provisioningReconnectController = StreamController<void>();
   final _onConfigCompositionDataStatusController = StreamController<void>();
   final _onConfigAppKeyStatusController = StreamController<void>();
-  final _provisioningGattErrorController = StreamController<DiscoveredDevice?>();
+  final _provisioningGattErrorController = StreamController<BleManagerCallbacksError>();
 }
 
 class ProvisioningEvent extends _ProvisioningEvent {
@@ -35,7 +36,7 @@ class ProvisioningEvent extends _ProvisioningEvent {
   Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
 
   Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
-  Stream<DiscoveredDevice?> get onProvisioningGattError => _provisioningGattErrorController.stream;
+  Stream<BleManagerCallbacksError> get onProvisioningGattError => _provisioningGattErrorController.stream;
 
   Future<void> dispose() => Future.wait([
         _provisioningController.close(),
@@ -123,10 +124,9 @@ Future<ProvisionedMeshNode> _provisioning(
         completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.reconnection, _msg));
       }
     } catch (e) {
-      completer.completeError(NrfMeshProvisioningException(
-        ProvisioningFailureCode.provisioningCompleted,
-        'unexpected error during provisioning completed listener',
-      ));
+      const _msg = 'unexpected error during provisioning completed listener';
+      _log('$_msg $e');
+      completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.provisioningCompleted, _msg));
     }
   });
   onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
@@ -156,6 +156,7 @@ Future<ProvisionedMeshNode> _provisioning(
           } catch (e) {
             unicast += 1;
             _log('error, incrementing unicast to $unicast');
+            _log('$e');
           }
         }
         _log('successfully assigned $unicast to node !');
@@ -194,7 +195,7 @@ Future<ProvisionedMeshNode> _provisioning(
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
   onGattErrorSubscription = bleMeshManager.callbacks!.onError.listen((event) {
-    events?._provisioningGattErrorController.add(event.device);
+    events?._provisioningGattErrorController.add(event);
   });
   onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController.add(null);
@@ -240,7 +241,7 @@ late int _connectRetryCount;
 Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
   _connectRetryCount++;
   await bleMeshManager
-      .connect(deviceToConnect)
+      .connect(deviceToConnect, connectionTimeout: const Duration(seconds: 10))
       .catchError((e) async => await _onConnectError(e, bleMeshManager, deviceToConnect));
 }
 
@@ -261,7 +262,8 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       throw e;
     }
   } else if (e is BleManagerException) {
-    if (_connectRetryCount < 3 && e.code == BleManagerFailureCode.serviceNotFound) {
+    if (_connectRetryCount < 3 &&
+        (e.code == BleManagerFailureCode.serviceNotFound || e.code == BleManagerFailureCode.negociation)) {
       _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
