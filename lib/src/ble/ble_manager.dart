@@ -52,13 +52,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   BleManager(this._bleInstance) {
     _deviceStatusStream = _bleInstance.connectedDeviceStream.listen((connectionStateUpdate) {
-      _log('\n------GLOBAL-----\n'
-          'received DeviceConnectionState event at ${DateTime.now().millisecondsSinceEpoch}!\n'
-          'plain : $connectionStateUpdate\n'
-          'connect state : ${connectionStateUpdate.connectionState}\n'
-          'deviceID : ${connectionStateUpdate.deviceId}\n'
-          'error : ${connectionStateUpdate.failure}\n'
-          '-----------------\n');
       final _callbacks = callbacks;
       if (_callbacks == null) {
         _log('no callbacks set...received $connectionStateUpdate');
