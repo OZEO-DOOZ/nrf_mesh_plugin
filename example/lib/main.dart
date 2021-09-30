@@ -25,5 +25,5 @@ void main() async {
     );
   }).sendPort);
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }

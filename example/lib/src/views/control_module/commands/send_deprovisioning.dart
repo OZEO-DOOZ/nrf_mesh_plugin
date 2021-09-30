@@ -19,12 +19,12 @@ class _SendDeprovisioningState extends State<SendDeprovisioning> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      key: ValueKey('module-send-deprovisioning-form'),
-      title: Text('Send a deprovisioning'),
+      key: const ValueKey('module-send-deprovisioning-form'),
+      title: const Text('Send a deprovisioning'),
       children: <Widget>[
         TextField(
-          key: ValueKey('module-send-deprovisioning-address'),
-          decoration: InputDecoration(hintText: 'Element Address'),
+          key: const ValueKey('module-send-deprovisioning-address'),
+          decoration: const InputDecoration(hintText: 'Element Address'),
           onChanged: (text) {
             setState(() {
               selectedElementAddress = int.tryParse(text);
@@ -39,20 +39,20 @@ class _SendDeprovisioningState extends State<SendDeprovisioning> {
                   final nodes = await widget.meshManagerApi.meshNetwork!.nodes;
                   try {
                     final provisionedNode = nodes.firstWhere((element) => element.uuid == node!.uuid);
-                    await widget.meshManagerApi.deprovision(provisionedNode).timeout(Duration(seconds: 40));
-                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
+                    await widget.meshManagerApi.deprovision(provisionedNode).timeout(const Duration(seconds: 40));
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
                   } on TimeoutException catch (_) {
-                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Board didn\'t respond')));
                   } on PlatformException catch (e) {
                     scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
                   } on StateError catch (_) {
-                    scaffoldMessenger.showSnackBar(SnackBar(content: Text('No node found with this uuid')));
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No node found with this uuid')));
                   } catch (e) {
                     scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
                   }
                 }
               : null,
-          child: Text('Send node reset'),
+          child: const Text('Send node reset'),
         )
       ],
     );
