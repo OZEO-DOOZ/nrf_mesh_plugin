@@ -112,8 +112,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               } else {
                 _log('received $connectionStateUpdate');
               }
-              if (_device!.id == connectionStateUpdate.deviceId) {
-                _device = null;
+              if (maybeError == null) {
+                // BLE library will notify several disconnected events,
+                // but when disconnection process is done, the event should have no error,
+                // so here we wait for the error to be null before assigning null to _device
+                if (_device!.id == connectionStateUpdate.deviceId) {
+                  _device = null;
+                }
               }
             } else {
               _log('received unexpected connection state update : $connectionStateUpdate');
@@ -161,7 +166,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _connectCompleter = Completer<void>();
     final connectTimeout = Timer(connectionTimeout, () {
       if (!_connectCompleter.isCompleted) {
-        _log('connect failed ${watch.elapsedMilliseconds}ms');
+        _log('connect failed after ${watch.elapsedMilliseconds}ms');
         _connectCompleter.completeError(TimeoutException('connection timed out', connectionTimeout));
       }
       _connectedDeviceStatusStream!.cancel();
@@ -187,6 +192,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                       if (!_connectCompleter.isCompleted) {
                         // will notify for error as the connection could not be properly established
                         _log('connect failed after ${watch.elapsedMilliseconds}ms');
+                        connectTimeout.cancel();
                         _connectCompleter.completeError(e);
                       }
                     },
@@ -203,12 +209,16 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                     if (!_connectCompleter.isCompleted) {
                       if (maybeError != null) {
                         // will notify for error as the connection could not be properly established
+                        _log('connect failed after ${watch.elapsedMilliseconds}ms');
+                        connectTimeout.cancel();
                         _connectCompleter.completeError(maybeError);
                       } else {
                         _connectCompleter.complete();
                       }
                     }
-                    _device = null;
+                    if (maybeError == null) {
+                      _device = null;
+                    }
                   } else {
                     _log('seems that you were already connected to that node..'
                         'ignoring connection state: $connectionStateUpdate');
@@ -225,6 +235,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
               if (!_connectCompleter.isCompleted) {
                 // will notify for error as the connection could not be properly established
                 _log('connect failed after ${watch.elapsedMilliseconds}ms');
+                connectTimeout.cancel();
                 _connectCompleter.completeError(error);
               }
             });
