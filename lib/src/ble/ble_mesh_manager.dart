@@ -22,6 +22,8 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   factory BleMeshManager() => _instance as BleMeshManager<T>;
 
+  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
+
   void onDeviceDisconnected() async {
     isProvisioningCompleted = false;
     await _meshProxyDataOutSubscription?.cancel();
@@ -65,22 +67,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   Future<void> initGatt() async {
     DiscoveredService? discoveredService;
     if (isProvisioningCompleted) {
-      discoveredService = hasExpectedService(meshProxyUuid)
-          ? _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid)
-          : null;
-      if (discoveredService == null) {
-        throw 'could not find the appropriate service on device..aborting';
-      }
+      discoveredService = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
       await _meshProxyDataOutSubscription?.cancel();
       _meshProxyDataOutSubscription =
           getDataOutSubscription(getQualifiedCharacteristic(meshProxyDataOut, discoveredService.serviceId));
     } else {
-      discoveredService = hasExpectedService(meshProvisioningUuid)
-          ? _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid)
-          : null;
-      if (discoveredService == null) {
-        throw 'could not find the appropriate service on device..aborting';
-      }
+      discoveredService = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid);
       await _meshProvisioningDataOutSubscription?.cancel();
       _meshProvisioningDataOutSubscription =
           getDataOutSubscription(getQualifiedCharacteristic(meshProvisioningDataOut, discoveredService.serviceId));
@@ -104,8 +96,20 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   StreamSubscription<List<int>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) =>
-      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen((data) =>
-          callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data)));
+      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen(
+          (data) =>
+              callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data)),
+          onError: (e, s) {
+        const _msg = 'error in device data stream';
+        _log('$_msg : $e\n$s');
+        if (!(callbacks?.onErrorController.isClosed == true) && callbacks!.onErrorController.hasListener) {
+          callbacks!.onErrorController.add(BleManagerCallbacksError(device, _msg, e));
+        }
+        if (!connectCompleter.isCompleted) {
+          // will notify for error as the connection could not be properly established
+          connectCompleter.completeError(e);
+        }
+      });
 
   Future<void> sendPdu(final List<int> pdu) async {
     final chunks = ((pdu.length / (mtuSize - 1)) + 1).floor();
@@ -163,7 +167,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           return await bleInstance.clearGattCache(device!.id);
         } on Exception catch (e) {
           if (e.toString().toLowerCase().contains('not connected')) {
-            debugPrint('cannot clear gatt cache because not connected');
+            _log('cannot clear gatt cache because not connected');
           } else {
             rethrow;
           }

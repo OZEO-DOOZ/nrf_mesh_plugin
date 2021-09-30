@@ -5,12 +5,12 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 class Model extends StatelessWidget {
   final ModelData model;
 
-  const Model(this.model) : super();
+  const Model(this.model, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      children: <Widget>[Text(' ${model.modelId} '), appKeyBindIcon(), Text(', ')],
+      children: <Widget>[Text(' ${model.modelId} '), appKeyBindIcon(), const Text(', ')],
     );
   }
 
@@ -20,12 +20,12 @@ class Model extends StatelessWidget {
 
   Icon appKeyBindIcon() {
     return isAppKeyBound()
-        ? Icon(
+        ? const Icon(
             Icons.check,
             size: 15,
             color: Colors.green,
           )
-        : Icon(
+        : const Icon(
             Icons.clear,
             size: 15,
             color: Colors.red,

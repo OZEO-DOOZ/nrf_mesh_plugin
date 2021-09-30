@@ -25,17 +25,17 @@ class BleManagerCallbacksError {
 }
 
 abstract class BleManagerCallbacks {
-  final onDeviceConnectingController = StreamController<DiscoveredDevice>();
-  Stream<DiscoveredDevice> get onDeviceConnecting => onDeviceConnectingController.stream;
+  final onDeviceConnectingController = StreamController<ConnectionStateUpdate>();
+  Stream<ConnectionStateUpdate> get onDeviceConnecting => onDeviceConnectingController.stream;
 
-  final onDeviceConnectedController = StreamController<DiscoveredDevice>();
-  Stream<DiscoveredDevice> get onDeviceConnected => onDeviceConnectedController.stream;
+  final onDeviceConnectedController = StreamController<ConnectionStateUpdate>();
+  Stream<ConnectionStateUpdate> get onDeviceConnected => onDeviceConnectedController.stream;
 
-  final onDeviceDisconnectingController = StreamController<DiscoveredDevice?>();
-  Stream<DiscoveredDevice?> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
+  final onDeviceDisconnectingController = StreamController<ConnectionStateUpdate>();
+  Stream<ConnectionStateUpdate> get onDeviceDisconnecting => onDeviceDisconnectingController.stream;
 
-  final onDeviceDisconnectedController = StreamController<DiscoveredDevice?>();
-  Stream<DiscoveredDevice?> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
+  final onDeviceDisconnectedController = StreamController<ConnectionStateUpdate>();
+  Stream<ConnectionStateUpdate> get onDeviceDisconnected => onDeviceDisconnectedController.stream;
 
   // Stream<BluetoothDevice> onLinkLossOccurred;
 

@@ -7,7 +7,7 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 class SendConfigModelSubscriptionAdd extends StatefulWidget {
   final MeshManagerApi meshManagerApi;
 
-  const SendConfigModelSubscriptionAdd(this.meshManagerApi) : super();
+  const SendConfigModelSubscriptionAdd(this.meshManagerApi, {Key? key}) : super(key: key);
 
   @override
   _SendConfigModelSubscriptionAddState createState() => _SendConfigModelSubscriptionAddState();
@@ -22,28 +22,28 @@ class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscrip
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: Text('Send a config model Subscription add'),
+      title: const Text('Send a config model Subscription add'),
       children: <Widget>[
         TextField(
-          decoration: InputDecoration(hintText: 'dest Address'),
+          decoration: const InputDecoration(hintText: 'dest Address'),
           onChanged: (text) {
             selectedAddress = int.parse(text);
           },
         ),
         TextField(
-          decoration: InputDecoration(hintText: 'Element Address'),
+          decoration: const InputDecoration(hintText: 'Element Address'),
           onChanged: (text) {
             selectedElementAddress = int.parse(text);
           },
         ),
         TextField(
-          decoration: InputDecoration(hintText: 'Model type'),
+          decoration: const InputDecoration(hintText: 'Model type'),
           onChanged: (text) {
             selectedModelType = int.parse(text);
           },
         ),
         TextField(
-          decoration: InputDecoration(hintText: 'subscription address'),
+          decoration: const InputDecoration(hintText: 'subscription address'),
           onChanged: (text) {
             selectedSubscriptionAddress = int.parse(text);
           },
@@ -55,17 +55,17 @@ class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscrip
               await widget.meshManagerApi
                   .sendConfigModelSubscriptionAdd(
                       selectedElementAddress, selectedSubscriptionAddress, selectedModelType)
-                  .timeout(Duration(seconds: 40));
-              scaffoldMessenger.showSnackBar(SnackBar(content: Text('OK')));
+                  .timeout(const Duration(seconds: 40));
+              scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {
-              scaffoldMessenger.showSnackBar(SnackBar(content: Text('Board didn\'t respond')));
+              scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Board didn\'t respond')));
             } on PlatformException catch (e) {
               scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
             } catch (e) {
               scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
             }
           },
-          child: Text('Send level'),
+          child: const Text('Send level'),
         )
       ],
     );

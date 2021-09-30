@@ -26,7 +26,7 @@ void main() {
 
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
-  }, timeout: Timeout(Duration(minutes: 5)));
+  }, timeout: const Timeout(Duration(minutes: 5)));
 
   test('see new node in meshNetwork', () async {
     final homeItemFinder = find.text('Home');
@@ -51,7 +51,7 @@ void main() {
     await driver.tap(findFirstDevice);
     final circularLoadingFinder = find.byType('CircularProgressIndicator');
     await driver.waitForAbsent(circularLoadingFinder);
-  }, timeout: Timeout(Duration(minutes: 5)));
+  }, timeout: const Timeout(Duration(minutes: 5)));
 
   test('open node page to configure and go back', () async {
     final firstNodeFinder = find.byValueKey('node-0');
@@ -63,7 +63,7 @@ void main() {
     await driver.waitFor(find.text('Board successfully configured'));
     final backPage = find.pageBack();
     await driver.tap(backPage);
-  }, timeout: Timeout(Duration(minutes: 1)));
+  }, timeout: const Timeout(Duration(minutes: 1)));
 
   test('turn first light on', () async {
     final sendGenericLevelFinder = find.text('Send a generic level set');
@@ -78,7 +78,7 @@ void main() {
 
     await driver.tap(find.text('Send level'));
     await driver.waitFor(find.text('OK'));
-  }, timeout: Timeout(Duration(minutes: 1)));
+  }, timeout: const Timeout(Duration(minutes: 1)));
 
   test('turn first light off', () async {
     final sendGenericOnOffFinder = find.text('Send a generic On Off set');
@@ -88,5 +88,5 @@ void main() {
     await driver.enterText('3');
     await driver.tap(find.text('Send on off'));
     await driver.waitFor(find.text('OK'));
-  }, timeout: Timeout(Duration(minutes: 1)));
+  }, timeout: const Timeout(Duration(minutes: 1)));
 }

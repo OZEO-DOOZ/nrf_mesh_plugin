@@ -6,7 +6,7 @@ class Node extends StatefulWidget {
   final ProvisionedMeshNode node;
   final IMeshNetwork meshNetwork;
   final String testKey; // For flutter driver tests
-  const Node(this.node, this.meshNetwork, this.testKey) : super();
+  const Node(this.node, this.meshNetwork, this.testKey, {Key? key}) : super(key: key);
 
   @override
   _NodeState createState() => _NodeState();
@@ -32,12 +32,12 @@ class _NodeState extends State<Node> {
       subtitle: Text(_nodeAdress),
       onExpansionChanged: (isOpen) {
         if (isOpen) {
-          print('load elements');
+          debugPrint('load elements');
           widget.node.elements.then((value) => setState(() => _elements = value));
         }
       },
       children: <Widget>[
-        Text('Elements :'),
+        const Text('Elements :'),
         Column(
           children: <Widget>[
             ..._elements.map((e) => MeshElement(e)).toList(),
