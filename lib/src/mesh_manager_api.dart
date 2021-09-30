@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
@@ -92,12 +93,11 @@ class MeshManagerApi {
   MeshNetwork? _lastMeshNetwork;
 
   MeshManagerApi() {
-    //  this is for debug purpose
-    _eventChannelStream = _eventChannel
-        .receiveBroadcastStream()
-        .cast<Map>()
-        .map((event) => event.cast<String, dynamic>())
-        .doOnData(print);
+    _eventChannelStream =
+        _eventChannel.receiveBroadcastStream().cast<Map>().map((event) => event.cast<String, dynamic>());
+    if (kDebugMode) {
+      _eventChannelStream.doOnData((data) => debugPrint('$data'));
+    }
 
     _onNetworkLoadedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded).listen(_onNetworkLoadedStreamController.add);
@@ -386,7 +386,7 @@ class MeshManagerApi {
   }) async {
     final status = _onGenericLevelStatusController.stream.firstWhere(
       (element) => element.source == address,
-      orElse: () => GenericLevelStatusData(-1, -1, -1, -1, -1, -1),
+      orElse: () => const GenericLevelStatusData(-1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendGenericLevelSet', {
       'address': address,
@@ -405,7 +405,7 @@ class MeshManagerApi {
   }) async {
     final status = _onGenericLevelStatusController.stream.firstWhere(
       (element) => element.source == address,
-      orElse: () => GenericLevelStatusData(-1, -1, -1, -1, -1, -1),
+      orElse: () => const GenericLevelStatusData(-1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendGenericLevelGet', {
       'address': address,
@@ -425,7 +425,7 @@ class MeshManagerApi {
   }) async {
     final status = _onGenericOnOffStatusController.stream.firstWhere(
       (element) => element.source == address && element.presentState == value,
-      orElse: () => GenericOnOffStatusData(-1, false, false, -1, -1),
+      orElse: () => const GenericOnOffStatusData(-1, false, false, -1, -1),
     );
     await _methodChannel.invokeMethod('sendGenericOnOffSet', {
       'address': address,
@@ -450,7 +450,7 @@ class MeshManagerApi {
     if (Platform.isAndroid) {
       final status = _onV2MagicLevelSetStatusController.stream.firstWhere(
         (element) => element.source == address,
-        orElse: () => MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
+        orElse: () => const MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
       );
       await _methodChannel.invokeMethod('sendV2MagicLevel', {
         'io': io,
@@ -476,7 +476,7 @@ class MeshManagerApi {
     if (Platform.isAndroid) {
       final status = _onV2MagicLevelGetStatusController.stream.firstWhere(
         (element) => element.source == address,
-        orElse: () => MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
+        orElse: () => const MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
       );
       await _methodChannel.invokeMethod('getV2MagicLevel', {
         'io': io,
@@ -501,7 +501,7 @@ class MeshManagerApi {
     final status = _onConfigModelAppStatusController.stream.firstWhere(
       (element) =>
           element.elementAddress == elementId && element.modelId == modelId && element.appKeyIndex == appKeyIndex,
-      orElse: () => ConfigModelAppStatusData(-1, -1, -1),
+      orElse: () => const ConfigModelAppStatusData(-1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendConfigModelAppBind', {
       'nodeId': nodeId,
@@ -519,7 +519,7 @@ class MeshManagerApi {
           element.elementAddress == elementAddress &&
           element.modelIdentifier == modelIdentifier &&
           element.subscriptionAddress == subscriptionAddress,
-      orElse: () => ConfigModelSubscriptionStatus(-1, -1, -1, -1, -1, false),
+      orElse: () => const ConfigModelSubscriptionStatus(-1, -1, -1, -1, -1, false),
     );
     await _methodChannel.invokeMethod('sendConfigModelSubscriptionAdd', {
       'elementAddress': elementAddress,
@@ -536,7 +536,7 @@ class MeshManagerApi {
           element.elementAddress == elementAddress &&
           element.modelIdentifier == modelIdentifier &&
           element.subscriptionAddress == subscriptionAddress,
-      orElse: () => ConfigModelSubscriptionStatus(-1, -1, -1, -1, -1, false),
+      orElse: () => const ConfigModelSubscriptionStatus(-1, -1, -1, -1, -1, false),
     );
     await _methodChannel.invokeMethod('sendConfigModelSubscriptionDelete', {
       'elementAddress': elementAddress,
@@ -579,7 +579,7 @@ class MeshManagerApi {
           element.retransmitCount == retransmitCount &&
           element.retransmitIntervalSteps == retransmitIntervalSteps &&
           element.modelIdentifier == modelIdentifier,
-      orElse: () => ConfigModelPublicationStatus(-1, -1, -1, false, -1, -1, -1, -1, -1, -1, false),
+      orElse: () => const ConfigModelPublicationStatus(-1, -1, -1, false, -1, -1, -1, -1, -1, -1, false),
     );
     await _methodChannel.invokeMethod('sendConfigModelPublicationSet', {
       'elementAddress': elementAddress,
@@ -605,7 +605,7 @@ class MeshManagerApi {
     if (Platform.isAndroid) {
       final status = _onLightLightnessStatusController.stream.firstWhere(
         (element) => element.source == address,
-        orElse: () => LightLightnessStatusData(-1, -1, -1, -1, -1, -1),
+        orElse: () => const LightLightnessStatusData(-1, -1, -1, -1, -1, -1),
       );
       await _methodChannel.invokeMethod('sendLightLightness', {
         'address': address,
@@ -630,7 +630,7 @@ class MeshManagerApi {
     if (Platform.isAndroid) {
       final status = _onLightCtlStatusController.stream.firstWhere(
         (element) => element.source == address,
-        orElse: () => LightCtlStatusData(-1, -1, -1, -1, -1, -1, -1, -1),
+        orElse: () => const LightCtlStatusData(-1, -1, -1, -1, -1, -1, -1, -1),
       );
       await _methodChannel.invokeMethod('sendLightCtl', {
         'address': address,
@@ -657,7 +657,7 @@ class MeshManagerApi {
     if (Platform.isAndroid) {
       final status = _onLightHslStatusController.stream.firstWhere(
         (element) => element.source == address,
-        orElse: () => LightHslStatusData(-1, -1, -1, -1, -1, -1, -1),
+        orElse: () => const LightHslStatusData(-1, -1, -1, -1, -1, -1, -1),
       );
       await _methodChannel.invokeMethod('sendLightHsl', {
         'address': address,
@@ -676,7 +676,7 @@ class MeshManagerApi {
   Future<ConfigDefaultTtlStatus> getDefaultTtl(int address) async {
     final status = _onConfigDefaultTtlStatusController.stream.firstWhere(
       (element) => element.source == address,
-      orElse: () => ConfigDefaultTtlStatus(-1, -1, -1),
+      orElse: () => const ConfigDefaultTtlStatus(-1, -1, -1),
     );
     await _methodChannel.invokeMethod('getDefaultTtl', {'address': address});
     return status;
@@ -685,7 +685,7 @@ class MeshManagerApi {
   Future<ConfigDefaultTtlStatus> setDefaultTtl(int address, int ttl) async {
     final status = _onConfigDefaultTtlStatusController.stream.firstWhere(
       (element) => element.source == address,
-      orElse: () => ConfigDefaultTtlStatus(-1, -1, -1),
+      orElse: () => const ConfigDefaultTtlStatus(-1, -1, -1),
     );
     await _methodChannel.invokeMethod('setDefaultTtl', {
       'address': address,
@@ -701,7 +701,7 @@ class MeshManagerApi {
   ) async {
     final status = _onConfigNetworkTransmitStatusController.stream.firstWhere(
       (element) => element.source == address,
-      orElse: () => ConfigNetworkTransmitStatus(-1, -1, -1, -1),
+      orElse: () => const ConfigNetworkTransmitStatus(-1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('setNetworkTransmitSettings', {
       'address': address,
@@ -714,7 +714,7 @@ class MeshManagerApi {
   Future<ConfigNetworkTransmitStatus> getNetworkTransmitSettings(int address) async {
     final status = _onConfigNetworkTransmitStatusController.stream.firstWhere(
       (element) => element.source == address,
-      orElse: () => ConfigNetworkTransmitStatus(-1, -1, -1, -1),
+      orElse: () => const ConfigNetworkTransmitStatus(-1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('getNetworkTransmitSettings', {'address': address});
     return status;
@@ -744,7 +744,7 @@ class MeshManagerApi {
           .where((element) => element.source == unicastAddress)
           .timeout(const Duration(seconds: 3),
               onTimeout: (sink) => sink.add(
-                    ConfigNodeResetStatus(-1, -1, false),
+                    const ConfigNodeResetStatus(-1, -1, false),
                   ))
           .first;
       await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
