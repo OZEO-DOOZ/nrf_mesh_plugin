@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 void main() {
   test('Check if address correspond to the one in advertisement data', () {
     final data = {
+      //'F4:02:20:96:76:3E': '9798A201-DB44-46B9-9D41-FEA9C96B149B',
       'ED:E4:50:B2:FB:C3': '9FA17819-6407-E043-83FB-B250E46DC3EF',
       'C2:A5:D1:FD:87:C3': 'E04B7DA8-CA77-2C44-8387-FDD1A5025E44',
       'E9:9B:4C:42:E8:03': '8F5A5B2E-59DF-1E4B-83E8-424C9B691FED',
