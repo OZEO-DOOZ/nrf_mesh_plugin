@@ -35,10 +35,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   E? callbacks;
 
   /// A [StreamSubscription] used to trigger events that describe the current [_device]'s connection status
-  StreamSubscription<ConnectionStateUpdate>? _connectedDeviceStatusStream;
+  StreamSubscription<ConnectionStateUpdate>? _connectedDeviceStatusListener;
 
   /// A [StreamSubscription] used to listen to every connection status updates coming from BLE library
-  late final StreamSubscription<ConnectionStateUpdate> _deviceStatusStream;
+  late final StreamSubscription<ConnectionStateUpdate> _globalStatusListener;
 
   /// A [Completer] used to handle the async behavior of [connect] method
   late Completer<void> _connectCompleter;
@@ -51,85 +51,27 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   FlutterReactiveBle get bleInstance => _bleInstance;
 
   BleManager(this._bleInstance) {
-    _deviceStatusStream = _bleInstance.connectedDeviceStream.listen((connectionStateUpdate) {
-      final _callbacks = callbacks;
-      if (_callbacks == null) {
-        _log('no callbacks set...received $connectionStateUpdate');
-      } else {
-        switch (connectionStateUpdate.connectionState) {
-          case DeviceConnectionState.connecting:
-            if (_device != null) {
-              if (!_callbacks.onDeviceConnectingController.isClosed &&
-                  _callbacks.onDeviceConnectingController.hasListener) {
-                _callbacks.onDeviceConnectingController.add(connectionStateUpdate);
-              } else {
-                _log('received $connectionStateUpdate');
-              }
-            } else {
-              _log('received unexpected connection state update : $connectionStateUpdate');
-            }
-            break;
-          case DeviceConnectionState.connected:
-            if (_device != null && connectionStateUpdate.deviceId == _device!.id) {
-              if (!_callbacks.onDeviceConnectedController.isClosed &&
-                  _callbacks.onDeviceConnectedController.hasListener) {
-                _callbacks.onDeviceConnectedController.add(connectionStateUpdate);
-              } else {
-                _log('received $connectionStateUpdate');
-              }
-            } else {
-              _log('received unexpected connection state update : $connectionStateUpdate');
-            }
-            break;
-          case DeviceConnectionState.disconnecting:
-            if (_device != null) {
-              if (!(_callbacks.onDeviceDisconnectingController.isClosed == true) &&
-                  _callbacks.onDeviceDisconnectingController.hasListener) {
-                _callbacks.onDeviceDisconnectingController.add(connectionStateUpdate);
-              } else {
-                _log('received $connectionStateUpdate');
-              }
-            } else {
-              _log('received unexpected connection state update : $connectionStateUpdate');
-            }
-            break;
-          case DeviceConnectionState.disconnected:
-            if (_device != null) {
-              // error may have been caught upon connection initialization or during connection
-              GenericFailure? maybeError = connectionStateUpdate.failure;
-              // determine if callbacks are set
-              if (_hasDeviceDisconnectedCallback) {
-                if (_hasErrorCallback) {
-                  // if all callbacks are available, prioritize error callback if any error is given in the event
-                  if (maybeError != null) {
-                    _callbacks.onErrorController.add(BleManagerCallbacksError(_device, maybeError.message, maybeError));
-                  } else {
-                    _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
-                  }
-                } else {
-                  _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
-                }
-              } else {
-                _log('received $connectionStateUpdate');
-              }
-              if (maybeError == null) {
-                // BLE library will notify several disconnected events,
-                // but when disconnection process is done, the event should have no error,
-                // so here we wait for the error to be null before assigning null to _device
-                if (_device!.id == connectionStateUpdate.deviceId) {
-                  _device = null;
-                }
-              }
-            } else {
-              _log('received unexpected connection state update : $connectionStateUpdate');
-            }
-            break;
-        }
-      }
-    });
+    _globalStatusListener = _bleInstance.connectedDeviceStream.listen(_onGlobalStateUpdate);
   }
 
-  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
+  Future<void> dispose() async {
+    await callbacks?.dispose();
+    await _connectedDeviceStatusListener?.cancel();
+    await _globalStatusListener.cancel();
+  }
+
+  @visibleForOverriding
+  Future<DiscoveredService?> isRequiredServiceSupported();
+
+  @visibleForOverriding
+  Future<void> initGatt();
+
+  Future<void> disconnect() async {
+    if (_device == null) {
+      _log('calling disconnect without connected device..');
+    }
+    await _connectedDeviceStatusListener?.cancel();
+  }
 
   bool get _hasDeviceDisconnectedCallback =>
       !(callbacks?.onDeviceDisconnectedController.isClosed == true) &&
@@ -137,11 +79,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   bool get _hasErrorCallback =>
       !(callbacks?.onErrorController.isClosed == true) && callbacks!.onErrorController.hasListener;
 
-  Future<void> dispose() async {
-    await callbacks?.dispose();
-    await _connectedDeviceStatusStream?.cancel();
-    await _deviceStatusStream.cancel();
-  }
+  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
 
   /// Will connect to the provided [DiscoveredDevice] using its [id] as identifier.
   /// This method will subscribe to connection status updates to :
@@ -160,7 +98,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     // cancel any existing sub, if connected to any device,
     // events will be handled by [_deviceStatusStream] or by
     // [_connectedDeviceStatusStream] first if same device as [discoveredDevice]
-    await _connectedDeviceStatusStream?.cancel();
+    await _connectedDeviceStatusListener?.cancel();
     final watch = Stopwatch()..start();
     final _callbacks = callbacks as E;
     _connectCompleter = Completer<void>();
@@ -169,9 +107,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         _log('connect failed after ${watch.elapsedMilliseconds}ms');
         _connectCompleter.completeError(TimeoutException('connection timed out', connectionTimeout));
       }
-      _connectedDeviceStatusStream!.cancel();
+      _connectedDeviceStatusListener!.cancel();
     });
-    _connectedDeviceStatusStream = _bleInstance
+    _connectedDeviceStatusListener = _bleInstance
         .connectToDevice(
           id: discoveredDevice.id,
           // added here so the library sets autoconnect flag to false, but timeout duration seems ignored
@@ -282,16 +220,83 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     }
   }
 
-  @visibleForOverriding
-  Future<DiscoveredService?> isRequiredServiceSupported();
-
-  @visibleForOverriding
-  Future<void> initGatt();
-
-  Future<void> disconnect() async {
-    if (_device == null) {
-      _log('calling disconnect without connected device..');
+  /// This handler will propagate events to any existing callback (if the update is expected).
+  ///
+  /// On confirmed disconnection event, it will reset the [_device] to `null` reflecting the current state of [BleManager] that manage one device at a time.
+  void _onGlobalStateUpdate(connectionStateUpdate) {
+    final _callbacks = callbacks;
+    if (_callbacks == null) {
+      _log('no callbacks set...received $connectionStateUpdate');
+    } else {
+      switch (connectionStateUpdate.connectionState) {
+        case DeviceConnectionState.connecting:
+          if (_device != null) {
+            if (!_callbacks.onDeviceConnectingController.isClosed &&
+                _callbacks.onDeviceConnectingController.hasListener) {
+              _callbacks.onDeviceConnectingController.add(connectionStateUpdate);
+            } else {
+              _log('received $connectionStateUpdate');
+            }
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+        case DeviceConnectionState.connected:
+          if (_device != null && connectionStateUpdate.deviceId == _device!.id) {
+            if (!_callbacks.onDeviceConnectedController.isClosed &&
+                _callbacks.onDeviceConnectedController.hasListener) {
+              _callbacks.onDeviceConnectedController.add(connectionStateUpdate);
+            } else {
+              _log('received $connectionStateUpdate');
+            }
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+        case DeviceConnectionState.disconnecting:
+          if (_device != null) {
+            if (!(_callbacks.onDeviceDisconnectingController.isClosed == true) &&
+                _callbacks.onDeviceDisconnectingController.hasListener) {
+              _callbacks.onDeviceDisconnectingController.add(connectionStateUpdate);
+            } else {
+              _log('received $connectionStateUpdate');
+            }
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+        case DeviceConnectionState.disconnected:
+          if (_device != null) {
+            // error may have been caught upon connection initialization or during connection
+            GenericFailure? maybeError = connectionStateUpdate.failure;
+            // determine if callbacks are set
+            if (_hasDeviceDisconnectedCallback) {
+              if (_hasErrorCallback) {
+                // if all callbacks are available, prioritize error callback if any error is given in the event
+                if (maybeError != null) {
+                  _callbacks.onErrorController.add(BleManagerCallbacksError(_device, maybeError.message, maybeError));
+                } else {
+                  _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
+                }
+              } else {
+                _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
+              }
+            } else {
+              _log('received $connectionStateUpdate');
+            }
+            if (maybeError == null) {
+              // BLE library will notify several disconnected events,
+              // but when disconnection process is done, the event should have no error,
+              // so here we wait for the error to be null before assigning null to _device
+              if (_device!.id == connectionStateUpdate.deviceId) {
+                _device = null;
+              }
+            }
+          } else {
+            _log('received unexpected connection state update : $connectionStateUpdate');
+          }
+          break;
+      }
     }
-    await _connectedDeviceStatusStream?.cancel();
   }
 }
