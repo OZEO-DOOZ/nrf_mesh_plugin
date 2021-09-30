@@ -122,7 +122,15 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt().then((_) => _connectCompleter.complete()).catchError(
+                  _negotiateAndInitGatt().then((_) {
+                    if (!_connectCompleter.isCompleted) {
+                      _connectCompleter.complete();
+                      if (!_callbacks.onDeviceReadyController.isClosed &&
+                          _callbacks.onDeviceReadyController.hasListener) {
+                        _callbacks.onDeviceReadyController.add(_device!);
+                      }
+                    }
+                  }).catchError(
                     (e, s) {
                       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
                         _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', e));
@@ -208,9 +216,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           mtuSize = negotiatedMtu;
         }
         await _callbacks.sendMtuToMeshManagerApi(mtuSize);
-        if (!_callbacks.onDeviceReadyController.isClosed && _callbacks.onDeviceReadyController.hasListener) {
-          _callbacks.onDeviceReadyController.add(_device!);
-        }
       } catch (e) {
         _log('caught error during negociation : $e');
         throw BleManagerException(BleManagerFailureCode.negociation, '$e');
