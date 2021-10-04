@@ -44,7 +44,7 @@ class NordicNrfMesh {
   ///
   /// Returns a [ProvisionedMeshNode] if success.
   ///
-  /// Throws an [Exception] if provisioning failed
+  /// Throws an [NrfMeshProvisioningException] if provisioning failed
   /// or an [UnsupportedError] if the current OS is not supported.
   Future<ProvisionedMeshNode> provisioning(
     final MeshManagerApi meshManagerApi,
