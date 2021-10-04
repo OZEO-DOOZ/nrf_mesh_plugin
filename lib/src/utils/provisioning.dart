@@ -79,7 +79,10 @@ Future<ProvisionedMeshNode> _provisioning(
     DiscoveredDevice deviceToProvision,
     String serviceDataUuid,
     ProvisioningEvent? events) async {
-  assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
+  if (meshManagerApi.meshNetwork == null) {
+    throw NrfMeshProvisioningException(ProvisioningFailureCode.meshConfiguration,
+        'You need to load a meshNetwork before being able to provision a device');
+  }
   final completer = Completer();
   late final ProvisionedMeshNode provisionedMeshNode;
 
@@ -131,7 +134,7 @@ Future<ProvisionedMeshNode> _provisioning(
   });
   onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
     completer.completeError(NrfMeshProvisioningException(
-        ProvisioningFailureCode.mesh, 'Failed to provision device ${deviceToProvision.id}'));
+        ProvisioningFailureCode.provisioningFailed, 'Failed to provision device ${deviceToProvision.id}'));
   });
   onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
@@ -215,8 +218,10 @@ Future<ProvisionedMeshNode> _provisioning(
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
     cancelProvisioningCallbackSubscription(bleMeshManager);
+    _log('provisioning success !');
     return provisionedMeshNode;
   } catch (e) {
+    _log('caught error during provisioning... $e');
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
     if (e is NrfMeshProvisioningException) {
       rethrow;
