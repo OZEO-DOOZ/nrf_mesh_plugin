@@ -23,6 +23,9 @@ enum ProvisioningFailureCode {
   /// when the configuration of the n/w is invalid (null network ?)
   meshConfiguration,
 
+  /// when an unexpected disconnectione event is received with an error
+  unexpectedGattError,
+
   /// when provisioning goes timeout
   timeout,
 
