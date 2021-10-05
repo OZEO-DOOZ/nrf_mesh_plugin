@@ -281,7 +281,11 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                 if (maybeError != null) {
                   _callbacks.onErrorController.add(BleManagerCallbacksError(_device, maybeError.message, maybeError));
                 } else {
-                  _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
+                  if (_hasDeviceDisconnectedCallback) {
+                    _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
+                  } else {
+                    _log('device has been disconnected ! $connectionStateUpdate');
+                  }
                 }
               } else {
                 _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
