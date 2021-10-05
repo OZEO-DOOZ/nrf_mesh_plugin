@@ -205,12 +205,14 @@ Future<ProvisionedMeshNode> _provisioning(
     if (!isHandlingConnectErrors) {
       // if not in a connection phase where auto retry are implemented, we should notify gatt errors
       events?._provisioningGattErrorController.add(event);
-      completer.completeError(
-        NrfMeshProvisioningException(
-          ProvisioningFailureCode.unexpectedGattError,
-          'received a gatt error event outside connection phases',
-        ),
-      );
+      if (!completer.isCompleted) {
+        completer.completeError(
+          NrfMeshProvisioningException(
+            ProvisioningFailureCode.unexpectedGattError,
+            'received a gatt error event outside connection phases',
+          ),
+        );
+      }
     }
   });
   onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
