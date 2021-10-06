@@ -146,7 +146,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   );
                   break;
                 case DeviceConnectionState.disconnecting:
-                  // handled by _deviceStatusStream
+                  // handled by _globalStatusListener
                   break;
                 case DeviceConnectionState.disconnected:
                   if (_device != null) {
@@ -161,9 +161,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                       } else {
                         _connectCompleter.complete();
                       }
-                    }
-                    if (maybeError == null) {
-                      _device = null;
                     }
                   } else {
                     _log('seems that you were already connected to that node..'
