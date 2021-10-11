@@ -147,7 +147,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   );
                   break;
                 case DeviceConnectionState.disconnecting:
-                  // handled by _deviceStatusStream
+                  // handled by _globalStatusListener
                   break;
                 case DeviceConnectionState.disconnected:
                   if (_device != null) {
@@ -162,9 +162,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                       } else {
                         _connectCompleter.complete();
                       }
-                    }
-                    if (maybeError == null) {
-                      _device = null;
                     }
                   } else {
                     _log('seems that you were already connected to that node..'
@@ -276,13 +273,17 @@ abstract class BleManager<E extends BleManagerCallbacks> {
             // error may have been caught upon connection initialization or during connection
             GenericFailure? maybeError = connectionStateUpdate.failure;
             // determine if callbacks are set
-            if (_hasDeviceDisconnectedCallback) {
+            if (_hasDeviceDisconnectedCallback || _hasErrorCallback) {
               if (_hasErrorCallback) {
                 // if all callbacks are available, prioritize error callback if any error is given in the event
                 if (maybeError != null) {
                   _callbacks.onErrorController.add(BleManagerCallbacksError(_device, maybeError.message, maybeError));
                 } else {
-                  _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
+                  if (_hasDeviceDisconnectedCallback) {
+                    _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
+                  } else {
+                    _log('device has been disconnected ! $connectionStateUpdate');
+                  }
                 }
               } else {
                 _callbacks.onDeviceDisconnectedController.add(connectionStateUpdate);
