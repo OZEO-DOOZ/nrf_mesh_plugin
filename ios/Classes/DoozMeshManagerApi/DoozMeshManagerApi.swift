@@ -99,7 +99,15 @@ private extension DoozMeshManagerApi {
             break
         case .loadMeshNetwork:
             do {
-                let network = try _loadMeshNetwork()
+                let network = try _loadMeshNetwork()                
+                // Set up local Elements on the phone.
+                let element0 = Element(name: "Primary Element", location: .first, models: [
+                    Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
+                    Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
+                    Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
+                    Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+                ])
+                meshNetworkManager.localElements = [element0]
                 delegate?.onNetworkLoaded(network)
                 delegate?.onNetworkUpdated(network)
                 result(nil)
@@ -110,6 +118,15 @@ private extension DoozMeshManagerApi {
         case .importMeshNetworkJson(let data):
             do{
                 let network = try _importMeshNetworkJson(data.json)
+                // Set up local Elements on the phone.
+                 let element0 = Element(name: "Primary Element", location: .first, models: [
+                     Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
+                     Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
+                     Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
+                     Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+                 ])
+                 meshNetworkManager.localElements = [element0]
+
                 delegate?.onNetworkImported(network)
                 delegate?.onNetworkUpdated(network)
                 result(nil)

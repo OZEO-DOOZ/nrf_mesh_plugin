@@ -10,7 +10,6 @@ import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
 import 'package:nordic_nrf_mesh/src/utils/provisioning.dart' as utils_provisioning;
-import 'package:nordic_nrf_mesh/src/utils/advertisement_data.dart' as utils_advertisement_data;
 
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
@@ -31,12 +30,6 @@ class NordicNrfMesh {
     final meshManagerApi = MeshManagerApi();
     return meshManagerApi;
   }
-
-  bool addressIsInAdvertisementData(final List<int> address, final List<int> advertisementData) =>
-      utils_advertisement_data.addressIsInAdvertisementData(address, advertisementData);
-
-  Stream<String> macAddressesFromAdvertisementData(final List<int> advertisementData) =>
-      utils_advertisement_data.macAddressesFromAdvertisementData(advertisementData);
 
   /// Will try to provision the specified [BluetoothDevice].
   ///

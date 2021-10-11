@@ -15,7 +15,7 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
         
         // Handle the message based on its type.
         switch message {
-        
+
         case let status as ConfigModelAppStatus:
             
             if status.isSuccess {
@@ -68,7 +68,7 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
             }
             
         case let status as GenericLevelStatus:
-            
+
             let message: FlutterMessage = [
                 
                 EventSinkKeys.eventName.rawValue : MessageEvent.onGenericLevelStatus.rawValue,

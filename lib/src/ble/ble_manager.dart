@@ -9,6 +9,8 @@ import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
+final macAddressServiceUuid = Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
+final macAddressCharacteristicUuid = Platform.isAndroid ? Uuid.parse('00001401-0000-1000-8000-00805F9B34FB') : Uuid.parse('1401');
 final meshProxyUuid = Platform.isAndroid ? Uuid.parse('00001828-0000-1000-8000-00805F9B34FB') : Uuid.parse('1828');
 final meshProxyDataIn = Platform.isAndroid ? Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADD');
 final meshProxyDataOut = Platform.isAndroid ? Uuid.parse('00002ADE-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADE');
