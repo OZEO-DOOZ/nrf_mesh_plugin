@@ -153,13 +153,14 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                     // error may have been caught upon connection initialization or during connection
                     GenericFailure? maybeError = connectionStateUpdate.failure;
                     if (!_connectCompleter.isCompleted) {
+                      // will notify for error as the connection could not be properly established
+                      _log('connect failed after ${watch.elapsedMilliseconds}ms');
                       if (maybeError != null) {
-                        // will notify for error as the connection could not be properly established
-                        _log('connect failed after ${watch.elapsedMilliseconds}ms');
                         connectTimeout.cancel();
                         _connectCompleter.completeError(maybeError);
                       } else {
-                        _connectCompleter.complete();
+                        connectTimeout.cancel();
+                        _connectCompleter.completeError('disconnect event before device is ready');
                       }
                     }
                   } else {
