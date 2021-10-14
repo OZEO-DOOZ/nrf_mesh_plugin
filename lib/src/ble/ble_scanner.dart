@@ -96,9 +96,9 @@ class BleScanner {
         withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
       ).firstWhere((s) => validScanResult(s, uid)).timeout(scanTimeout);
     } on StateError catch (e) {
-      debugPrint('[BleScanner] StateError -- no device found with UUID : $uid\n$e\n${e.message}');
+      debugPrint('[NordicNrfMesh] StateError -- no device found with UUID : $uid\n$e\n${e.message}');
     } on TimeoutException catch (e) {
-      debugPrint('[BleScanner] TimeoutException -- no device found with UUID : $uid\n$e\n${e.message}');
+      debugPrint('[NordicNrfMesh] TimeoutException -- no device found with UUID : $uid\n$e\n${e.message}');
     }
     return result;
   }

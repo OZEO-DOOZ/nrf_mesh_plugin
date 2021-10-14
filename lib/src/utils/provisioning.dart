@@ -79,8 +79,12 @@ Future<ProvisionedMeshNode> _provisioning(
     DiscoveredDevice deviceToProvision,
     String serviceDataUuid,
     ProvisioningEvent? events) async {
-  assert(meshManagerApi.meshNetwork != null, 'You need to load a meshNetwork before being able to provision a device');
+  if (meshManagerApi.meshNetwork == null) {
+    throw NrfMeshProvisioningException(ProvisioningFailureCode.meshConfiguration,
+        'You need to load a meshNetwork before being able to provision a device');
+  }
   final completer = Completer();
+  late bool isHandlingConnectErrors;
   late final ProvisionedMeshNode provisionedMeshNode;
 
   //'Undocumented scan throttle' error caught here
@@ -116,7 +120,9 @@ Future<ProvisionedMeshNode> _provisioning(
       events?._provisioningReconnectController.add(null);
       try {
         _connectRetryCount = 0;
+        isHandlingConnectErrors = true;
         await _connect(bleMeshManager, device!);
+        isHandlingConnectErrors = false;
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode!.uuid);
       } catch (e) {
         const _msg = 'Error in connection during provisioning process';
@@ -131,7 +137,7 @@ Future<ProvisionedMeshNode> _provisioning(
   });
   onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
     completer.completeError(NrfMeshProvisioningException(
-        ProvisioningFailureCode.mesh, 'Failed to provision device ${deviceToProvision.id}'));
+        ProvisioningFailureCode.provisioningFailed, 'Failed to provision device ${deviceToProvision.id}'));
   });
   onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
@@ -195,7 +201,19 @@ Future<ProvisionedMeshNode> _provisioning(
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
   onGattErrorSubscription = bleMeshManager.callbacks!.onError.listen((event) {
-    events?._provisioningGattErrorController.add(event);
+    _log('received error event : $event');
+    if (!isHandlingConnectErrors) {
+      // if not in a connection phase where auto retry are implemented, we should notify gatt errors
+      events?._provisioningGattErrorController.add(event);
+      if (!completer.isCompleted) {
+        completer.completeError(
+          NrfMeshProvisioningException(
+            ProvisioningFailureCode.unexpectedGattError,
+            'received a gatt error event outside connection phases',
+          ),
+        );
+      }
+    }
   });
   onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController.add(null);
@@ -209,14 +227,18 @@ Future<ProvisionedMeshNode> _provisioning(
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
     _connectRetryCount = 0;
+    isHandlingConnectErrors = true;
     await _connect(bleMeshManager, deviceToProvision);
+    isHandlingConnectErrors = false;
     await completer.future;
     await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
     cancelProvisioningCallbackSubscription(bleMeshManager);
+    _log('provisioning success !');
     return provisionedMeshNode;
   } catch (e) {
+    _log('caught error during provisioning... $e');
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
     if (e is NrfMeshProvisioningException) {
       rethrow;
