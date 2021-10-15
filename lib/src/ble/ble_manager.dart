@@ -117,7 +117,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           connectionTimeout: connectionTimeout,
         )
         .listen(
-            (connectionStateUpdate) async {
+            (ConnectionStateUpdate connectionStateUpdate) async {
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
                   _device = discoveredDevice;
@@ -154,13 +154,14 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                     // error may have been caught upon connection initialization or during connection
                     GenericFailure? maybeError = connectionStateUpdate.failure;
                     if (!_connectCompleter.isCompleted) {
+                      // will notify for error as the connection could not be properly established
+                      _log('connect failed after ${watch.elapsedMilliseconds}ms');
                       if (maybeError != null) {
-                        // will notify for error as the connection could not be properly established
-                        _log('connect failed after ${watch.elapsedMilliseconds}ms');
                         connectTimeout.cancel();
                         _connectCompleter.completeError(maybeError);
                       } else {
-                        _connectCompleter.complete();
+                        connectTimeout.cancel();
+                        _connectCompleter.completeError('disconnect event before device is ready');
                       }
                     }
                   } else {
@@ -226,7 +227,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   /// This handler will propagate events to any existing callback (if the update is expected).
   ///
   /// On confirmed disconnection event, it will reset the [_device] to `null` reflecting the current state of [BleManager] that manage one device at a time.
-  void _onGlobalStateUpdate(connectionStateUpdate) {
+  void _onGlobalStateUpdate(ConnectionStateUpdate connectionStateUpdate) {
     final _callbacks = callbacks;
     if (_callbacks == null) {
       _log('no callbacks set...received $connectionStateUpdate');
