@@ -206,8 +206,6 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
         case .sendGenericLevelSet(let data):
-            #warning("TODO : add transitionTime and delay")
-            
             guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
                 let error = MeshNetworkError.keyIndexOutOfRange
                 let nsError = error as NSError
@@ -215,12 +213,15 @@ private extension DoozMeshManagerApi {
                 return
             }
             
-            let message = GenericLevelSet(level: data.level)
+            let stepResolution = StepResolution(rawValue: UInt8(data.transitionResolution))!
+            let transitionTime = TransitionTime(steps: UInt8(data.transitionStep), stepResolution: stepResolution)
+            
+            let message = GenericLevelSet(level: Int16(data.level), transitionTime: transitionTime, delay: UInt8(data.delay))
             do{
                 
                 _ = try meshNetworkManager.send(
                     message,
-                    to: MeshAddress(Address(bitPattern: data.address)),
+                    to: MeshAddress(Address(exactly: data.address)!),
                     using: appKey
                 )
                 
@@ -240,12 +241,15 @@ private extension DoozMeshManagerApi {
                 return
             }
             
-            let message = GenericOnOffSet(data.value)
+            let stepResolution = StepResolution(rawValue: UInt8(data.transitionResolution))!
+            let transitionTime = TransitionTime(steps: UInt8(data.transitionStep), stepResolution: stepResolution)
+            
+            let message = GenericOnOffSet(data.value, transitionTime: transitionTime, delay: UInt8(data.delay))
             
             do{
                 _ = try meshNetworkManager.send(
                     message,
-                    to: MeshAddress(Address(bitPattern: data.address)),
+                    to: MeshAddress(Address(exactly: data.address)!),
                     using: appKey
                 )
                 result(nil)
@@ -256,18 +260,18 @@ private extension DoozMeshManagerApi {
             break
         case .sendConfigModelSubscriptionAdd(let data):
             if
-                let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: data.subscriptionAddress))),
+                let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(exactly: data.subscriptionAddress)!)),
                 
-                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.address)),
-                let element = node.element(withAddress: Address(bitPattern: data.elementAddress)),
-                let model = element.model(withModelId: data.modelIdentifier){
-                
+                    let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.elementAddress)!),
+                let element = node.element(withAddress: Address(exactly: data.elementAddress)!),
+                let model = element.model(withModelId: UInt32(data.modelIdentifier)){
+
                 let message: ConfigMessage =
                     ConfigModelSubscriptionAdd(group: group, to: model) ??
                     ConfigModelSubscriptionVirtualAddressAdd(group: group, to: model)!
                 
                 do{
-                    _ = try meshNetworkManager.send(message, to: model)
+                    _ = try meshNetworkManager.send(message, to: node)
                     result(true)
                 }catch{
                     let nsError = error as NSError
@@ -277,18 +281,18 @@ private extension DoozMeshManagerApi {
             break
         case .sendConfigModelSubscriptionDelete(let data):
             if
-                let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(bitPattern: data.subscriptionAddress))),
+                let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(exactly: data.subscriptionAddress)!)),
                 
-                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.address)),
-                let element = node.element(withAddress: Address(bitPattern: data.elementAddress)),
-                let model = element.model(withModelId: data.modelIdentifier){
+                    let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.address)!),
+                let element = node.element(withAddress: Address(exactly: data.elementAddress)!),
+                let model = element.model(withModelId: UInt32(data.modelIdentifier)){
                 
                 let message: ConfigMessage =
                     ConfigModelSubscriptionDelete(group: group, from: model) ??
                     ConfigModelSubscriptionVirtualAddressDelete(group: group, from: model)!
                 
                 do{
-                    _ = try meshNetworkManager.send(message, to: model)
+                    _ = try meshNetworkManager.send(message, to: node)
                     result(true)
                 }catch{
                     let nsError = error as NSError
@@ -298,15 +302,15 @@ private extension DoozMeshManagerApi {
             break
         case .sendConfigModelAppBind(let data):
             do{
-                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.nodeId))
-                let element = node?.element(withAddress: Address(bitPattern: data.elementId))
-                let model = element?.model(withModelId: data.modelId)
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.nodeId)!)
+                let element = node?.element(withAddress: Address(exactly: data.elementId)!)
+                let model = element?.model(withModelId: UInt32(data.modelId))
                 let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.appKeyIndex)]
                 
                 if let _appKey = appKey, let _model = model{
                     
                     if let configModelAppBind = ConfigModelAppBind(applicationKey: _appKey, to: _model){
-                        try _ =  meshNetworkManager.send(configModelAppBind, to: _model)
+                        try _ =  meshNetworkManager.send(configModelAppBind, to: node!)
                         result(nil)
                     }
                 }
@@ -358,7 +362,7 @@ private extension DoozMeshManagerApi {
                 
                 _ = try meshNetworkManager.send(
                     message,
-                    to: MeshAddress(Address(bitPattern: data.address)),
+                    to: MeshAddress(Address(exactly: data.address)!),
                     using: appKey
                 )
                 
@@ -370,9 +374,10 @@ private extension DoozMeshManagerApi {
             }
             break
         case .setNetworkTransmitSettings(let data):
+            let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(exactly: data.address)!)
             let message = ConfigNetworkTransmitSet(count: UInt8(data.transmitCount), steps: UInt8(data.transmitIntervalSteps))
             do {
-                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                _ = try meshNetworkManager.send(message, to: _node!)
                 result(nil)
             } catch {
                 let nsError = error as NSError
@@ -381,8 +386,9 @@ private extension DoozMeshManagerApi {
             break
         case .getNetworkTransmitSettings(let data):
             let message = ConfigNetworkTransmitGet()
+            let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(exactly: data.address)!)
             do {
-                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                _ = try meshNetworkManager.send(message, to: _node!)
                 result(nil)
             } catch {
                 let nsError = error as NSError
@@ -391,8 +397,9 @@ private extension DoozMeshManagerApi {
             break
         case .getDefaultTtl(let data):
             let message = ConfigDefaultTtlGet()
+            let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(exactly: data.address)!)
             do {
-                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                _ = try meshNetworkManager.send(message, to: _node!)
                 result(nil)
             } catch {
                 let nsError = error as NSError
@@ -401,8 +408,9 @@ private extension DoozMeshManagerApi {
             break
         case .setDefaultTtl(let data):
             let message = ConfigDefaultTtlSet(ttl: UInt8(data.ttl))
+            let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(exactly: data.address)!)
             do {
-                _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.address))
+                _ = try meshNetworkManager.send(message, to: _node!)
                 result(nil)
             } catch {
                 let nsError = error as NSError
@@ -412,13 +420,13 @@ private extension DoozMeshManagerApi {
         case .sendConfigModelSubscriptionDeleteAll(let data):
             if
                 
-                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.elementAddress)),
-                let element = node.element(withAddress: Address(bitPattern: data.elementAddress)),
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.elementAddress)!),
+                let element = node.element(withAddress: Address(exactly: data.elementAddress)!),
                 let model = element.model(withModelId: UInt32(data.modelIdentifier)){
                 
                 let message: ConfigMessage = ConfigModelSubscriptionDeleteAll(from: model)!
                 do {
-                    _ = try meshNetworkManager.send(message, to: Address(bitPattern: data.elementAddress))
+                    _ = try meshNetworkManager.send(message, to: node)
                     result(nil)
                 } catch {
                     let nsError = error as NSError
@@ -436,13 +444,13 @@ private extension DoozMeshManagerApi {
             let retransmit = Publish.Retransmit.init(publishRetransmitCount: UInt8(data.retransmitCount), intervalSteps: UInt8(data.retransmitIntervalSteps))
             let stepResolution = StepResolution.init(rawValue: UInt8(data.publicationResolution))
             let period = Publish.Period.init(steps: UInt8(data.retransmitIntervalSteps), resolution: stepResolution!)
-            let publish = Publish.init(to: MeshAddress(Address(bitPattern: Int16(data.publishAddress))), using: appKey, usingFriendshipMaterial: data.credentialFlag, ttl: UInt8(data.publishTtl), period: period, retransmit: retransmit)
-            let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: data.elementAddress))
-            let element = node!.element(withAddress: Address(bitPattern: data.elementAddress))
+            let publish = Publish.init(to: MeshAddress(Address(exactly: Int16(data.publishAddress))!), using: appKey, usingFriendshipMaterial: data.credentialFlag, ttl: UInt8(data.publishTtl), period: period, retransmit: retransmit)
+            let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.elementAddress)!)
+            let element = node!.element(withAddress: Address(exactly: data.elementAddress)!)
             let model = element!.model(withModelId: UInt32(data.modelIdentifier))
             let message: ConfigModelPublicationSet = ConfigModelPublicationSet(publish, to: model!)!
             do {
-                _ = try meshNetworkManager.send(message, to: node!.unicastAddress)
+                _ = try meshNetworkManager.send(message, to: node!)
                 result(nil)
             } catch {
                 let nsError = error as NSError
@@ -610,12 +618,12 @@ private extension DoozMeshManagerApi{
     }
     
     func _exportMeshNetwork() -> String{
-        
+
         let data = meshNetworkManager.export()
         let str = String(decoding: data, as: UTF8.self)
         
         return str
-        
+
     }
     
     func _generateMeshNetwork() -> MeshNetwork{
@@ -769,6 +777,8 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
     }
     
     func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisioningState) {
+        Swift.print("the provisioning state here ______________________________\(state)")
+        Swift.print("the flutter state of provisioning here ___________________\(state.flutterState())")
         let message: FlutterMessage = [
             EventSinkKeys.eventName.rawValue : state.eventName(),
             EventSinkKeys.state.rawValue : state.flutterState(),

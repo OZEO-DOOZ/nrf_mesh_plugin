@@ -150,6 +150,7 @@ Future<ProvisionedMeshNode> _provisioning(
             ProvisioningFailureCode.nodeComposition, 'Provisioning is failed. Module does not have any elements.'));
         return;
       }
+      //TODO: check unicast address for the ios prov after implementing magic lvl cmds on ios lib
       if (Platform.isAndroid) {
         var assigned = false;
         final meshnw = meshManagerApi.meshNetwork!;
@@ -169,7 +170,7 @@ Future<ProvisionedMeshNode> _provisioning(
       }
       events?._provisioningController.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
-    } else if (Platform.isAndroid && event.state == 'PROVISIONING_INVITE') {
+    } else if (event.state == 'PROVISIONING_INVITE') {
       if (!bleMeshManager.isProvisioningCompleted) {
         events?._provisioningInvitationController.add(null);
       } else if (bleMeshManager.isProvisioningCompleted) {

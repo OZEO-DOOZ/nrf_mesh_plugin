@@ -30,7 +30,7 @@ extension ProvisioningState{
         case .ready:
             return "PROVISIONER_READY"
         case .requestingCapabilities:
-            return "REQUESTING_CAPABILITIES"
+            return "PROVISIONING_INVITE"
         case .provisioning:
             return "PROVISIONING"
         default:

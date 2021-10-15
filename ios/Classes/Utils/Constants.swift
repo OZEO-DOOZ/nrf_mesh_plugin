@@ -98,6 +98,15 @@ enum MessageEvent: String{
     case onConfigAppKeyStatus
     case onConfigCompositionDataStatus
     case onGenericLevelStatus
+    case onGenericOnOffStatus
+    case onConfigModelSubscriptionStatus
+    case onConfigModelPublicationStatus
+    case onLightLightnessStatus
+    case onLightCtlStatus
+    case onLightHslStatus
+    case onConfigNodeResetStatus
+    case onConfigNetworkTransmitStatus
+    case onConfigDefaultTtlStatus
 }
 
 enum EventSinkKeys: String{
@@ -108,6 +117,42 @@ enum EventSinkKeys: String{
         case meshMessage
         case source
         case destination
+        
+        case level
+        case targetLevel
+        case transitionResolution
+        case transitionSteps
+        
+        case presentState
+        case targetState
+        
+        case subscriptionAddress
+        case modelIdentifier
+        case isSuccessful
+        
+        case publishAddress
+        case credentialFlag
+        case publishTtl
+        case publicationSteps
+        case publicationResolution
+        case retransmitCount
+        case retransmitIntervalSteps
+        
+        case presentLightness
+        case targetLightness
+        
+        case presentTemperature
+        case targetTemperature
+        
+        case presentHue
+        case presentSaturation
+        
+        case success
+        
+        case transmitCount
+        case transmitIntervalSteps
+        
+        case ttl
     }
     
     enum network: String{
@@ -137,6 +182,4 @@ enum EventSinkKeys: String{
     case data
     case source
     
-    case level
-    case targetLevel
 }

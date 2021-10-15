@@ -161,8 +161,7 @@ private extension DoozMeshNetwork {
             
         case .removeGroup(let data):
             #warning("TODO: impl. meshAddress hex in most cases")
-            let groupAddress = String(format:"%02X", data.groupAddress)
-            if let group = meshNetwork.group(withAddress: MeshAddress(hex: groupAddress)!) {
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(exactly: data.groupAddress)!)) {
                 
                 do{
                     try meshNetwork.remove(group: group)
@@ -180,7 +179,7 @@ private extension DoozMeshNetwork {
             }
                         
         case .getElementsForGroup(let data):
-            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.address))){
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(exactly: data.address)!)){
                 let models = meshNetwork.models(subscribedTo: group)
                 let elements = models.compactMap { model in
                     return model.parentElement
@@ -341,7 +340,10 @@ private extension DoozMeshNetwork {
             result(provisionedMeshNode?.uuid.uuidString)
             
         case .getGroupElementIds(let data):
-            let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress)))!
+            Swift.print("the actual group address : \(data.groupAddress)")
+            Swift.print("the exact address : \(Address(exactly: data.groupAddress)!)")
+            Swift.print("the mesh address : \(MeshAddress(Address(exactly: data.groupAddress)!))")
+            let group = meshNetwork.group(withAddress: MeshAddress(Address(exactly: data.groupAddress)!))!
             let modelsList = meshNetwork.models(subscribedTo: group)
             let elements = modelsList.compactMap { model in
                 return model.parentElement

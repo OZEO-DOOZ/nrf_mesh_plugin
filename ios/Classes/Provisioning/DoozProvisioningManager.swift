@@ -100,7 +100,7 @@ class DoozProvisioningManager: NSObject {
     func sendConfigCompositionDataGet(_ dest: Int16){
         if
             let _meshNetworkManager = self.meshNetworkManager,
-            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
+            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: dest)!){
             
             let message = ConfigCompositionDataGet()
             
@@ -115,7 +115,7 @@ class DoozProvisioningManager: NSObject {
     func sendConfigAppKeyAdd(dest: Int16, appKey: ApplicationKey){
         if
             let _meshNetworkManager = self.meshNetworkManager,
-            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
+            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: dest)!){
             let message = ConfigAppKeyAdd(applicationKey: appKey)
             do{
                 _ = try _meshNetworkManager.send(message, to: _node)

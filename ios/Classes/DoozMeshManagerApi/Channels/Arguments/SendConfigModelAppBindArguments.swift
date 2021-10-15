@@ -6,8 +6,8 @@
 //
 
 struct SendConfigModelAppBindArguments: BaseFlutterArguments {
-    let nodeId: Int16
-    let elementId: Int16
-    let modelId: UInt32
-    let appKeyIndex: Int16
+    let nodeId: Int
+    let elementId: Int
+    let modelId: Int
+    let appKeyIndex: Int
 }
