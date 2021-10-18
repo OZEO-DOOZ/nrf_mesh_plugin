@@ -299,9 +299,7 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       _log('timeout ! will retry to connect after $_connectRetryCount tries');
       await _connect(bleMeshManager, deviceToConnect);
     } else {
-      _log(_connectRetryCount >= 2
-          ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
-          : 'unhandled error $e');
+      _log('connect to ${deviceToConnect.id} failed after $_connectRetryCount tries');
       throw e;
     }
   } else if (e is Exception && e.toString().contains('GenericFailure<CharacteristicValueUpdateError>')) {
@@ -310,9 +308,7 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
     } else {
-      _log(_connectRetryCount >= 3
-          ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
-          : 'unhandled CharacteristicValueUpdateError $e');
+      _log('connect to ${deviceToConnect.id} failed after $_connectRetryCount tries');
       throw e;
     }
   } else {
