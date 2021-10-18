@@ -284,8 +284,7 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       throw e;
     }
   } else if (e is BleManagerException) {
-    if (_connectRetryCount < 3 &&
-        (e.code == BleManagerFailureCode.serviceNotFound || e.code == BleManagerFailureCode.negociation)) {
+    if (_connectRetryCount < 3 && e.code != BleManagerFailureCode.callbacks) {
       _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
@@ -295,16 +294,26 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
           : 'unhandled BleManagerException $e');
       throw e;
     }
-  } else {
-    if (e is TimeoutException && _connectRetryCount < 2) {
+  } else if (e is TimeoutException) {
+    if (_connectRetryCount < 2) {
       _log('timeout ! will retry to connect after $_connectRetryCount tries');
       await _connect(bleMeshManager, deviceToConnect);
     } else {
-      _log(_connectRetryCount >= 2
-          ? 'connect to ${deviceToConnect.id} failed after $_connectRetryCount tries'
-          : 'unhandled error $e');
+      _log('connect to ${deviceToConnect.id} failed after $_connectRetryCount tries');
       throw e;
     }
+  } else if (e is Exception && e.toString().contains('GenericFailure<CharacteristicValueUpdateError>')) {
+    if (_connectRetryCount < 3) {
+      _log('will retry to connect after $_connectRetryCount tries');
+      await Future.delayed(const Duration(milliseconds: 500));
+      await _connect(bleMeshManager, deviceToConnect);
+    } else {
+      _log('connect to ${deviceToConnect.id} failed after $_connectRetryCount tries');
+      throw e;
+    }
+  } else {
+    _log('unhandled error $e');
+    throw e;
   }
 }
 
