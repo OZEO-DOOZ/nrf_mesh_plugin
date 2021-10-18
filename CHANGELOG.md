@@ -1,3 +1,7 @@
+## 0.2.2
+
+- added new error code for BleManagerFailureCode enum for the case where we get a disconnection event before device is ready for communication
+
 ## 0.2.1
 
 - fix Completer error if error occurs during gatt data out stream subscription
