@@ -199,7 +199,7 @@ packages:
       name: flutter_reactive_ble
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.1+1"
+    version: "5.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -390,6 +390,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  reactive_ble_mobile:
+    dependency: transitive
+    description:
+      name: reactive_ble_mobile
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.0"
+  reactive_ble_platform_interface:
+    dependency: transitive
+    description:
+      name: reactive_ble_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.0"
   retry:
     dependency: transitive
     description:
