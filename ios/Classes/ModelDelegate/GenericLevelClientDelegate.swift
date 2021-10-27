@@ -38,7 +38,9 @@ class GenericLevelClientDelegate: ModelDelegate {
 
     init() {
         let types: [GenericMessage.Type] = [
-            GenericLevelStatus.self
+            GenericLevelStatus.self,
+            MagicLevelSetStatus.self,
+            MagicLevelGetStatus.self
         ]
         messageTypes = types.toMap()
     }

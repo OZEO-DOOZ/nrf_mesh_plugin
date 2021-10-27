@@ -179,6 +179,11 @@ private extension DoozMeshManagerApi {
             _didDeliverData(data: data.pdu.data)
             result(nil)
             break
+        case .handleWriteCallbacks(let data):
+            Swift.print(data)
+            _didDeliverData(data: data.pdu.data)
+            result(nil)
+            break
         case .setMtuSize(let data):
             
             delegate?.mtuSize = data.mtuSize
@@ -442,20 +447,23 @@ private extension DoozMeshManagerApi {
                 return
             }
             let retransmit = Publish.Retransmit.init(publishRetransmitCount: UInt8(data.retransmitCount), intervalSteps: UInt8(data.retransmitIntervalSteps))
-            let stepResolution = StepResolution.init(rawValue: UInt8(data.publicationResolution))
-            let period = Publish.Period.init(steps: UInt8(data.retransmitIntervalSteps), resolution: stepResolution!)
-            let publish = Publish.init(to: MeshAddress(Address(exactly: Int16(data.publishAddress))!), using: appKey, usingFriendshipMaterial: data.credentialFlag, ttl: UInt8(data.publishTtl), period: period, retransmit: retransmit)
-            let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.elementAddress)!)
-            let element = node!.element(withAddress: Address(exactly: data.elementAddress)!)
-            let model = element!.model(withModelId: UInt32(data.modelIdentifier))
-            let message: ConfigModelPublicationSet = ConfigModelPublicationSet(publish, to: model!)!
-            do {
-                _ = try meshNetworkManager.send(message, to: node!)
-                result(nil)
-            } catch {
-                let nsError = error as NSError
-                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
-            }
+            //let stepResolution = StepResolution.init(rawValue: .hundredsOfMilliseconds)
+            let period = Publish.Period.init(steps: UInt8(data.retransmitIntervalSteps), resolution: .hundredsOfMilliseconds)
+            let publish = Publish.init(to: MeshAddress(Address(exactly: data.publishAddress)!), using: appKey, usingFriendshipMaterial: data.credentialFlag, ttl: UInt8(data.publishTtl), period: period, retransmit: retransmit)
+
+            if
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.elementAddress)!),
+                let element = node.element(withAddress: Address(exactly: data.elementAddress)!),
+                let model = element.model(withModelId: UInt32(data.modelIdentifier)){
+                let message: ConfigModelPublicationSet = ConfigModelPublicationSet(publish, to: model)!
+                    do{
+                        _ = try meshNetworkManager.send(message, to: node)
+                        result(nil)
+                    }catch{
+                        let nsError = error as NSError
+                        result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                    }
+                }
             break
         case .sendLightLightness(let data):
             guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
@@ -505,6 +513,57 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             break
+        case .sendV2MagicLevel(let data):
+            
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            
+            let message = MagicLevelSet(io: data.io, index: data.index, value: data.value, correlation: data.correlation)
+            do{
+                
+                _ = try meshNetworkManager.send(
+                    message,
+                    to: MeshAddress(Address(exactly: data.address)!),
+                    using: appKey
+                )
+                
+                result(nil)
+                
+            }catch{
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+            
+        case .getV2MagicLevel(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            
+            let message = MagicLevelGet(io: data.io, index: data.index, correlation: data.correlation)
+            do{
+                
+                _ = try meshNetworkManager.send(
+                    message,
+                    to: MeshAddress(Address(exactly: data.address)!),
+                    using: appKey
+                )
+                
+                result(nil)
+                
+            }catch{
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+            
         case .isAdvertisingWithNetworkIdentity(let data):
             result(isAdvertisingWithNetworkIdentity(data: data.serviceData.data))
         case .isAdvertisedWithNodeIdentity(let data):
@@ -514,6 +573,14 @@ private extension DoozMeshManagerApi {
             result(meshNetworkManager.meshNetwork?.matches(hash: hastAndRandom!.hash, random: hastAndRandom!.random))
         case .networkIdMatches(let data):
             result(networkIdMatches(data: data.serviceData.data))
+            
+        case .cachedProvisionedMeshNodeUuid:
+            let provisionedDevice = doozProvisioningManager.getCachedProvisionedDevice()
+            if ("nil" == provisionedDevice){
+                result(nil)
+            }
+            result(provisionedDevice)
+            
         }
         
     }
@@ -655,6 +722,15 @@ private extension DoozMeshManagerApi{
             try _ = meshNetwork.add(applicationKey: Data.random128BitKey(), name: "Application Key 3")
 
             _ = meshNetworkManager.save()
+            
+            let element0 = Element(name: "Primary Element", location: .first, models: [
+                Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
+                Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
+                Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
+                Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+            ])
+            meshNetworkManager.localElements = [element0]
+            
             delegate?.onNetworkLoaded(meshNetwork)
         }catch{
             throw(error)
@@ -668,7 +744,7 @@ private extension DoozMeshManagerApi{
             let type = PduType(rawValue: UInt8(data[0])) else{
             return
         }
-        
+
         let packet = data.subdata(in: 1 ..< data.count)
         
         switch type {
@@ -777,8 +853,6 @@ extension DoozMeshManagerApi: DoozProvisioningManagerDelegate{
     }
     
     func provisioningStateDidChange(unprovisionedDevice: UnprovisionedDevice, state: ProvisioningState) {
-        Swift.print("the provisioning state here ______________________________\(state)")
-        Swift.print("the flutter state of provisioning here ___________________\(state.flutterState())")
         let message: FlutterMessage = [
             EventSinkKeys.eventName.rawValue : state.eventName(),
             EventSinkKeys.state.rawValue : state.flutterState(),

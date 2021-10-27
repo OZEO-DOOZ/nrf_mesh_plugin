@@ -447,23 +447,19 @@ class MeshManagerApi {
     int correlation, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onV2MagicLevelSetStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('sendV2MagicLevel', {
-        'io': io,
-        'index': index,
-        'value': value,
-        'correlation': correlation,
-        'address': address,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onV2MagicLevelSetStatusController.stream.firstWhere(
+          (element) => element.source == address,
+      orElse: () => const MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('sendV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'value': value,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
@@ -473,22 +469,18 @@ class MeshManagerApi {
     int correlation, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onV2MagicLevelGetStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('getV2MagicLevel', {
-        'io': io,
-        'index': index,
-        'correlation': correlation,
-        'address': address,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onV2MagicLevelGetStatusController.stream.firstWhere(
+          (element) => element.source == address,
+      orElse: () => const MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('getV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<void> sendConfigCompositionDataGet(int dest) =>

@@ -121,12 +121,12 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                 
                 EventSinkKeys.eventName.rawValue : MessageEvent.onConfigModelPublicationStatus.rawValue,
                 EventSinkKeys.message.elementAddress.rawValue: status.elementAddress,
-                EventSinkKeys.message.publishAddress.rawValue : status.publish.publicationAddress,
+                EventSinkKeys.message.publishAddress.rawValue : status.publish.publicationAddress.address,
                 EventSinkKeys.message.appKeyIndex.rawValue : status.publish.index,
                 EventSinkKeys.message.credentialFlag.rawValue : status.publish.isUsingFriendshipSecurityMaterial,
                 EventSinkKeys.message.publishTtl.rawValue : status.publish.ttl,
                 EventSinkKeys.message.publicationSteps.rawValue : status.publish.period.numberOfSteps,
-                EventSinkKeys.message.publicationResolution.rawValue : status.publish.period.resolution,
+                EventSinkKeys.message.publicationResolution.rawValue : status.publish.period.resolution.rawValue,
                 EventSinkKeys.message.retransmitCount.rawValue : status.publish.retransmit.count,
                 EventSinkKeys.message.retransmitIntervalSteps.rawValue : status.publish.retransmit.steps,
                 EventSinkKeys.message.modelIdentifier.rawValue : status.modelIdentifier,
@@ -225,6 +225,31 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                 
             ]
             
+            _sendFlutterMessage(message)
+        case let status as MagicLevelSetStatus:
+            
+            let message: FlutterMessage = [
+                EventSinkKeys.eventName.rawValue : MessageEvent.onMagicLevelSetStatus.rawValue,
+                EventSinkKeys.message.io.rawValue : status.mIO,
+                EventSinkKeys.message.index.rawValue : status.mIndex,
+                EventSinkKeys.message.value.rawValue : status.mValue,
+                EventSinkKeys.message.correlation.rawValue : status.mCorrelation,
+                EventSinkKeys.source.rawValue : source,
+                EventSinkKeys.message.destination.rawValue : destination,
+            ]
+            
+            _sendFlutterMessage(message)
+        case let status as MagicLevelGetStatus:
+            let message: FlutterMessage = [
+                EventSinkKeys.eventName.rawValue : MessageEvent.onMagicLevelGetStatus.rawValue,
+                EventSinkKeys.message.io.rawValue : status.mIO,
+                EventSinkKeys.message.index.rawValue : status.mIndex,
+                EventSinkKeys.message.value.rawValue : status.mValue,
+                EventSinkKeys.message.correlation.rawValue : status.mCorrelation,
+                EventSinkKeys.source.rawValue : source,
+                EventSinkKeys.message.destination.rawValue : destination,
+            ]
+        
             _sendFlutterMessage(message)
         //        case let list as ConfigModelAppList:
         //            break
