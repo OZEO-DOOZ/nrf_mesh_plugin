@@ -46,4 +46,7 @@ enum BleManagerFailureCode {
 
   /// missing callbacks (Flutter layer)
   callbacks,
+
+  /// disconnection event received before end of GATT negociation
+  unexpectedDisconnection,
 }

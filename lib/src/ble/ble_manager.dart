@@ -157,11 +157,17 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                       // will notify for error as the connection could not be properly established
                       _log('connect failed after ${watch.elapsedMilliseconds}ms');
                       if (maybeError != null) {
+                        _log('error : $maybeError');
                         connectTimeout.cancel();
                         _connectCompleter.completeError(maybeError);
                       } else {
+                        const err = BleManagerException(
+                          BleManagerFailureCode.unexpectedDisconnection,
+                          'disconnect event before device is ready',
+                        );
+                        _log('error : $err');
                         connectTimeout.cancel();
-                        _connectCompleter.completeError('disconnect event before device is ready');
+                        _connectCompleter.completeError(err);
                       }
                     }
                   } else {
