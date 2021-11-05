@@ -44,6 +44,7 @@ enum DoozMeshManagerApiChannel {
     case networkIdMatches(_ data: NetworkIdMatchesArguments)
     case sendV2MagicLevel(_ data: SendV2MagicLevelArguments)
     case getV2MagicLevel(_ data: GetV2MagicLevelArguments)
+    case deprovision(_ data: DeprovisionArguments)
 
     case error(_ error: Error)
     
@@ -130,7 +131,8 @@ enum DoozMeshManagerApiChannel {
             
             case "cachedProvisionedMeshNodeUuid":
                 self = .cachedProvisionedMeshNodeUuid
-            //deprovision
+            case "deprovision":
+                self = .deprovision(try DeprovisionArguments(arguments))
             default:
                 self = .error(FlutterCallError.notImplemented)
             }

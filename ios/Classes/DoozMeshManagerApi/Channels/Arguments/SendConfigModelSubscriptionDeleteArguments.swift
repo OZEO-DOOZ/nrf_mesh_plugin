@@ -6,7 +6,6 @@
 //
 
 struct SendConfigModelSubscriptionDeleteArguments: BaseFlutterArguments {
-    let address: Int
     let elementAddress: Int
     let subscriptionAddress: Int
     let modelIdentifier: Int

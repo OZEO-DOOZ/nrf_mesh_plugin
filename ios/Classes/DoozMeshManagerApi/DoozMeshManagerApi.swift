@@ -288,7 +288,7 @@ private extension DoozMeshManagerApi {
             if
                 let group = meshNetworkManager.meshNetwork?.group(withAddress: MeshAddress(Address(exactly: data.subscriptionAddress)!)),
                 
-                    let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.address)!),
+                    let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.elementAddress)!),
                 let element = node.element(withAddress: Address(exactly: data.elementAddress)!),
                 let model = element.model(withModelId: UInt32(data.modelIdentifier)){
                 
@@ -522,7 +522,7 @@ private extension DoozMeshManagerApi {
                 return
             }
             
-            let message = MagicLevelSet(io: data.io, index: data.index, value: data.value, correlation: data.correlation)
+            let message = MagicLevelSet(io: UInt8(data.io), index: UInt16(data.index), value: UInt32(data.value), correlation: UInt32(data.correlation))
             do{
                 
                 _ = try meshNetworkManager.send(
@@ -547,7 +547,7 @@ private extension DoozMeshManagerApi {
                 return
             }
             
-            let message = MagicLevelGet(io: data.io, index: data.index, correlation: data.correlation)
+            let message = MagicLevelGet(io: UInt8(data.io), index: UInt16(data.index), correlation: UInt32(data.correlation))
             do{
                 
                 _ = try meshNetworkManager.send(
@@ -581,6 +581,22 @@ private extension DoozMeshManagerApi {
             }
             result(provisionedDevice)
             
+        case .deprovision(let data):
+            if
+                let node = meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: data.unicastAddress)!){
+                let message = ConfigNodeReset()
+                do{
+                    _ = try meshNetworkManager.send(
+                        message,
+                        to: node
+                    )
+                    result(true)
+                }catch{
+                    let nsError = error as NSError
+                    result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                }
+            }
+            break
         }
         
     }
