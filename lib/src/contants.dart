@@ -29,9 +29,6 @@ enum ProvisioningFailureCode {
   /// when provisioning goes timeout
   timeout,
 
-  /// when the mac id service is not discovered for the connected provisioning device (Platform ios)
-  macIdServiceNotFound,
-
   /// unknown error that should be diagnosed
   unknown,
 }

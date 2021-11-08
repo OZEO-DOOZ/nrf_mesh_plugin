@@ -101,7 +101,7 @@ class DoozProvisioningManager: NSObject {
         if (nil == provisionedDevice) {
             return "nil"
         } else {
-            return provisionedDevice?.node.uuid.uuidString ?? "nil"
+            return provisionedDevice!.node.uuid.uuidString
         }
     }
     

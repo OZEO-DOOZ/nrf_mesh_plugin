@@ -99,8 +99,7 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
             _sendFlutterMessage(message)
             
         case let status as ConfigModelSubscriptionStatus:
-            #warning("check the data type of status.address here in this status")
-            Swift.print("the subscriptionAddress from the feedback of model subscription is \(status.address)")
+
             let message: FlutterMessage = [
                 
                 EventSinkKeys.eventName.rawValue : MessageEvent.onConfigModelSubscriptionStatus.rawValue,

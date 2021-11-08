@@ -74,6 +74,13 @@ struct FlutterChannels{
     
 }
 
+struct SigModelIds{
+    static let GenericOnOffServer: UInt16 = 0x1000
+    static let GenericLevelServer: UInt16 = 0x1002
+    static let GenericOnOffClient: UInt16 = 0x1001
+    static let GenericLevelClient: UInt16 = 0x1003
+}
+
 enum MeshNetworkApiEvent: String{
     case onNetworkLoaded
     case onNetworkImported
