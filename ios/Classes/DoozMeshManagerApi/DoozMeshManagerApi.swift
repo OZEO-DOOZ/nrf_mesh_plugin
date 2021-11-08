@@ -569,8 +569,12 @@ private extension DoozMeshManagerApi {
         case .isAdvertisedWithNodeIdentity(let data):
             result(isAdvertisedWithNodeIdentity(data: data.serviceData.data))
         case .nodeIdentityMatches(let data):
-            let hastAndRandom = nodeIdentityMatches(data: data.serviceData.data)
-            result(meshNetworkManager.meshNetwork!.matches(hash: hastAndRandom!.hash, random: hastAndRandom!.random))
+            let hashAndRandom = nodeIdentityMatches(data: data.serviceData.data)
+            guard hashAndRandom != nil else{
+                result(false)
+                return
+            }
+            result(meshNetworkManager.meshNetwork!.matches(hash: hashAndRandom!.hash, random: hashAndRandom!.random))
         case .networkIdMatches(let data):
             result(networkIdMatches(data: data.serviceData.data))
             
