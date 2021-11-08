@@ -102,10 +102,10 @@ private extension DoozMeshManagerApi {
                 let network = try _loadMeshNetwork()                
                 // Set up local Elements on the phone.
                 let element0 = Element(name: "Primary Element", location: .first, models: [
-                    Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-                    Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-                    Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-                    Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+                    Model(sigModelId: SigModelIds.GenericOnOffServer, delegate: GenericOnOffServerDelegate()),
+                    Model(sigModelId: SigModelIds.GenericLevelServer, delegate: GenericLevelServerDelegate()),
+                    Model(sigModelId: SigModelIds.GenericOnOffClient, delegate: GenericOnOffClientDelegate()),
+                    Model(sigModelId: SigModelIds.GenericLevelClient, delegate: GenericLevelClientDelegate()),
                 ])
                 meshNetworkManager.localElements = [element0]
                 delegate?.onNetworkLoaded(network)
@@ -119,12 +119,12 @@ private extension DoozMeshManagerApi {
             do{
                 let network = try _importMeshNetworkJson(data.json)
                 // Set up local Elements on the phone.
-                 let element0 = Element(name: "Primary Element", location: .first, models: [
-                     Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-                     Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-                     Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-                     Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
-                 ])
+                let element0 = Element(name: "Primary Element", location: .first, models: [
+                    Model(sigModelId: SigModelIds.GenericOnOffServer, delegate: GenericOnOffServerDelegate()),
+                    Model(sigModelId: SigModelIds.GenericLevelServer, delegate: GenericLevelServerDelegate()),
+                    Model(sigModelId: SigModelIds.GenericOnOffClient, delegate: GenericOnOffClientDelegate()),
+                    Model(sigModelId: SigModelIds.GenericLevelClient, delegate: GenericLevelClientDelegate()),
+                ])
                  meshNetworkManager.localElements = [element0]
 
                 delegate?.onNetworkImported(network)
@@ -570,7 +570,7 @@ private extension DoozMeshManagerApi {
             result(isAdvertisedWithNodeIdentity(data: data.serviceData.data))
         case .nodeIdentityMatches(let data):
             let hastAndRandom = nodeIdentityMatches(data: data.serviceData.data)
-            result(meshNetworkManager.meshNetwork?.matches(hash: hastAndRandom!.hash, random: hastAndRandom!.random))
+            result(meshNetworkManager.meshNetwork!.matches(hash: hastAndRandom!.hash, random: hastAndRandom!.random))
         case .networkIdMatches(let data):
             result(networkIdMatches(data: data.serviceData.data))
             
@@ -629,12 +629,7 @@ private extension DoozMeshManagerApi{
     
     func networkIdMatches(data: Data) -> Bool{
         let nId = data.subdata(in: 1..<9);
-        let nKeys = meshNetworkManager.meshNetwork?.networkKeys
-        let generatedNetworkId = nKeys![0].networkId!
-        guard nId.hex == generatedNetworkId.hex else {
-            return false
-        }
-        return true
+        return meshNetworkManager.meshNetwork!.matches(networkId: nId)
     }
     
     func _loadMeshNetwork() throws -> MeshNetwork {
@@ -739,11 +734,12 @@ private extension DoozMeshManagerApi{
 
             _ = meshNetworkManager.save()
             
+            // Set up local Elements on the phone.
             let element0 = Element(name: "Primary Element", location: .first, models: [
-                Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-                Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-                Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-                Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
+                Model(sigModelId: SigModelIds.GenericOnOffServer, delegate: GenericOnOffServerDelegate()),
+                Model(sigModelId: SigModelIds.GenericLevelServer, delegate: GenericLevelServerDelegate()),
+                Model(sigModelId: SigModelIds.GenericOnOffClient, delegate: GenericOnOffClientDelegate()),
+                Model(sigModelId: SigModelIds.GenericLevelClient, delegate: GenericLevelClientDelegate()),
             ])
             meshNetworkManager.localElements = [element0]
             

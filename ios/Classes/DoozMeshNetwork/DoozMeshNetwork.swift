@@ -28,6 +28,7 @@ class DoozMeshNetwork: NSObject{
     
 }
 
+//To avoid index out of range fatal error
 extension Collection where Indices.Iterator.Element == Index {
    public subscript(safe index: Index) -> Iterator.Element? {
      return (startIndex <= index && index < endIndex) ? self[index] : nil
@@ -362,37 +363,37 @@ private extension DoozMeshNetwork {
                 
                 var mappedModels = [Int:Array<Int>]()
                 
-                let onOffServer = models.first(where: {$0.modelIdentifier == 0x1000 })
+                let onOffServer = models.first(where: {$0.modelIdentifier == SigModelIds.GenericOnOffServer })
                 if(onOffServer != nil){
                     var groupAddresses = Array<Int>()
                     onOffServer?.subscriptions.forEach({ group in
                         groupAddresses.append(Int(group.address.address))
                     })
-                    mappedModels[0x1000] = groupAddresses
+                    mappedModels[Int(SigModelIds.GenericOnOffServer)] = groupAddresses
                 }
-                let levelServer = models.first(where: {$0.modelIdentifier == 0x1002 })
+                let levelServer = models.first(where: {$0.modelIdentifier == SigModelIds.GenericLevelServer })
                 if (levelServer != nil) {
                     var groupAddresses = Array<Int>()
                     levelServer?.subscriptions.forEach({ group in
                         groupAddresses.append(Int(group.address.address))
                     })
-                    mappedModels[0x1002] = groupAddresses
+                    mappedModels[Int(SigModelIds.GenericLevelServer)] = groupAddresses
                 }
-                let onOffClient = models.first(where: {$0.modelIdentifier == 0x1001 })
+                let onOffClient = models.first(where: {$0.modelIdentifier == SigModelIds.GenericOnOffClient })
                 if (onOffClient != nil) {
                     var groupAddresses = Array<Int>()
                     onOffClient?.subscriptions.forEach({ group in
                         groupAddresses.append(Int(group.address.address))
                     })
-                    mappedModels[0x1001] = groupAddresses
+                    mappedModels[Int(SigModelIds.GenericOnOffClient)] = groupAddresses
                 }
-                let levelClient = models.first(where: {$0.modelIdentifier == 0x1003 })
+                let levelClient = models.first(where: {$0.modelIdentifier == SigModelIds.GenericLevelClient })
                 if (levelClient != nil) {
                     var groupAddresses = Array<Int>()
                     levelClient?.subscriptions.forEach({ group in
                         groupAddresses.append(Int(group.address.address))
                     })
-                    mappedModels[0x1003] = groupAddresses
+                    mappedModels[Int(SigModelIds.GenericLevelClient)] = groupAddresses
                 }
                 
                 map[Int(element.unicastAddress)] = mappedModels as AnyObject
