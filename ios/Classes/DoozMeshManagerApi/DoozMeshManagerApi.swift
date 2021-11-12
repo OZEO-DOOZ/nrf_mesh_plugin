@@ -100,7 +100,7 @@ private extension DoozMeshManagerApi {
         case .loadMeshNetwork:
             do {
                 let network = try _loadMeshNetwork()                
-                // Set up local Elements on the phone.
+                // to parse the generic feedback from board, Set up local Elements on the phone.
                 let element0 = Element(name: "Primary Element", location: .first, models: [
                     Model(sigModelId: SigModelIds.GenericOnOffServer, delegate: GenericOnOffServerDelegate()),
                     Model(sigModelId: SigModelIds.GenericLevelServer, delegate: GenericLevelServerDelegate()),
@@ -118,7 +118,7 @@ private extension DoozMeshManagerApi {
         case .importMeshNetworkJson(let data):
             do{
                 let network = try _importMeshNetworkJson(data.json)
-                // Set up local Elements on the phone.
+                // to parse the generic feedback from board, Set up local Elements on the phone.
                 let element0 = Element(name: "Primary Element", location: .first, models: [
                     Model(sigModelId: SigModelIds.GenericOnOffServer, delegate: GenericOnOffServerDelegate()),
                     Model(sigModelId: SigModelIds.GenericLevelServer, delegate: GenericLevelServerDelegate()),
@@ -738,7 +738,7 @@ private extension DoozMeshManagerApi{
 
             _ = meshNetworkManager.save()
             
-            // Set up local Elements on the phone.
+            // to parse the generic feedback from board, Set up local Elements on the phone.
             let element0 = Element(name: "Primary Element", location: .first, models: [
                 Model(sigModelId: SigModelIds.GenericOnOffServer, delegate: GenericOnOffServerDelegate()),
                 Model(sigModelId: SigModelIds.GenericLevelServer, delegate: GenericLevelServerDelegate()),
