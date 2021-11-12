@@ -198,25 +198,6 @@ extension DoozProvisioningManager: BearerDelegate{
         guard let _provisioningManager = self.provisioningManager, case .complete = _provisioningManager.state else {
             return
         }
-        
-        // Provisioning is complete
-        if let _meshNetworkManager = self.meshNetworkManager{
-            if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
-                if let _meshNetwork = _meshNetworkManager.meshNetwork {
-//                    let element0 = Element(name: "Primary Element", location: .first, models: [
-//                        Model(sigModelId: 0x1000, delegate: GenericOnOffServerDelegate()),
-//                        Model(sigModelId: 0x1002, delegate: GenericLevelServerDelegate()),
-//                        Model(sigModelId: 0x1001, delegate: GenericOnOffClientDelegate()),
-//                        Model(sigModelId: 0x1003, delegate: GenericLevelClientDelegate())
-//                    ])
-//                    _meshNetworkManager.localElements = [element0]
-                }
-            }else {
-                print("Mesh configuration could not be saved.")
-            }
-            
-        }
-        
         return
     }
     

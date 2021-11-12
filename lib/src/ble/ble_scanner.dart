@@ -104,11 +104,7 @@ class BleScanner {
   }
 
   bool validScanResult(DiscoveredDevice s, String uid) {
-    if (Platform.isAndroid || Platform.isIOS) {
-      return s.id == uid;
-    } else {
-      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
-    }
+    return s.id == uid;
   }
 
   Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
