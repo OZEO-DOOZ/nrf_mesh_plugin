@@ -97,10 +97,18 @@ class DoozProvisioningManager: NSObject {
         unprovisionedDevice = nil
     }
     
+    func getCachedProvisionedDevice() -> String{
+        if (nil == provisionedDevice) {
+            return "nil"
+        } else {
+            return provisionedDevice!.node.uuid.uuidString
+        }
+    }
+    
     func sendConfigCompositionDataGet(_ dest: Int16){
         if
             let _meshNetworkManager = self.meshNetworkManager,
-            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
+            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: dest)!){
             
             let message = ConfigCompositionDataGet()
             
@@ -115,7 +123,7 @@ class DoozProvisioningManager: NSObject {
     func sendConfigAppKeyAdd(dest: Int16, appKey: ApplicationKey){
         if
             let _meshNetworkManager = self.meshNetworkManager,
-            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(bitPattern: dest)){
+            let _node = _meshNetworkManager.meshNetwork?.node(withAddress: Address(exactly: dest)!){
             let message = ConfigAppKeyAdd(applicationKey: appKey)
             do{
                 _ = try _meshNetworkManager.send(message, to: _node)
@@ -190,19 +198,17 @@ extension DoozProvisioningManager: BearerDelegate{
         guard let _provisioningManager = self.provisioningManager, case .complete = _provisioningManager.state else {
             return
         }
-        
+
         // Provisioning is complete
         if let _meshNetworkManager = self.meshNetworkManager{
-            if _meshNetworkManager.save(), let _unprovisionedDevice = self.unprovisionedDevice{
-                if let _meshNetwork = _meshNetworkManager.meshNetwork {
-                    _meshNetworkManager.localElements = []
-                }
+            if _meshNetworkManager.save(){
+                print("Mesh configuration saved.")
             }else {
                 print("Mesh configuration could not be saved.")
             }
-            
+
         }
-        
+
         return
     }
     

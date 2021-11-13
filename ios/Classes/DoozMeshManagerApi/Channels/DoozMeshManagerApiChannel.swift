@@ -14,9 +14,11 @@ enum DoozMeshManagerApiChannel {
     case resetMeshNetwork
     case identifyNode(_ data: IdentifyNodeArguments)
     case handleNotifications(_ data: HandleNotificationsArguments)
+    case handleWriteCallbacks(_ data: HandleWriteCallbacksArguments)
     case setMtuSize(_ data: MtuSizeArguments)
     case cleanProvisioningData
     case provisioning
+    case cachedProvisionedMeshNodeUuid
     case sendConfigCompositionDataGet(_ data: SendConfigCompositionDataGetArguments)
     case sendConfigAppKeyAdd(_ data: SendConfigAppKeyAddArguments)
     case sendConfigModelAppBind(_ data: SendConfigModelAppBindArguments)
@@ -36,6 +38,13 @@ enum DoozMeshManagerApiChannel {
     case sendLightLightness(_ data: SendLightLightnessArguments)
     case sendLightCtl(_ data: SendLightCtlArguments)
     case sendLightHsl(_ data: SendLightHslArguments)
+    case isAdvertisingWithNetworkIdentity(_ data: IsAdvertisingWithNetworkIdentityArguments)
+    case isAdvertisedWithNodeIdentity(_ data: IsAdvertisingWithNodeIdentityArguments)
+    case nodeIdentityMatches(_ data: NodeIdentityMatchesArguments)
+    case networkIdMatches(_ data: NetworkIdMatchesArguments)
+    case sendV2MagicLevel(_ data: SendV2MagicLevelArguments)
+    case getV2MagicLevel(_ data: GetV2MagicLevelArguments)
+    case deprovision(_ data: DeprovisionArguments)
 
     case error(_ error: Error)
     
@@ -102,19 +111,28 @@ enum DoozMeshManagerApiChannel {
                 self = .sendLightCtl(try SendLightCtlArguments(arguments))
             case "sendLightHsl":
                 self = .sendLightHsl(try SendLightHslArguments(arguments))
-            //sendV2MagicLevel
-            //getV2MagicLevel
+            case "isAdvertisingWithNetworkIdentity":
+                self = .isAdvertisingWithNetworkIdentity(try IsAdvertisingWithNetworkIdentityArguments(arguments))
+            case "isAdvertisedWithNodeIdentity":
+                self = .isAdvertisedWithNodeIdentity(try IsAdvertisingWithNodeIdentityArguments(arguments))
+            case "nodeIdentityMatches":
+                self = .nodeIdentityMatches(try NodeIdentityMatchesArguments(arguments))
+            case "networkIdMatches":
+                self = .networkIdMatches(try NetworkIdMatchesArguments(arguments))
+            case "sendV2MagicLevel":
+                self = .sendV2MagicLevel(try SendV2MagicLevelArguments(arguments))
+            case "getV2MagicLevel":
+                self = .getV2MagicLevel(try GetV2MagicLevelArguments(arguments))
             
             //getDeviceUuid
-            //handleWriteCallbacks
+            case "handleWriteCallbacks":
+                self = .handleWriteCallbacks(try HandleWriteCallbacksArguments(arguments))
             
             
-            //cachedProvisionedMeshNodeUuid
-            //deprovision
-            //nodeIdentityMatches
-            //networkIdMatches
-            //isAdvertisingWithNetworkIdentity
-            //isAdvertisedWithNodeIdentity
+            case "cachedProvisionedMeshNodeUuid":
+                self = .cachedProvisionedMeshNodeUuid
+            case "deprovision":
+                self = .deprovision(try DeprovisionArguments(arguments))
             default:
                 self = .error(FlutterCallError.notImplemented)
             }

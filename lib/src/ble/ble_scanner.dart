@@ -94,24 +94,13 @@ class BleScanner {
     try {
       result = await _scanWithParamsAsStream(
         withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
-      ).firstWhere((s) => validScanResult(s, uid)).timeout(scanTimeout);
+      ).firstWhere((s) => s.id == uid).timeout(scanTimeout);
     } on StateError catch (e) {
       debugPrint('[NordicNrfMesh] StateError -- no device found with UUID : $uid\n$e\n${e.message}');
     } on TimeoutException catch (e) {
       debugPrint('[NordicNrfMesh] TimeoutException -- no device found with UUID : $uid\n$e\n${e.message}');
     }
     return result;
-  }
-
-  bool validScanResult(DiscoveredDevice s, String uid) {
-    if (Platform.isAndroid) {
-      return s.id == uid;
-    } else if (Platform.isIOS) {
-      //TODO
-      throw UnimplementedError();
-    } else {
-      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
-    }
   }
 
   Future<List<DiscoveredDevice>> unprovisionedNodesInRange({

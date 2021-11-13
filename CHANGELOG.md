@@ -1,3 +1,7 @@
+## 0.3.0
+
+- added iOS support
+
 ## 0.2.2
 
 - added new error code for BleManagerFailureCode enum for the case where we get a disconnection event before device is ready for communication

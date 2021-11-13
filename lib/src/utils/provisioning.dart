@@ -169,7 +169,7 @@ Future<ProvisionedMeshNode> _provisioning(
       }
       events?._provisioningController.add(null);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
-    } else if (Platform.isAndroid && event.state == 'PROVISIONING_INVITE') {
+    } else if (event.state == 'PROVISIONING_INVITE') {
       if (!bleMeshManager.isProvisioningCompleted) {
         events?._provisioningInvitationController.add(null);
       } else if (bleMeshManager.isProvisioningCompleted) {

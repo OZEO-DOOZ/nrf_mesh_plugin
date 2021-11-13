@@ -73,7 +73,9 @@ class GenericLevelServerDelegate: ModelDelegate {
             GenericDeltaSet.self,
             GenericDeltaSetUnacknowledged.self,
             GenericMoveSet.self,
-            GenericMoveSetUnacknowledged.self
+            GenericMoveSetUnacknowledged.self,
+            MagicLevelGet.self,
+            MagicLevelSet.self
         ]
         messageTypes = types.toMap()
     }
@@ -148,6 +150,19 @@ class GenericLevelServerDelegate: ModelDelegate {
                 // Generic Default Transition Time is not supported, so the command
                 // shall not initiate any change.
             }
+            
+        case let request as MagicLevelSet:
+            // Ignore a repeated request (with the same TID) from the same source
+            // and sent to the same destinatino when it was received within 6 seconds.
+            guard lastTransaction == nil ||
+                  lastTransaction!.source != source || lastTransaction!.destination != destination ||
+                  request.isNewTransaction(previousTid: lastTransaction!.tid, timestamp: lastTransaction!.timestamp) else {
+                lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+                break
+            }
+            lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
+            
+            return MagicLevelSetStatus(io: request.mIO, index: request.mIndex, value: request.mValue, correlation: request.mCorrelation, tId: request.tid)
             
         default:
             // Not possible.
