@@ -180,8 +180,7 @@ private extension DoozMeshManagerApi {
             result(nil)
             break
         case .handleWriteCallbacks(let data):
-            Swift.print(data)
-            _didDeliverData(data: data.pdu.data)
+            _didDeliverData(data: data.pdu)
             result(nil)
             break
         case .setMtuSize(let data):
@@ -762,7 +761,6 @@ private extension DoozMeshManagerApi{
         }
 
         let packet = data.subdata(in: 1 ..< data.count)
-        
         switch type {
         case .provisioningPdu:
             doozProvisioningManager.didDeliverData(data, ofType: type)

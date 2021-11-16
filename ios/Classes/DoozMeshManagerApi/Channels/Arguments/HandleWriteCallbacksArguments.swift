@@ -9,23 +9,20 @@ import Foundation
 
 struct HandleWriteCallbacksArguments {
     let mtu: Int
-    let pdu: FlutterStandardTypedData
+    let pdu: Data
     
     init(_ arguments: FlutterCallArguments?) throws {
         guard let _arguments = arguments else{
             throw FlutterCallError.missingArguments
         }
-        
         guard
-            let pdu = _arguments["pdu"] as? FlutterStandardTypedData,
+            let pdu = _arguments["pdu"] as? Array<UInt8>,
             let mtu = _arguments["mtu"] as? Int
         else{
             throw FlutterCallError.errorDecoding
         }
-            
         self.mtu = mtu
-        self.pdu = pdu
-        
+        self.pdu = Data(pdu)
     }
 
 }
