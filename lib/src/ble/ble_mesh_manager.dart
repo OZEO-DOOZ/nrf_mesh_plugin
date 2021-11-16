@@ -40,11 +40,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   String _toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
 
-  Future<String> getServiceMacId() async{
-    if(hasExpectedService(macAddressServiceUuid)){
+  Future<String> getServiceMacId() async {
+    if (hasExpectedService(macAddressServiceUuid)) {
       final service = _discoveredServices.firstWhere((service) => service.serviceId == macAddressServiceUuid);
       if (hasExpectedCharacteristicUuid(service, macAddressCharacteristicUuid)) {
-        final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(characteristicId: macAddressCharacteristicUuid, serviceId: macAddressServiceUuid, deviceId: device!.id));
+        final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
+            characteristicId: macAddressCharacteristicUuid, serviceId: macAddressServiceUuid, deviceId: device!.id));
         final macIdList = macIdChar.reversed.toList();
         final macId = _toMacAddress(macIdList);
         return macId.toUpperCase();
