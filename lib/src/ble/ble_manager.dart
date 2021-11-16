@@ -149,7 +149,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                         _connectCompleter.completeError(e);
                       }
                     },
-                    test: (e) => e is BleManagerException,
                   );
                   break;
                 case DeviceConnectionState.disconnecting:
