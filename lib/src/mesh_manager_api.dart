@@ -448,7 +448,7 @@ class MeshManagerApi {
     int keyIndex = 0,
   }) async {
     final status = _onV2MagicLevelSetStatusController.stream.firstWhere(
-          (element) => element.source == address,
+      (element) => element.source == address,
       orElse: () => const MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendV2MagicLevel', {
@@ -470,7 +470,7 @@ class MeshManagerApi {
     int keyIndex = 0,
   }) async {
     final status = _onV2MagicLevelGetStatusController.stream.firstWhere(
-          (element) => element.source == address,
+      (element) => element.source == address,
       orElse: () => const MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('getV2MagicLevel', {
@@ -595,7 +595,7 @@ class MeshManagerApi {
     int keyIndex = 0,
   }) async {
     final status = _onLightLightnessStatusController.stream.firstWhere(
-          (element) => element.source == address,
+      (element) => element.source == address,
       orElse: () => const LightLightnessStatusData(-1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendLightLightness', {
@@ -616,7 +616,7 @@ class MeshManagerApi {
     int keyIndex = 0,
   }) async {
     final status = _onLightCtlStatusController.stream.firstWhere(
-          (element) => element.source == address,
+      (element) => element.source == address,
       orElse: () => const LightCtlStatusData(-1, -1, -1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendLightCtl', {
@@ -639,7 +639,7 @@ class MeshManagerApi {
     int keyIndex = 0,
   }) async {
     final status = _onLightHslStatusController.stream.firstWhere(
-          (element) => element.source == address,
+      (element) => element.source == address,
       orElse: () => const LightHslStatusData(-1, -1, -1, -1, -1, -1, -1),
     );
     await _methodChannel.invokeMethod('sendLightHsl', {
@@ -722,9 +722,9 @@ class MeshManagerApi {
     final status = _onConfigNodeResetStatusController.stream
         .where((element) => element.source == unicastAddress)
         .timeout(const Duration(seconds: 3),
-        onTimeout: (sink) => sink.add(
-          const ConfigNodeResetStatus(-1, -1, false),
-        ))
+            onTimeout: (sink) => sink.add(
+                  const ConfigNodeResetStatus(-1, -1, false),
+                ))
         .first;
     await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
     return status;
