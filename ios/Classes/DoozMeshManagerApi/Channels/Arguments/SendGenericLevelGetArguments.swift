@@ -6,6 +6,6 @@
 //
 
 struct SendGenericLevelGetArguments: BaseFlutterArguments {
-    let address: Int16
-    let keyIndex: Int16
+    let address: Int
+    let keyIndex: Int
 }

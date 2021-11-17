@@ -6,17 +6,24 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
-import 'package:nordic_nrf_mesh/src/contants.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
-final meshProxyUuid = Uuid.parse('00001828-0000-1000-8000-00805F9B34FB');
-final meshProxyDataIn = Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB');
-final meshProxyDataOut = Uuid.parse('00002ADE-0000-1000-8000-00805F9B34FB');
-final meshProvisioningUuid = Uuid.parse('00001827-0000-1000-8000-00805F9B34FB');
-final meshProvisioningDataIn = Uuid.parse('00002ADB-0000-1000-8000-00805F9B34FB');
-final meshProvisioningDataOut = Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB');
-final clientCharacteristicConfigDescriptorUuid = Uuid.parse('00002902-0000-1000-8000-00805f9b34fb');
+final macAddressServiceUuid =
+    Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
+final macAddressCharacteristicUuid =
+    Platform.isAndroid ? Uuid.parse('00001401-0000-1000-8000-00805F9B34FB') : Uuid.parse('1401');
+final meshProxyUuid = Platform.isAndroid ? Uuid.parse('00001828-0000-1000-8000-00805F9B34FB') : Uuid.parse('1828');
+final meshProxyDataIn = Platform.isAndroid ? Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADD');
+final meshProxyDataOut = Platform.isAndroid ? Uuid.parse('00002ADE-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADE');
+final meshProvisioningUuid =
+    Platform.isAndroid ? Uuid.parse('00001827-0000-1000-8000-00805F9B34FB') : Uuid.parse('1827');
+final meshProvisioningDataIn =
+    Platform.isAndroid ? Uuid.parse('00002ADB-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADB');
+final meshProvisioningDataOut =
+    Platform.isAndroid ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADC');
+final clientCharacteristicConfigDescriptorUuid =
+    Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
 final enableNotificationValue = [0x01, 0x00];
 const Duration kConnectionTimeout = Duration(seconds: 30);
 
@@ -142,7 +149,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                         _connectCompleter.completeError(e);
                       }
                     },
-                    test: (e) => e is BleManagerException,
                   );
                   break;
                 case DeviceConnectionState.disconnecting:
@@ -156,11 +162,17 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                       // will notify for error as the connection could not be properly established
                       _log('connect failed after ${watch.elapsedMilliseconds}ms');
                       if (maybeError != null) {
+                        _log('error : $maybeError');
                         connectTimeout.cancel();
                         _connectCompleter.completeError(maybeError);
                       } else {
+                        const err = BleManagerException(
+                          BleManagerFailureCode.unexpectedDisconnection,
+                          'disconnect event before device is ready',
+                        );
+                        _log('error : $err');
                         connectTimeout.cancel();
-                        _connectCompleter.completeError('disconnect event before device is ready');
+                        _connectCompleter.completeError(err);
                       }
                     }
                   } else {

@@ -74,6 +74,13 @@ struct FlutterChannels{
     
 }
 
+struct SigModelIds{
+    static let GenericOnOffServer: UInt16 = 0x1000
+    static let GenericLevelServer: UInt16 = 0x1002
+    static let GenericOnOffClient: UInt16 = 0x1001
+    static let GenericLevelClient: UInt16 = 0x1003
+}
+
 enum MeshNetworkApiEvent: String{
     case onNetworkLoaded
     case onNetworkImported
@@ -98,6 +105,17 @@ enum MessageEvent: String{
     case onConfigAppKeyStatus
     case onConfigCompositionDataStatus
     case onGenericLevelStatus
+    case onGenericOnOffStatus
+    case onConfigModelSubscriptionStatus
+    case onConfigModelPublicationStatus
+    case onLightLightnessStatus
+    case onLightCtlStatus
+    case onLightHslStatus
+    case onConfigNodeResetStatus
+    case onConfigNetworkTransmitStatus
+    case onConfigDefaultTtlStatus
+    case onMagicLevelSetStatus
+    case onMagicLevelGetStatus
 }
 
 enum EventSinkKeys: String{
@@ -108,6 +126,47 @@ enum EventSinkKeys: String{
         case meshMessage
         case source
         case destination
+        
+        case level
+        case targetLevel
+        case transitionResolution
+        case transitionSteps
+        
+        case presentState
+        case targetState
+        
+        case subscriptionAddress
+        case modelIdentifier
+        case isSuccessful
+        
+        case publishAddress
+        case credentialFlag
+        case publishTtl
+        case publicationSteps
+        case publicationResolution
+        case retransmitCount
+        case retransmitIntervalSteps
+        
+        case presentLightness
+        case targetLightness
+        
+        case presentTemperature
+        case targetTemperature
+        
+        case presentHue
+        case presentSaturation
+        
+        case success
+        
+        case transmitCount
+        case transmitIntervalSteps
+        
+        case ttl
+        
+        case io
+        case index
+        case value
+        case correlation
     }
     
     enum network: String{
@@ -137,6 +196,4 @@ enum EventSinkKeys: String{
     case data
     case source
     
-    case level
-    case targetLevel
 }

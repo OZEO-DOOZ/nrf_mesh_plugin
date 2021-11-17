@@ -38,6 +38,22 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     return super.disconnect();
   }
 
+  String _toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
+
+  Future<String> getServiceMacId() async {
+    if (hasExpectedService(macAddressServiceUuid)) {
+      final service = _discoveredServices.firstWhere((service) => service.serviceId == macAddressServiceUuid);
+      if (hasExpectedCharacteristicUuid(service, macAddressCharacteristicUuid)) {
+        final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
+            characteristicId: macAddressCharacteristicUuid, serviceId: macAddressServiceUuid, deviceId: device!.id));
+        final macIdList = macIdChar.reversed.toList();
+        final macId = _toMacAddress(macIdList);
+        return macId.toUpperCase();
+      }
+    }
+    return 'NOT-FOUND';
+  }
+
   @override
   Future<DiscoveredService?> isRequiredServiceSupported() async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
@@ -96,10 +112,19 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   StreamSubscription<List<int>> getDataOutSubscription(QualifiedCharacteristic qCharacteristic) =>
-      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen(
-          (data) =>
-              callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data)),
-          onError: (e, s) {
+      bleInstance.subscribeToCharacteristic(qCharacteristic).where((data) => data.isNotEmpty == true).listen((data) {
+        if (!(callbacks?.onDataReceivedController.isClosed == true) &&
+            callbacks!.onDataReceivedController.hasListener) {
+          callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data));
+        } else {
+          if (!connectCompleter.isCompleted) {
+            // will notify for error as the connection could not be properly established
+            const _msg = 'no callback ready to receive data event';
+            _log(_msg);
+            connectCompleter.completeError(const BleManagerException(BleManagerFailureCode.callbacks, _msg));
+          }
+        }
+      }, onError: (e, s) {
         const _msg = 'error in device data stream';
         _log('$_msg : $e\n$s');
         if (!(callbacks?.onErrorController.isClosed == true) && callbacks!.onErrorController.hasListener) {

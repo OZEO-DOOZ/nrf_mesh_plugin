@@ -6,7 +6,10 @@
 //
 
 struct SendGenericOnOffSetArguments: BaseFlutterArguments {
-    let address: Int16
+    let address: Int
     let value: Bool
-    let keyIndex: Int16
+    let keyIndex: Int
+    let transitionStep: Int
+    let transitionResolution: Int
+    let delay: Int
 }

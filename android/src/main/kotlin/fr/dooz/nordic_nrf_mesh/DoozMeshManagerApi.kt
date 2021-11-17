@@ -402,9 +402,11 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
             "nodeIdentityMatches" -> {
                 val serviceData = call.argument<ByteArray>("serviceData")!!
                 val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
-                currentMeshNetwork.nodes.forEach { node ->
-                    if (mMeshManagerApi.nodeIdentityMatches(node, serviceData)) {
-                        result.success(true)
+                if(mMeshManagerApi.isAdvertisedWithNodeIdentity(serviceData)){
+                    currentMeshNetwork.nodes.forEach { node ->
+                        if (mMeshManagerApi.nodeIdentityMatches(node, serviceData)) {
+                            result.success(true)
+                        }
                     }
                 }
                 result.success(false)

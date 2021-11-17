@@ -28,6 +28,13 @@ class DoozMeshNetwork: NSObject{
     
 }
 
+//To avoid index out of range fatal error
+extension Collection where Indices.Iterator.Element == Index {
+   public subscript(safe index: Index) -> Iterator.Element? {
+     return (startIndex <= index && index < endIndex) ? self[index] : nil
+   }
+}
+
 private extension DoozMeshNetwork {
     
     func _initChannel(messenger: FlutterBinaryMessenger, networkId: String) {
@@ -41,7 +48,6 @@ private extension DoozMeshNetwork {
         }
         
     }
-    
     
     func _handleMethodCall(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         print("🥂 [\(self.classForCoder)] Received flutter call : \(call.method)")
@@ -69,11 +75,13 @@ private extension DoozMeshNetwork {
             result(_getMeshNetworkName())
             break
         case .selectProvisioner(let data):
-            
             do{
-                let provisioner = meshNetwork.provisioners[data.provisionerIndex]
-                try meshNetwork.setLocalProvisioner(provisioner)
-                result(nil)
+                if let provisioner = meshNetwork.provisioners[safe: data.provisionerIndex]{
+                    try meshNetwork.setLocalProvisioner((provisioner))
+                    result(nil)
+                }else{
+                    result(FlutterError(code: "Not-Found", message: "The Provisioner is not found for the given index.", details: nil))
+                }
             }catch{
                 let nsError = error as NSError
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
@@ -161,8 +169,7 @@ private extension DoozMeshNetwork {
             
         case .removeGroup(let data):
             #warning("TODO: impl. meshAddress hex in most cases")
-            let groupAddress = String(format:"%02X", data.groupAddress)
-            if let group = meshNetwork.group(withAddress: MeshAddress(hex: groupAddress)!) {
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(exactly: data.groupAddress)!)) {
                 
                 do{
                     try meshNetwork.remove(group: group)
@@ -180,7 +187,7 @@ private extension DoozMeshNetwork {
             }
                         
         case .getElementsForGroup(let data):
-            if let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.address))){
+            if let group = meshNetwork.group(withAddress: MeshAddress(Address(exactly: data.address)!)){
                 let models = meshNetwork.models(subscribedTo: group)
                 let elements = models.compactMap { model in
                     return model.parentElement
@@ -341,24 +348,58 @@ private extension DoozMeshNetwork {
             result(provisionedMeshNode?.uuid.uuidString)
             
         case .getGroupElementIds(let data):
-            let group = meshNetwork.group(withAddress: MeshAddress(Address(bitPattern: data.groupAddress)))!
+            let group = meshNetwork.group(withAddress: MeshAddress(Address(exactly: data.groupAddress)!))!
+            
             let modelsList = meshNetwork.models(subscribedTo: group)
             let elements = modelsList.compactMap { model in
                 return model.parentElement
             }
             
-            let mappedElements = elements.map { element in
-                return [
-                    element.unicastAddress : modelsList.filter({$0.parentElement == element}).map({ m in
-                        return [
-                            m.modelIdentifier : m.subscriptions.map({ s in
-                                return s.address
-                            }),
-                        ]
+            var map = [Int:AnyObject]()
+            
+            elements.forEach { element in
+                
+                let models = element.models
+                
+                var mappedModels = [Int:Array<Int>]()
+                
+                let onOffServer = models.first(where: {$0.modelIdentifier == SigModelIds.GenericOnOffServer })
+                if(onOffServer != nil){
+                    var groupAddresses = Array<Int>()
+                    onOffServer?.subscriptions.forEach({ group in
+                        groupAddresses.append(Int(group.address.address))
                     })
-                ]
+                    mappedModels[Int(SigModelIds.GenericOnOffServer)] = groupAddresses
+                }
+                let levelServer = models.first(where: {$0.modelIdentifier == SigModelIds.GenericLevelServer })
+                if (levelServer != nil) {
+                    var groupAddresses = Array<Int>()
+                    levelServer?.subscriptions.forEach({ group in
+                        groupAddresses.append(Int(group.address.address))
+                    })
+                    mappedModels[Int(SigModelIds.GenericLevelServer)] = groupAddresses
+                }
+                let onOffClient = models.first(where: {$0.modelIdentifier == SigModelIds.GenericOnOffClient })
+                if (onOffClient != nil) {
+                    var groupAddresses = Array<Int>()
+                    onOffClient?.subscriptions.forEach({ group in
+                        groupAddresses.append(Int(group.address.address))
+                    })
+                    mappedModels[Int(SigModelIds.GenericOnOffClient)] = groupAddresses
+                }
+                let levelClient = models.first(where: {$0.modelIdentifier == SigModelIds.GenericLevelClient })
+                if (levelClient != nil) {
+                    var groupAddresses = Array<Int>()
+                    levelClient?.subscriptions.forEach({ group in
+                        groupAddresses.append(Int(group.address.address))
+                    })
+                    mappedModels[Int(SigModelIds.GenericLevelClient)] = groupAddresses
+                }
+                
+                map[Int(element.unicastAddress)] = mappedModels as AnyObject
             }
-            result(mappedElements)
+
+            result(map)
             
         }
     }

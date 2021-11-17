@@ -447,23 +447,19 @@ class MeshManagerApi {
     int correlation, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onV2MagicLevelSetStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('sendV2MagicLevel', {
-        'io': io,
-        'index': index,
-        'value': value,
-        'correlation': correlation,
-        'address': address,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onV2MagicLevelSetStatusController.stream.firstWhere(
+      (element) => element.source == address,
+      orElse: () => const MagicLevelSetStatusData(-1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('sendV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'value': value,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
@@ -473,22 +469,18 @@ class MeshManagerApi {
     int correlation, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onV2MagicLevelGetStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('getV2MagicLevel', {
-        'io': io,
-        'index': index,
-        'correlation': correlation,
-        'address': address,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onV2MagicLevelGetStatusController.stream.firstWhere(
+      (element) => element.source == address,
+      orElse: () => const MagicLevelGetStatusData(-1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('getV2MagicLevel', {
+      'io': io,
+      'index': index,
+      'correlation': correlation,
+      'address': address,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<void> sendConfigCompositionDataGet(int dest) =>
@@ -602,21 +594,17 @@ class MeshManagerApi {
     int sequenceNumber, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onLightLightnessStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const LightLightnessStatusData(-1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('sendLightLightness', {
-        'address': address,
-        'lightness': lightness,
-        'sequenceNumber': sequenceNumber,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onLightLightnessStatusController.stream.firstWhere(
+      (element) => element.source == address,
+      orElse: () => const LightLightnessStatusData(-1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('sendLightLightness', {
+      'address': address,
+      'lightness': lightness,
+      'sequenceNumber': sequenceNumber,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<LightCtlStatusData> sendLightCtl(
@@ -627,23 +615,19 @@ class MeshManagerApi {
     int sequenceNumber, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onLightCtlStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const LightCtlStatusData(-1, -1, -1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('sendLightCtl', {
-        'address': address,
-        'lightness': lightness,
-        'temperature': temperature,
-        'lightDeltaUV': lightDeltaUV,
-        'sequenceNumber': sequenceNumber,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onLightCtlStatusController.stream.firstWhere(
+      (element) => element.source == address,
+      orElse: () => const LightCtlStatusData(-1, -1, -1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('sendLightCtl', {
+      'address': address,
+      'lightness': lightness,
+      'temperature': temperature,
+      'lightDeltaUV': lightDeltaUV,
+      'sequenceNumber': sequenceNumber,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<LightHslStatusData> sendLightHsl(
@@ -654,23 +638,19 @@ class MeshManagerApi {
     int sequenceNumber, {
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid) {
-      final status = _onLightHslStatusController.stream.firstWhere(
-        (element) => element.source == address,
-        orElse: () => const LightHslStatusData(-1, -1, -1, -1, -1, -1, -1),
-      );
-      await _methodChannel.invokeMethod('sendLightHsl', {
-        'address': address,
-        'lightness': lightness,
-        'hue': hue,
-        'saturation': saturation,
-        'sequenceNumber': sequenceNumber,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnsupportedError('Platform not supported');
-    }
+    final status = _onLightHslStatusController.stream.firstWhere(
+      (element) => element.source == address,
+      orElse: () => const LightHslStatusData(-1, -1, -1, -1, -1, -1, -1),
+    );
+    await _methodChannel.invokeMethod('sendLightHsl', {
+      'address': address,
+      'lightness': lightness,
+      'hue': hue,
+      'saturation': saturation,
+      'sequenceNumber': sequenceNumber,
+      'keyIndex': keyIndex,
+    });
+    return status;
   }
 
   Future<ConfigDefaultTtlStatus> getDefaultTtl(int address) async {
@@ -738,20 +718,16 @@ class MeshManagerApi {
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
   Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
-    if (Platform.isAndroid) {
-      final unicastAddress = await meshNode.unicastAddress;
-      final status = _onConfigNodeResetStatusController.stream
-          .where((element) => element.source == unicastAddress)
-          .timeout(const Duration(seconds: 3),
-              onTimeout: (sink) => sink.add(
-                    const ConfigNodeResetStatus(-1, -1, false),
-                  ))
-          .first;
-      await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
-      return status;
-    } else {
-      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
-    }
+    final unicastAddress = await meshNode.unicastAddress;
+    final status = _onConfigNodeResetStatusController.stream
+        .where((element) => element.source == unicastAddress)
+        .timeout(const Duration(seconds: 3),
+            onTimeout: (sink) => sink.add(
+                  const ConfigNodeResetStatus(-1, -1, false),
+                ))
+        .first;
+    await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
+    return status;
   }
 
   Future<String?> cachedProvisionedMeshNodeUuid() => _methodChannel.invokeMethod('cachedProvisionedMeshNodeUuid');
