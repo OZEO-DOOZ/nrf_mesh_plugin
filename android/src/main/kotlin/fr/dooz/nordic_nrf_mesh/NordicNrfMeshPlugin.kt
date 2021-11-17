@@ -1,6 +1,7 @@
 package fr.dooz.nordic_nrf_mesh
 
 import androidx.annotation.NonNull;
+import com.polidea.rxandroidble2.exceptions.BleException
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
@@ -9,6 +10,8 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import io.reactivex.exceptions.UndeliverableException
+import io.reactivex.plugins.RxJavaPlugins
 
 class NordicNrfMeshPlugin: FlutterPlugin, MethodCallHandler {
     private lateinit var methodChannel : MethodChannel
@@ -18,6 +21,13 @@ class NordicNrfMeshPlugin: FlutterPlugin, MethodCallHandler {
 
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        RxJavaPlugins.setErrorHandler { throwable ->
+            if (throwable is UndeliverableException && throwable.cause is BleException) {
+                return@setErrorHandler // ignore BleExceptions since we do not have subscriber
+            } else {
+                throw throwable
+            }
+        }
         binaryMessenger = flutterPluginBinding.binaryMessenger
         methodChannel = MethodChannel(binaryMessenger, "$namespace/methods")
         flutterBinding = flutterPluginBinding;
