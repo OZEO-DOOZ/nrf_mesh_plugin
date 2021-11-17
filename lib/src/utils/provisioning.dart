@@ -263,7 +263,7 @@ late int _connectRetryCount;
 Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
   _connectRetryCount++;
   await bleMeshManager
-      .connect(deviceToConnect, connectionTimeout: const Duration(seconds: 10))
+      .connect(deviceToConnect, [deviceToConnect.id],connectionTimeout: const Duration(seconds: 10))
       .catchError((e) async => await _onConnectError(e, bleMeshManager, deviceToConnect));
 }
 

@@ -96,7 +96,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return a [TimeoutException] if connection is not established after [connectionTimeout]
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
-  Future<void> connect(final DiscoveredDevice discoveredDevice,
+  Future<void> connect(final DiscoveredDevice discoveredDevice, List<String> macIds,
       {Duration connectionTimeout = kConnectionTimeout}) async {
     if (callbacks == null) {
       throw const BleManagerException(
@@ -129,14 +129,54 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt().then((_) {
+                  _negotiateAndInitGatt().then((_) async {
                     if (!_connectCompleter.isCompleted) {
+                      //do stuffs with mac ids list
                       _connectCompleter.complete();
                       if (!_callbacks.onDeviceReadyController.isClosed &&
                           _callbacks.onDeviceReadyController.hasListener) {
                         _callbacks.onDeviceReadyController.add(_device!);
                       }
+                      // String deviceId;
+                      // if(Platform.isIOS){
+                      //   print('the macIds list ----------------------------------> $macIds');
+                      //   print('the connected device id is ${_device!.id}');
+                      //   final services = await _bleInstance.discoverServices(_device!.id);
+                      //   print('the discovered services $services');
+                      //   if(services.any((service) => service.serviceId == macAddressServiceUuid)){
+                      //     deviceId = await getMacId();
+                      //     print('the device id for the connected device $deviceId');
+                      //
+                      //     if(!macIds.contains(deviceId)){
+                      //       disconnect();
+                      //       _connectCompleter.complete();
+                      //       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
+                      //         _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', 'Device does not have the mac id service'));
+                      //       }
+                      //       return;
+                      //     }else{
+                      //       _connectCompleter.complete();
+                      //       if (!_callbacks.onDeviceReadyController.isClosed &&
+                      //           _callbacks.onDeviceReadyController.hasListener) {
+                      //         _callbacks.onDeviceReadyController.add(_device!);
+                      //       }
+                      //     }
+                      //   }else{
+                      //     disconnect();
+                      //     _connectCompleter.completeError('Device does not have the mac id service');
+                      //     if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
+                      //       _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', 'Device does not have the mac id service'));
+                      //     }
+                      //   }
+                      // }else{
+                      //   _connectCompleter.complete();
+                      //   if (!_callbacks.onDeviceReadyController.isClosed &&
+                      //       _callbacks.onDeviceReadyController.hasListener) {
+                      //     _callbacks.onDeviceReadyController.add(_device!);
+                      //   }
+                      // }
                     }
+
                   }).catchError(
                     (e, s) {
                       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
@@ -198,6 +238,16 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     await _connectCompleter.future;
     connectTimeout.cancel();
     _log('connect took ${watch.elapsedMilliseconds}ms');
+  }
+
+  String toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
+
+  Future<String> getMacId() async {
+    final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
+        characteristicId: macAddressCharacteristicUuid, serviceId: macAddressServiceUuid, deviceId: _device!.id));
+    final macIdList = macIdChar.reversed.toList();
+    final macId = toMacAddress(macIdList);
+    return macId.toUpperCase();
   }
 
   Future<void> _negotiateAndInitGatt() async {
