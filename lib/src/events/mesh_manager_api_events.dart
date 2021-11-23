@@ -43,4 +43,5 @@ class MeshManagerApiEvent {
   static const configNodeResetStatus = MeshManagerApiEvent._('onConfigNodeResetStatus');
   static const configNetworkTransmitStatus = MeshManagerApiEvent._('onConfigNetworkTransmitStatus');
   static const configDefaultTtlStatus = MeshManagerApiEvent._('onConfigDefaultTtlStatus');
+  static const configKeyRefreshPhaseStatus = MeshManagerApiEvent._('onConfigKeyRefreshPhaseStatus');
 }

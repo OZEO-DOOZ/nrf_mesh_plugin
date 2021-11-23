@@ -206,6 +206,14 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "keyRefreshPhaseGet" -> {
+                val address = call.argument<Int>("address")!!
+                val netKeyIndex = call.argument<Int>("netKeyIndex")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val meshMessage: MeshMessage = ConfigKeyRefreshPhaseGet(currentMeshNetwork.netKeys[netKeyIndex])
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
             "sendConfigModelSubscriptionAdd" -> {
                 val elementAddress = call.argument<Int>("elementAddress")!!
                 val subscriptionAddress = call.argument<Int>("subscriptionAddress")!!
