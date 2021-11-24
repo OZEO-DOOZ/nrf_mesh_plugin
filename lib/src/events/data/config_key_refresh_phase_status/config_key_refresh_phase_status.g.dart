@@ -6,8 +6,7 @@ part of 'config_key_refresh_phase_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigKeyRefreshPhaseStatus _$_$_ConfigKeyRefreshPhaseStatusFromJson(
-    Map<String, dynamic> json) {
+_$_ConfigKeyRefreshPhaseStatus _$_$_ConfigKeyRefreshPhaseStatusFromJson(Map<String, dynamic> json) {
   return _$_ConfigKeyRefreshPhaseStatus(
     json['source'] as int,
     json['destination'] as int,
@@ -18,8 +17,7 @@ _$_ConfigKeyRefreshPhaseStatus _$_$_ConfigKeyRefreshPhaseStatusFromJson(
   );
 }
 
-Map<String, dynamic> _$_$_ConfigKeyRefreshPhaseStatusToJson(
-        _$_ConfigKeyRefreshPhaseStatus instance) =>
+Map<String, dynamic> _$_$_ConfigKeyRefreshPhaseStatusToJson(_$_ConfigKeyRefreshPhaseStatus instance) =>
     <String, dynamic>{
       'source': instance.source,
       'destination': instance.destination,

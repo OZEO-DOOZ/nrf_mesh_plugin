@@ -12,8 +12,7 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-ConfigKeyRefreshPhaseStatus _$ConfigKeyRefreshPhaseStatusFromJson(
-    Map<String, dynamic> json) {
+ConfigKeyRefreshPhaseStatus _$ConfigKeyRefreshPhaseStatusFromJson(Map<String, dynamic> json) {
   return _ConfigKeyRefreshPhaseStatus.fromJson(json);
 }
 
@@ -21,8 +20,8 @@ ConfigKeyRefreshPhaseStatus _$ConfigKeyRefreshPhaseStatusFromJson(
 class _$ConfigKeyRefreshPhaseStatusTearOff {
   const _$ConfigKeyRefreshPhaseStatusTearOff();
 
-  _ConfigKeyRefreshPhaseStatus call(int source, int destination, int statusCode,
-      String statusCodeName, int netKeyIndex, int transition) {
+  _ConfigKeyRefreshPhaseStatus call(
+      int source, int destination, int statusCode, String statusCodeName, int netKeyIndex, int transition) {
     return _ConfigKeyRefreshPhaseStatus(
       source,
       destination,
@@ -52,28 +51,19 @@ mixin _$ConfigKeyRefreshPhaseStatus {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ConfigKeyRefreshPhaseStatusCopyWith<ConfigKeyRefreshPhaseStatus>
-      get copyWith => throw _privateConstructorUsedError;
+  $ConfigKeyRefreshPhaseStatusCopyWith<ConfigKeyRefreshPhaseStatus> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $ConfigKeyRefreshPhaseStatusCopyWith<$Res> {
   factory $ConfigKeyRefreshPhaseStatusCopyWith(
-          ConfigKeyRefreshPhaseStatus value,
-          $Res Function(ConfigKeyRefreshPhaseStatus) then) =
+          ConfigKeyRefreshPhaseStatus value, $Res Function(ConfigKeyRefreshPhaseStatus) then) =
       _$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>;
-  $Res call(
-      {int source,
-      int destination,
-      int statusCode,
-      String statusCodeName,
-      int netKeyIndex,
-      int transition});
+  $Res call({int source, int destination, int statusCode, String statusCodeName, int netKeyIndex, int transition});
 }
 
 /// @nodoc
-class _$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>
-    implements $ConfigKeyRefreshPhaseStatusCopyWith<$Res> {
+class _$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res> implements $ConfigKeyRefreshPhaseStatusCopyWith<$Res> {
   _$ConfigKeyRefreshPhaseStatusCopyWithImpl(this._value, this._then);
 
   final ConfigKeyRefreshPhaseStatus _value;
@@ -119,34 +109,23 @@ class _$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>
 }
 
 /// @nodoc
-abstract class _$ConfigKeyRefreshPhaseStatusCopyWith<$Res>
-    implements $ConfigKeyRefreshPhaseStatusCopyWith<$Res> {
+abstract class _$ConfigKeyRefreshPhaseStatusCopyWith<$Res> implements $ConfigKeyRefreshPhaseStatusCopyWith<$Res> {
   factory _$ConfigKeyRefreshPhaseStatusCopyWith(
-          _ConfigKeyRefreshPhaseStatus value,
-          $Res Function(_ConfigKeyRefreshPhaseStatus) then) =
+          _ConfigKeyRefreshPhaseStatus value, $Res Function(_ConfigKeyRefreshPhaseStatus) then) =
       __$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {int source,
-      int destination,
-      int statusCode,
-      String statusCodeName,
-      int netKeyIndex,
-      int transition});
+  $Res call({int source, int destination, int statusCode, String statusCodeName, int netKeyIndex, int transition});
 }
 
 /// @nodoc
-class __$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>
-    extends _$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>
+class __$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res> extends _$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>
     implements _$ConfigKeyRefreshPhaseStatusCopyWith<$Res> {
   __$ConfigKeyRefreshPhaseStatusCopyWithImpl(
-      _ConfigKeyRefreshPhaseStatus _value,
-      $Res Function(_ConfigKeyRefreshPhaseStatus) _then)
+      _ConfigKeyRefreshPhaseStatus _value, $Res Function(_ConfigKeyRefreshPhaseStatus) _then)
       : super(_value, (v) => _then(v as _ConfigKeyRefreshPhaseStatus));
 
   @override
-  _ConfigKeyRefreshPhaseStatus get _value =>
-      super._value as _ConfigKeyRefreshPhaseStatus;
+  _ConfigKeyRefreshPhaseStatus get _value => super._value as _ConfigKeyRefreshPhaseStatus;
 
   @override
   $Res call({
@@ -189,8 +168,8 @@ class __$ConfigKeyRefreshPhaseStatusCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_ConfigKeyRefreshPhaseStatus implements _ConfigKeyRefreshPhaseStatus {
-  const _$_ConfigKeyRefreshPhaseStatus(this.source, this.destination,
-      this.statusCode, this.statusCodeName, this.netKeyIndex, this.transition);
+  const _$_ConfigKeyRefreshPhaseStatus(
+      this.source, this.destination, this.statusCode, this.statusCodeName, this.netKeyIndex, this.transition);
 
   factory _$_ConfigKeyRefreshPhaseStatus.fromJson(Map<String, dynamic> json) =>
       _$_$_ConfigKeyRefreshPhaseStatusFromJson(json);
@@ -217,23 +196,17 @@ class _$_ConfigKeyRefreshPhaseStatus implements _ConfigKeyRefreshPhaseStatus {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _ConfigKeyRefreshPhaseStatus &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
+            (identical(other.source, source) || const DeepCollectionEquality().equals(other.source, source)) &&
             (identical(other.destination, destination) ||
-                const DeepCollectionEquality()
-                    .equals(other.destination, destination)) &&
+                const DeepCollectionEquality().equals(other.destination, destination)) &&
             (identical(other.statusCode, statusCode) ||
-                const DeepCollectionEquality()
-                    .equals(other.statusCode, statusCode)) &&
+                const DeepCollectionEquality().equals(other.statusCode, statusCode)) &&
             (identical(other.statusCodeName, statusCodeName) ||
-                const DeepCollectionEquality()
-                    .equals(other.statusCodeName, statusCodeName)) &&
+                const DeepCollectionEquality().equals(other.statusCodeName, statusCodeName)) &&
             (identical(other.netKeyIndex, netKeyIndex) ||
-                const DeepCollectionEquality()
-                    .equals(other.netKeyIndex, netKeyIndex)) &&
+                const DeepCollectionEquality().equals(other.netKeyIndex, netKeyIndex)) &&
             (identical(other.transition, transition) ||
-                const DeepCollectionEquality()
-                    .equals(other.transition, transition)));
+                const DeepCollectionEquality().equals(other.transition, transition)));
   }
 
   @override
@@ -248,9 +221,8 @@ class _$_ConfigKeyRefreshPhaseStatus implements _ConfigKeyRefreshPhaseStatus {
 
   @JsonKey(ignore: true)
   @override
-  _$ConfigKeyRefreshPhaseStatusCopyWith<_ConfigKeyRefreshPhaseStatus>
-      get copyWith => __$ConfigKeyRefreshPhaseStatusCopyWithImpl<
-          _ConfigKeyRefreshPhaseStatus>(this, _$identity);
+  _$ConfigKeyRefreshPhaseStatusCopyWith<_ConfigKeyRefreshPhaseStatus> get copyWith =>
+      __$ConfigKeyRefreshPhaseStatusCopyWithImpl<_ConfigKeyRefreshPhaseStatus>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
@@ -258,18 +230,12 @@ class _$_ConfigKeyRefreshPhaseStatus implements _ConfigKeyRefreshPhaseStatus {
   }
 }
 
-abstract class _ConfigKeyRefreshPhaseStatus
-    implements ConfigKeyRefreshPhaseStatus {
+abstract class _ConfigKeyRefreshPhaseStatus implements ConfigKeyRefreshPhaseStatus {
   const factory _ConfigKeyRefreshPhaseStatus(
-      int source,
-      int destination,
-      int statusCode,
-      String statusCodeName,
-      int netKeyIndex,
-      int transition) = _$_ConfigKeyRefreshPhaseStatus;
+          int source, int destination, int statusCode, String statusCodeName, int netKeyIndex, int transition) =
+      _$_ConfigKeyRefreshPhaseStatus;
 
-  factory _ConfigKeyRefreshPhaseStatus.fromJson(Map<String, dynamic> json) =
-      _$_ConfigKeyRefreshPhaseStatus.fromJson;
+  factory _ConfigKeyRefreshPhaseStatus.fromJson(Map<String, dynamic> json) = _$_ConfigKeyRefreshPhaseStatus.fromJson;
 
   @override
   int get source => throw _privateConstructorUsedError;
@@ -285,6 +251,6 @@ abstract class _ConfigKeyRefreshPhaseStatus
   int get transition => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$ConfigKeyRefreshPhaseStatusCopyWith<_ConfigKeyRefreshPhaseStatus>
-      get copyWith => throw _privateConstructorUsedError;
+  _$ConfigKeyRefreshPhaseStatusCopyWith<_ConfigKeyRefreshPhaseStatus> get copyWith =>
+      throw _privateConstructorUsedError;
 }

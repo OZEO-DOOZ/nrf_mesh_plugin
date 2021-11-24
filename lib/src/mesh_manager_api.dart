@@ -26,7 +26,7 @@ import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_pr
 import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
 import 'package:nordic_nrf_mesh/src/events/mesh_manager_api_events.dart';
 import 'package:nordic_nrf_mesh/src/mesh_network.dart';
-import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
+import 'package:nordic_nrf_mesh/src/models/models.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MeshManagerApi {
@@ -728,7 +728,7 @@ class MeshManagerApi {
     }
   }
 
-  // Key refresh phases
+  // Key refresh phases (from Nordic's Android SDK)
   // public static final int NORMAL_OPERATION = 0;
   // public static final int KEY_DISTRIBUTION = 1;
   // public static final int USING_NEW_KEYS = 2;

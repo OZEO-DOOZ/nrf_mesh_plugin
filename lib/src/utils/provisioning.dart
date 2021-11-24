@@ -11,8 +11,7 @@ import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
 import 'package:nordic_nrf_mesh/src/exceptions/exceptions.dart';
 import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
-import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
-import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
+import 'package:nordic_nrf_mesh/src/models/models.dart';
 
 class _ProvisioningEvent {
   final _provisioningController = StreamController<void>();

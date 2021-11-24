@@ -1,8 +1,6 @@
 export 'src/nrf_mesh.dart';
 export 'src/mesh_network.dart' show IMeshNetwork;
 export 'src/mesh_manager_api.dart';
-export 'src/provisioned_mesh_node.dart';
-export 'src/unprovisioned_mesh_node.dart';
 export 'src/events/data/event_data.dart';
 export 'src/models/models.dart';
 export 'src/ble/ble_manager.dart';
