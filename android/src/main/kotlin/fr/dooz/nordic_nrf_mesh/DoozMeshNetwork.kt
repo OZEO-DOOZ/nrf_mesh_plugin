@@ -291,6 +291,27 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 }
                 result.success(subscribedAddresses)
             }
+            "generateAndAddNetKey" -> {
+                Log.d(tag, "should generate and add new NetworkKey")
+                val netKey = meshNetwork.createNetworkKey()
+                result.success(meshNetwork.addNetKey(netKey))
+            }
+            "getNetKey" -> {
+                val netKeyIndex = call.argument<Int>("netKeyIndex")!!
+                val netKey = meshNetwork.getNetKey(netKeyIndex)
+                result.success(mapOf(
+                            "meshUuid" to netKey.getMeshUuid(),
+                            "name" to netKey.getName(),
+                            "netKeyIndex" to netKey.getKeyIndex(),
+                            "phase" to netKey.phase
+                    ))
+            }
+            "removeNetKey" -> {
+                val netKeyIndex = call.argument<Int>("netKeyIndex")!!
+                Log.d(tag, "should remove NetworkKey at index " + netKeyIndex.toString())
+                val netKey = meshNetwork.getNetKey(netKeyIndex)
+                result.success(meshNetwork.removeNetKey(netKey))
+            }
             else -> {
                 result.notImplemented()
             }

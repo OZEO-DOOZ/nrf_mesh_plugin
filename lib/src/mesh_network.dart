@@ -47,6 +47,12 @@ abstract class IMeshNetwork {
   Future<ProvisionedMeshNode?> getNode(int address);
 
   Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid);
+
+  Future<bool?> generateAndAddNetKey();
+
+  Future<Object?> getNetKey(int netKeyIndex);
+
+  Future<bool?> removeNetKey(int netKeyIndex);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -235,6 +241,36 @@ class MeshNetwork implements IMeshNetwork {
         debugPrint('node not found');
         return null;
       }
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<bool?> generateAndAddNetKey() {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      return _methodChannel.invokeMethod<bool>('generateAndAddNetKey');
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<Object?> getNetKey(int netKeyIndex) async {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      final result = await _methodChannel.invokeMethod('getNetKey', {'netKeyIndex': netKeyIndex});
+      print('[NordicNrfMesh] getNetKey : $result, type: ${result.runtimeType}');
+      return result;
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<bool?> removeNetKey(int netKeyIndex) async {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      final result = await _methodChannel.invokeMethod<bool>('removeNetKey', {'netKeyIndex': netKeyIndex});
+      return result;
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
