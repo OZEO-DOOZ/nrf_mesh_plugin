@@ -718,10 +718,41 @@ class MeshManagerApi {
   }) async {
     if (Platform.isAndroid) {
       final status = _onConfigKeyRefreshPhaseStatusController.stream.firstWhere(
-        (element) => element.source == address,
+        (element) => address != 0xFFFF || element.source == address,
         orElse: () => const ConfigKeyRefreshPhaseStatus(-1, -1, -1, 'timeout', -1, -1),
       );
       await _methodChannel.invokeMethod('keyRefreshPhaseGet', {'address': address, 'netKeyIndex': netKeyIndex});
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
+  // Key refresh phases
+  // public static final int NORMAL_OPERATION = 0;
+  // public static final int KEY_DISTRIBUTION = 1;
+  // public static final int USING_NEW_KEYS = 2;
+  // public static final int REVOKING_OLD_KEYS   = 3; This phase is instantaneous.
+
+  // Transitions
+  static const int useNewKeys = 2; // Normal operation
+  static const int revokeOldKeys = 3; // Key Distribution
+
+  Future<ConfigKeyRefreshPhaseStatus> keyRefreshPhaseSet({
+    int address = 0xFFFF,
+    int netKeyIndex = 0,
+    int transition = useNewKeys,
+  }) async {
+    if (Platform.isAndroid) {
+      final status = _onConfigKeyRefreshPhaseStatusController.stream.firstWhere(
+        (element) => address != 0xFFFF || element.source == address,
+        orElse: () => const ConfigKeyRefreshPhaseStatus(-1, -1, -1, 'timeout', -1, -1),
+      );
+      await _methodChannel.invokeMethod('keyRefreshPhaseSet', {
+        'address': address,
+        'netKeyIndex': netKeyIndex,
+        'transition': transition,
+      });
       return status;
     } else {
       throw UnimplementedError('${Platform.environment} not supported');
