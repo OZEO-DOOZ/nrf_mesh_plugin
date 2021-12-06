@@ -64,18 +64,12 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
             final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
             if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
               return service;
-            } else {
-              throw const BleManagerException(
-                BleManagerFailureCode.doozServiceNotFound,
-                'plz update the firmware to v1.1.x',
-              );
             }
-          } else {
-            throw const BleManagerException(
-              BleManagerFailureCode.doozServiceNotFound,
-              'plz update the firmware to v1.1.x',
-            );
           }
+          throw const BleManagerException(
+            BleManagerFailureCode.doozServiceNotFound,
+            'plz update the firmware to v1.1.x',
+          );
         } else {
           return service;
         }
@@ -88,10 +82,9 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
             hasExpectedCharacteristicUuid(service, meshProvisioningDataOut)) {
           return service;
         }
-        return null;
       }
+      return null;
     }
-    return null;
   }
 
   @override
