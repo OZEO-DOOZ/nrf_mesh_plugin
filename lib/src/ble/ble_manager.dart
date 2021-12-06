@@ -96,6 +96,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return a [TimeoutException] if connection is not established after [connectionTimeout]
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
+  ///
+  /// The [whitelist] has been introduced along with [doozCustomCharacteristicUuid] and is intended to be used like so :
+  ///   - the whitelist is populated with MAC addresses and [shouldCheckDoozCustomService] is true
+  ///   - it will connect to the BLE device and check the MAC address that should be stored in the DooZ custom charac
+  /// If the read MAC is not in the [whitelist], then this method will trigger an error event and complete with an error.
+  ///
+  /// (because this is a DooZ application specific flow, we made these parameters optional)
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
     Duration connectionTimeout = kConnectionTimeout,
@@ -224,6 +231,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   String _toMacAddress(final List<int> bytes) =>
       bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
 
+  /// This method will read the [doozCustomCharacteristicUuid] if a device is connected and return the MAC address stored
   Future<String?> getMacId() async {
     try {
       final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
