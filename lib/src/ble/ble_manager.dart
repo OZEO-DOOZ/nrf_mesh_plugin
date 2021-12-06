@@ -221,7 +221,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _log('connect took ${watch.elapsedMilliseconds}ms');
   }
 
-  String toMacAddress(final List<int> bytes) =>
+  String _toMacAddress(final List<int> bytes) =>
       bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
 
   Future<String?> getMacId() async {
@@ -232,7 +232,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         deviceId: _device!.id,
       ));
       final macIdList = macIdChar.reversed.toList();
-      final macId = toMacAddress(macIdList);
+      final macId = _toMacAddress(macIdList);
       _log('got mac adr from custom service ! $macId');
       return macId;
     } catch (e) {
