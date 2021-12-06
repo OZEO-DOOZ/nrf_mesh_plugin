@@ -98,9 +98,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
+    Duration connectionTimeout = kConnectionTimeout,
     List<String>? whitelist,
     bool shouldCheckDoozCustomService = false,
-    Duration connectionTimeout = kConnectionTimeout,
   }) async {
     if (callbacks == null) {
       throw const BleManagerException(
