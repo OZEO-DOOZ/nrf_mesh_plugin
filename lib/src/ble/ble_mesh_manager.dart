@@ -48,7 +48,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   @override
-  Future<DiscoveredService?> isRequiredServiceSupported() async {
+  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService) async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
     isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
@@ -57,7 +57,27 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
       if (hasExpectedCharacteristicUuid(service, meshProxyDataIn) &&
           hasExpectedCharacteristicUuid(service, meshProxyDataOut)) {
-        return service;
+        // if shouldCheckDoozCustomService is true, will also check for the existence of doozCustomServiceUuid
+        if (shouldCheckDoozCustomService) {
+          if (hasExpectedService(doozCustomServiceUuid)) {
+            final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
+            if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
+              return service;
+            } else {
+              throw const BleManagerException(
+                BleManagerFailureCode.doozServiceNotFound,
+                'plz update the firmware to v1.1.x',
+              );
+            }
+          } else {
+            throw const BleManagerException(
+              BleManagerFailureCode.doozServiceNotFound,
+              'plz update the firmware to v1.1.x',
+            );
+          }
+        } else {
+          return service;
+        }
       }
       return null;
     } else {

@@ -38,6 +38,9 @@ enum BleManagerFailureCode {
   /// service discovery failure
   serviceNotFound,
 
+  /// when the connected device does not broadcast the DooZ custom service
+  doozServiceNotFound,
+
   /// negociation failure
   negociation,
 

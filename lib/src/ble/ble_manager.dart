@@ -68,7 +68,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   }
 
   @visibleForOverriding
-  Future<DiscoveredService?> isRequiredServiceSupported();
+  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
   @visibleForOverriding
   Future<void> initGatt();
@@ -136,7 +136,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt().then((_) async {
+                  _negotiateAndInitGatt(shouldCheckDoozCustomService).then((_) async {
                     if (!_connectCompleter.isCompleted) {
                       String? deviceId = _device!.id;
                       if (shouldCheckDoozCustomService && !_whitelist.contains(deviceId)) {
@@ -232,17 +232,21 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       ));
       final macIdList = macIdChar.reversed.toList();
       final macId = toMacAddress(macIdList);
+      _log('got mac id from custom service ! $macId');
       return macId.toUpperCase();
     } catch (e) {
       _log('caught error during reading dooz custom charac $e');
     }
   }
 
-  Future<void> _negotiateAndInitGatt() async {
+  Future<void> _negotiateAndInitGatt(bool shouldCheckDoozCustomService) async {
     final _callbacks = callbacks as E;
     DiscoveredService? service;
     try {
-      service = await isRequiredServiceSupported();
+      service = await isRequiredServiceSupported(shouldCheckDoozCustomService);
+    } on BleManagerException catch (e) {
+      _log('$e');
+      rethrow;
     } catch (e) {
       _log('caught error during discover service : $e');
     }
