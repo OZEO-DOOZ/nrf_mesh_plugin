@@ -68,7 +68,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   }
 
   @visibleForOverriding
-  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
+  Future<DiscoveredService?> isRequiredServiceSupported();
 
   @visibleForOverriding
   Future<void> initGatt();
@@ -136,7 +136,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt(shouldCheckDoozCustomService).then((_) async {
+                  _negotiateAndInitGatt().then((_) async {
                     if (!_connectCompleter.isCompleted) {
                       String? deviceId = _device!.id;
                       if (shouldCheckDoozCustomService && !_whitelist.contains(deviceId)) {
@@ -238,11 +238,11 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     }
   }
 
-  Future<void> _negotiateAndInitGatt(bool shouldCheckDoozCustomService) async {
+  Future<void> _negotiateAndInitGatt() async {
     final _callbacks = callbacks as E;
     DiscoveredService? service;
     try {
-      service = await isRequiredServiceSupported(shouldCheckDoozCustomService);
+      service = await isRequiredServiceSupported();
     } catch (e) {
       _log('caught error during discover service : $e');
     }

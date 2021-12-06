@@ -48,7 +48,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   @override
-  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService) async {
+  Future<DiscoveredService?> isRequiredServiceSupported() async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
     isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
@@ -57,19 +57,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
       if (hasExpectedCharacteristicUuid(service, meshProxyDataIn) &&
           hasExpectedCharacteristicUuid(service, meshProxyDataOut)) {
-        // if shouldCheckDoozCustomService is true, will also check for the existence of doozCustomServiceUuid
-        if (shouldCheckDoozCustomService) {
-          if (hasExpectedService(doozCustomServiceUuid)) {
-            final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
-            if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
-              return service;
-            } else {
-              return null;
-            }
-          }
-        } else {
-          return service;
-        }
+        return service;
       }
       return null;
     } else {
