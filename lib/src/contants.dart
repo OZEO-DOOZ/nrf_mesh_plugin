@@ -23,7 +23,7 @@ enum ProvisioningFailureCode {
   /// when the configuration of the n/w is invalid (null network ?)
   meshConfiguration,
 
-  /// when an unexpected disconnectione event is received with an error
+  /// when an unexpected disconnection event is received with an error
   unexpectedGattError,
 
   /// when provisioning goes timeout
@@ -38,6 +38,9 @@ enum BleManagerFailureCode {
   /// service discovery failure
   serviceNotFound,
 
+  /// when the connected device does not broadcast the DooZ custom service
+  doozServiceNotFound,
+
   /// negociation failure
   negociation,
 
@@ -46,4 +49,7 @@ enum BleManagerFailureCode {
 
   /// disconnection event received before end of GATT negociation
   unexpectedDisconnection,
+
+  /// when the connected device's UUID or MAC is not in the given whitelist
+  proxyWhitelist,
 }

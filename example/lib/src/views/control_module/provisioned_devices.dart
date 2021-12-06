@@ -93,12 +93,8 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     setState(() {
       _devices.clear();
     });
-
-    //  TODO: we should check if the device advertise with the good network id
     _scanSubscription = flutterReactiveBle.scanForDevices(
-      withServices: [
-        meshProxyUuid,
-      ],
+      withServices: [meshProxyUuid],
     ).listen((device) async {
       setState(() {
         _devices.add(device);

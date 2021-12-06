@@ -9,9 +9,9 @@ import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
-final macAddressServiceUuid =
+final doozCustomServiceUuid =
     Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
-final macAddressCharacteristicUuid =
+final doozCustomCharacteristicUuid =
     Platform.isAndroid ? Uuid.parse('00001401-0000-1000-8000-00805F9B34FB') : Uuid.parse('1401');
 final meshProxyUuid = Platform.isAndroid ? Uuid.parse('00001828-0000-1000-8000-00805F9B34FB') : Uuid.parse('1828');
 final meshProxyDataIn = Platform.isAndroid ? Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADD');
@@ -68,7 +68,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   }
 
   @visibleForOverriding
-  Future<DiscoveredService?> isRequiredServiceSupported();
+  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
   @visibleForOverriding
   Future<void> initGatt();
@@ -88,7 +88,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
 
-  /// Will connect to the provided [DiscoveredDevice] using its [id] as identifier.
+  /// Will connect to the provided [DiscoveredDevice] using its id as identifier.
   /// This method will subscribe to connection status updates to :
   ///   - negotiate and init the GATT link with BLE device
   ///   - maintain the [_device] variable up to date (null: disconnected)
@@ -96,12 +96,26 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return a [TimeoutException] if connection is not established after [connectionTimeout]
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
-  Future<void> connect(final DiscoveredDevice discoveredDevice, List<String> macIds,
-      {Duration connectionTimeout = kConnectionTimeout}) async {
+  ///
+  /// The [whitelist] has been introduced along with [doozCustomCharacteristicUuid] and is intended to be used like so :
+  ///   - the whitelist is populated with MAC addresses and [shouldCheckDoozCustomService] is true
+  ///   - it will connect to the BLE device and check the MAC address that should be stored in the DooZ custom charac
+  /// If the read MAC is not in the [whitelist], then this method will trigger an error event and complete with an error.
+  ///
+  /// (because this is a DooZ application specific flow, we made these parameters optional)
+  Future<void> connect(
+    final DiscoveredDevice discoveredDevice, {
+    Duration connectionTimeout = kConnectionTimeout,
+    List<String>? whitelist,
+    bool shouldCheckDoozCustomService = false,
+  }) async {
     if (callbacks == null) {
       throw const BleManagerException(
-          BleManagerFailureCode.callbacks, 'You have to set callbacks using callbacks(E callbacks) before connecting');
+        BleManagerFailureCode.callbacks,
+        'You have to set callbacks using callbacks(E callbacks) before connecting',
+      );
     }
+    final _whitelist = whitelist ?? [discoveredDevice.id];
     // cancel any existing sub, if connected to any device,
     // events will be handled by [_deviceStatusStream] or by
     // [_connectedDeviceStatusStream] first if same device as [discoveredDevice]
@@ -129,38 +143,28 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt().then((_) async {
+                  _negotiateAndInitGatt(shouldCheckDoozCustomService).then((_) async {
                     if (!_connectCompleter.isCompleted) {
-                      //do stuffs with mac ids list
-
                       String? deviceId = _device!.id;
-                      if(Platform.isIOS){
-                        final services = await _bleInstance.discoverServices(_device!.id);
-                        if(macIds.contains(_device!.id)){
-                          deviceId = _device!.id;
-                        }else if(services.any((service) => service.serviceId == macAddressServiceUuid)){
-                          deviceId = await getMacId();
-                        }else{
-                          deviceId = null;
-                        }
+                      if (shouldCheckDoozCustomService && !_whitelist.contains(deviceId)) {
+                        // because white list is intended to be populated with mac addresses,
+                        // the deviceId may not be in the list if user is on iOS as it's using generated UUIDs
+                        // so use dooz custom BLE charac to read mac address
+                        deviceId = await getMacId();
                       }
-
-                      if(deviceId == null || !macIds.contains(deviceId)){
-                        disconnect();
-                        _connectCompleter.completeError('Device does not have the mac id service');
-                        if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
-                          _callbacks.onErrorController.add(BleManagerCallbacksError(_device, 'GATT error', 'Device does not have the mac id service'));
+                      if (!_whitelist.contains(deviceId)) {
+                        throw BleManagerException(
+                          BleManagerFailureCode.proxyWhitelist,
+                          '$deviceId not in $_whitelist',
+                        );
+                      } else {
+                        _connectCompleter.complete();
+                        if (!_callbacks.onDeviceReadyController.isClosed &&
+                            _callbacks.onDeviceReadyController.hasListener) {
+                          _callbacks.onDeviceReadyController.add(_device!);
                         }
-                        return;
-                      }
-
-                      _connectCompleter.complete();
-                      if (!_callbacks.onDeviceReadyController.isClosed &&
-                          _callbacks.onDeviceReadyController.hasListener) {
-                        _callbacks.onDeviceReadyController.add(_device!);
                       }
                     }
-
                   }).catchError(
                     (e, s) {
                       if (!_callbacks.onErrorController.isClosed && _callbacks.onErrorController.hasListener) {
@@ -224,33 +228,44 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _log('connect took ${watch.elapsedMilliseconds}ms');
   }
 
-  String toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
+  String _toMacAddress(final List<int> bytes) =>
+      bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
 
-  Future<String> getMacId() async {
-    final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
-        characteristicId: macAddressCharacteristicUuid, serviceId: macAddressServiceUuid, deviceId: _device!.id));
-    final macIdList = macIdChar.reversed.toList();
-    final macId = toMacAddress(macIdList);
-    return macId.toUpperCase();
+  /// This method will read the [doozCustomCharacteristicUuid] if a device is connected and return the MAC address stored
+  Future<String?> getMacId() async {
+    try {
+      final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
+        characteristicId: doozCustomCharacteristicUuid,
+        serviceId: doozCustomServiceUuid,
+        deviceId: _device!.id,
+      ));
+      final macIdList = macIdChar.reversed.toList();
+      final macId = _toMacAddress(macIdList);
+      _log('got mac adr from custom service ! $macId');
+      return macId;
+    } catch (e) {
+      _log('caught error during reading dooz custom charac $e');
+    }
   }
 
-  Future<void> _negotiateAndInitGatt() async {
+  Future<void> _negotiateAndInitGatt(bool shouldCheckDoozCustomService) async {
     final _callbacks = callbacks as E;
     DiscoveredService? service;
     try {
-      service = await isRequiredServiceSupported();
+      service = await isRequiredServiceSupported(shouldCheckDoozCustomService);
+    } on BleManagerException catch (e) {
+      _log('the device does not have the DooZ custom BLE service $e');
+      rethrow; // handled in catchError block
     } catch (e) {
       _log('caught error during discover service : $e');
     }
-
     if (service != null) {
       // valid mesh node
       try {
         await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
         if (!_callbacks.onServicesDiscoveredController.isClosed &&
             _callbacks.onServicesDiscoveredController.hasListener) {
-          _callbacks.onServicesDiscoveredController
-              .add(BleManagerCallbacksDiscoveredServices(_device!, service, false));
+          _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service));
         }
         await initGatt();
         final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
@@ -265,6 +280,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         throw BleManagerException(BleManagerFailureCode.negociation, '$e');
       }
     } else {
+      // invalid BLE device
       throw const BleManagerException(BleManagerFailureCode.serviceNotFound, 'Required service not found');
     }
   }
