@@ -221,7 +221,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _log('connect took ${watch.elapsedMilliseconds}ms');
   }
 
-  String toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
+  String toMacAddress(final List<int> bytes) =>
+      bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
 
   Future<String?> getMacId() async {
     try {
@@ -232,8 +233,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
       ));
       final macIdList = macIdChar.reversed.toList();
       final macId = toMacAddress(macIdList);
-      _log('got mac id from custom service ! $macId');
-      return macId.toUpperCase();
+      _log('got mac adr from custom service ! $macId');
+      return macId;
     } catch (e) {
       _log('caught error during reading dooz custom charac $e');
     }
@@ -245,8 +246,8 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     try {
       service = await isRequiredServiceSupported(shouldCheckDoozCustomService);
     } on BleManagerException catch (e) {
-      _log('$e');
-      rethrow;
+      _log('the device does not have the DooZ custom BLE service $e');
+      rethrow; // handled in catchError block
     } catch (e) {
       _log('caught error during discover service : $e');
     }
@@ -271,6 +272,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         throw BleManagerException(BleManagerFailureCode.negociation, '$e');
       }
     } else {
+      // invalid BLE device
       throw const BleManagerException(BleManagerFailureCode.serviceNotFound, 'Required service not found');
     }
   }
