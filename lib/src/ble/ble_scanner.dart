@@ -88,17 +88,12 @@ class BleScanner {
   Future<DiscoveredDevice?> searchForSpecificNode(
     String uid,
     Duration scanTimeout,
-    bool forProxy, {
-    Uuid? optionalService,
-  }) async {
+    bool forProxy,
+  ) async {
     DiscoveredDevice? result;
     try {
-      final services = [forProxy ? meshProxyUuid : meshProvisioningUuid];
-      if (optionalService != null) {
-        services.add(optionalService);
-      }
       result = await _scanWithParamsAsStream(
-        withServices: services,
+        withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
       ).firstWhere((s) => s.id == uid).timeout(scanTimeout);
     } on StateError catch (e) {
       debugPrint('[NordicNrfMesh] StateError -- no device found with UUID : $uid\n$e\n${e.message}');
@@ -110,47 +105,23 @@ class BleScanner {
 
   Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
-    Uuid? optionalService,
-  }) {
-    final services = [meshProvisioningUuid];
-    if (optionalService != null) {
-      services.add(optionalService);
-    }
-    return _scanWithParamsAsFuture(
-      withServices: services,
-      timeoutDuration: timeoutDuration,
-    );
-  }
+  }) =>
+      _scanWithParamsAsFuture(
+        withServices: [meshProvisioningUuid],
+        timeoutDuration: timeoutDuration,
+      );
 
-  Stream<DiscoveredDevice> scanForUnprovisionedNodes({Uuid? optionalService}) {
-    final services = [meshProvisioningUuid];
-    if (optionalService != null) {
-      services.add(optionalService);
-    }
-    return _scanWithParamsAsStream(withServices: services);
-  }
+  Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _scanWithParamsAsStream(withServices: [meshProvisioningUuid]);
 
   Future<List<DiscoveredDevice>> provisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
-    Uuid? optionalService,
-  }) {
-    final services = [meshProxyUuid];
-    if (optionalService != null) {
-      services.add(optionalService);
-    }
-    return _scanWithParamsAsFuture(
-      withServices: services,
-      timeoutDuration: timeoutDuration,
-    );
-  }
+  }) =>
+      _scanWithParamsAsFuture(
+        withServices: [meshProxyUuid],
+        timeoutDuration: timeoutDuration,
+      );
 
-  Stream<DiscoveredDevice> scanForProxy({Uuid? optionalService}) {
-    final services = [meshProxyUuid];
-    if (optionalService != null) {
-      services.add(optionalService);
-    }
-    return _scanWithParamsAsStream(withServices: services);
-  }
+  Stream<DiscoveredDevice> scanForProxy() => _scanWithParamsAsStream(withServices: [meshProxyUuid]);
 
   Stream<DiscoveredDevice> scanWithServices(List<Uuid> services) => _scanWithParamsAsStream(withServices: services);
 }

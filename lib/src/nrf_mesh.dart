@@ -81,7 +81,7 @@ class NordicNrfMesh {
     Duration timeoutDuration = defaultScanDuration,
     Uuid? optionalService,
   }) =>
-      _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration, optionalService: optionalService);
+      _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
   /// Will scan for **unprovisioned** nodes.
   ///
@@ -90,8 +90,7 @@ class NordicNrfMesh {
   /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<DiscoveredDevice> scanForUnprovisionedNodes({Uuid? optionalService}) =>
-      _bleScanner.scanForUnprovisionedNodes(optionalService: optionalService);
+  Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _bleScanner.scanForUnprovisionedNodes();
 
   /// Will scan for **provisioned** nodes.
   ///
@@ -100,9 +99,8 @@ class NordicNrfMesh {
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Future<List<DiscoveredDevice>> provisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
-    Uuid? optionalService,
   }) =>
-      _bleScanner.provisionedNodesInRange(timeoutDuration: timeoutDuration, optionalService: optionalService);
+      _bleScanner.provisionedNodesInRange(timeoutDuration: timeoutDuration);
 
   /// Will scan for **provisioned** nodes.
   ///
@@ -111,8 +109,7 @@ class NordicNrfMesh {
   /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
-  Stream<DiscoveredDevice> scanForProxy({Uuid? optionalService}) =>
-      _bleScanner.scanForProxy(optionalService: optionalService);
+  Stream<DiscoveredDevice> scanForProxy() => _bleScanner.scanForProxy();
 
   /// Will scan for devices that broadcast given services.
   ///
@@ -134,9 +131,8 @@ class NordicNrfMesh {
     String uid, {
     bool isProxy = false,
     Duration timeoutDuration = defaultScanDuration,
-    Uuid? optionalService,
   }) =>
-      _bleScanner.searchForSpecificNode(uid, timeoutDuration, isProxy, optionalService: optionalService);
+      _bleScanner.searchForSpecificNode(uid, timeoutDuration, isProxy);
 
   /// Provide a [Stream] of the current [BleStatus] of the host device.
   Stream<BleStatus> get bleStatus => _bleScanner.bleStatus;
