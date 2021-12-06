@@ -79,7 +79,6 @@ class NordicNrfMesh {
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
     Duration timeoutDuration = defaultScanDuration,
-    Uuid? optionalService,
   }) =>
       _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
