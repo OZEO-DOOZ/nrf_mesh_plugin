@@ -1,6 +1,6 @@
 name: nordic_nrf_mesh
 description: A Flutter plugin to enable mesh network management and communication using Nordic's SDKs. It also provides the ability to open BLE connection with mesh nodes using some other flutter package.
-version: 0.3.0
+version: 0.4.0
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

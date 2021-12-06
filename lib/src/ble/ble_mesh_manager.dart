@@ -38,32 +38,47 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
     return super.disconnect();
   }
 
-  String _toMacAddress(final List<int> bytes) => bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':');
-
-  Future<String> getServiceMacId() async {
-    if (hasExpectedService(macAddressServiceUuid)) {
-      final service = _discoveredServices.firstWhere((service) => service.serviceId == macAddressServiceUuid);
-      if (hasExpectedCharacteristicUuid(service, macAddressCharacteristicUuid)) {
-        final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
-            characteristicId: macAddressCharacteristicUuid, serviceId: macAddressServiceUuid, deviceId: device!.id));
-        final macIdList = macIdChar.reversed.toList();
-        final macId = _toMacAddress(macIdList);
-        return macId.toUpperCase();
+  Future<String?> getServiceMacId() async {
+    if (hasExpectedService(doozCustomServiceUuid)) {
+      final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
+      if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
+        return getMacId();
       }
     }
-    return 'NOT-FOUND';
   }
 
   @override
-  Future<DiscoveredService?> isRequiredServiceSupported() async {
+  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService) async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
     isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;
+      // check for meshProxy characs
       final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
       if (hasExpectedCharacteristicUuid(service, meshProxyDataIn) &&
           hasExpectedCharacteristicUuid(service, meshProxyDataOut)) {
-        return service;
+        // if shouldCheckDoozCustomService is true, will also check for the existence of doozCustomServiceUuid
+        // that has been introduced in firmwares v1.1.0 so we can get the mac address even on iOS devices
+        if (shouldCheckDoozCustomService) {
+          if (hasExpectedService(doozCustomServiceUuid)) {
+            final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
+            if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
+              return service;
+            } else {
+              throw const BleManagerException(
+                BleManagerFailureCode.doozServiceNotFound,
+                'plz update the firmware to v1.1.x',
+              );
+            }
+          } else {
+            throw const BleManagerException(
+              BleManagerFailureCode.doozServiceNotFound,
+              'plz update the firmware to v1.1.x',
+            );
+          }
+        } else {
+          return service;
+        }
       }
       return null;
     } else {
@@ -118,7 +133,6 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data));
         } else {
           if (!connectCompleter.isCompleted) {
-            // will notify for error as the connection could not be properly established
             const _msg = 'no callback ready to receive data event';
             _log(_msg);
             connectCompleter.completeError(const BleManagerException(BleManagerFailureCode.callbacks, _msg));

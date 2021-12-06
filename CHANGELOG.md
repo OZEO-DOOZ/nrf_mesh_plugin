@@ -1,3 +1,9 @@
+## 0.4.0
+
+- added a new scanning method where a user may choose the BLE services to look for
+- implement a whitelist parameter in BleManager.connect method. Useful when using iOS device and consumer know in advance which MAC addresses belong to the loaded n/w
+- added new error codes for BleManagerFailureCode related to the DooZ custom BLE service
+
 ## 0.3.0
 
 - now use flutter_reactive_ble v4.0.1
