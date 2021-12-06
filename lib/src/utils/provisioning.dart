@@ -263,7 +263,7 @@ late int _connectRetryCount;
 Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
   _connectRetryCount++;
   await bleMeshManager
-      .connect(deviceToConnect, [deviceToConnect.id],connectionTimeout: const Duration(seconds: 10))
+      .connect(deviceToConnect, connectionTimeout: const Duration(seconds: 10))
       .catchError((e) async => await _onConnectError(e, bleMeshManager, deviceToConnect));
 }
 
@@ -284,7 +284,9 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       throw e;
     }
   } else if (e is BleManagerException) {
-    if (_connectRetryCount < 3 && e.code != BleManagerFailureCode.callbacks) {
+    if (_connectRetryCount < 3 &&
+        e.code != BleManagerFailureCode.callbacks &&
+        e.code != BleManagerFailureCode.proxyWhitelist) {
       _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
