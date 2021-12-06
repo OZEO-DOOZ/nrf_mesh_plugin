@@ -242,15 +242,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     } catch (e) {
       _log('caught error during discover service : $e');
     }
-
     if (service != null) {
       // valid mesh node
       try {
         await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
         if (!_callbacks.onServicesDiscoveredController.isClosed &&
             _callbacks.onServicesDiscoveredController.hasListener) {
-          _callbacks.onServicesDiscoveredController
-              .add(BleManagerCallbacksDiscoveredServices(_device!, service, false));
+          _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service));
         }
         await initGatt();
         final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
