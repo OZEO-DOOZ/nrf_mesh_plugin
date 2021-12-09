@@ -144,7 +144,7 @@ class MeshNetwork implements IMeshNetwork {
     int groupAddressRange,
     int sceneAddressRange,
     int globalTtl, {
-    String name = 'DOOZ Mesh Provisioner',
+    String name = 'DooZ Mesh Provisioner',
   }) async {
     if (Platform.isIOS || Platform.isAndroid) {
       return (await _methodChannel.invokeMethod<bool>(
