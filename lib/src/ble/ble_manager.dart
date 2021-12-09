@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
