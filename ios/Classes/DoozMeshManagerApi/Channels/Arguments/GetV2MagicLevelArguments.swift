@@ -10,7 +10,7 @@ import Foundation
 struct GetV2MagicLevelArguments: BaseFlutterArguments {
     let io: Int
     let index: Int
-    let correlation: Int16
+    let correlation: Int
     let keyIndex: Int
     let address: Int
 }
