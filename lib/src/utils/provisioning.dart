@@ -104,7 +104,8 @@ Future<ProvisionedMeshNode> _provisioning(
         scanTries++;
         _log('attempt #$scanTries to scan for ${deviceToProvision.id}');
         final scanResults = await bleScanner.provisionedNodesInRange(
-          timeoutDuration: const Duration(seconds: 5), // increase in time reduces 'Undocumented scan throttle' error
+          // increase in time between two scans reduces 'Undocumented scan throttle' error (on Android)
+          timeoutDuration: const Duration(seconds: 5),
         );
         try {
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id);
