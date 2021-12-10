@@ -1,3 +1,11 @@
+## 0.4.0
+
+- added a new scanning method where a user may choose the BLE services to look for
+- implement a whitelist parameter in BleManager.connect method. Useful when using iOS device and consumer know in advance which MAC addresses belong to the loaded **DooZ** mesh network
+- added new error codes for BleManagerFailureCode related to the DooZ custom BLE service
+- migrate Gradle build script artifacts repository from`jcenter()` to `mavenCentral()`
+- fix `GetV2MagicLevelArguments` `correlation` parameter data type
+
 ## 0.3.0
 
 - now use flutter_reactive_ble v4.0.1
