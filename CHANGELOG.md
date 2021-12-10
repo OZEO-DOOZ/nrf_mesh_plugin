@@ -3,7 +3,7 @@
 - added a new scanning method where a user may choose the BLE services to look for
 - implement a whitelist parameter in BleManager.connect method. Useful when using iOS device and consumer know in advance which MAC addresses belong to the loaded **DooZ** mesh network
 - added new error codes for BleManagerFailureCode related to the DooZ custom BLE service
-- migrate from `jcenter()` to `mavenCentral()`
+- migrate Gradle build script artifacts repository from`jcenter()` to `mavenCentral()`
 - fix `GetV2MagicLevelArguments` `correlation` parameter data type
 
 ## 0.3.0
