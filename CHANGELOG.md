@@ -1,3 +1,7 @@
+## 0.5.0
+
+- expose some of the API needed to execute a Key Refresh Procedure
+
 ## 0.4.0
 
 - added a new scanning method where a user may choose the BLE services to look for
