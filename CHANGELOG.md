@@ -1,6 +1,7 @@
 ## 0.5.0
 
 - expose some of the API needed to execute a Key Refresh Procedure on Android using [this](https://github.com/NordicSemiconductor/Android-nRF-Mesh-Library/pull/381) Pull Request as reference
+- allow to choose the name of a provisioner when asking to create one using `IMeshNetwork.addProvisioner` method (defaults to `'DooZ Mesh Provisioner'`)
 
 ## 0.4.0
 
