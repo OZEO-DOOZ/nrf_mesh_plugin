@@ -291,10 +291,23 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 }
                 result.success(subscribedAddresses)
             }
-            "generateAndAddNetKey" -> {
-                Log.d(tag, "should generate and add new NetworkKey")
+            "generateNetKey" -> {
+                Log.d(tag, "should generate a NetworkKey a return the associated data")
                 val netKey = meshNetwork.createNetworkKey()
-                result.success(meshNetwork.addNetKey(netKey))
+                result.success(mapOf(
+                                "name" to netKey.getName(),
+                                "netKeyIndex" to netKey.getKeyIndex(),
+                                "phase" to netKey.getPhase(),
+                                "phaseDescription" to netKey.getPhaseDescription(),
+                                "isMinSecurity" to netKey.isMinSecurity(),
+                                "netKeyBytes" to netKey.getKey(),
+                                "oldNetKeyBytes" to netKey.getOldKey(),
+                                "txNetworkKey" to netKey.getTxNetworkKey(),
+                                "identityKey" to netKey.getIdentityKey(),
+                                "oldIdentityKey" to netKey.getOldIdentityKey(),
+                                "meshUuid" to netKey.getMeshUuid(),
+                                "timestamp" to netKey.getTimestamp()
+                    ))
             }
             "getNetKey" -> {
                 val netKeyIndex = call.argument<Int>("netKeyIndex")!!

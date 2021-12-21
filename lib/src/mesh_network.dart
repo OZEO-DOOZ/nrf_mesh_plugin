@@ -46,7 +46,7 @@ abstract class IMeshNetwork {
 
   Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid);
 
-  Future<bool?> generateAndAddNetKey();
+  Future<NetworkKey> generateNetKey();
 
   Future<NetworkKey?> getNetKey(int netKeyIndex);
 
@@ -247,9 +247,10 @@ class MeshNetwork implements IMeshNetwork {
   }
 
   @override
-  Future<bool?> generateAndAddNetKey() {
+  Future<NetworkKey> generateNetKey() async {
     if (/* Platform.isIOS ||  */ Platform.isAndroid) {
-      return _methodChannel.invokeMethod<bool>('generateAndAddNetKey');
+      final result = await _methodChannel.invokeMethod<Map>('generateNetKey');
+      return NetworkKey.fromJson(Map<String, dynamic>.from(result!));
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
