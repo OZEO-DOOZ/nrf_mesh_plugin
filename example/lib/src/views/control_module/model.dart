@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 class Model extends StatelessWidget {
