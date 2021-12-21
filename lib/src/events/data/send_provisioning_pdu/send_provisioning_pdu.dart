@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
+import 'package:nordic_nrf_mesh/src/models/models.dart';
 
 part 'send_provisioning_pdu.freezed.dart';
 part 'send_provisioning_pdu.g.dart';

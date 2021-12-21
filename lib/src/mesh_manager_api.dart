@@ -6,27 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_app_key_status/config_app_key_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_composition_data_status/config_composition_data_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_model_app_status/config_model_app_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_model_publication_status/config_model_publication_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_model_subscription_status/config_model_subscription_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_network_transmit_status/config_network_transmit_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_default_ttl_status/config_default_ttl_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/generic_level_status/generic_level_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/generic_on_off_status/generic_on_off_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/light_ctl_status/light_ctl_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/light_hsl_status/light_hsl_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/light_lightness_status/light_lightness_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/magic_level_get_status/magic_level_get_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/magic_level_set_status/magic_level_set_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/mesh_network/mesh_network_event.dart';
-import 'package:nordic_nrf_mesh/src/events/data/mesh_provisioning_status/mesh_provisioning_status.dart';
-import 'package:nordic_nrf_mesh/src/events/data/send_provisioning_pdu/send_provisioning_pdu.dart';
 import 'package:nordic_nrf_mesh/src/events/mesh_manager_api_events.dart';
 import 'package:nordic_nrf_mesh/src/mesh_network.dart';
-import 'package:nordic_nrf_mesh/src/unprovisioned_mesh_node.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MeshManagerApi {
@@ -61,6 +42,7 @@ class MeshManagerApi {
   late final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
   late final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
   late final _onLightHslStatusController = StreamController<LightHslStatusData>.broadcast();
+  late final _onConfigKeyRefreshPhaseStatusController = StreamController<ConfigKeyRefreshPhaseStatus>.broadcast();
 
   late StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   late StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
@@ -88,6 +70,8 @@ class MeshManagerApi {
   late StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
   late StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
   late StreamSubscription<LightHslStatusData> _onLightHslStatusSubscription;
+
+  late StreamSubscription<ConfigKeyRefreshPhaseStatus> _onConfigKeyRefreshPhaseStatusSubscription;
 
   late Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork? _lastMeshNetwork;
@@ -199,6 +183,10 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configDefaultTtlStatus.value)
         .map((event) => ConfigDefaultTtlStatus.fromJson(event))
         .listen(_onConfigDefaultTtlStatusController.add);
+    _onConfigKeyRefreshPhaseStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configKeyRefreshPhaseStatus.value)
+        .map((event) => ConfigKeyRefreshPhaseStatus.fromJson(event))
+        .listen(_onConfigKeyRefreshPhaseStatusController.add);
   }
 
   Stream<ConfigNetworkTransmitStatus> get onConfigNetworkTransmitStatus =>
@@ -252,6 +240,9 @@ class MeshManagerApi {
   Stream<LightCtlStatusData> get onLightCtlStatus => _onLightCtlStatusController.stream;
 
   Stream<LightHslStatusData> get onLightHslStatus => _onLightHslStatusController.stream;
+
+  Stream<ConfigKeyRefreshPhaseStatus> get onConfigKeyRefreshPhaseStatus =>
+      _onConfigKeyRefreshPhaseStatusController.stream;
 
   Uuid get meshProvisioningUuidServiceKey => meshProvisioningUuid;
 
@@ -335,7 +326,9 @@ class MeshManagerApi {
         _onV2MagicLevelGetStatusController.close(),
         _onConfigNodeResetStatusController.close(),
         _onConfigNetworkTransmitStatusController.close(),
-        _onConfigDefaultTtlStatusController.close()
+        _onConfigDefaultTtlStatusController.close(),
+        _onConfigKeyRefreshPhaseStatusSubscription.cancel(),
+        _onConfigKeyRefreshPhaseStatusController.close()
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
@@ -698,6 +691,53 @@ class MeshManagerApi {
     );
     await _methodChannel.invokeMethod('getNetworkTransmitSettings', {'address': address});
     return status;
+  }
+
+  Future<ConfigKeyRefreshPhaseStatus> keyRefreshPhaseGet({
+    int address = 0xFFFF,
+    int netKeyIndex = 0,
+  }) async {
+    if (Platform.isAndroid) {
+      final status = _onConfigKeyRefreshPhaseStatusController.stream.firstWhere(
+        (element) => address != 0xFFFF || element.source == address,
+        orElse: () => const ConfigKeyRefreshPhaseStatus(-1, -1, -1, 'timeout', -1, -1),
+      );
+      await _methodChannel.invokeMethod('keyRefreshPhaseGet', {'address': address, 'netKeyIndex': netKeyIndex});
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
+  // Key refresh phases (from Nordic's Android SDK)
+  // public static final int NORMAL_OPERATION = 0;
+  // public static final int KEY_DISTRIBUTION = 1;
+  // public static final int USING_NEW_KEYS = 2;
+  // public static final int REVOKING_OLD_KEYS   = 3; This phase is instantaneous.
+
+  // Transitions
+  static const int useNewKeys = 2; // Normal operation
+  static const int revokeOldKeys = 3; // Key Distribution
+
+  Future<ConfigKeyRefreshPhaseStatus> keyRefreshPhaseSet({
+    int address = 0xFFFF,
+    int netKeyIndex = 0,
+    int transition = useNewKeys,
+  }) async {
+    if (Platform.isAndroid) {
+      final status = _onConfigKeyRefreshPhaseStatusController.stream.firstWhere(
+        (element) => address != 0xFFFF || element.source == address,
+        orElse: () => const ConfigKeyRefreshPhaseStatus(-1, -1, -1, 'timeout', -1, -1),
+      );
+      await _methodChannel.invokeMethod('keyRefreshPhaseSet', {
+        'address': address,
+        'netKeyIndex': netKeyIndex,
+        'transition': transition,
+      });
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
   }
 
   String getDeviceUuid(List<int> serviceData) {

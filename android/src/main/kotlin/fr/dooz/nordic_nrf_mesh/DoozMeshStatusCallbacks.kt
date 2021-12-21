@@ -217,6 +217,20 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                     ))
                 }
             }
+            is ConfigKeyRefreshPhaseStatus -> {
+                Log.d(tag, "received a ConfigKeyRefreshPhaseStatus")
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onConfigKeyRefreshPhaseStatus",
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst,
+                            "statusCode" to meshMessage.statusCode,
+                            "statusCodeName" to meshMessage.statusCodeName,
+                            "netKeyIndex" to meshMessage.netKeyIndex,
+                            "transition" to meshMessage.transition
+                    ))
+                }
+            }
             else -> {
                 Log.d(tag, "Unknown message received :" + meshMessage.javaClass.toString())
             }

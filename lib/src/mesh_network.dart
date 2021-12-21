@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
-import 'package:nordic_nrf_mesh/src/models/group/group.dart';
-import 'package:nordic_nrf_mesh/src/models/provisioner/provisioner.dart';
-import 'package:nordic_nrf_mesh/src/provisioned_mesh_node.dart';
+import 'package:nordic_nrf_mesh/src/models/models.dart';
 
 abstract class IMeshNetwork {
   Future<List<GroupData>> get groups;
@@ -32,7 +30,13 @@ abstract class IMeshNetwork {
 
   Future<void> selectProvisioner(int provisionerIndex);
 
-  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl);
+  Future<bool> addProvisioner(
+    int unicastAddressRange,
+    int groupAddressRange,
+    int sceneAddressRange,
+    int globalTtl, {
+    String name,
+  });
 
   Future<bool> updateProvisioner(Provisioner provisioner);
 
@@ -47,6 +51,14 @@ abstract class IMeshNetwork {
   Future<ProvisionedMeshNode?> getNode(int address);
 
   Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid);
+
+  Future<NetworkKey> generateNetKey();
+
+  Future<NetworkKey?> getNetKey(int netKeyIndex);
+
+  Future<bool?> removeNetKey(int netKeyIndex);
+
+  Future<NetworkKey?> distributeNetKey(int netKeyIndex);
 }
 
 class MeshNetwork implements IMeshNetwork {
@@ -134,11 +146,17 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<bool> addProvisioner(
-      int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) async {
+    int unicastAddressRange,
+    int groupAddressRange,
+    int sceneAddressRange,
+    int globalTtl, {
+    String name = 'DooZ Mesh Provisioner',
+  }) async {
     if (Platform.isIOS || Platform.isAndroid) {
       return (await _methodChannel.invokeMethod<bool>(
         'addProvisioner',
         {
+          'name': name,
           'unicastAddressRange': unicastAddressRange,
           'groupAddressRange': groupAddressRange,
           'sceneAddressRange': sceneAddressRange,
@@ -235,6 +253,45 @@ class MeshNetwork implements IMeshNetwork {
         debugPrint('node not found');
         return null;
       }
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<NetworkKey> generateNetKey() async {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      final result = await _methodChannel.invokeMethod<Map>('generateNetKey');
+      return NetworkKey.fromJson(Map<String, dynamic>.from(result!));
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<NetworkKey?> getNetKey(int netKeyIndex) async {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      final result = await _methodChannel.invokeMethod<Map>('getNetKey', {'netKeyIndex': netKeyIndex});
+      return NetworkKey.fromJson(Map<String, dynamic>.from(result!));
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<bool?> removeNetKey(int netKeyIndex) async {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      return _methodChannel.invokeMethod<bool>('removeNetKey', {'netKeyIndex': netKeyIndex});
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
+  }
+
+  @override
+  Future<NetworkKey?> distributeNetKey(int netKeyIndex) async {
+    if (/* Platform.isIOS ||  */ Platform.isAndroid) {
+      final result = await _methodChannel.invokeMethod<Map>('distributeNetKey', {'netKeyIndex': netKeyIndex});
+      return NetworkKey.fromJson(Map<String, dynamic>.from(result!));
     } else {
       throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
     }
