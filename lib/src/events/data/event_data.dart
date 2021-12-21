@@ -1,6 +1,7 @@
 export 'config_app_key_status/config_app_key_status.dart';
 export 'config_composition_data_status/config_composition_data_status.dart';
 export 'config_default_ttl_status/config_default_ttl_status.dart';
+export 'config_key_refresh_phase_status/config_key_refresh_phase_status.dart';
 export 'config_model_app_status/config_model_app_status.dart';
 export 'config_model_publication_status/config_model_publication_status.dart';
 export 'config_model_subscription_status/config_model_subscription_status.dart';

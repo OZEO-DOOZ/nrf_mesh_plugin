@@ -291,6 +291,75 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 }
                 result.success(subscribedAddresses)
             }
+            "generateNetKey" -> {
+                Log.d(tag, "should generate a NetworkKey and return the associated data")
+                val netKey = meshNetwork.createNetworkKey()
+                result.success(mapOf(
+                                "name" to netKey.getName(),
+                                "netKeyIndex" to netKey.getKeyIndex(),
+                                "phase" to netKey.getPhase(),
+                                "phaseDescription" to netKey.getPhaseDescription(),
+                                "isMinSecurity" to netKey.isMinSecurity(),
+                                "netKeyBytes" to netKey.getKey(),
+                                "oldNetKeyBytes" to netKey.getOldKey(),
+                                "txNetworkKey" to netKey.getTxNetworkKey(),
+                                "identityKey" to netKey.getIdentityKey(),
+                                "oldIdentityKey" to netKey.getOldIdentityKey(),
+                                "meshUuid" to netKey.getMeshUuid(),
+                                "timestamp" to netKey.getTimestamp()
+                    ))
+            }
+            "getNetKey" -> {
+                val netKeyIndex = call.argument<Int>("netKeyIndex")!!
+                Log.d(tag, "should get NetworkKey at index " + netKeyIndex.toString())
+                val netKey = meshNetwork.getNetKey(netKeyIndex)
+                if(null != netKey) {
+                    result.success(mapOf(
+                                "name" to netKey.getName(),
+                                "netKeyIndex" to netKey.getKeyIndex(),
+                                "phase" to netKey.getPhase(),
+                                "phaseDescription" to netKey.getPhaseDescription(),
+                                "isMinSecurity" to netKey.isMinSecurity(),
+                                "netKeyBytes" to netKey.getKey(),
+                                "oldNetKeyBytes" to netKey.getOldKey(),
+                                "txNetworkKey" to netKey.getTxNetworkKey(),
+                                "identityKey" to netKey.getIdentityKey(),
+                                "oldIdentityKey" to netKey.getOldIdentityKey(),
+                                "meshUuid" to netKey.getMeshUuid(),
+                                "timestamp" to netKey.getTimestamp()
+                        ))
+                } else {
+                    result.error("NOT_FOUND", "No Network Key found", "Please check the given index")
+                }
+            }
+            "removeNetKey" -> {
+                val netKeyIndex = call.argument<Int>("netKeyIndex")!!
+                Log.d(tag, "should remove NetworkKey at index " + netKeyIndex.toString())
+                val netKey = meshNetwork.getNetKey(netKeyIndex)
+                if(null != netKey) {
+                    result.success(meshNetwork.removeNetKey(netKey))
+                } else {
+                    result.error("NOT_FOUND", "No Network Key found", "Please check the given index")
+                }
+            }
+            "distributeNetKey" -> {
+                val netKeyIndex = call.argument<Int>("netKeyIndex")!!
+                Log.d(tag, "should distribute NetworkKey at index " + netKeyIndex.toString())
+                val netKey = meshNetwork.getNetKey(netKeyIndex)
+                if(null != netKey) {
+                    val netKeyBytes = netKey.getKey()
+                    val updatedNetKey = meshNetwork.distributeNetKey(netKey, netKeyBytes)
+                    result.success(mapOf(
+                                "meshUuid" to updatedNetKey.getMeshUuid(),
+                                "name" to updatedNetKey.getName(),
+                                "netKeyIndex" to updatedNetKey.getKeyIndex(),
+                                "oldPhase" to netKey.phase,
+                                "phase" to updatedNetKey.phase
+                        ))
+                } else {
+                    result.error("NOT_FOUND", "No Network Key found", "Please check the given index")
+                }
+            }
             else -> {
                 result.notImplemented()
             }
