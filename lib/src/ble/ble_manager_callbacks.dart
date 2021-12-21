@@ -5,9 +5,8 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 class BleManagerCallbacksDiscoveredServices {
   final DiscoveredDevice device;
   final DiscoveredService service;
-  final bool optionalServicesFound;
 
-  const BleManagerCallbacksDiscoveredServices(this.device, this.service, this.optionalServicesFound);
+  const BleManagerCallbacksDiscoveredServices(this.device, this.service);
 }
 
 class BleManagerCallbacksError {

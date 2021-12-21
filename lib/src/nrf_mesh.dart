@@ -109,6 +109,15 @@ class NordicNrfMesh {
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Stream<DiscoveredDevice> scanForProxy() => _bleScanner.scanForProxy();
 
+  /// Will scan for devices that broadcast given services.
+  ///
+  /// Returns a [Stream] of [DiscoveredDevice] for the user to listen to.
+  ///
+  /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
+  ///
+  /// Throws an [UnsupportedError] if the current OS is not supported.
+  Stream<DiscoveredDevice> scanWithServices(List<Uuid> services) => _bleScanner.scanWithServices(services);
+
   /// Will scan for the given node uid.
   ///
   /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [isProxy] bool flag.

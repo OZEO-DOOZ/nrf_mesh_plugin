@@ -97,14 +97,15 @@ Future<ProvisionedMeshNode> _provisioning(
     try {
       await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
-
       DiscoveredDevice? device;
       var scanTries = 0;
       while (device == null && scanTries < 6) {
         scanTries++;
         _log('attempt #$scanTries to scan for ${deviceToProvision.id}');
         final scanResults = await bleScanner.provisionedNodesInRange(
-            timeoutDuration: const Duration(seconds: 5)); //increase in time reduces 'Undocumented scan throttle' error
+          // increase in time between two scans reduces 'Undocumented scan throttle' error (on Android)
+          timeoutDuration: const Duration(seconds: 5),
+        );
         try {
           device = scanResults.firstWhere((device) => device.id == deviceToProvision.id);
         } on StateError catch (e) {
@@ -283,7 +284,10 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       throw e;
     }
   } else if (e is BleManagerException) {
-    if (_connectRetryCount < 3 && e.code != BleManagerFailureCode.callbacks) {
+    if (_connectRetryCount < 3 &&
+        e.code != BleManagerFailureCode.callbacks &&
+        e.code != BleManagerFailureCode.proxyWhitelist &&
+        e.code != BleManagerFailureCode.doozServiceNotFound) {
       _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);
