@@ -190,6 +190,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                 result.success(maxAddress)
             }
             "addProvisioner" -> {
+                val name = call.argument<String>("name")!!
                 val unicastAddressRange = call.argument<Int>("unicastAddressRange")!!
                 val groupAddressRange = call.argument<Int>("groupAddressRange")!!
                 val sceneAddressRange = call.argument<Int>("sceneAddressRange")!!
@@ -199,7 +200,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
                     val unicastRange: AllocatedUnicastRange = meshNetwork.nextAvailableUnicastAddressRange(unicastAddressRange)
                     val groupRange: AllocatedGroupRange = meshNetwork.nextAvailableGroupAddressRange(groupAddressRange)
                     val sceneRange: AllocatedSceneRange = meshNetwork.nextAvailableSceneAddressRange(sceneAddressRange)!!
-                    val provisioner: Provisioner = meshNetwork.createProvisioner("DOOZ Mesh Provisioner",
+                    val provisioner: Provisioner = meshNetwork.createProvisioner(name,
                             unicastRange, groupRange, sceneRange)
                     val unicastId = provisioner.allocatedUnicastRanges[0].lowAddress
 

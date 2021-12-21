@@ -30,7 +30,13 @@ abstract class IMeshNetwork {
 
   Future<void> selectProvisioner(int provisionerIndex);
 
-  Future<bool> addProvisioner(int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl);
+  Future<bool> addProvisioner(
+    int unicastAddressRange,
+    int groupAddressRange,
+    int sceneAddressRange,
+    int globalTtl, {
+    String name,
+  });
 
   Future<bool> updateProvisioner(Provisioner provisioner);
 
@@ -140,11 +146,17 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<bool> addProvisioner(
-      int unicastAddressRange, int groupAddressRange, int sceneAddressRange, int globalTtl) async {
+    int unicastAddressRange,
+    int groupAddressRange,
+    int sceneAddressRange,
+    int globalTtl, {
+    String name = 'DooZ Mesh Provisioner',
+  }) async {
     if (Platform.isIOS || Platform.isAndroid) {
       return (await _methodChannel.invokeMethod<bool>(
         'addProvisioner',
         {
+          'name': name,
           'unicastAddressRange': unicastAddressRange,
           'groupAddressRange': groupAddressRange,
           'sceneAddressRange': sceneAddressRange,

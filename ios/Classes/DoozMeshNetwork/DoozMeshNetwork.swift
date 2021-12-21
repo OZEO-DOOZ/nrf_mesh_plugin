@@ -271,11 +271,12 @@ private extension DoozMeshNetwork {
             do {
                 let provisionerUUID = UUID()
                 
+                let name = String(data.name)
                 let nextAvailableUnicastAddressRange = meshNetwork.nextAvailableUnicastAddressRange(ofSize: UInt16(data.unicastAddressRange))!
                 let nextAvailableGroupAddressRange = meshNetwork.nextAvailableGroupAddressRange(ofSize: UInt16(data.groupAddressRange))!
                 let nextAvailableSceneRange = meshNetwork.nextAvailableSceneRange(ofSize: UInt16(data.sceneAddressRange))!
                 
-                let mProvisioner = Provisioner.init(name: UIDevice.current.name, uuid: provisionerUUID, allocatedUnicastRange: [nextAvailableUnicastAddressRange], allocatedGroupRange: [nextAvailableGroupAddressRange], allocatedSceneRange: [nextAvailableSceneRange])
+                let mProvisioner = Provisioner.init(name: name, uuid: provisionerUUID, allocatedUnicastRange: [nextAvailableUnicastAddressRange], allocatedGroupRange: [nextAvailableGroupAddressRange], allocatedSceneRange: [nextAvailableSceneRange])
                 
                 try meshNetwork.add(provisioner: mProvisioner)
                 
