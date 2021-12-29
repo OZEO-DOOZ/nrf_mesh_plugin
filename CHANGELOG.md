@@ -1,3 +1,7 @@
+## 0.5.1
+
+- fix bug in adding a provisioner on iOS device
+
 ## 0.5.0
 
 - expose some of the API needed to execute a Key Refresh Procedure on Android using [this](https://github.com/NordicSemiconductor/Android-nRF-Mesh-Library/pull/381) Pull Request as reference
