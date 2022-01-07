@@ -1,6 +1,7 @@
-## 0.5.1
+## 0.6.0
 
 - fix bug in adding a provisioner on iOS device
+- expose ConfigBeacon API
 
 ## 0.5.0
 
