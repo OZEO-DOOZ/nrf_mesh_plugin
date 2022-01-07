@@ -751,7 +751,7 @@ class MeshManagerApi {
 
   /// Will get the current beacon configuration
   Future<ConfigBeaconStatus> getSNBeacon(int address) async {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || Platform.isIOS) {
       final status = _onConfigBeaconStatusController.stream.firstWhere(
         (element) => element.source == address,
         orElse: () => const ConfigBeaconStatus(-1, -1, false),
@@ -770,7 +770,7 @@ class MeshManagerApi {
     int address = 0xFFFF,
     bool enable = false,
   }) async {
-    if (Platform.isAndroid) {
+    if (Platform.isAndroid || Platform.isIOS) {
       final status = _onConfigBeaconStatusController.stream.firstWhere(
         (element) => element.source == address,
         orElse: () => const ConfigBeaconStatus(-1, -1, false),

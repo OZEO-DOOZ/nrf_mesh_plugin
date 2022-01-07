@@ -33,6 +33,8 @@ enum DoozMeshManagerApiChannel {
     case getNetworkTransmitSettings(_ data: GetNetworkTransmitSettingsArguments)
     case getDefaultTtl(_ data: GetDefaultTtlArguments)
     case setDefaultTtl(_ data: SetDefaultTtlArguments)
+    case getSNBeacon(_ data: ConfigBeaconGetArguments)
+    case setSNBeacon(_ data: ConfigBeaconSetArguments)
     case sendConfigModelSubscriptionDeleteAll(_ data: SendConfigModelSubscriptionDeleteAllArguments)
     case sendConfigModelPublicationSet(_ data: SendConfigModelPublicationSetArguments)
     case sendLightLightness(_ data: SendLightLightnessArguments)
@@ -101,6 +103,10 @@ enum DoozMeshManagerApiChannel {
                 self = .getDefaultTtl(try GetDefaultTtlArguments(arguments))
             case "setDefaultTtl":
                 self = .setDefaultTtl(try SetDefaultTtlArguments(arguments))
+            case "getSNBeacon":
+                self = .getDefaultTtl(try ConfigBeaconGetArguments(arguments))
+            case "setSNBeacon":
+                self = .setDefaultTtl(try ConfigBeaconSetArguments(arguments))
             case "sendConfigModelSubscriptionDeleteAll":
                 self = .sendConfigModelSubscriptionDeleteAll(try SendConfigModelSubscriptionDeleteAllArguments(arguments))
             case "sendConfigModelPublicationSet":
