@@ -8,10 +8,6 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
-final doozCustomServiceUuid =
-    Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
-final doozCustomCharacteristicUuid =
-    Platform.isAndroid ? Uuid.parse('00001401-0000-1000-8000-00805F9B34FB') : Uuid.parse('1401');
 final meshProxyUuid = Platform.isAndroid ? Uuid.parse('00001828-0000-1000-8000-00805F9B34FB') : Uuid.parse('1828');
 final meshProxyDataIn = Platform.isAndroid ? Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADD');
 final meshProxyDataOut = Platform.isAndroid ? Uuid.parse('00002ADE-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADE');
@@ -67,7 +63,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   }
 
   @visibleForOverriding
-  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
+  Future<DiscoveredService?> isRequiredServiceSupported();
 
   @visibleForOverriding
   Future<void> initGatt();
@@ -95,18 +91,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return a [TimeoutException] if connection is not established after [connectionTimeout]
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
-  ///
-  /// The [whitelist] has been introduced along with [doozCustomCharacteristicUuid] and is intended to be used like so :
-  ///   - the whitelist is populated with MAC addresses and [shouldCheckDoozCustomService] is true
-  ///   - it will connect to the BLE device and check the MAC address that should be stored in the DooZ custom charac
-  /// If the read MAC is not in the [whitelist], then this method will trigger an error event and complete with an error.
-  ///
-  /// (because this is a DooZ application specific flow, we made these parameters optional)
+
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
     Duration connectionTimeout = kConnectionTimeout,
-    List<String>? whitelist,
-    bool shouldCheckDoozCustomService = false,
   }) async {
     if (callbacks == null) {
       throw const BleManagerException(
@@ -114,7 +102,6 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         'You have to set callbacks using callbacks(E callbacks) before connecting',
       );
     }
-    final _whitelist = whitelist ?? [discoveredDevice.id];
     // cancel any existing sub, if connected to any device,
     // events will be handled by [_deviceStatusStream] or by
     // [_connectedDeviceStatusStream] first if same device as [discoveredDevice]
@@ -142,26 +129,12 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt(shouldCheckDoozCustomService).then((_) async {
+                  _negotiateAndInitGatt().then((_) async {
                     if (!_connectCompleter.isCompleted) {
-                      String? deviceId = _device!.id;
-                      if (shouldCheckDoozCustomService && !_whitelist.contains(deviceId)) {
-                        // because white list is intended to be populated with mac addresses,
-                        // the deviceId may not be in the list if user is on iOS as it's using generated UUIDs
-                        // so use dooz custom BLE charac to read mac address
-                        deviceId = await getMacId();
-                      }
-                      if (!_whitelist.contains(deviceId)) {
-                        throw BleManagerException(
-                          BleManagerFailureCode.proxyWhitelist,
-                          '$deviceId not in $_whitelist',
-                        );
-                      } else {
-                        _connectCompleter.complete();
-                        if (!_callbacks.onDeviceReadyController.isClosed &&
-                            _callbacks.onDeviceReadyController.hasListener) {
-                          _callbacks.onDeviceReadyController.add(_device!);
-                        }
+                      _connectCompleter.complete();
+                      if (!_callbacks.onDeviceReadyController.isClosed &&
+                          _callbacks.onDeviceReadyController.hasListener) {
+                        _callbacks.onDeviceReadyController.add(_device!);
                       }
                     }
                   }).catchError(
@@ -227,31 +200,11 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _log('connect took ${watch.elapsedMilliseconds}ms');
   }
 
-  String _toMacAddress(final List<int> bytes) =>
-      bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
-
-  /// This method will read the [doozCustomCharacteristicUuid] if a device is connected and return the MAC address stored
-  Future<String?> getMacId() async {
-    try {
-      final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
-        characteristicId: doozCustomCharacteristicUuid,
-        serviceId: doozCustomServiceUuid,
-        deviceId: _device!.id,
-      ));
-      final macIdList = macIdChar.reversed.toList();
-      final macId = _toMacAddress(macIdList);
-      _log('got mac adr from custom service ! $macId');
-      return macId;
-    } catch (e) {
-      _log('caught error during reading dooz custom charac $e');
-    }
-  }
-
-  Future<void> _negotiateAndInitGatt(bool shouldCheckDoozCustomService) async {
+  Future<void> _negotiateAndInitGatt() async {
     final _callbacks = callbacks as E;
     DiscoveredService? service;
     try {
-      service = await isRequiredServiceSupported(shouldCheckDoozCustomService);
+      service = await isRequiredServiceSupported();
     } on BleManagerException catch (e) {
       _log('the device does not have the DooZ custom BLE service $e');
       rethrow; // handled in catchError block
