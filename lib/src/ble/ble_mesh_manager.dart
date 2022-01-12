@@ -38,35 +38,29 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   Future<String?> getServiceMacId() async {
     if (hasExpectedService(doozCustomServiceUuid)) {
-      final service = _discoveredServices
-          .firstWhere((service) => service.serviceId == doozCustomServiceUuid);
-      if (hasExpectedCharacteristicUuid(
-          service, doozCustomCharacteristicUuid)) {
+      final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
+      if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
         return getMacId();
       }
     }
   }
 
   @override
-  Future<DiscoveredService?> isRequiredServiceSupported(
-      bool shouldCheckDoozCustomService) async {
+  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService) async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
     isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;
       // check for meshProxy characs
-      final service = _discoveredServices
-          .firstWhere((service) => service.serviceId == meshProxyUuid);
+      final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
       if (hasExpectedCharacteristicUuid(service, meshProxyDataIn) &&
           hasExpectedCharacteristicUuid(service, meshProxyDataOut)) {
         // if shouldCheckDoozCustomService is true, will also check for the existence of doozCustomServiceUuid
         // that has been introduced in firmwares v1.1.0 so we can get the mac address even on iOS devices
         if (shouldCheckDoozCustomService) {
           if (hasExpectedService(doozCustomServiceUuid)) {
-            final service = _discoveredServices.firstWhere(
-                (service) => service.serviceId == doozCustomServiceUuid);
-            if (hasExpectedCharacteristicUuid(
-                service, doozCustomCharacteristicUuid)) {
+            final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
+            if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
               return service;
             }
           }
@@ -81,8 +75,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
       return null;
     } else {
       if (hasExpectedService(meshProvisioningUuid)) {
-        final service = _discoveredServices
-            .firstWhere((service) => service.serviceId == meshProvisioningUuid);
+        final service = _discoveredServices.firstWhere((service) => service.serviceId == meshProvisioningUuid);
         if (hasExpectedCharacteristicUuid(service, meshProvisioningDataIn) &&
             hasExpectedCharacteristicUuid(service, meshProvisioningDataOut)) {
           return service;

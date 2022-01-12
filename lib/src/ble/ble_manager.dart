@@ -8,31 +8,21 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
-final doozCustomServiceUuid = Platform.isAndroid
-    ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('1400');
-final doozCustomCharacteristicUuid = Platform.isAndroid
-    ? Uuid.parse('00001401-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('1401');
-final meshProxyUuid = Platform.isAndroid
-    ? Uuid.parse('00001828-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('1828');
-final meshProxyDataIn = Platform.isAndroid
-    ? Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('2ADD');
-final meshProxyDataOut = Platform.isAndroid
-    ? Uuid.parse('00002ADE-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('2ADE');
-final meshProvisioningUuid = Platform.isAndroid
-    ? Uuid.parse('00001827-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('1827');
-final meshProvisioningDataIn = Platform.isAndroid
-    ? Uuid.parse('00002ADB-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('2ADB');
-final meshProvisioningDataOut = Platform.isAndroid
-    ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB')
-    : Uuid.parse('2ADC');
-final clientCharacteristicConfigDescriptorUuid = Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
+final doozCustomServiceUuid =
+    Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
+final doozCustomCharacteristicUuid =
+    Platform.isAndroid ? Uuid.parse('00001401-0000-1000-8000-00805F9B34FB') : Uuid.parse('1401');
+final meshProxyUuid = Platform.isAndroid ? Uuid.parse('00001828-0000-1000-8000-00805F9B34FB') : Uuid.parse('1828');
+final meshProxyDataIn = Platform.isAndroid ? Uuid.parse('00002ADD-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADD');
+final meshProxyDataOut = Platform.isAndroid ? Uuid.parse('00002ADE-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADE');
+final meshProvisioningUuid =
+    Platform.isAndroid ? Uuid.parse('00001827-0000-1000-8000-00805F9B34FB') : Uuid.parse('1827');
+final meshProvisioningDataIn =
+    Platform.isAndroid ? Uuid.parse('00002ADB-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADB');
+final meshProvisioningDataOut =
+    Platform.isAndroid ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADC');
+final clientCharacteristicConfigDescriptorUuid =
+    Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
 final enableNotificationValue = [0x01, 0x00];
 const Duration kConnectionTimeout = Duration(seconds: 30);
 
@@ -77,8 +67,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   }
 
   @visibleForOverriding
-  Future<DiscoveredService?> isRequiredServiceSupported(
-      bool shouldCheckDoozCustomService);
+  Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
   @visibleForOverriding
   Future<void> initGatt();
@@ -153,12 +142,10 @@ abstract class BleManager<E extends BleManagerCallbacks> {
                   _device = discoveredDevice;
                   break;
                 case DeviceConnectionState.connected:
-                  _negotiateAndInitGatt(shouldCheckDoozCustomService)
-                      .then((_) async {
+                  _negotiateAndInitGatt(shouldCheckDoozCustomService).then((_) async {
                     if (!_connectCompleter.isCompleted) {
                       String? deviceId = _device!.id;
-                      if (shouldCheckDoozCustomService &&
-                          !_whitelist.contains(deviceId)) {
+                      if (shouldCheckDoozCustomService && !_whitelist.contains(deviceId)) {
                         // because white list is intended to be populated with mac addresses,
                         // the deviceId may not be in the list if user is on iOS as it's using generated UUIDs
                         // so use dooz custom BLE charac to read mac address
@@ -240,16 +227,13 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     _log('connect took ${watch.elapsedMilliseconds}ms');
   }
 
-  String _toMacAddress(final List<int> bytes) => bytes
-      .map((e) => e.toRadixString(16).padLeft(2, '0'))
-      .join(':')
-      .toUpperCase();
+  String _toMacAddress(final List<int> bytes) =>
+      bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join(':').toUpperCase();
 
   /// This method will read the [doozCustomCharacteristicUuid] if a device is connected and return the MAC address stored
   Future<String?> getMacId() async {
     try {
-      final macIdChar =
-          await bleInstance.readCharacteristic(QualifiedCharacteristic(
+      final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
         characteristicId: doozCustomCharacteristicUuid,
         serviceId: doozCustomServiceUuid,
         deviceId: _device!.id,

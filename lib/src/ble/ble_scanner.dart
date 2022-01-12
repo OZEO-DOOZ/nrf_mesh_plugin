@@ -94,9 +94,7 @@ class BleScanner {
     try {
       result = await _scanWithParamsAsStream(
         withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
-      )
-          .firstWhere((s) => s.name == deviceNameOrId || s.id == deviceNameOrId)
-          .timeout(scanTimeout);
+      ).firstWhere((s) => s.name == deviceNameOrId || s.id == deviceNameOrId).timeout(scanTimeout);
     } on StateError catch (e) {
       debugPrint(
           '[NordicNrfMesh] StateError -- no device found with given deviceNameOrId : $deviceNameOrId\n$e\n${e.message}');
