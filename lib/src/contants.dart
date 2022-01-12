@@ -38,6 +38,9 @@ enum BleManagerFailureCode {
   /// service discovery failure
   serviceNotFound,
 
+  /// when the connected device does not broadcast the DooZ custom service
+  doozServiceNotFound,
+
   /// negociation failure
   negociation,
 
@@ -46,4 +49,7 @@ enum BleManagerFailureCode {
 
   /// disconnection event received before end of GATT negociation
   unexpectedDisconnection,
+
+  /// when the connected device's UUID or MAC is not in the given whitelist
+  proxyWhitelist,
 }

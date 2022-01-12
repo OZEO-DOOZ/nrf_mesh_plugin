@@ -284,7 +284,10 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
       throw e;
     }
   } else if (e is BleManagerException) {
-    if (_connectRetryCount < 3 && e.code != BleManagerFailureCode.callbacks) {
+    if (_connectRetryCount < 3 &&
+        e.code != BleManagerFailureCode.callbacks &&
+        e.code != BleManagerFailureCode.proxyWhitelist &&
+        e.code != BleManagerFailureCode.doozServiceNotFound) {
       _log('will retry to connect after $_connectRetryCount tries');
       await Future.delayed(const Duration(milliseconds: 500));
       await _connect(bleMeshManager, deviceToConnect);

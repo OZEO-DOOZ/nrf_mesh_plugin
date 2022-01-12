@@ -86,7 +86,7 @@ class BleScanner {
   }
 
   Future<DiscoveredDevice?> searchForSpecificNode(
-    String deviceName,
+    String deviceNameOrId,
     Duration scanTimeout,
     bool forProxy,
   ) async {
@@ -94,11 +94,15 @@ class BleScanner {
     try {
       result = await _scanWithParamsAsStream(
         withServices: [forProxy ? meshProxyUuid : meshProvisioningUuid],
-      ).firstWhere((s) => s.name == deviceName).timeout(scanTimeout);
+      )
+          .firstWhere((s) => s.name == deviceNameOrId || s.id == deviceNameOrId)
+          .timeout(scanTimeout);
     } on StateError catch (e) {
-      debugPrint('[NordicNrfMesh] StateError -- no device found with NAME : $deviceName\n$e\n${e.message}');
+      debugPrint(
+          '[NordicNrfMesh] StateError -- no device found with given deviceNameOrId : $deviceNameOrId\n$e\n${e.message}');
     } on TimeoutException catch (e) {
-      debugPrint('[NordicNrfMesh] TimeoutException -- no device found with NAME : $deviceName\n$e\n${e.message}');
+      debugPrint(
+          '[NordicNrfMesh] TimeoutException -- no device found with given deviceNameOrId : $deviceNameOrId\n$e\n${e.message}');
     }
     return result;
   }
