@@ -6,6 +6,6 @@
 //
 
 struct ConfigBeaconSetArguments: BaseFlutterArguments {
-    let address: Int16
+    let address: Int
     let enable: Bool
 }

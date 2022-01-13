@@ -6,5 +6,5 @@
 //
 
 struct ConfigBeaconGetArguments: BaseFlutterArguments {
-    let address: Int16
+    let address: Int
 }

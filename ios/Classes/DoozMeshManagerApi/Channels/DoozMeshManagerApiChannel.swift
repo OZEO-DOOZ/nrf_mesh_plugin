@@ -104,9 +104,9 @@ enum DoozMeshManagerApiChannel {
             case "setDefaultTtl":
                 self = .setDefaultTtl(try SetDefaultTtlArguments(arguments))
             case "getSNBeacon":
-                self = .getDefaultTtl(try ConfigBeaconGetArguments(arguments))
+                self = .getSNBeacon(try ConfigBeaconGetArguments(arguments))
             case "setSNBeacon":
-                self = .setDefaultTtl(try ConfigBeaconSetArguments(arguments))
+                self = .setSNBeacon(try ConfigBeaconSetArguments(arguments))
             case "sendConfigModelSubscriptionDeleteAll":
                 self = .sendConfigModelSubscriptionDeleteAll(try SendConfigModelSubscriptionDeleteAllArguments(arguments))
             case "sendConfigModelPublicationSet":
