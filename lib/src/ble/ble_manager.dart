@@ -69,6 +69,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   @visibleForOverriding
   Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
+  /// A method that should implement the GATT initialization.
+  ///
+  /// In our case, it means requesting the highest possible MTU size and subcribing to notifications
   @visibleForOverriding
   Future<void> initGatt();
 
@@ -260,23 +263,15 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     }
     if (service != null) {
       // valid mesh node
+      if (!_callbacks.onServicesDiscoveredController.isClosed &&
+          _callbacks.onServicesDiscoveredController.hasListener) {
+        _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service));
+      }
       try {
-        await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
-        if (!_callbacks.onServicesDiscoveredController.isClosed &&
-            _callbacks.onServicesDiscoveredController.hasListener) {
-          _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service));
-        }
         await initGatt();
-        final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
-        if (Platform.isAndroid) {
-          mtuSize = negotiatedMtu - 3;
-        } else if (Platform.isIOS) {
-          mtuSize = negotiatedMtu;
-        }
-        await _callbacks.sendMtuToMeshManagerApi(mtuSize);
       } catch (e) {
-        _log('caught error during negociation : $e');
-        throw BleManagerException(BleManagerFailureCode.negociation, '$e');
+        _log('caught error during GATT initialization : $e');
+        throw BleManagerException(BleManagerFailureCode.initGatt, '$e');
       }
     } else {
       // invalid BLE device

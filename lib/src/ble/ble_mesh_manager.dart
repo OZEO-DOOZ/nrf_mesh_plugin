@@ -87,6 +87,13 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<void> initGatt() async {
+    final negotiatedMtu = await bleInstance.requestMtu(deviceId: device!.id, mtu: mtuSizeMax);
+    if (Platform.isAndroid) {
+      mtuSize = negotiatedMtu - 3;
+    } else if (Platform.isIOS) {
+      mtuSize = negotiatedMtu;
+    }
+    await callbacks!.sendMtuToMeshManagerApi(mtuSize);
     DiscoveredService? discoveredService;
     if (isProvisioningCompleted) {
       discoveredService = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
