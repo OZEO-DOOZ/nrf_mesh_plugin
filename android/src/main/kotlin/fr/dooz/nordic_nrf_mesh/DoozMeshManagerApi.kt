@@ -176,6 +176,19 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(address, meshMessage)
                 result.success(null)
             }
+            "getSNBeacon" -> {
+                val address = call.argument<Int>("address")!!
+                val meshMessage: MeshMessage = ConfigBeaconGet()
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "setSNBeacon" -> {
+                val address = call.argument<Int>("address")!!
+                val enable = call.argument<Boolean>("enable")!!
+                val meshMessage: MeshMessage = ConfigBeaconSet(enable)
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
             "setNetworkTransmitSettings" -> {
                 val address = call.argument<Int>("address")!!
                 val transmitCount = call.argument<Int>("transmitCount")!!

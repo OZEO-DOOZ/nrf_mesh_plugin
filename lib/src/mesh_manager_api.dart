@@ -38,6 +38,7 @@ class MeshManagerApi {
   late final _onConfigNodeResetStatusController = StreamController<ConfigNodeResetStatus>.broadcast();
   late final _onConfigNetworkTransmitStatusController = StreamController<ConfigNetworkTransmitStatus>.broadcast();
   late final _onConfigDefaultTtlStatusController = StreamController<ConfigDefaultTtlStatus>.broadcast();
+  late final _onConfigBeaconStatusController = StreamController<ConfigBeaconStatus>.broadcast();
 
   late final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
   late final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
@@ -66,6 +67,7 @@ class MeshManagerApi {
   late StreamSubscription<ConfigNodeResetStatus> _onConfigNodeResetStatusSubscription;
   late StreamSubscription<ConfigNetworkTransmitStatus> _onConfigNetworkTransmitStatusSubscription;
   late StreamSubscription<ConfigDefaultTtlStatus> _onConfigDefaultTtlStatusSubscription;
+  late StreamSubscription<ConfigBeaconStatus> _onConfigBeaconStatusSubscription;
 
   late StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
   late StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
@@ -187,7 +189,12 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.configKeyRefreshPhaseStatus.value)
         .map((event) => ConfigKeyRefreshPhaseStatus.fromJson(event))
         .listen(_onConfigKeyRefreshPhaseStatusController.add);
+    _onConfigBeaconStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.configBeaconStatus.value)
+        .map((event) => ConfigBeaconStatus.fromJson(event))
+        .listen(_onConfigBeaconStatusController.add);
   }
+  Stream<ConfigBeaconStatus> get onConfigBeaconStatus => _onConfigBeaconStatusController.stream;
 
   Stream<ConfigNetworkTransmitStatus> get onConfigNetworkTransmitStatus =>
       _onConfigNetworkTransmitStatusController.stream;
@@ -328,7 +335,9 @@ class MeshManagerApi {
         _onConfigNetworkTransmitStatusController.close(),
         _onConfigDefaultTtlStatusController.close(),
         _onConfigKeyRefreshPhaseStatusSubscription.cancel(),
-        _onConfigKeyRefreshPhaseStatusController.close()
+        _onConfigKeyRefreshPhaseStatusController.close(),
+        _onConfigBeaconStatusSubscription.cancel(),
+        _onConfigBeaconStatusController.close()
       ]);
 
   Future<IMeshNetwork> loadMeshNetwork() async {
@@ -733,6 +742,42 @@ class MeshManagerApi {
         'address': address,
         'netKeyIndex': netKeyIndex,
         'transition': transition,
+      });
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
+  /// Will get the current beacon configuration
+  Future<ConfigBeaconStatus> getSNBeacon(int address) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      final status = _onConfigBeaconStatusController.stream.firstWhere(
+        (element) => element.source == address,
+        orElse: () => const ConfigBeaconStatus(-1, -1, false),
+      );
+      await _methodChannel.invokeMethod('getSNBeacon', {'address': address});
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
+  /// Will set the beacon configuration.
+  ///
+  /// If [enable] is true, the node that receives this message will periodically send Secure Network Beacons.
+  Future<ConfigBeaconStatus> setSNBeacon({
+    int address = 0xFFFF,
+    bool enable = false,
+  }) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      final status = _onConfigBeaconStatusController.stream.firstWhere(
+        (element) => element.source == address,
+        orElse: () => const ConfigBeaconStatus(-1, -1, false),
+      );
+      await _methodChannel.invokeMethod('setSNBeacon', {
+        'address': address,
+        'enable': enable,
       });
       return status;
     } else {

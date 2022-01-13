@@ -231,6 +231,17 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                     ))
                 }
             }
+            is ConfigBeaconStatus -> {
+                Log.d(tag, "received a ConfigBeaconStatus")
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onConfigBeaconStatus",
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst,
+                            "enable" to meshMessage.isEnable()
+                    ))
+                }
+            }
             else -> {
                 Log.d(tag, "Unknown message received :" + meshMessage.javaClass.toString())
             }
