@@ -48,6 +48,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   @override
   Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService) async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
+    _log('services $_discoveredServices');
     isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;

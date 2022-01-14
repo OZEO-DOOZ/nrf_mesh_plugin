@@ -49,6 +49,7 @@ abstract class BleManagerCallbacks {
 
   // Stream<BluetoothDevice> onDeviceNotSupported;
 
+  /// A method that should be used to update the stored MTU so the native code properly constructs the PDUs
   Future<void> sendMtuToMeshManagerApi(int mtu);
 
   bool shouldEnableBatteryLevelNotifications(DiscoveredDevice device) => false;

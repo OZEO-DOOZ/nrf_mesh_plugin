@@ -114,6 +114,7 @@ enum MessageEvent: String{
     case onConfigNodeResetStatus
     case onConfigNetworkTransmitStatus
     case onConfigDefaultTtlStatus
+    case onConfigBeaconStatus
     case onMagicLevelSetStatus
     case onMagicLevelGetStatus
 }
@@ -167,6 +168,8 @@ enum EventSinkKeys: String{
         case index
         case value
         case correlation
+
+        case enable
     }
     
     enum network: String{

@@ -421,6 +421,28 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             break
+        case .getSNBeacon(let data):
+            let message = ConfigBeaconGet()
+            let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(exactly: data.address)!)
+            do {
+                _ = try meshNetworkManager.send(message, to: _node!)
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
+        case .setSNBeacon(let data):
+            let message = ConfigBeaconSet(enable: Bool(data.enable))
+            let _node = doozMeshNetwork?.meshNetwork.node(withAddress: Address(exactly: data.address)!)
+            do {
+                _ = try meshNetworkManager.send(message, to: _node!)
+                result(nil)
+            } catch {
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
         case .sendConfigModelSubscriptionDeleteAll(let data):
             if
                 
