@@ -4,6 +4,7 @@
 - expose ConfigBeacon API
 - negociate MTU before enabling notifications (Fix bug on Android where Secure Network Beacons were truncated)
 - Ignore timing criterias to accept an incoming Secure Network Beacon (useful when network has just been loaded from its JSON representation in which the IV Index last transition date is not stored)
+- `searchForSpecificNode` will now return a result if the given String matches the device's id **or** name
 
 ## 0.5.0
 
