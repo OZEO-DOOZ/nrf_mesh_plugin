@@ -23,8 +23,7 @@ final meshProvisioningDataOut =
     Platform.isAndroid ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADC');
 final clientCharacteristicConfigDescriptorUuid =
     Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
-final enableNotificationValue = [0x01, 0x00];
-const Duration kConnectionTimeout = Duration(seconds: 30);
+const Duration _kConnectionTimeout = Duration(seconds: 30);
 
 abstract class BleManager<E extends BleManagerCallbacks> {
   /// The current BLE device being managed if any
@@ -107,7 +106,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   /// (because this is a DooZ application specific flow, we made these parameters optional)
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
-    Duration connectionTimeout = kConnectionTimeout,
+    Duration connectionTimeout = _kConnectionTimeout,
     List<String>? whitelist,
     bool shouldCheckDoozCustomService = false,
   }) async {
