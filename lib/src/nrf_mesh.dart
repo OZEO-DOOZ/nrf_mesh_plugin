@@ -115,7 +115,7 @@ class NordicNrfMesh {
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Stream<DiscoveredDevice> scanWithServices(List<Uuid> services) => _bleScanner.scanWithServices(services);
 
-  /// Will scan for the given node uid.
+  /// Will scan for the given device using name or id (MAC on Android or UUID on iOS).
   ///
   /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [isProxy] bool flag.
   ///
@@ -123,11 +123,11 @@ class NordicNrfMesh {
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
   Future<DiscoveredDevice?> searchForSpecificNode(
-    String uid, {
+    String deviceNameOrId, {
     bool isProxy = false,
     Duration timeoutDuration = defaultScanDuration,
   }) =>
-      _bleScanner.searchForSpecificNode(uid, timeoutDuration, isProxy);
+      _bleScanner.searchForSpecificNode(deviceNameOrId, timeoutDuration, isProxy);
 
   /// Provide a [Stream] of the current [BleStatus] of the host device.
   Stream<BleStatus> get bleStatus => _bleScanner.bleStatus;
