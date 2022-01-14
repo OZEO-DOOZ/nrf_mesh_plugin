@@ -41,8 +41,8 @@ enum BleManagerFailureCode {
   /// when the connected device does not broadcast the DooZ custom service
   doozServiceNotFound,
 
-  /// negociation failure
-  negociation,
+  /// init GATT failure (MTU size negociation and notification subscription)
+  initGatt,
 
   /// missing callbacks (Flutter layer)
   callbacks,
