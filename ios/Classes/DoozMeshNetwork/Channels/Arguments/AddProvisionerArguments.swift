@@ -6,6 +6,7 @@
 //
 
 struct AddProvisionerArguments: BaseFlutterArguments {
+    let name: String
     let unicastAddressRange: Int
     let groupAddressRange: Int
     let sceneAddressRange: Int

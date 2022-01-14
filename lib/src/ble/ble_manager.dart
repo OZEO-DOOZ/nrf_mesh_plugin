@@ -23,8 +23,7 @@ final meshProvisioningDataOut =
     Platform.isAndroid ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADC');
 final clientCharacteristicConfigDescriptorUuid =
     Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
-final enableNotificationValue = [0x01, 0x00];
-const Duration kConnectionTimeout = Duration(seconds: 30);
+const Duration _kConnectionTimeout = Duration(seconds: 30);
 
 abstract class BleManager<E extends BleManagerCallbacks> {
   /// The current BLE device being managed if any
@@ -69,6 +68,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   @visibleForOverriding
   Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
+  /// A method that should implement the GATT initialization.
+  ///
+  /// In our case, it means requesting the highest possible MTU size and subcribing to notifications
   @visibleForOverriding
   Future<void> initGatt();
 
@@ -104,7 +106,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   /// (because this is a DooZ application specific flow, we made these parameters optional)
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
-    Duration connectionTimeout = kConnectionTimeout,
+    Duration connectionTimeout = _kConnectionTimeout,
     List<String>? whitelist,
     bool shouldCheckDoozCustomService = false,
   }) async {
@@ -260,23 +262,15 @@ abstract class BleManager<E extends BleManagerCallbacks> {
     }
     if (service != null) {
       // valid mesh node
+      if (!_callbacks.onServicesDiscoveredController.isClosed &&
+          _callbacks.onServicesDiscoveredController.hasListener) {
+        _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service));
+      }
       try {
-        await _callbacks.sendMtuToMeshManagerApi(isProvisioningCompleted ? 22 : mtuSize);
-        if (!_callbacks.onServicesDiscoveredController.isClosed &&
-            _callbacks.onServicesDiscoveredController.hasListener) {
-          _callbacks.onServicesDiscoveredController.add(BleManagerCallbacksDiscoveredServices(_device!, service));
-        }
         await initGatt();
-        final negotiatedMtu = await _bleInstance.requestMtu(deviceId: _device!.id, mtu: 517);
-        if (Platform.isAndroid) {
-          mtuSize = negotiatedMtu - 3;
-        } else if (Platform.isIOS) {
-          mtuSize = negotiatedMtu;
-        }
-        await _callbacks.sendMtuToMeshManagerApi(mtuSize);
       } catch (e) {
-        _log('caught error during negociation : $e');
-        throw BleManagerException(BleManagerFailureCode.negociation, '$e');
+        _log('caught error during GATT initialization : $e');
+        throw BleManagerException(BleManagerFailureCode.initGatt, '$e');
       }
     } else {
       // invalid BLE device

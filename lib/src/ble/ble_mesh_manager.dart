@@ -48,6 +48,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   @override
   Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService) async {
     _discoveredServices = await bleInstance.discoverServices(device!.id);
+    _log('services $_discoveredServices');
     isProvisioningCompleted = false;
     if (hasExpectedService(meshProxyUuid)) {
       isProvisioningCompleted = true;
@@ -87,6 +88,13 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
 
   @override
   Future<void> initGatt() async {
+    final negotiatedMtu = await bleInstance.requestMtu(deviceId: device!.id, mtu: mtuSizeMax);
+    if (Platform.isAndroid) {
+      mtuSize = negotiatedMtu - 3;
+    } else if (Platform.isIOS) {
+      mtuSize = negotiatedMtu;
+    }
+    await callbacks!.sendMtuToMeshManagerApi(mtuSize);
     DiscoveredService? discoveredService;
     if (isProvisioningCompleted) {
       discoveredService = _discoveredServices.firstWhere((service) => service.serviceId == meshProxyUuid);
