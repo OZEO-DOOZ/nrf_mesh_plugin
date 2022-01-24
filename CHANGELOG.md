@@ -1,3 +1,7 @@
+## 0.7.0
+
+- added getter for `BleStatus`
+
 ## 0.6.0
 
 - fix bug in adding a provisioner on iOS device

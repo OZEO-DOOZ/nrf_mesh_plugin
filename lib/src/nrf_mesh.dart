@@ -130,5 +130,8 @@ class NordicNrfMesh {
       _bleScanner.searchForSpecificNode(deviceNameOrId, timeoutDuration, isProxy);
 
   /// Provide a [Stream] of the current [BleStatus] of the host device.
-  Stream<BleStatus> get bleStatus => _bleScanner.bleStatus;
+  Stream<BleStatus> get bleStatusStream => _bleScanner.bleStatusStream;
+
+  /// Will return the last known [BleStatus] (tracked via stream by BLE library, so it should always be up-to-date)
+  BleStatus get bleStatus => _bleScanner.bleStatus;
 }
