@@ -1,3 +1,9 @@
+## 0.7.0
+
+- added getter for `BleStatus`
+- provisioning events now pass the target BLE device data
+- workflow `on_pr.yml` now forces Flutter version to 2.5.3
+
 ## 0.6.0
 
 - fix bug in adding a provisioner on iOS device

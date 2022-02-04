@@ -14,27 +14,27 @@ import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
 import 'package:nordic_nrf_mesh/src/models/models.dart';
 
 class _ProvisioningEvent {
-  final _provisioningController = StreamController<void>();
-  final _provisioningCapabilitiesController = StreamController<void>();
-  final _provisioningInvitationController = StreamController<void>();
-  final _provisioningReconnectController = StreamController<void>();
-  final _onConfigCompositionDataStatusController = StreamController<void>();
-  final _onConfigAppKeyStatusController = StreamController<void>();
+  final _provisioningController = StreamController<DiscoveredDevice>();
+  final _provisioningCapabilitiesController = StreamController<DiscoveredDevice>();
+  final _provisioningInvitationController = StreamController<DiscoveredDevice>();
+  final _provisioningReconnectController = StreamController<DiscoveredDevice>();
+  final _onConfigCompositionDataStatusController = StreamController<DiscoveredDevice>();
+  final _onConfigAppKeyStatusController = StreamController<DiscoveredDevice>();
   final _provisioningGattErrorController = StreamController<BleManagerCallbacksError>();
 }
 
 class ProvisioningEvent extends _ProvisioningEvent {
-  Stream<void> get onProvisioning => _provisioningController.stream;
+  Stream<DiscoveredDevice> get onProvisioning => _provisioningController.stream;
 
-  Stream<void> get onProvisioningCapabilities => _provisioningCapabilitiesController.stream;
+  Stream<DiscoveredDevice> get onProvisioningCapabilities => _provisioningCapabilitiesController.stream;
 
-  Stream<void> get onProvisioningInvitation => _provisioningInvitationController.stream;
+  Stream<DiscoveredDevice> get onProvisioningInvitation => _provisioningInvitationController.stream;
 
-  Stream<void> get onProvisioningReconnect => _provisioningReconnectController.stream;
+  Stream<DiscoveredDevice> get onProvisioningReconnect => _provisioningReconnectController.stream;
 
-  Stream<void> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+  Stream<DiscoveredDevice> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
 
-  Stream<void> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
+  Stream<DiscoveredDevice> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
   Stream<BleManagerCallbacksError> get onProvisioningGattError => _provisioningGattErrorController.stream;
 
   Future<void> dispose() => Future.wait([
@@ -117,7 +117,7 @@ Future<ProvisionedMeshNode> _provisioning(
       if (device == null) {
         completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.notFound, 'Didn\'t find module'));
       }
-      events?._provisioningReconnectController.add(null);
+      events?._provisioningReconnectController.add(deviceToProvision);
       try {
         _connectRetryCount = 0;
         isHandlingConnectErrors = true;
@@ -141,7 +141,7 @@ Future<ProvisionedMeshNode> _provisioning(
   });
   onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
-      events?._provisioningCapabilitiesController.add(null);
+      events?._provisioningCapabilitiesController.add(deviceToProvision);
       final unprovisionedMeshNode =
           UnprovisionedMeshNode(event.meshNode!.uuid, event.meshNode!.provisionerPublicKeyXY!);
       final elementSize = await unprovisionedMeshNode.getNumberOfElements();
@@ -167,11 +167,11 @@ Future<ProvisionedMeshNode> _provisioning(
         }
         _log('successfully assigned $unicast to node !');
       }
-      events?._provisioningController.add(null);
+      events?._provisioningController.add(deviceToProvision);
       await meshManagerApi.provisioning(unprovisionedMeshNode);
     } else if (event.state == 'PROVISIONING_INVITE') {
       if (!bleMeshManager.isProvisioningCompleted) {
-        events?._provisioningInvitationController.add(null);
+        events?._provisioningInvitationController.add(deviceToProvision);
       } else if (bleMeshManager.isProvisioningCompleted) {
         final unicast = await provisionedMeshNode.unicastAddress;
         await meshManagerApi.sendConfigCompositionDataGet(unicast);
@@ -216,11 +216,11 @@ Future<ProvisionedMeshNode> _provisioning(
     }
   });
   onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
-    events?._onConfigCompositionDataStatusController.add(null);
+    events?._onConfigCompositionDataStatusController.add(deviceToProvision);
     await meshManagerApi.sendConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
   onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
-    events?._onConfigAppKeyStatusController.add(null);
+    events?._onConfigAppKeyStatusController.add(deviceToProvision);
     completer.complete(provisionedMeshNode);
   });
   try {
