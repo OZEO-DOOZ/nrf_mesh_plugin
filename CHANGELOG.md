@@ -1,6 +1,7 @@
 ## 0.7.0
 
 - added getter for `BleStatus`
+- provisioning events now pass the target BLE device data
 
 ## 0.6.0
 
