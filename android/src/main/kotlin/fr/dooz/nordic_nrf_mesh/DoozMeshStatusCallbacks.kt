@@ -71,6 +71,43 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                     ))
                 }
             }
+            is DoozScenarioStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onDoozScenarioStatus",
+                            "scenarioId" to meshMessage.scenarioId,
+                            "command" to meshMessage.command,
+                            "io" to meshMessage.io,
+                            "isActive" to meshMessage.isActive,
+                            "unused" to meshMessage.unused,
+                            "value" to meshMessage.value,
+                            "transition" to meshMessage.transition,
+                            "startAt" to meshMessage.startAt,
+                            "duration" to meshMessage.duration,
+                            "daysInWeek" to meshMessage.daysInWeek,
+                            "correlation" to meshMessage.correlation,
+                            "extra" to meshMessage.extra,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
+            is DoozEpochStatus -> {
+                Handler(Looper.getMainLooper()).post {
+                    eventSink?.success(mapOf(
+                            "eventName" to "onDoozEpochStatus",
+                            "tzData" to meshMessage.tzData,
+                            "command" to meshMessage.command,
+                            "io" to meshMessage.io,
+                            "unused" to meshMessage.unused,
+                            "epoch" to meshMessage.epoch,
+                            "correlation" to meshMessage.correlation,
+                            "extra" to meshMessage.extra,
+                            "source" to meshMessage.src,
+                            "destination" to meshMessage.dst
+                    ))
+                }
+            }
             is MagicLevelSetStatus -> {
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(

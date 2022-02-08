@@ -28,6 +28,8 @@ class MeshManagerApi {
   late final _onConfigCompositionDataStatusController = StreamController<ConfigCompositionDataStatusData>.broadcast();
   late final _onConfigAppKeyStatusController = StreamController<ConfigAppKeyStatusData>.broadcast();
   late final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
+  late final _onDoozScenarioStatusController = StreamController<DoozScenarioStatusData>.broadcast();
+  late final _onDoozEpochStatusController = StreamController<DoozEpochStatusData>.broadcast();
   late final _onV2MagicLevelSetStatusController = StreamController<MagicLevelSetStatusData>.broadcast();
   late final _onV2MagicLevelGetStatusController = StreamController<MagicLevelGetStatusData>.broadcast();
 
@@ -59,6 +61,8 @@ class MeshManagerApi {
   late StreamSubscription<ConfigAppKeyStatusData> _onConfigAppKeyStatusSubscription;
   late StreamSubscription<GenericLevelStatusData> _onGenericLevelStatusSubscription;
   late StreamSubscription<GenericOnOffStatusData> _onGenericOnOffStatusSubscription;
+  late StreamSubscription<DoozScenarioStatusData> _onDoozScenarioStatusSubscription;
+  late StreamSubscription<DoozEpochStatusData> _onDoozEpochStatusSubscription;
   late StreamSubscription<MagicLevelSetStatusData> _onV2MagicLevelSetStatusSubscription;
   late StreamSubscription<MagicLevelGetStatusData> _onV2MagicLevelGetStatusSubscription;
   late StreamSubscription<ConfigModelAppStatusData> _onConfigModelAppStatusSubscription;
@@ -139,6 +143,14 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.genericOnOffStatus.value)
         .map((event) => GenericOnOffStatusData.fromJson(event))
         .listen(_onGenericOnOffStatusController.add);
+    _onDoozScenarioStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.doozScenarioStatus.value)
+        .map((event) => DoozScenarioStatusData.fromJson(event))
+        .listen(_onDoozScenarioStatusController.add);
+    _onDoozEpochStatusSubscription = _eventChannelStream
+        .where((event) => event['eventName'] == MeshManagerApiEvent.doozEpochStatus.value)
+        .map((event) => DoozEpochStatusData.fromJson(event))
+        .listen(_onDoozEpochStatusController.add);
     _onV2MagicLevelSetStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelSetStatus.value)
         .map((event) => MagicLevelSetStatusData.fromJson(event))
@@ -236,6 +248,10 @@ class MeshManagerApi {
 
   Stream<GenericOnOffStatusData> get onGenericOnOffStatus => _onGenericOnOffStatusController.stream;
 
+  Stream<DoozScenarioStatusData> get onDoozScenarioStatus => _onDoozScenarioStatusController.stream;
+
+  Stream<DoozEpochStatusData> get onDoozScenarioEpochStatus => _onDoozEpochStatusController.stream;
+
   Stream<MagicLevelSetStatusData> get onV2MagicLevelSetStatus => _onV2MagicLevelSetStatusController.stream;
 
   Stream<MagicLevelGetStatusData> get onV2MagicLevelGetStatus => _onV2MagicLevelGetStatusController.stream;
@@ -299,6 +315,8 @@ class MeshManagerApi {
         _onConfigCompositionDataStatusSubscription.cancel(),
         _onConfigAppKeyStatusSubscription.cancel(),
         _onGenericLevelStatusSubscription.cancel(),
+        _onDoozScenarioStatusSubscription.cancel(),
+        _onDoozEpochStatusSubscription.cancel(),
         _onV2MagicLevelSetStatusSubscription.cancel(),
         _onV2MagicLevelGetStatusSubscription.cancel(),
         _onGenericOnOffStatusSubscription.cancel(),
@@ -329,6 +347,8 @@ class MeshManagerApi {
         _onConfigModelAppStatusController.close(),
         _onConfigModelSubscriptionStatusController.close(),
         _onConfigModelPublicationStatusController.close(),
+        _onDoozScenarioStatusController.close(),
+        _onDoozEpochStatusController.close(),
         _onV2MagicLevelSetStatusController.close(),
         _onV2MagicLevelGetStatusController.close(),
         _onConfigNodeResetStatusController.close(),
@@ -778,6 +798,85 @@ class MeshManagerApi {
       await _methodChannel.invokeMethod('setSNBeacon', {
         'address': address,
         'enable': enable,
+      });
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
+  /// Will send a DoozScenarioSet message (0x8219).
+  /// Defaults to a scenario that apply a level 0 (OFF cmd with lights).
+  Future<DoozScenarioStatusData?> doozScenarioSet(
+    int address,
+    int scenarioId,
+    int correlation, {
+    int command = 0,
+    int io = 0,
+    bool isActive = true,
+    int unused = 0,
+    int value = 0,
+    int transition = 0,
+    int startAt = 0x7F,
+    int duration = 0x7F,
+    int daysInWeek = 0x7F,
+    int? extra,
+    int keyIndex = 0,
+  }) async {
+    if (Platform.isAndroid /* || Platform.isIOS */) {
+      final status = _onDoozScenarioStatusController.stream.cast<DoozScenarioStatusData?>().firstWhere(
+            (element) => element!.source == address,
+            orElse: () => null,
+          );
+      await _methodChannel.invokeMethod('doozScenarioSet', {
+        'address': address,
+        'scenarioId': scenarioId,
+        'command': command,
+        'io': io,
+        'isActive': isActive,
+        'unused': unused,
+        'value': value,
+        'transition': transition,
+        'startAt': startAt,
+        'duration': duration,
+        'daysInWeek': daysInWeek,
+        'extra': extra,
+        'correlation': correlation,
+        'keyIndex': keyIndex,
+      });
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
+  /// Will send a DoozEpochSet message (0x8220).
+  Future<DoozEpochStatusData?> doozScenarioEpochSet(
+    int address,
+    int tzData,
+    int epoch,
+    int correlation, {
+    int command = 15,
+    int io = 0,
+    int unused = 0,
+    int? extra,
+    int keyIndex = 0,
+  }) async {
+    if (Platform.isAndroid /* || Platform.isIOS */) {
+      final status = _onDoozEpochStatusController.stream.cast<DoozEpochStatusData?>().firstWhere(
+            (element) => element!.source == address,
+            orElse: () => null,
+          );
+      await _methodChannel.invokeMethod('doozScenarioEpochSet', {
+        'address': address,
+        'tzData': tzData,
+        'command': command,
+        'io': io,
+        'unused': unused,
+        'epoch': epoch,
+        'extra': extra,
+        'correlation': correlation,
+        'keyIndex': keyIndex,
       });
       return status;
     } else {

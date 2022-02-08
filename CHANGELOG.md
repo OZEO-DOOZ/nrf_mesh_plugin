@@ -1,3 +1,7 @@
+## 0.8.0
+
+- Add DooZ scenario protocol V2 messages (`DoozScenarioSet`, `DoozEpochSet`, `DoozScenarioStatus` and `DoozEpochStatus`)
+
 ## 0.7.0
 
 - added getter for `BleStatus`
