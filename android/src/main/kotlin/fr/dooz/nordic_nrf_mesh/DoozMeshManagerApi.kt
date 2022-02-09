@@ -291,6 +291,18 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
                 result.success(null)
             }
+            "getPublicationSettings" -> {
+                val elementAddress = call.argument<Int>("elementAddress")!!
+                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
+                val meshMessage = ConfigModelPublicationGet(
+                        elementAddress,
+                        modelIdentifier
+                )
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
+                result.success(null)
+            }
             "sendV2MagicLevel" -> {
                 val io = call.argument<Int>("io")!!
                 val index = call.argument<Int>("index")!!
