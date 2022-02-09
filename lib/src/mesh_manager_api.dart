@@ -590,6 +590,25 @@ class MeshManagerApi {
     return status;
   }
 
+  Future<ConfigModelPublicationStatus> getPublicationSettings(
+    int elementAddress,
+    int modelIdentifier,
+  ) async {
+    if (Platform.isAndroid || Platform.isIOS) {
+      final status = _onConfigModelPublicationStatusController.stream.firstWhere(
+        (element) => element.elementAddress == elementAddress && element.modelIdentifier == modelIdentifier,
+        orElse: () => const ConfigModelPublicationStatus(-1, -1, -1, false, -1, -1, -1, -1, -1, -1, false),
+      );
+      await _methodChannel.invokeMethod(
+        'getPublicationSettings',
+        {'elementAddress': elementAddress, 'modelIdentifier': modelIdentifier},
+      );
+      return status;
+    } else {
+      throw UnimplementedError('${Platform.environment} not supported');
+    }
+  }
+
   Future<LightLightnessStatusData> sendLightLightness(
     int address,
     int lightness,

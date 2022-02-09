@@ -37,6 +37,7 @@ enum DoozMeshManagerApiChannel {
     case setSNBeacon(_ data: ConfigBeaconSetArguments)
     case sendConfigModelSubscriptionDeleteAll(_ data: SendConfigModelSubscriptionDeleteAllArguments)
     case sendConfigModelPublicationSet(_ data: SendConfigModelPublicationSetArguments)
+    case getPublicationSettings(_ data: GetPublicationSettingsArguments)
     case sendLightLightness(_ data: SendLightLightnessArguments)
     case sendLightCtl(_ data: SendLightCtlArguments)
     case sendLightHsl(_ data: SendLightHslArguments)
@@ -111,6 +112,8 @@ enum DoozMeshManagerApiChannel {
                 self = .sendConfigModelSubscriptionDeleteAll(try SendConfigModelSubscriptionDeleteAllArguments(arguments))
             case "sendConfigModelPublicationSet":
                 self = .sendConfigModelPublicationSet(try SendConfigModelPublicationSetArguments(arguments))
+            case "getPublicationSettings":
+                self = .getPublicationSettings(try GetPublicationSettingsArguments(arguments))
             case "sendLightLightness":
                 self = .sendLightLightness(try SendLightLightnessArguments(arguments))
             case "sendLightCtl":
