@@ -881,7 +881,7 @@ class MeshManagerApi {
     int? extra,
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid /* || Platform.isIOS */) {
+    if (Platform.isAndroid || Platform.isIOS) {
       final status = _onDoozEpochStatusController.stream.cast<DoozEpochStatusData?>().firstWhere(
             (element) => element!.source == address,
             orElse: () => null,

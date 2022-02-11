@@ -40,7 +40,8 @@ class GenericLevelClientDelegate: ModelDelegate {
         let types: [GenericMessage.Type] = [
             GenericLevelStatus.self,
             MagicLevelSetStatus.self,
-            MagicLevelGetStatus.self
+            MagicLevelGetStatus.self,
+            DoozEpochStatus.self
         ]
         messageTypes = types.toMap()
     }

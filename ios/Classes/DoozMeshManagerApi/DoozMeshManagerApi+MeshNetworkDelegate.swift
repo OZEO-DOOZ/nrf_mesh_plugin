@@ -191,6 +191,20 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                 EventSinkKeys.message.destination.rawValue : destination,
             ]
             _sendFlutterMessage(message)
+        case let status as DoozEpochStatus:
+            let message: FlutterMessage = [
+                EventSinkKeys.eventName.rawValue : MessageEvent.onDoozEpochStatus.rawValue,
+                EventSinkKeys.message.tzData.rawValue : status.mTzData,
+                EventSinkKeys.message.command.rawValue : status.mCommand,
+                EventSinkKeys.message.io.rawValue : status.mIO,
+                EventSinkKeys.message.unused.rawValue : status.mUnused,
+                EventSinkKeys.message.epoch.rawValue : status.mEpoch,
+                EventSinkKeys.message.correlation.rawValue : status.mCorrelation,
+                EventSinkKeys.message.extrat.rawValue : status.mExtra,
+                EventSinkKeys.source.rawValue : source,
+                EventSinkKeys.message.destination.rawValue : destination,
+            ]
+            _sendFlutterMessage(message)
         default:
             break
         }

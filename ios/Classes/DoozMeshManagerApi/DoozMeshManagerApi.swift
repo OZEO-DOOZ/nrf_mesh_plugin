@@ -599,7 +599,26 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
             }
             break
-            
+        case .doozScenarioEpochSet(let data):
+            guard let appKey = meshNetworkManager.meshNetwork?.applicationKeys[KeyIndex(data.keyIndex)] else{
+                let error = MeshNetworkError.keyIndexOutOfRange
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+                return
+            }
+            let message = DoozEpochSet(tzData: UInt16(data.tzData), command: UInt8(data.command), io: UInt8(data.io), unused: UInt8(data.unused), epoch: UInt32(data.epoch), correlation: UInt32(data.correlation), extra: UInt8?(data.extra))
+            do{
+                _ = try meshNetworkManager.send(
+                    message,
+                    to: MeshAddress(Address(exactly: data.address)!),
+                    using: appKey
+                )
+                result(nil)
+            }catch{
+                let nsError = error as NSError
+                result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
+            }
+            break
         case .isAdvertisingWithNetworkIdentity(let data):
             result(isAdvertisingWithNetworkIdentity(data: data.serviceData.data))
         case .isAdvertisedWithNodeIdentity(let data):
