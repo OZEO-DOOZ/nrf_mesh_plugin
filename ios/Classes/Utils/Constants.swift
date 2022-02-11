@@ -171,6 +171,12 @@ enum EventSinkKeys: String{
         case correlation
 
         case enable
+
+        case tzData
+        case command
+        case unused
+        case epoch
+        case extra
     }
     
     enum network: String{
