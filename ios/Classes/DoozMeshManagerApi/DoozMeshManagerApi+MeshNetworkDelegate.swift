@@ -200,7 +200,7 @@ extension DoozMeshManagerApi: MeshNetworkDelegate{
                 EventSinkKeys.message.unused.rawValue : status.mUnused,
                 EventSinkKeys.message.epoch.rawValue : status.mEpoch,
                 EventSinkKeys.message.correlation.rawValue : status.mCorrelation,
-                EventSinkKeys.message.extrat.rawValue : status.mExtra,
+                EventSinkKeys.message.extra.rawValue : status.mExtra,
                 EventSinkKeys.source.rawValue : source,
                 EventSinkKeys.message.destination.rawValue : destination,
             ]
