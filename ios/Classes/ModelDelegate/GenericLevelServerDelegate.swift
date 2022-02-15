@@ -76,7 +76,7 @@ class GenericLevelServerDelegate: ModelDelegate {
             GenericMoveSetUnacknowledged.self,
             MagicLevelGet.self,
             MagicLevelSet.self,
-            DoozEpochStatus.self
+            DoozEpochSet.self
         ]
         messageTypes = types.toMap()
     }
