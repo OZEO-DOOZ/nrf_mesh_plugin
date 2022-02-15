@@ -174,7 +174,7 @@ class GenericLevelServerDelegate: ModelDelegate {
                 break
             }
             lastTransaction = (source: source, destination: destination, tid: request.tid, timestamp: Date())
-            return DoozEpochStatus(tzData: request.mTzData, command: request.mCommand, io: request.mIO, unused: request.mUnused, epoch: request.mEpoch, correlation: request.mCorrelation, extra: request.mExtra)
+            return DoozEpochStatus(tzData: request.mTzData, command: request.mCommand, io: request.mIO, unused: request.mUnused, epoch: request.mEpoch, correlation: request.mCorrelation, extra: request.mExtra, tId: request.tid)
         default:
             // Not possible.
             break

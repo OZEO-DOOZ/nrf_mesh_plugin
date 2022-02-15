@@ -606,7 +606,7 @@ private extension DoozMeshManagerApi {
                 result(FlutterError(code: String(nsError.code), message: nsError.localizedDescription, details: nil))
                 return
             }
-            let message = DoozEpochSet(tzData: UInt16(data.tzData), command: UInt8(data.command), io: UInt8(data.io), unused: UInt8(data.unused), epoch: UInt32(data.epoch), correlation: UInt32(data.correlation), extra: UInt8?(data.extra))
+            let message = DoozEpochSet(tzData: Int16(data.tzData), command: UInt8(data.command), io: UInt8(data.io), unused: UInt8(data.unused), epoch: UInt32(data.epoch), correlation: UInt32(data.correlation), extra: UInt8?(data.extra ?? 0))
             do{
                 _ = try meshNetworkManager.send(
                     message,

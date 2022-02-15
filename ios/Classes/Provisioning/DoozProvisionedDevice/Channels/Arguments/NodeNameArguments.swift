@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct NodeNameArguments: BaseFlutterArguments {
+struct NodeNameArguments: BaseFlutterArguments {
     let name: String
 }
