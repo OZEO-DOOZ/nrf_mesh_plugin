@@ -13,5 +13,5 @@ struct DoozEpochSetArguments: BaseFlutterArguments {
     let packed: UInt16
     let epoch: UInt32
     let correlation: UInt32
-    let extra: UInt8?
+    let extra: UInt16?
 }
