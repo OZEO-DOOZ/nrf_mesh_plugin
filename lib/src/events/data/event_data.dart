@@ -8,6 +8,8 @@ export 'config_model_publication_status/config_model_publication_status.dart';
 export 'config_model_subscription_status/config_model_subscription_status.dart';
 export 'config_network_transmit_status/config_network_transmit_status.dart';
 export 'config_node_reset_status/config_node_reset_status.dart';
+export 'dooz_epoch_status/dooz_epoch_status.dart';
+export 'dooz_scenario_status/dooz_scenario_status.dart';
 export 'generic_level_status/generic_level_status.dart';
 export 'generic_on_off_status/generic_on_off_status.dart';
 export 'light_ctl_status/light_ctl_status.dart';

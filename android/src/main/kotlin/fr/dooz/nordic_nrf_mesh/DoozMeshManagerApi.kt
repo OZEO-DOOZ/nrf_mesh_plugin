@@ -291,6 +291,72 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
                 result.success(null)
             }
+            "doozScenarioSet" -> {
+                val scenarioId = call.argument<Int>("scenarioId")!!
+                val command = call.argument<Int>("command")!!
+                val io = call.argument<Int>("io")!!
+                val isActive = call.argument<Boolean>("isActive")!!
+                val unused = call.argument<Int>("unused")!!
+                val value = call.argument<Int>("value")!!
+                val transition = call.argument<Int>("transition")!!
+                val startAt = call.argument<Int>("startAt")!!
+                val duration = call.argument<Int>("duration")!!
+                val daysInWeek = call.argument<Int>("daysInWeek")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val extra = call.argument<Int?>("extra")
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
+                val meshMessage = DoozScenarioSet(
+                    mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                    scenarioId,
+                    command,
+                    io,
+                    isActive,
+                    unused,
+                    value,
+                    transition,
+                    startAt,
+                    duration,
+                    daysInWeek,
+                    correlation,
+                    extra,
+                    sequenceNumber,
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "doozScenarioEpochSet" -> {
+                val packed = call.argument<Int>("packed")!!
+                val epoch = call.argument<Int>("epoch")!!
+                val correlation = call.argument<Int>("correlation")!!
+                val extra = call.argument<Int?>("extra")
+                val address = call.argument<Int>("address")!!
+                val keyIndex = call.argument<Int>("keyIndex")!!
+                val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
+                val meshMessage = DoozEpochSet(
+                    mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
+                    packed,
+                    epoch,
+                    correlation,
+                    extra,
+                    sequenceNumber,
+                )
+                mMeshManagerApi.createMeshPdu(address, meshMessage)
+                result.success(null)
+            }
+            "getPublicationSettings" -> {
+                val elementAddress = call.argument<Int>("elementAddress")!!
+                val modelIdentifier = call.argument<Int>("modelIdentifier")!!
+                val currentMeshNetwork = mMeshManagerApi.meshNetwork!!
+                val pNode: ProvisionedMeshNode = currentMeshNetwork.getNode(elementAddress)
+                val meshMessage = ConfigModelPublicationGet(
+                        elementAddress,
+                        modelIdentifier
+                )
+                mMeshManagerApi.createMeshPdu(pNode.unicastAddress, meshMessage)
+                result.success(null)
+            }
             "sendV2MagicLevel" -> {
                 val io = call.argument<Int>("io")!!
                 val index = call.argument<Int>("index")!!

@@ -37,6 +37,7 @@ enum DoozMeshManagerApiChannel {
     case setSNBeacon(_ data: ConfigBeaconSetArguments)
     case sendConfigModelSubscriptionDeleteAll(_ data: SendConfigModelSubscriptionDeleteAllArguments)
     case sendConfigModelPublicationSet(_ data: SendConfigModelPublicationSetArguments)
+    case getPublicationSettings(_ data: GetPublicationSettingsArguments)
     case sendLightLightness(_ data: SendLightLightnessArguments)
     case sendLightCtl(_ data: SendLightCtlArguments)
     case sendLightHsl(_ data: SendLightHslArguments)
@@ -46,6 +47,7 @@ enum DoozMeshManagerApiChannel {
     case networkIdMatches(_ data: NetworkIdMatchesArguments)
     case sendV2MagicLevel(_ data: SendV2MagicLevelArguments)
     case getV2MagicLevel(_ data: GetV2MagicLevelArguments)
+    case doozScenarioEpochSet(_ data: DoozEpochSetArguments)
     case deprovision(_ data: DeprovisionArguments)
 
     case error(_ error: Error)
@@ -111,6 +113,8 @@ enum DoozMeshManagerApiChannel {
                 self = .sendConfigModelSubscriptionDeleteAll(try SendConfigModelSubscriptionDeleteAllArguments(arguments))
             case "sendConfigModelPublicationSet":
                 self = .sendConfigModelPublicationSet(try SendConfigModelPublicationSetArguments(arguments))
+            case "getPublicationSettings":
+                self = .getPublicationSettings(try GetPublicationSettingsArguments(arguments))
             case "sendLightLightness":
                 self = .sendLightLightness(try SendLightLightnessArguments(arguments))
             case "sendLightCtl":
@@ -129,7 +133,8 @@ enum DoozMeshManagerApiChannel {
                 self = .sendV2MagicLevel(try SendV2MagicLevelArguments(arguments))
             case "getV2MagicLevel":
                 self = .getV2MagicLevel(try GetV2MagicLevelArguments(arguments))
-            
+            case "doozScenarioEpochSet":
+                self = .doozScenarioEpochSet(try DoozEpochSetArguments(arguments))
             //getDeviceUuid
             case "handleWriteCallbacks":
                 self = .handleWriteCallbacks(try HandleWriteCallbacksArguments(arguments))
