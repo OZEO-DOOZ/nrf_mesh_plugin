@@ -10,10 +10,7 @@ import Foundation
 struct DoozEpochSetArguments: BaseFlutterArguments {
     let address: Int
     let keyIndex: Int
-    let tzData: Int16
-    let command: UInt8
-    let io: UInt8
-    let unused: UInt8
+    let packed: UInt16
     let epoch: UInt32
     let correlation: UInt32
     let extra: UInt8?

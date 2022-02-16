@@ -149,8 +149,15 @@ class MeshManagerApi {
         .listen(_onDoozScenarioStatusController.add);
     _onDoozEpochStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.doozEpochStatus.value)
-        .map((event) => DoozEpochStatusData.fromJson(event))
-        .listen(_onDoozEpochStatusController.add);
+        .map((event) {
+      final parsedEvent = Map<String, dynamic>.from(event);
+      final int packed = parsedEvent.remove('packed');
+      parsedEvent['tzData'] = (packed & 0x1FF).toSigned(9);
+      parsedEvent['command'] = (packed >> 9) & 0xF;
+      parsedEvent['io'] = (packed >> 13) & 0x1;
+      parsedEvent['unused'] = packed >> 14;
+      return DoozEpochStatusData.fromJson(parsedEvent);
+    }).listen(_onDoozEpochStatusController.add);
     _onV2MagicLevelSetStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelSetStatus.value)
         .map((event) => MagicLevelSetStatusData.fromJson(event))
@@ -886,12 +893,11 @@ class MeshManagerApi {
             (element) => element!.source == address,
             orElse: () => null,
           );
+      final uTz = tzData.toUnsigned(9);
+      final packed = unused << 14 | io << 13 | command << 9 | ((uTz << 8) & 0x7) | uTz;
       await _methodChannel.invokeMethod('doozScenarioEpochSet', {
         'address': address,
-        'tzData': tzData,
-        'command': command,
-        'io': io,
-        'unused': unused,
+        'packed': packed,
         'epoch': epoch,
         'extra': extra,
         'correlation': correlation,

@@ -327,10 +327,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 result.success(null)
             }
             "doozScenarioEpochSet" -> {
-                val tzData = call.argument<Int>("tzData")!!
-                val command = call.argument<Int>("command")!!
-                val io = call.argument<Int>("io")!!
-                val unused = call.argument<Int>("unused")!!
+                val packed = call.argument<Int>("packed")!!
                 val epoch = call.argument<Int>("epoch")!!
                 val correlation = call.argument<Int>("correlation")!!
                 val extra = call.argument<Int?>("extra")
@@ -339,10 +336,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
                 val sequenceNumber = getSequenceNumber(mMeshManagerApi.meshNetwork)
                 val meshMessage = DoozEpochSet(
                     mMeshManagerApi.meshNetwork!!.getAppKey(keyIndex),
-                    tzData,
-                    command,
-                    io,
-                    unused,
+                    packed,
                     epoch,
                     correlation,
                     extra,

@@ -96,10 +96,7 @@ class DoozMeshStatusCallbacks(var eventSink: EventChannel.EventSink?): MeshStatu
                 Handler(Looper.getMainLooper()).post {
                     eventSink?.success(mapOf(
                             "eventName" to "onDoozEpochStatus",
-                            "tzData" to meshMessage.tzData,
-                            "command" to meshMessage.command,
-                            "io" to meshMessage.io,
-                            "unused" to meshMessage.unused,
+                            "packed" to meshMessage.packed,
                             "epoch" to meshMessage.epoch,
                             "correlation" to meshMessage.correlation,
                             "extra" to meshMessage.extra,
