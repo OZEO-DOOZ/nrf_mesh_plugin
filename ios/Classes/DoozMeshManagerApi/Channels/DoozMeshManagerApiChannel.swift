@@ -47,6 +47,7 @@ enum DoozMeshManagerApiChannel {
     case networkIdMatches(_ data: NetworkIdMatchesArguments)
     case sendV2MagicLevel(_ data: SendV2MagicLevelArguments)
     case getV2MagicLevel(_ data: GetV2MagicLevelArguments)
+    case doozScenarioEpochSet(_ data: DoozEpochSetArguments)
     case deprovision(_ data: DeprovisionArguments)
 
     case error(_ error: Error)
@@ -132,7 +133,8 @@ enum DoozMeshManagerApiChannel {
                 self = .sendV2MagicLevel(try SendV2MagicLevelArguments(arguments))
             case "getV2MagicLevel":
                 self = .getV2MagicLevel(try GetV2MagicLevelArguments(arguments))
-            
+            case "doozScenarioEpochSet":
+                self = .doozScenarioEpochSet(try DoozEpochSetArguments(arguments))
             //getDeviceUuid
             case "handleWriteCallbacks":
                 self = .handleWriteCallbacks(try HandleWriteCallbacksArguments(arguments))
