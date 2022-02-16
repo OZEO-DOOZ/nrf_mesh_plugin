@@ -1,7 +1,9 @@
 ## 0.8.0
 
-- Add DooZ scenario protocol V2 messages (`DoozScenarioSet`, `DoozEpochSet`, `DoozScenarioStatus` and `DoozEpochStatus`)
+- Add DooZ scenario protocol V2 messages. `DoozEpochSet` and `DoozEpochStatus` are tested on both platforms, whereas `DoozScenarioSet` and `DoozScenarioStatus` are added in Android version but not used for now (prepare for next release)
 - Expose `ConfigModelPublicationGet` msg
+- Use of Nordic's Android SDK v3.1.7
+- Use of Nordic's iOS SDK v3.1.5
 
 ## 0.7.0
 

@@ -845,31 +845,31 @@ class MeshManagerApi {
     int? extra,
     int keyIndex = 0,
   }) async {
-    if (Platform.isAndroid /* || Platform.isIOS */) {
-      final status = _onDoozScenarioStatusController.stream.cast<DoozScenarioStatusData?>().firstWhere(
-            (element) => element!.source == address,
-            orElse: () => null,
-          );
-      await _methodChannel.invokeMethod('doozScenarioSet', {
-        'address': address,
-        'scenarioId': scenarioId,
-        'command': command,
-        'io': io,
-        'isActive': isActive,
-        'unused': unused,
-        'value': value,
-        'transition': transition,
-        'startAt': startAt,
-        'duration': duration,
-        'daysInWeek': daysInWeek,
-        'extra': extra,
-        'correlation': correlation,
-        'keyIndex': keyIndex,
-      });
-      return status;
-    } else {
-      throw UnimplementedError('${Platform.environment} not supported');
-    }
+    // if (Platform.isAndroid /* || Platform.isIOS */) {
+    //   final status = _onDoozScenarioStatusController.stream.cast<DoozScenarioStatusData?>().firstWhere(
+    //         (element) => element!.source == address,
+    //         orElse: () => null,
+    //       );
+    //   await _methodChannel.invokeMethod('doozScenarioSet', {
+    //     'address': address,
+    //     'scenarioId': scenarioId,
+    //     'command': command,
+    //     'io': io,
+    //     'isActive': isActive,
+    //     'unused': unused,
+    //     'value': value,
+    //     'transition': transition,
+    //     'startAt': startAt,
+    //     'duration': duration,
+    //     'daysInWeek': daysInWeek,
+    //     'extra': extra,
+    //     'correlation': correlation,
+    //     'keyIndex': keyIndex,
+    //   });
+    //   return status;
+    // } else {
+    throw UnimplementedError('${Platform.environment} not supported');
+    // }
   }
 
   /// Will send a DoozEpochSet message (0x8220).
