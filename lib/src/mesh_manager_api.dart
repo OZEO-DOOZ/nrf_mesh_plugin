@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -82,6 +83,8 @@ class MeshManagerApi {
   late Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork? _lastMeshNetwork;
 
+  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
+
   MeshManagerApi() {
     _eventChannelStream =
         _eventChannel.receiveBroadcastStream().cast<Map>().map((event) => event.cast<String, dynamic>());
@@ -149,15 +152,8 @@ class MeshManagerApi {
         .listen(_onDoozScenarioStatusController.add);
     _onDoozEpochStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.doozEpochStatus.value)
-        .map((event) {
-      final parsedEvent = Map<String, dynamic>.from(event);
-      final int packed = parsedEvent.remove('packed');
-      parsedEvent['tzData'] = (packed & 0x1FF).toSigned(9);
-      parsedEvent['command'] = (packed >> 9) & 0xF;
-      parsedEvent['io'] = (packed >> 13) & 0x1;
-      parsedEvent['unused'] = packed >> 14;
-      return DoozEpochStatusData.fromJson(parsedEvent);
-    }).listen(_onDoozEpochStatusController.add);
+        .map(_onRawDoozEpochStatus)
+        .listen(_onDoozEpochStatusController.add);
     _onV2MagicLevelSetStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelSetStatus.value)
         .map((event) => MagicLevelSetStatusData.fromJson(event))
@@ -895,6 +891,12 @@ class MeshManagerApi {
           );
       final uTz = tzData.toUnsigned(9);
       final packed = unused << 14 | io << 13 | command << 9 | ((uTz << 8) & 0x7) | uTz;
+      _log('tzData = $uTz ($tzData) , tzData << 8 & 0x7 | tzData --> ${(((uTz << 8) & 0x7) | uTz).bitField(width: 9)}');
+      _log('command = $command (${command.bitField(width: 4)})');
+      _log('io = $io (${io.bitField(width: 1)})');
+      _log('unused = $unused (${unused.bitField(width: 2)})');
+      _log(
+          '($unused << 15) | ($io << 13) | ($command << 9) |(($uTz << 8 & 0x7) | $uTz)\n\t==> ${(packed).bitField(width: 16)}, length : ${packed.bitLength}');
       await _methodChannel.invokeMethod('doozScenarioEpochSet', {
         'address': address,
         'packed': packed,
@@ -907,6 +909,25 @@ class MeshManagerApi {
     } else {
       throw UnimplementedError('${Platform.environment} not supported');
     }
+  }
+
+  /// This method will unpack some data to construct the proper [DoozEpochStatusData]
+  DoozEpochStatusData _onRawDoozEpochStatus(event) {
+    final parsedEvent = Map<String, dynamic>.from(event);
+    final int packed = parsedEvent.remove('packed');
+    final uPackUnused = packed >> 14;
+    final uPackIo = (packed >> 13) & 0x1;
+    final uPackCmd = (packed >> 9) & 0xF;
+    final uPackTz = (packed & 0x1FF).toSigned(9);
+    _log('uPackUnused: $uPackUnused, ${uPackUnused.bitField(width: 2)} (length : ${max(uPackUnused.bitLength, 2)})');
+    _log('uPackIo: $uPackIo, ${uPackIo.bitField(width: 1)} (length : ${max(1, uPackIo.bitLength)})');
+    _log('uPackCmd: $uPackCmd, ${uPackCmd.bitField(width: 4)} (length : ${max(4, uPackCmd.bitLength)})');
+    _log('uPackTz: ${uPackTz.toSigned(9)}, ${uPackTz.bitField(width: 9)} (length : ${max(9, uPackTz.bitLength)})');
+    parsedEvent['tzData'] = uPackTz;
+    parsedEvent['command'] = uPackCmd;
+    parsedEvent['io'] = uPackIo;
+    parsedEvent['unused'] = uPackUnused;
+    return DoozEpochStatusData.fromJson(parsedEvent);
   }
 
   String getDeviceUuid(List<int> serviceData) {
