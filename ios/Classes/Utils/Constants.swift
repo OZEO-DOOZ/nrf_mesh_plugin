@@ -172,9 +172,7 @@ enum EventSinkKeys: String{
 
         case enable
 
-        case tzData
-        case command
-        case unused
+        case packed
         case epoch
         case extra
     }
