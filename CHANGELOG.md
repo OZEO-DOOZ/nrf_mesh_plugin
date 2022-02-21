@@ -1,6 +1,6 @@
 ## 0.8.0
 
-- compile against Android 12 (API 31)
+- compile against Android 12 (API 31) and update BLE permissions in app's manifest
 
 ## 0.8.0
 
