@@ -1,5 +1,9 @@
 ## 0.8.0
 
+- compile against Android 12 (API 31)
+
+## 0.8.0
+
 - Add DooZ scenario protocol V2 messages. `DoozEpochSet` and `DoozEpochStatus` are tested on both platforms, whereas `DoozScenarioSet` and `DoozScenarioStatus` are added in Android version but not used for now (prepare for next release)
 - Expose `ConfigModelPublicationGet` msg
 - Use of Nordic's Android SDK v3.1.7
