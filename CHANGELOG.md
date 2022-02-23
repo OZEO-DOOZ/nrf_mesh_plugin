@@ -1,6 +1,6 @@
 ## 0.9.1
 
-- revert app's manifest changes as it is handled correctly by flutter_reactive_ble v5.0.0
+- revert app's manifest changes
 
 ## 0.9.0
 

@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_reactive_ble: ^5.0.0
+  flutter_reactive_ble: ^4.0.1
   json_annotation: ^4.0.0
   freezed_annotation: ^0.14.0
   meta: ^1.3.0
