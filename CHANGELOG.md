@@ -1,4 +1,8 @@
-## 0.8.0
+## 0.9.1
+
+- revert app's manifest changes
+
+## 0.9.0
 
 - compile against Android 12 (API 31) and update BLE permissions in app's manifest
 
