@@ -136,7 +136,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           connectionTimeout: connectionTimeout,
         )
         .listen(
-            (ConnectionStateUpdate connectionStateUpdate) async {
+            (ConnectionStateUpdate connectionStateUpdate) {
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
                   _device = discoveredDevice;

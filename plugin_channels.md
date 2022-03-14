@@ -22,18 +22,6 @@ await widget.nordicNrfMesh.platformVersion;
 
 This method returns a string e.g. `"iOS 11.0"`
 
-
-
-### createMeshManagerApi
-
-```
-await widget.nordicNrfMesh.meshManagerApi;
-```
-
-This method returns nothing, no errors is thrown
-
-
-
 ## DoozMeshManagerApiChannel
 
 ### loadMeshNetwork

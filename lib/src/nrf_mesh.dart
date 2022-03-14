@@ -11,21 +11,13 @@ class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
   final BleScanner _bleScanner = BleScanner();
 
-  NordicNrfMesh();
-
   Future<String> get platformVersion async {
     final version = await _methodChannel.invokeMethod('getPlatformVersion');
     return version;
   }
 
-  late final MeshManagerApi _meshManagerApi = _createMeshManagerApi();
+  late final MeshManagerApi _meshManagerApi = MeshManagerApi();
   MeshManagerApi get meshManagerApi => _meshManagerApi;
-
-  MeshManagerApi _createMeshManagerApi() {
-    _methodChannel.invokeMethod('createMeshManagerApi');
-    final meshManagerApi = MeshManagerApi();
-    return meshManagerApi;
-  }
 
   /// Will try to provision the specified [BluetoothDevice].
   ///
