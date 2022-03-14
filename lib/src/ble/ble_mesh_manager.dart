@@ -37,12 +37,14 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   }
 
   Future<String?> getServiceMacId() async {
+    String? macId;
     if (hasExpectedService(doozCustomServiceUuid)) {
       final service = _discoveredServices.firstWhere((service) => service.serviceId == doozCustomServiceUuid);
       if (hasExpectedCharacteristicUuid(service, doozCustomCharacteristicUuid)) {
-        return getMacId();
+        macId = await getMacId();
       }
     }
+    return macId;
   }
 
   @override

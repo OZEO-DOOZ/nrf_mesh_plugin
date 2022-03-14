@@ -232,6 +232,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   /// This method will read the [doozCustomCharacteristicUuid] if a device is connected and return the MAC address stored
   Future<String?> getMacId() async {
+    String? macId;
     try {
       final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
         characteristicId: doozCustomCharacteristicUuid,
@@ -239,12 +240,12 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         deviceId: _device!.id,
       ));
       final macIdList = macIdChar.reversed.toList();
-      final macId = _toMacAddress(macIdList);
+      macId = _toMacAddress(macIdList);
       _log('got mac adr from custom service ! $macId');
-      return macId;
     } catch (e) {
       _log('caught error during reading dooz custom charac $e');
     }
+    return macId;
   }
 
   Future<void> _negotiateAndInitGatt(bool shouldCheckDoozCustomService) async {
