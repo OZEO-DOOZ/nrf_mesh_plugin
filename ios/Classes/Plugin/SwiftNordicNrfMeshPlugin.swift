@@ -49,5 +49,6 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
             let systemVersion = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
             result(systemVersion)
             break
+        }
     }
 }
