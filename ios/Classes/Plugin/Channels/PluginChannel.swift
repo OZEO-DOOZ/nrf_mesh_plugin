@@ -7,15 +7,9 @@
 
 import Foundation
 
-//enum PluginMethodChannel: String{
-//    case getPlatformVersion
-//    case createMeshManagerApi
-//}
-
 enum PluginMethodChannel {
     
     case getPlatformVersion
-    case createMeshManagerApi
     
     case error(_ error: Error)
     
@@ -24,9 +18,6 @@ enum PluginMethodChannel {
         switch call.method {
         case "getPlatformVersion":
             self = .getPlatformVersion
-        case "createMeshManagerApi":
-            self = .createMeshManagerApi
-            
         default:
             self = .error(FlutterCallError.notImplemented)
         }

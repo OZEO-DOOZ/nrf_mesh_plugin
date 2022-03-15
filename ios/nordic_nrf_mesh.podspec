@@ -5,19 +5,19 @@
 Pod::Spec.new do |s|
   s.name             = 'nordic_nrf_mesh'
   s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.summary          = 'A Flutter plugin to enable mesh network management and communication using Nordic SDKs. It also provides the ability to open BLE connection with mesh nodes using some other flutter package.'
   s.description      = <<-DESC
-A new flutter plugin project.
+A Flutter plugin to enable mesh network management and communication using Nordic SDKs. It also provides the ability to open BLE connection with mesh nodes using some other flutter package.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'http://dooz-domotique.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'OZEO-DOOZ' => 'contact@dooz-domotique.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.dependency 'nRFMeshProvision'
 
-  s.platform = :ios, '10.0'
+  s.platform = :ios, '11.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
