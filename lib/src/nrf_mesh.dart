@@ -79,16 +79,19 @@ class NordicNrfMesh {
   ) =>
       utils_provisioning.cancelProvisioning(meshManagerApi, _bleScanner, bleMeshManager);
 
+  /// {@template get_unprovisioned}
   /// Will scan for **unprovisioned** nodes.
   ///
   /// Returns a [List] of [DiscoveredDevice] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
-    Duration timeoutDuration = defaultScanDuration,
+    Duration timeoutDuration = kDefaultScanDuration,
   }) =>
       _bleScanner.unprovisionedNodesInRange(timeoutDuration: timeoutDuration);
 
+  /// {@template scan_unprovisioned}
   /// Will scan for **unprovisioned** nodes.
   ///
   /// Returns a [Stream] of [DiscoveredDevice].
@@ -96,18 +99,22 @@ class NordicNrfMesh {
   /// To stop the scan, make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _bleScanner.scanForUnprovisionedNodes();
 
+  /// {@template get_provisioned}
   /// Will scan for **provisioned** nodes.
   ///
   /// Returns a [List] of [DiscoveredDevice] that may be empty if no device is in range.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Future<List<DiscoveredDevice>> provisionedNodesInRange({
-    Duration timeoutDuration = defaultScanDuration,
+    Duration timeoutDuration = kDefaultScanDuration,
   }) =>
       _bleScanner.provisionedNodesInRange(timeoutDuration: timeoutDuration);
 
+  /// {@template scan_provisioned}
   /// Will scan for **provisioned** nodes.
   ///
   /// Returns a [Stream] of [DiscoveredDevice] for the user to listen to.
@@ -115,8 +122,10 @@ class NordicNrfMesh {
   /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Stream<DiscoveredDevice> scanForProxy() => _bleScanner.scanForProxy();
 
+  /// {@template custom_scan}
   /// Will scan for devices that broadcast given services.
   ///
   /// Returns a [Stream] of [DiscoveredDevice] for the user to listen to.
@@ -124,8 +133,10 @@ class NordicNrfMesh {
   /// To stop the scan, user has to make sure to cancel any subscription to this [Stream].
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Stream<DiscoveredDevice> scanWithServices(List<Uuid> services) => _bleScanner.scanWithServices(services);
 
+  /// {@template get_specific_node}
   /// Will scan for the given device using name or id (MAC on Android or UUID on iOS).
   ///
   /// It will scan by default for **unprovisioned** nodes, but one can switch to proxy candidates using the [isProxy] bool flag.
@@ -133,16 +144,21 @@ class NordicNrfMesh {
   /// Returns a [DiscoveredDevice] or null if not found after [timeoutDuration] (defaults to 5sec).
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Future<DiscoveredDevice?> searchForSpecificNode(
     String deviceNameOrId, {
     bool isProxy = false,
-    Duration timeoutDuration = defaultScanDuration,
+    Duration timeoutDuration = kDefaultScanDuration,
   }) =>
       _bleScanner.searchForSpecificNode(deviceNameOrId, timeoutDuration, isProxy);
 
+  /// {@template ble_status_stream}
   /// Provide a [Stream] of the current [BleStatus] of the host device.
+  /// {@endtemplate}
   Stream<BleStatus> get bleStatusStream => _bleScanner.bleStatusStream;
 
+  /// {@template ble_status}
   /// Will return the last known [BleStatus] (tracked via stream by BLE library, so it should always be up-to-date)
+  /// {@endtemplate}
   BleStatus get bleStatus => _bleScanner.bleStatus;
 }

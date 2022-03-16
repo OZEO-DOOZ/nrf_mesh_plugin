@@ -1,5 +1,9 @@
 /// The namespace (used to identify flutter method and event channels)
 const namespace = 'fr.dooz.nordic_nrf_mesh';
+const Duration kDefaultScanDuration = Duration(seconds: 5);
+const Duration kDefaultConnectionTimeout = Duration(seconds: 30);
+const mtuSizeMax = 517;
+const maxPacketSize = 20;
 
 /// Used when an error occured during the provisioning process
 enum ProvisioningFailureCode {

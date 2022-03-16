@@ -5,10 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/constants.dart';
 
 // runtime constants
-const mtuSizeMax = 517;
-const maxPacketSize = 20;
 final doozCustomServiceUuid =
     Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
 final doozCustomCharacteristicUuid =
@@ -24,7 +23,6 @@ final meshProvisioningDataOut =
     Platform.isAndroid ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADC');
 final clientCharacteristicConfigDescriptorUuid =
     Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
-const Duration _kConnectionTimeout = Duration(seconds: 30);
 
 /// {@template ble_manager}
 /// An abstract class that should be extended to handle BLE device interactions.
@@ -118,7 +116,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   /// (because this is a DooZ application specific flow, we made these parameters optional)
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
-    Duration connectionTimeout = _kConnectionTimeout,
+    Duration connectionTimeout = kDefaultConnectionTimeout,
     List<String>? whitelist,
     bool shouldCheckDoozCustomService = false,
   }) async {
