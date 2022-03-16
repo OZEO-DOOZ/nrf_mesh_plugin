@@ -4,35 +4,46 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/constants.dart';
 
 import 'ble_manager.dart'; // for mesh guid constants
 
-const Duration defaultScanDuration = Duration(seconds: 5);
-
+/// {@template ble_scanner_error}
+/// A data class used to hold some data when an ble scan error occur
+/// {@endtemplate}
 class BleScannerError {
   final String message;
   final Object error;
 
+  /// {@macro ble_scanner_error}
   const BleScannerError(this.message, this.error);
 }
 
+/// {@template ble_scanner}
+/// This singleton is used to wrap the Bluetooth scanning features of [FlutterReactiveBle].
+/// {@endtemplate}
 class BleScanner {
   static late final BleScanner _instance = BleScanner._();
 
   BleScanner._();
 
+  /// {@macro ble_scanner}
   factory BleScanner() => _instance;
 
+  /// The entry point for BLE library
   final FlutterReactiveBle _flutterReactiveBle = FlutterReactiveBle();
 
+  /// {@macro ble_status_stream}
   Stream<BleStatus> get bleStatusStream => _flutterReactiveBle.statusStream;
 
+  /// {@macro ble_status}
   BleStatus get bleStatus => _flutterReactiveBle.status;
 
+  /// A [Stream] providing any [BleScannerError] that could occur when using (un)provisionedNodesInRange methods
+  Stream<BleScannerError> get onScanErrorStream => _onScanErrorController.stream;
   late final StreamController<BleScannerError> _onScanErrorController = StreamController<BleScannerError>.broadcast();
 
-  Stream<BleScannerError> get onScanErrorStream => _onScanErrorController.stream;
-
+  /// Used to close the [onScanErrorStream]
   void dispose() {
     _onScanErrorController.close();
   }
@@ -45,7 +56,7 @@ class BleScanner {
   Future<List<DiscoveredDevice>> _scanWithParamsAsFuture({
     ScanMode scanMode = ScanMode.lowLatency,
     List<Uuid> withServices = const [],
-    Duration timeoutDuration = defaultScanDuration,
+    Duration timeoutDuration = kDefaultScanDuration,
   }) async {
     if (Platform.isIOS || Platform.isAndroid) {
       final scanResults = <DiscoveredDevice>[];
@@ -87,6 +98,7 @@ class BleScanner {
     }
   }
 
+  /// {@macro get_specific_node}
   Future<DiscoveredDevice?> searchForSpecificNode(
     String deviceNameOrId,
     Duration scanTimeout,
@@ -105,25 +117,30 @@ class BleScanner {
     return result;
   }
 
+  /// {@macro get_unprovisioned}
   Future<List<DiscoveredDevice>> unprovisionedNodesInRange({
-    Duration timeoutDuration = defaultScanDuration,
+    Duration timeoutDuration = kDefaultScanDuration,
   }) =>
       _scanWithParamsAsFuture(
         withServices: [meshProvisioningUuid],
         timeoutDuration: timeoutDuration,
       );
 
+  /// {@macro scan_unprovisioned}
   Stream<DiscoveredDevice> scanForUnprovisionedNodes() => _scanWithParamsAsStream(withServices: [meshProvisioningUuid]);
 
+  /// {@macro get_provisioned}
   Future<List<DiscoveredDevice>> provisionedNodesInRange({
-    Duration timeoutDuration = defaultScanDuration,
+    Duration timeoutDuration = kDefaultScanDuration,
   }) =>
       _scanWithParamsAsFuture(
         withServices: [meshProxyUuid],
         timeoutDuration: timeoutDuration,
       );
 
+  /// {@macro scan_provisioned}
   Stream<DiscoveredDevice> scanForProxy() => _scanWithParamsAsStream(withServices: [meshProxyUuid]);
 
+  /// {@macro custom_scan}
   Stream<DiscoveredDevice> scanWithServices(List<Uuid> services) => _scanWithParamsAsStream(withServices: services);
 }

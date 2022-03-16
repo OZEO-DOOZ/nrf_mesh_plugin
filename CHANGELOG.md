@@ -1,3 +1,11 @@
+## 0.10.0
+
+First open source release ! :rocket:
+
+- add missing documentation
+- remove unused API and dependency
+- refresh `example/`, `ios/` and `android/` folders to be up to date with the latest Flutter version (2.10.3)
+
 ## 0.9.1
 
 - revert app's manifest changes

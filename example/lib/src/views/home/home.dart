@@ -129,14 +129,14 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         ),
         TextButton(
           onPressed: () async {
-            final provisionerList = await _meshNetwork!.provisionerList;
+            final provisionerList = await _meshNetwork!.provisioners;
             debugPrint('# of provs : ${provisionerList.length}');
           },
           child: const Text('get provisioner list'),
         ),
         TextButton(
           onPressed: () async {
-            var provUUIDs = await _meshNetwork!.provisionerList;
+            var provUUIDs = await _meshNetwork!.provisioners;
             for (var value in provUUIDs) {
               debugPrint('$value');
             }

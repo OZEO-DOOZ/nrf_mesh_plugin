@@ -1,3 +1,8 @@
+/// {@template mesh_manager_event}
+/// A class used to enumerate the events received from native side.
+///
+/// _(may be refactored to an enum in future releases of Dart)_
+/// {@endtemplate}
 class MeshManagerApiEvent {
   final String value;
 

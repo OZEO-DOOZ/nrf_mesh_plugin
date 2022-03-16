@@ -3,33 +3,58 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:nordic_nrf_mesh/src/contants.dart';
-import 'package:nordic_nrf_mesh/src/models/models.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/constants.dart';
 
+/// {@template mesh_network}
+/// The class defining the API to manage a bluetooth mesh network.
+/// {@endtemplate}
 abstract class IMeshNetwork {
-  Future<List<GroupData>> get groups;
-  Future<int> get highestAllocatableAddress;
-  Future<String> get name;
-  Future<List<ProvisionedMeshNode>> get nodes;
+  /// The id of the network
   String get id;
-  Future<List<Provisioner>> get provisionerList;
 
+  /// The name of the network
+  Future<String> get name;
+
+  /// The current list of provisioners
+  Future<List<Provisioner>> get provisioners;
+
+  /// The current list of nodes (provisioners + provisioned mesh devices)
+  Future<List<ProvisionedMeshNode>> get nodes;
+
+  /// The currently defined group(s)
+  Future<List<GroupData>> get groups;
+
+  /// The max address that the current selected provisioner can allocate
+  Future<int> get highestAllocatableAddress;
+
+  /// Will try to add a new group in the network with the given [name]
   Future<GroupData?> addGroupWithName(String name);
 
+  /// Will check if the given [unicastAddress] is free of use
   Future<void> assignUnicastAddress(int unicastAddress);
 
-  Future<List<ElementData>> elementsForGroup(int id);
+  /// Will return the data of elements subscribed to the given [groupAddress]
+  Future<List<ElementData>> elementsForGroup(int groupAddress);
 
+  /// Will return the next free unicast address based on the number of elements of a node
   Future<int> nextAvailableUnicastAddress(int elementSize);
 
+  /// Will return the next free unicast address based on the number of elements of a node. The address shall be greater than the given [minAddress]
   Future<int> nextAvailableUnicastAddressWithMin(int minAddress, int elementSize);
 
-  Future<bool> removeGroup(int id);
+  /// Will remove the group with the given [groupAddress]
+  Future<bool> removeGroup(int groupAddress);
 
+  /// Will return the UUID of the current selected provisioner
   Future<String> selectedProvisionerUuid();
 
+  /// Will select the provisioner at the given index of the [provisioners] list
   Future<void> selectProvisioner(int provisionerIndex);
 
+  /// Will add a provisioner in the current network using the given ranges and ttl.
+  ///
+  /// Will return false if the creation is a failure (e.g the unicast address range is incompatible with the current configuration)
   Future<bool> addProvisioner(
     int unicastAddressRange,
     int groupAddressRange,
@@ -38,34 +63,53 @@ abstract class IMeshNetwork {
     String name,
   });
 
+  /// Will update the given [provisioner]
   Future<bool> updateProvisioner(Provisioner provisioner);
 
+  /// Will remove the provisioner with the given uuid
   Future<bool> removeProvisioner(String provisionerUUID);
 
+  /// Will manually remove a node from the network.
+  ///
+  /// If you want to deprovision a node, please use the `deprovision` method of [NordicNrfMesh]
   Future<bool> deleteNode(String uid);
 
+  /// Will return the subscribed addresses of the given element and model
   Future<Map> getMeshModelSubscriptions(int elementAddress, int modelIdentifier);
 
+  /// Will return the elements that have subscribed either **Generic Level** models or **Generic ON/OFF** models to the given [groupAddress]
   Future<Map> getGroupElementIds(int groupAddress);
 
+  /// Will return the node corresponding to the given [address]
   Future<ProvisionedMeshNode?> getNode(int address);
 
+  /// Will return the node corresponding to the given [uuid]
   Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid);
 
+  /// Will return a newly generated Network Key
   Future<NetworkKey> generateNetKey();
 
+  /// Will return the Network Key at the given index
   Future<NetworkKey?> getNetKey(int netKeyIndex);
 
+  /// Will remove the Network Key at the given index
   Future<bool?> removeNetKey(int netKeyIndex);
 
+  /// Will distribute the Network Key at the given index
   Future<NetworkKey?> distributeNetKey(int netKeyIndex);
 }
 
+/// {@template mesh_network_impl}
+/// The implementation of [IMeshNetwork] used at runtime.
+/// {@endtemplate}
 class MeshNetwork implements IMeshNetwork {
+  /// The [MethodChannel] used to interact with Nordic API
   final MethodChannel _methodChannel;
 
+  /// The unique id of the currently loaded [MeshNetwork]
   final String _id;
 
+  /// {@macro mesh_network_impl}
   MeshNetwork(this._id) : _methodChannel = MethodChannel('$namespace/mesh_network/$_id/methods');
 
   @override
@@ -134,7 +178,7 @@ class MeshNetwork implements IMeshNetwork {
       _methodChannel.invokeMethod<void>('selectProvisioner', {'provisionerIndex': provisionerIndex});
 
   @override
-  Future<List<Provisioner>> get provisionerList async {
+  Future<List<Provisioner>> get provisioners async {
     var provisioners = <Provisioner>[];
     final result = await _methodChannel.invokeMethod('getProvisionersAsJson');
     var prov = json.decode(result) as List;
