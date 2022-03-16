@@ -4,28 +4,32 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
-import 'package:nordic_nrf_mesh/src/contants.dart';
+import 'package:nordic_nrf_mesh/src/constants.dart';
 import 'package:nordic_nrf_mesh/src/events/mesh_manager_api_events.dart';
 import 'package:nordic_nrf_mesh/src/mesh_network.dart';
 import 'package:rxdart/rxdart.dart';
 
+/// {@template mesh_manager_api}
+/// This class is used to expose Nordic's APIs and handle a mesh network.
+///
+/// It listens to all native events and distribute it to broadcast [Stream]s that should in turn be listened by plugin consumer.
+/// {@endtemplate}
 class MeshManagerApi {
+  // native channels
   late final _methodChannel = const MethodChannel('$namespace/mesh_manager_api/methods');
   late final _eventChannel = const EventChannel('$namespace/mesh_manager_api/events');
+  late Stream<Map<String, dynamic>> _eventChannelStream;
 
+  // event controllers
   late final _onNetworkLoadedStreamController = StreamController<MeshNetwork>.broadcast();
   late final _onNetworkImportedController = StreamController<MeshNetwork>.broadcast();
   late final _onNetworkUpdatedController = StreamController<MeshNetwork>.broadcast();
-
   late final _onMeshPduCreatedController = StreamController<List<int>>.broadcast();
   late final _sendProvisioningPduController = StreamController<SendProvisioningPduData>.broadcast();
-
   late final _onProvisioningStateChangedController = StreamController<MeshProvisioningStatusData>.broadcast();
   late final _onProvisioningFailedController = StreamController<MeshProvisioningStatusData>.broadcast();
   late final _onProvisioningCompletedController = StreamController<MeshProvisioningCompletedData>.broadcast();
-
   late final _onConfigCompositionDataStatusController = StreamController<ConfigCompositionDataStatusData>.broadcast();
   late final _onConfigAppKeyStatusController = StreamController<ConfigAppKeyStatusData>.broadcast();
   late final _onGenericLevelStatusController = StreamController<GenericLevelStatusData>.broadcast();
@@ -33,7 +37,6 @@ class MeshManagerApi {
   late final _onDoozEpochStatusController = StreamController<DoozEpochStatusData>.broadcast();
   late final _onV2MagicLevelSetStatusController = StreamController<MagicLevelSetStatusData>.broadcast();
   late final _onV2MagicLevelGetStatusController = StreamController<MagicLevelGetStatusData>.broadcast();
-
   late final _onGenericOnOffStatusController = StreamController<GenericOnOffStatusData>.broadcast();
   late final _onConfigModelAppStatusController = StreamController<ConfigModelAppStatusData>.broadcast();
   late final _onConfigModelSubscriptionStatusController = StreamController<ConfigModelSubscriptionStatus>.broadcast();
@@ -42,12 +45,11 @@ class MeshManagerApi {
   late final _onConfigNetworkTransmitStatusController = StreamController<ConfigNetworkTransmitStatus>.broadcast();
   late final _onConfigDefaultTtlStatusController = StreamController<ConfigDefaultTtlStatus>.broadcast();
   late final _onConfigBeaconStatusController = StreamController<ConfigBeaconStatus>.broadcast();
-
   late final _onLightLightnessStatusController = StreamController<LightLightnessStatusData>.broadcast();
   late final _onLightCtlStatusController = StreamController<LightCtlStatusData>.broadcast();
   late final _onLightHslStatusController = StreamController<LightHslStatusData>.broadcast();
   late final _onConfigKeyRefreshPhaseStatusController = StreamController<ConfigKeyRefreshPhaseStatus>.broadcast();
-
+  // stream subs
   late StreamSubscription<MeshNetwork> _onNetworkLoadedSubscription;
   late StreamSubscription<MeshNetwork> _onNetworkImportedSubscription;
   late StreamSubscription<MeshNetwork> _onNetworkUpdatedSubscription;
@@ -73,63 +75,55 @@ class MeshManagerApi {
   late StreamSubscription<ConfigNetworkTransmitStatus> _onConfigNetworkTransmitStatusSubscription;
   late StreamSubscription<ConfigDefaultTtlStatus> _onConfigDefaultTtlStatusSubscription;
   late StreamSubscription<ConfigBeaconStatus> _onConfigBeaconStatusSubscription;
-
   late StreamSubscription<LightLightnessStatusData> _onLightLightnessStatusSubscription;
   late StreamSubscription<LightCtlStatusData> _onLightCtlStatusSubscription;
   late StreamSubscription<LightHslStatusData> _onLightHslStatusSubscription;
-
   late StreamSubscription<ConfigKeyRefreshPhaseStatus> _onConfigKeyRefreshPhaseStatusSubscription;
 
-  late Stream<Map<String, dynamic>> _eventChannelStream;
   MeshNetwork? _lastMeshNetwork;
 
-  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
-
   MeshManagerApi() {
+    // initialize main event stream listener
     _eventChannelStream =
         _eventChannel.receiveBroadcastStream().cast<Map>().map((event) => event.cast<String, dynamic>());
     if (kDebugMode) {
       _eventChannelStream.doOnData((data) => debugPrint('$data'));
     }
-
+    // network events
     _onNetworkLoadedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.loaded).listen(_onNetworkLoadedStreamController.add);
     _onNetworkImportedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.imported).listen(_onNetworkImportedController.add);
     _onNetworkUpdatedSubscription =
         _onMeshNetworkEventSucceed(MeshManagerApiEvent.updated).listen(_onNetworkUpdatedController.add);
-
     _onNetworkLoadFailedSubscription =
         _onMeshNetworkEventFailed(MeshManagerApiEvent.loadFailed).listen(_onNetworkLoadedStreamController.addError);
     _onNetworkImportFailedSubscription =
         _onMeshNetworkEventFailed(MeshManagerApiEvent.importFailed).listen(_onNetworkImportedController.addError);
-
+    // pdu events
     _onMeshPduCreatedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.meshPduCreated.value)
         .map((event) => event['pdu'] as List)
         .map((event) => event.cast<int>())
         .listen(_onMeshPduCreatedController.add);
-
     _sendProvisioningPduSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.sendProvisioningPdu.value)
         .map((event) => SendProvisioningPduData.fromJson(event))
         .listen(_sendProvisioningPduController.add);
-
+    // provisioning events
     _onProvisioningStateChangedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningStateChanged.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningStateChangedController.add);
-
     _onProvisioningCompletedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningCompleted.value)
         .map((event) => MeshProvisioningCompletedData.fromJson(event))
         .listen(_onProvisioningCompletedController.add);
-
     _onProvisioningFailedSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.provisioningFailed.value)
         .map((event) => MeshProvisioningStatusData.fromJson(event))
         .listen(_onProvisioningFailedController.add);
-
+    // mesh status events
     _onConfigCompositionDataStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configCompositionDataStatus.value)
         .map((event) => ConfigCompositionDataStatusData.fromJson(event))
@@ -162,7 +156,6 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.v2MagicLevelGetStatus.value)
         .map((event) => MagicLevelGetStatusData.fromJson(event))
         .listen(_onV2MagicLevelGetStatusController.add);
-
     _onLightLightnessStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.lightLightnessStatus.value)
         .map((event) => LightLightnessStatusData.fromJson(event))
@@ -175,7 +168,6 @@ class MeshManagerApi {
         .where((event) => event['eventName'] == MeshManagerApiEvent.lightHslStatus.value)
         .map((event) => LightHslStatusData.fromJson(event))
         .listen(_onLightHslStatusController.add);
-
     _onConfigModelAppStatusSubscription = _eventChannelStream
         .where((event) => event['eventName'] == MeshManagerApiEvent.configModelAppStatus.value)
         .map((event) => ConfigModelAppStatusData.fromJson(event))
@@ -259,6 +251,7 @@ class MeshManagerApi {
 
   Stream<MagicLevelGetStatusData> get onV2MagicLevelGetStatus => _onV2MagicLevelGetStatusController.stream;
 
+  /// The currently loaded [IMeshNetwork] or null
   IMeshNetwork? get meshNetwork => _lastMeshNetwork;
 
   Stream<LightLightnessStatusData> get onLightLightnessStatus => _onLightLightnessStatusController.stream;
@@ -270,8 +263,7 @@ class MeshManagerApi {
   Stream<ConfigKeyRefreshPhaseStatus> get onConfigKeyRefreshPhaseStatus =>
       _onConfigKeyRefreshPhaseStatusController.stream;
 
-  Uuid get meshProvisioningUuidServiceKey => meshProvisioningUuid;
-
+  /// Checks if the node is advertising with Node Identity
   Future<bool> isAdvertisedWithNodeIdentity(final List<int> serviceData) async {
     final result = await _methodChannel.invokeMethod<bool>(
       'isAdvertisedWithNodeIdentity',
@@ -280,6 +272,7 @@ class MeshManagerApi {
     return result!;
   }
 
+  /// Checks if the node identity matches
   Future<bool> nodeIdentityMatches(List<int> serviceData) async {
     final result = await _methodChannel.invokeMethod<bool>(
       'nodeIdentityMatches',
@@ -288,6 +281,7 @@ class MeshManagerApi {
     return result!;
   }
 
+  /// Checks if the node is advertising with Network Identity
   Future<bool> isAdvertisingWithNetworkIdentity(final List<int> serviceData) async {
     final result = await _methodChannel.invokeMethod<bool>(
       'isAdvertisingWithNetworkIdentity',
@@ -296,6 +290,7 @@ class MeshManagerApi {
     return result!;
   }
 
+  /// Checks if the generated network ids match. The network ID contained in the service data would be checked against a network id of each network key.
   Future<bool> networkIdMatches(List<int> serviceData) async {
     final result = await _methodChannel.invokeMethod(
       'networkIdMatches',
@@ -304,6 +299,7 @@ class MeshManagerApi {
     return result!;
   }
 
+  /// Should be called to clear all resources used by this class
   void dispose() => Future.wait([
         _onNetworkLoadedSubscription.cancel(),
         _onNetworkImportedSubscription.cancel(),
@@ -363,44 +359,60 @@ class MeshManagerApi {
         _onConfigBeaconStatusController.close()
       ]);
 
+  /// Loads the mesh network from the local database.
   Future<IMeshNetwork> loadMeshNetwork() async {
     final future = _onNetworkLoadedStreamController.stream.first;
     await _methodChannel.invokeMethod('loadMeshNetwork');
     return future;
   }
 
+  /// Starts an asynchronous task that imports a network from the mesh configuration db json
   Future<MeshNetwork> importMeshNetworkJson(final String json) async {
     final future = _onNetworkImportedController.stream.first;
     await _methodChannel.invokeMethod('importMeshNetworkJson', {'json': json});
     return future;
   }
 
+  /// Notify native side about the current mtu size
   Future<void> setMtu(final int mtuSize) => _methodChannel.invokeMethod<void>('setMtuSize', {'mtuSize': mtuSize});
 
+  /// Exports full mesh network to a JSON String.
   Future<String?> exportMeshNetwork() async {
     final json = await _methodChannel.invokeMethod<String>('exportMeshNetwork');
     return json;
   }
 
+  /// This method will clear the provisioned nodes, reset the sequence number and generate new network with new provisioning data.
   Future<void> resetMeshNetwork() => _methodChannel.invokeMethod<void>('resetMeshNetwork');
 
+  /// Handles notifications received by the client.
+  ///
+  /// **Should be called whenever data is received from a mesh node, so the Nordic library do the parsing job**
   Future<void> handleNotifications(int mtu, List<int> pdu) => _methodChannel.invokeMethod<void>(
         'handleNotifications',
         {'mtu': mtu, 'pdu': pdu},
       );
 
+  /// Must be called to handle sent data.
   Future<void> handleWriteCallbacks(int mtu, List<int> pdu) => _methodChannel.invokeMethod<void>(
         'handleWriteCallbacks',
         {'mtu': mtu, 'pdu': pdu},
       );
 
+  /// Identifies the node that is to be provisioned.
+  ///
+  /// _WARNING: This method is not intended to be used by external user of nrf_mesh_plugin. It is used by the provisioning method._
   Future<void> identifyNode(String serviceUuid) => _methodChannel.invokeMethod<void>(
         'identifyNode',
         {'serviceUuid': serviceUuid},
       );
 
+  /// This method reset the unprovisioned nodes cache.
+  ///
+  /// _WARNING: This method is not intended to be used by external use of nrf_mesh_plugin. It is used for the provisioning process._
   Future<void> cleanProvisioningData() => _methodChannel.invokeMethod<void>('cleanProvisioningData');
 
+  /// Will send a GenericLevelSet message to the given [address].
   Future<GenericLevelStatusData> sendGenericLevelSet(
     int address,
     int level, {
@@ -424,6 +436,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a GenericLevelGet message to the given [address].
   Future<GenericLevelStatusData> sendGenericLevelGet(
     int address, {
     int keyIndex = 0,
@@ -439,6 +452,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a GenericLevelOnOff message to the given [address].
   Future<GenericOnOffStatusData> sendGenericOnOffSet(
     int address,
     bool value,
@@ -464,6 +478,9 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a MagicLevelSet message to the given [address].
+  ///
+  /// _(DooZ specific API)_
   Future<MagicLevelSetStatusData> sendV2MagicLevelSet(
     int address,
     int io,
@@ -487,6 +504,9 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a MagicLevelGet message to the given [address].
+  ///
+  /// _(DooZ specific API)_
   Future<MagicLevelGetStatusData> sendV2MagicLevelGet(
     int address,
     int io,
@@ -508,11 +528,14 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigCompositionDataGet message to the given [dest].
   Future<void> sendConfigCompositionDataGet(int dest) =>
       _methodChannel.invokeMethod('sendConfigCompositionDataGet', {'dest': dest});
 
+  /// Will send a ConfigAppKeyAdd message to the given [dest].
   Future<void> sendConfigAppKeyAdd(int dest) => _methodChannel.invokeMethod('sendConfigAppKeyAdd', {'dest': dest});
 
+  /// Will send a ConfigModelAppBind message to the given [nodeId].
   Future<ConfigModelAppStatusData> sendConfigModelAppBind(int nodeId, int elementId, int modelId,
       {int appKeyIndex = 0}) async {
     final status = _onConfigModelAppStatusController.stream.firstWhere(
@@ -529,6 +552,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigModelSubscriptionAdd message to the given [elementAddress].
   Future<ConfigModelSubscriptionStatus> sendConfigModelSubscriptionAdd(
       int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
@@ -546,6 +570,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigModelSubscriptionDelete message to the given [elementAddress].
   Future<ConfigModelSubscriptionStatus> sendConfigModelSubscriptionDelete(
       int elementAddress, int subscriptionAddress, int modelIdentifier) async {
     final status = _onConfigModelSubscriptionStatusController.stream.firstWhere(
@@ -563,6 +588,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigModelSubscriptionDeleteAll message to the given [elementAddress].
   Future<void> sendConfigModelSubscriptionDeleteAll(int elementAddress, int modelIdentifier) =>
       _methodChannel.invokeMethod(
         'sendConfigModelSubscriptionDeleteAll',
@@ -572,6 +598,7 @@ class MeshManagerApi {
         },
       );
 
+  /// Will send a ConfigModelPublicationSet message to the given [elementAddress].
   Future<ConfigModelPublicationStatus> sendConfigModelPublicationSet(
     int elementAddress,
     int publishAddress,
@@ -613,6 +640,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigModelPublicationGet message to the given [elementAddress].
   Future<ConfigModelPublicationStatus> getPublicationSettings(
     int elementAddress,
     int modelIdentifier,
@@ -632,6 +660,7 @@ class MeshManagerApi {
     }
   }
 
+  /// Will send a LightLightnessSet message to the given [address].
   Future<LightLightnessStatusData> sendLightLightness(
     int address,
     int lightness,
@@ -651,6 +680,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a LightCtlSet message to the given [address].
   Future<LightCtlStatusData> sendLightCtl(
     int address,
     int lightness,
@@ -674,6 +704,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a LightHslSet message to the given [address].
   Future<LightHslStatusData> sendLightHsl(
     int address,
     int lightness,
@@ -697,6 +728,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigDefaultTtlGet message to the given [address].
   Future<ConfigDefaultTtlStatus> getDefaultTtl(int address) async {
     final status = _onConfigDefaultTtlStatusController.stream.firstWhere(
       (element) => element.source == address,
@@ -706,6 +738,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigDefaultTtlSet message to the given [address].
   Future<ConfigDefaultTtlStatus> setDefaultTtl(int address, int ttl) async {
     final status = _onConfigDefaultTtlStatusController.stream.firstWhere(
       (element) => element.source == address,
@@ -718,6 +751,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigNetworkTransmitSet message to the given [address].
   Future<ConfigNetworkTransmitStatus> setNetworkTransmitSettings(
     int address,
     int transmitCount,
@@ -735,6 +769,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigNetworkTransmitGet message to the given [address].
   Future<ConfigNetworkTransmitStatus> getNetworkTransmitSettings(int address) async {
     final status = _onConfigNetworkTransmitStatusController.stream.firstWhere(
       (element) => element.source == address,
@@ -744,6 +779,7 @@ class MeshManagerApi {
     return status;
   }
 
+  /// Will send a ConfigKeyRefreshPhaseGet message to the given [address].
   Future<ConfigKeyRefreshPhaseStatus> keyRefreshPhaseGet({
     int address = 0xFFFF,
     int netKeyIndex = 0,
@@ -770,6 +806,7 @@ class MeshManagerApi {
   static const int useNewKeys = 2; // Normal operation
   static const int revokeOldKeys = 3; // Key Distribution
 
+  /// Will send a ConfigKeyRefreshPhaseSet message to the given [address].
   Future<ConfigKeyRefreshPhaseStatus> keyRefreshPhaseSet({
     int address = 0xFFFF,
     int netKeyIndex = 0,
@@ -829,6 +866,8 @@ class MeshManagerApi {
 
   /// Will send a DoozScenarioSet message (0x8219).
   /// Defaults to a scenario that apply a level 0 (OFF cmd with lights).
+  ///
+  /// _(DooZ specific API)_
   Future<DoozScenarioStatusData?> doozScenarioSet(
     int address,
     int scenarioId,
@@ -873,6 +912,8 @@ class MeshManagerApi {
   }
 
   /// Will send a DoozEpochSet message (0x8220).
+  ///
+  /// _(DooZ specific API)_
   Future<DoozEpochStatusData?> doozScenarioEpochSet(
     int address,
     int tzData,
@@ -942,26 +983,34 @@ class MeshManagerApi {
     return '${_digits(msb >> 32, 8)}-${_digits(msb >> 16, 4)}-${_digits(msb, 4)}-${_digits(lsb >> 48, 4)}-${_digits(lsb, 12)}';
   }
 
-  Future<void> provisioningIos(String uuid) => _methodChannel.invokeMethod('provisioning', {'uuid': uuid});
-
+  /// Provision the given [meshNode].
+  ///
+  /// _WARNING: This method is not intended to be used by external user of nrf_mesh_plugin. It is used by the provisioning method._
   Future<void> provisioning(UnprovisionedMeshNode meshNode) =>
       _methodChannel.invokeMethod('provisioning', meshNode.toJson());
 
+  /// {@macro deprovision}
   Future<ConfigNodeResetStatus> deprovision(ProvisionedMeshNode meshNode) async {
-    final unicastAddress = await meshNode.unicastAddress;
-    final status = _onConfigNodeResetStatusController.stream
-        .where((element) => element.source == unicastAddress)
-        .timeout(const Duration(seconds: 3),
-            onTimeout: (sink) => sink.add(
-                  const ConfigNodeResetStatus(-1, -1, false),
-                ))
-        .first;
-    await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
-    return status;
+    if (Platform.isIOS || Platform.isAndroid) {
+      final unicastAddress = await meshNode.unicastAddress;
+      final status = _onConfigNodeResetStatusController.stream
+          .where((element) => element.source == unicastAddress)
+          .timeout(const Duration(seconds: 3),
+              onTimeout: (sink) => sink.add(
+                    const ConfigNodeResetStatus(-1, -1, false),
+                  ))
+          .first;
+      await _methodChannel.invokeMethod('deprovision', {'unicastAddress': unicastAddress});
+      return status;
+    } else {
+      throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
+    }
   }
 
+  /// A method that will return a mesh node uuid during provisioning process or null
   Future<String?> cachedProvisionedMeshNodeUuid() => _methodChannel.invokeMethod('cachedProvisionedMeshNodeUuid');
 
+  /// A method to get the sequence number of a given mesh [node]
   Future<int> getSequenceNumber(ProvisionedMeshNode node) async {
     if (Platform.isIOS || Platform.isAndroid) {
       final result = await _methodChannel.invokeMethod<int>(
@@ -973,6 +1022,7 @@ class MeshManagerApi {
     throw Exception('Platform not supported');
   }
 
+  /// A method to set the sequence number of a given mesh [node]
   Future<void> setSequenceNumber(ProvisionedMeshNode node, int seqNum) async => _methodChannel.invokeMethod<void>(
         'setSequenceNumberForAddress',
         {'address': await node.unicastAddress, 'sequenceNumber': seqNum},
@@ -996,4 +1046,6 @@ class MeshManagerApi {
 
   Stream<MeshNetworkEventError> _onMeshNetworkEventFailed(final MeshManagerApiEvent eventType) =>
       _filterEventChannel(eventType).map((event) => MeshNetworkEventError.fromJson(event));
+
+  void _log(String msg) => debugPrint('[NordicNrfMesh] $msg');
 }

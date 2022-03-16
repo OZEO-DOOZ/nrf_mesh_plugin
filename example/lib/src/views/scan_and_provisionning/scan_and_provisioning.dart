@@ -62,8 +62,8 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
         meshProvisioningUuid,
       ],
     ).listen((device) async {
-      _serviceData[device.id] = Uuid.parse(
-          _meshManagerApi.getDeviceUuid(device.serviceData[_meshManagerApi.meshProvisioningUuidServiceKey]!.toList()));
+      _serviceData[device.id] =
+          Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[meshProvisioningUuid]!.toList()));
       if (_devices.every((d) => d.id != device.id)) {
         setState(() {
           _devices.add(device);
