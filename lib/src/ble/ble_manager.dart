@@ -6,6 +6,7 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
+// runtime constants
 const mtuSizeMax = 517;
 const maxPacketSize = 20;
 final doozCustomServiceUuid =
@@ -25,10 +26,15 @@ final clientCharacteristicConfigDescriptorUuid =
     Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
 const Duration _kConnectionTimeout = Duration(seconds: 30);
 
+/// {@template ble_manager}
+/// An abstract class that should be extended to handle BLE device interactions.
+///
+/// It already implements most parts of the connection process and also triggers event on the given [BleManagerCallbacks].
+/// {@endtemplate}
 abstract class BleManager<E extends BleManagerCallbacks> {
   /// The current BLE device being managed if any
-  DiscoveredDevice? _device;
   DiscoveredDevice? get device => _device;
+  DiscoveredDevice? _device;
 
   /// A [bool] used to adapt the connection process
   bool isProvisioningCompleted = false;
@@ -46,34 +52,37 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   late final StreamSubscription<ConnectionStateUpdate> _globalStatusListener;
 
   /// A [Completer] used to handle the async behavior of [connect] method
-  late Completer<void> _connectCompleter;
-
   @protected
   Completer<void> get connectCompleter => _connectCompleter;
+  late Completer<void> _connectCompleter;
 
   /// The entry point for BLE library
-  final FlutterReactiveBle _bleInstance;
   FlutterReactiveBle get bleInstance => _bleInstance;
+  final FlutterReactiveBle _bleInstance;
 
+  /// {@macro ble_manager}
   BleManager(this._bleInstance) {
     _globalStatusListener = _bleInstance.connectedDeviceStream.listen(_onGlobalStateUpdate);
   }
 
+  /// Will clear used resources
   Future<void> dispose() async {
     await callbacks?.dispose();
     await _connectedDeviceStatusListener?.cancel();
     await _globalStatusListener.cancel();
   }
 
+  /// A method that should be overriden to define a validation on the BLE device advertised services
   @visibleForOverriding
   Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
   /// A method that should implement the GATT initialization.
   ///
-  /// In our case, it means requesting the highest possible MTU size and subcribing to notifications
+  /// It should for instance request the highest possible MTU size and subscribe to notifications
   @visibleForOverriding
   Future<void> initGatt();
 
+  /// Will disconnect from the current device if any
   Future<void> disconnect() async {
     if (_device == null) {
       _log('calling disconnect without connected device..');
@@ -97,6 +106,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - return a [TimeoutException] if connection is not established after [connectionTimeout]
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
+  ///
+  /// _DooZ specific API :_
+  /// TODO remove before 1.0.0
   ///
   /// The [whitelist] has been introduced along with [doozCustomCharacteristicUuid] and is intended to be used like so :
   ///   - the whitelist is populated with MAC addresses and [shouldCheckDoozCustomService] is true
