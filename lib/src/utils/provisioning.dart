@@ -3,40 +3,44 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_manager_callbacks.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager.dart';
-import 'package:nordic_nrf_mesh/src/ble/ble_mesh_manager_callbacks.dart';
+import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
-import 'package:nordic_nrf_mesh/src/contants.dart';
-import 'package:nordic_nrf_mesh/src/events/data/config_node_reset_status/config_node_reset_status.dart';
-import 'package:nordic_nrf_mesh/src/exceptions/exceptions.dart';
-import 'package:nordic_nrf_mesh/src/mesh_manager_api.dart';
-import 'package:nordic_nrf_mesh/src/models/models.dart';
 
-class _ProvisioningEvent {
-  final _provisioningController = StreamController<DiscoveredDevice>();
-  final _provisioningCapabilitiesController = StreamController<DiscoveredDevice>();
-  final _provisioningInvitationController = StreamController<DiscoveredDevice>();
-  final _provisioningReconnectController = StreamController<DiscoveredDevice>();
-  final _onConfigCompositionDataStatusController = StreamController<DiscoveredDevice>();
-  final _onConfigAppKeyStatusController = StreamController<DiscoveredDevice>();
-  final _provisioningGattErrorController = StreamController<BleManagerCallbacksError>();
-}
-
-class ProvisioningEvent extends _ProvisioningEvent {
+/// {@template provisioning_events}
+/// A class that may be used to listen to provisioning progress.
+///
+/// When the provisioning method is running, if the caller passed a [ProvisioningEvent] instance, events will be streamed to notify about the current state.
+/// {@endtemplate}
+class ProvisioningEvent {
+  /// A [Stream] that will contain the [DiscoveredDevice] when the main part of the provisioning is about to begin
   Stream<DiscoveredDevice> get onProvisioning => _provisioningController.stream;
+  final _provisioningController = StreamController<DiscoveredDevice>();
 
+  /// A [Stream] that will contain the [DiscoveredDevice] when the provisioning capabilities have been received
   Stream<DiscoveredDevice> get onProvisioningCapabilities => _provisioningCapabilitiesController.stream;
+  final _provisioningCapabilitiesController = StreamController<DiscoveredDevice>();
 
+  /// A [Stream] that will contain the [DiscoveredDevice] when the provisioning invite has been sent
   Stream<DiscoveredDevice> get onProvisioningInvitation => _provisioningInvitationController.stream;
+  final _provisioningInvitationController = StreamController<DiscoveredDevice>();
 
+  /// A [Stream] that will contain the [DiscoveredDevice] when provisioning is completed and we try to reconnect to the new node
   Stream<DiscoveredDevice> get onProvisioningReconnect => _provisioningReconnectController.stream;
+  final _provisioningReconnectController = StreamController<DiscoveredDevice>();
 
+  /// A [Stream] that will contain the [DiscoveredDevice] when the mesh composition data has been received
   Stream<DiscoveredDevice> get onConfigCompositionDataStatus => _onConfigCompositionDataStatusController.stream;
+  final _onConfigCompositionDataStatusController = StreamController<DiscoveredDevice>();
 
+  /// A [Stream] that will contain the [DiscoveredDevice] when the app key has been received by the new node
   Stream<DiscoveredDevice> get onConfigAppKeyStatus => _onConfigAppKeyStatusController.stream;
-  Stream<BleManagerCallbacksError> get onProvisioningGattError => _provisioningGattErrorController.stream;
+  final _onConfigAppKeyStatusController = StreamController<DiscoveredDevice>();
 
+  /// A [Stream] that will contain a [BleManagerCallbacksError] (unexpected error that should be handled by plugin user)
+  Stream<BleManagerCallbacksError> get onProvisioningGattError => _provisioningGattErrorController.stream;
+  final _provisioningGattErrorController = StreamController<BleManagerCallbacksError>();
+
+  /// Will clear used resources
   Future<void> dispose() => Future.wait([
         _provisioningController.close(),
         _provisioningCapabilitiesController.close(),
@@ -48,19 +52,21 @@ class ProvisioningEvent extends _ProvisioningEvent {
       ]);
 }
 
-StreamSubscription? onBleScannerError;
-StreamSubscription? onProvisioningCompletedSubscription;
-StreamSubscription? onProvisioningStateChangedSubscription;
-StreamSubscription? onProvisioningFailedSubscription;
-StreamSubscription? sendProvisioningPduSubscription;
-StreamSubscription? onConfigCompositionDataStatusSubscription;
-StreamSubscription? onConfigAppKeyStatusSubscription;
-StreamSubscription? onDeviceReadySubscription;
-StreamSubscription? onDataReceivedSubscription;
-StreamSubscription? onMeshPduCreatedSubscription;
-StreamSubscription? onGattErrorSubscription;
-StreamSubscription? onDataSentSubscription;
+// necessary subcriptions to handle the whole provisioning process
+StreamSubscription? _onBleScannerError;
+StreamSubscription? _onProvisioningCompletedSubscription;
+StreamSubscription? _onProvisioningStateChangedSubscription;
+StreamSubscription? _onProvisioningFailedSubscription;
+StreamSubscription? _sendProvisioningPduSubscription;
+StreamSubscription? _onConfigCompositionDataStatusSubscription;
+StreamSubscription? _onConfigAppKeyStatusSubscription;
+StreamSubscription? _onDeviceReadySubscription;
+StreamSubscription? _onDataReceivedSubscription;
+StreamSubscription? _onMeshPduCreatedSubscription;
+StreamSubscription? _onGattErrorSubscription;
+StreamSubscription? _onDataSentSubscription;
 
+/// {@macro provisioning}
 Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BleMeshManager bleMeshManager,
     BleScanner bleScanner, DiscoveredDevice device, String serviceDataUuid,
     {ProvisioningEvent? events}) async {
@@ -71,6 +77,7 @@ Future<ProvisionedMeshNode> provisioning(MeshManagerApi meshManagerApi, BleMeshM
   }
 }
 
+/// {@macro provisioning}
 Future<ProvisionedMeshNode> _provisioning(
     MeshManagerApi meshManagerApi,
     BleMeshManager bleMeshManager,
@@ -82,18 +89,24 @@ Future<ProvisionedMeshNode> _provisioning(
     throw NrfMeshProvisioningException(ProvisioningFailureCode.meshConfiguration,
         'You need to load a meshNetwork before being able to provision a device');
   }
+  // this completer will help providing a Future that corresponds to the process ending
   final completer = Completer();
+  // when this boll is false, it will notify errors via _onGattErrorSubscription
   late bool isHandlingConnectErrors;
+  // the node that will be returned after the provisioning process ends
   late final ProvisionedMeshNode provisionedMeshNode;
-
   //'Undocumented scan throttle' error caught here
-  onBleScannerError = bleScanner.onScanErrorStream.listen((event) {
+  _onBleScannerError = bleScanner.onScanErrorStream.listen((event) {
     _log('Scanner Error : ${event.error}');
   });
-
+  // override callbacks so we can react to BLE events
   final provisioningCallbacks = BleMeshManagerProvisioningCallbacks(meshManagerApi);
   bleMeshManager.callbacks = provisioningCallbacks;
-  onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
+  // define listeners to handle the provisioning process asynchronously
+  _onProvisioningCompletedSubscription = meshManagerApi.onProvisioningCompleted.listen((event) async {
+    // upon provisioning completion, we disconnect from the device,
+    // scan to check whether it advertises the proper services,
+    // and then reconnect to it
     try {
       await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
@@ -135,11 +148,13 @@ Future<ProvisionedMeshNode> _provisioning(
       completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.provisioningCompleted, _msg));
     }
   });
-  onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
+  // If provisioning failed, stop process and notify caller by throwing an error
+  _onProvisioningFailedSubscription = meshManagerApi.onProvisioningFailed.listen((event) async {
     completer.completeError(NrfMeshProvisioningException(
         ProvisioningFailureCode.provisioningFailed, 'Failed to provision device ${deviceToProvision.id}'));
   });
-  onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
+  // define what should be done when receiving some events from the native side
+  _onProvisioningStateChangedSubscription = meshManagerApi.onProvisioningStateChanged.listen((event) async {
     if (event.state == 'PROVISIONING_CAPABILITIES') {
       events?._provisioningCapabilitiesController.add(deviceToProvision);
       final unprovisionedMeshNode =
@@ -178,29 +193,35 @@ Future<ProvisionedMeshNode> _provisioning(
       }
     }
   });
-  onDeviceReadySubscription = bleMeshManager.callbacks!.onDeviceReady.listen((event) async {
+  // when connected to device, need to identify it in order to start the provisioning process
+  _onDeviceReadySubscription = bleMeshManager.callbacks!.onDeviceReady.listen((event) async {
     if (Platform.isIOS && bleMeshManager.isProvisioningCompleted) {
+      // this case is here because the 'PROVISIONING_INVITE' is not on iOS native code (for now?)
       final unicast = await provisionedMeshNode.unicastAddress;
       await meshManagerApi.sendConfigCompositionDataGet(unicast);
     } else {
       await meshManagerApi.identifyNode(serviceDataUuid);
     }
   });
-  sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
+  // handle sending PDUs
+  _sendProvisioningPduSubscription = meshManagerApi.sendProvisioningPdu.listen((event) async {
     await bleMeshManager.sendPdu(event.pdu);
   });
-  onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
+  _onMeshPduCreatedSubscription = meshManagerApi.onMeshPduCreated.listen((event) async {
     await bleMeshManager.sendPdu(event);
   });
   if (Platform.isAndroid) {
-    onDataSentSubscription = bleMeshManager.callbacks!.onDataSent.listen((event) async {
+    // on Android need to call Nordic library to handle sent data parsing
+    _onDataSentSubscription = bleMeshManager.callbacks!.onDataSent.listen((event) async {
       await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
     });
   }
-  onDataReceivedSubscription = bleMeshManager.callbacks!.onDataReceived.listen((event) async {
+  // handle received data parsing
+  _onDataReceivedSubscription = bleMeshManager.callbacks!.onDataReceived.listen((event) async {
     await meshManagerApi.handleNotifications(event.mtu, event.pdu);
   });
-  onGattErrorSubscription = bleMeshManager.callbacks!.onError.listen((event) {
+  // will notify call and stop process in case of unexpected GATT error
+  _onGattErrorSubscription = bleMeshManager.callbacks!.onError.listen((event) {
     _log('received error event : $event');
     if (!isHandlingConnectErrors) {
       // if not in a connection phase where auto retry are implemented, we should notify gatt errors
@@ -215,31 +236,39 @@ Future<ProvisionedMeshNode> _provisioning(
       }
     }
   });
-  onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
+  // when we received the mesh composition data from the newly provisioned node, we should bind to the network using ConfigAppKey msg
+  _onConfigCompositionDataStatusSubscription = meshManagerApi.onConfigCompositionDataStatus.listen((event) async {
     events?._onConfigCompositionDataStatusController.add(deviceToProvision);
     await meshManagerApi.sendConfigAppKeyAdd(await provisionedMeshNode.unicastAddress);
   });
-  onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
+  // when ConfigAppKey has been received, the provisioning is successful !
+  _onConfigAppKeyStatusSubscription = meshManagerApi.onConfigAppKeyStatus.listen((event) async {
     events?._onConfigAppKeyStatusController.add(deviceToProvision);
     completer.complete(provisionedMeshNode);
   });
   try {
+    // disconnect from device if any
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
+    // auto retry connect to the target device
     _connectRetryCount = 0;
     isHandlingConnectErrors = true;
     await _connect(bleMeshManager, deviceToProvision);
     isHandlingConnectErrors = false;
+    // wait for listeners to do their job
     await completer.future;
+    // cleanup resources
     await meshManagerApi.cleanProvisioningData();
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
-    cancelProvisioningCallbackSubscription(bleMeshManager);
+    _cancelProvisioningCallbackSubscription(bleMeshManager);
     _log('provisioning success !');
     return provisionedMeshNode;
   } catch (e) {
     _log('caught error during provisioning... $e');
+    // need to clean up data/resources and properly cancel the provisioning process
     await cancelProvisioning(meshManagerApi, bleScanner, bleMeshManager);
+    // depending on the error, always try to throw a NrfMeshProvisioningException to ease downstream error handling
     if (e is NrfMeshProvisioningException) {
       rethrow;
     } else if (e is GenericFailure || e is BleManagerException || e is TimeoutException) {
@@ -253,13 +282,16 @@ Future<ProvisionedMeshNode> _provisioning(
       }
       throw NrfMeshProvisioningException(ProvisioningFailureCode.initialConnection, message);
     } else {
-      // unknown error that should be diagnosed
+      // unknown error that should be diagnosed (please file an issue)
       throw NrfMeshProvisioningException(ProvisioningFailureCode.unknown, '$e');
     }
   }
 }
 
 late int _connectRetryCount;
+
+/// A method to handle the connections.
+/// It may auto retry depending on the failures that could occur.
 Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
   _connectRetryCount++;
   await bleMeshManager
@@ -267,6 +299,10 @@ Future<void> _connect(BleMeshManager bleMeshManager, DiscoveredDevice deviceToCo
       .catchError((e) async => await _onConnectError(e, bleMeshManager, deviceToConnect));
 }
 
+/// The method that implements the error handling for BLE connection.
+///
+/// Some errors can be overcome by a simple retry,
+/// others are considered unhandled and this method will rethrow them.
 Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, DiscoveredDevice deviceToConnect) async {
   _log('caught error during connect $e');
   if (e is GenericFailure) {
@@ -320,31 +356,36 @@ Future<void> _onConnectError(Object e, BleMeshManager bleMeshManager, Discovered
   }
 }
 
-void cancelProvisioningCallbackSubscription(BleMeshManager bleMeshManager) {
-  onProvisioningCompletedSubscription?.cancel();
-  onProvisioningStateChangedSubscription?.cancel();
-  onProvisioningFailedSubscription?.cancel();
-  sendProvisioningPduSubscription?.cancel();
-  onConfigCompositionDataStatusSubscription?.cancel();
-  onConfigAppKeyStatusSubscription?.cancel();
-  onDeviceReadySubscription?.cancel();
-  onDataReceivedSubscription?.cancel();
-  onMeshPduCreatedSubscription?.cancel();
-  onGattErrorSubscription?.cancel();
-  onBleScannerError?.cancel();
-  if (Platform.isAndroid) onDataSentSubscription?.cancel();
+/// Will clear stream subscriptions used for the provisioning process
+void _cancelProvisioningCallbackSubscription(BleMeshManager bleMeshManager) {
+  _onProvisioningCompletedSubscription?.cancel();
+  _onProvisioningStateChangedSubscription?.cancel();
+  _onProvisioningFailedSubscription?.cancel();
+  _sendProvisioningPduSubscription?.cancel();
+  _onConfigCompositionDataStatusSubscription?.cancel();
+  _onConfigAppKeyStatusSubscription?.cancel();
+  _onDeviceReadySubscription?.cancel();
+  _onDataReceivedSubscription?.cancel();
+  _onMeshPduCreatedSubscription?.cancel();
+  _onGattErrorSubscription?.cancel();
+  _onBleScannerError?.cancel();
+  if (Platform.isAndroid) _onDataSentSubscription?.cancel();
   if (bleMeshManager.callbacks != null) bleMeshManager.callbacks!.dispose();
 }
 
+/// {@macro cancel_provisioning}
 Future<bool> cancelProvisioning(
     MeshManagerApi meshManagerApi, BleScanner bleScanner, BleMeshManager bleMeshManager) async {
   if (Platform.isIOS || Platform.isAndroid) {
     _log('should cancel provisioning');
+    // try to dispose any resources used by provisioning process
     try {
       bleScanner.dispose();
-
       final cachedProvisionedMeshNodeUuid = await meshManagerApi.cachedProvisionedMeshNodeUuid();
       if (bleMeshManager.isProvisioningCompleted && cachedProvisionedMeshNodeUuid != null) {
+        // a node has been added to the network, but we want to cancel
+
+        // get the unwanted node
         final nodes = await meshManagerApi.meshNetwork!.nodes;
         ProvisionedMeshNode? nodeToDelete;
         try {
@@ -352,18 +393,21 @@ Future<bool> cancelProvisioning(
         } on StateError catch (e) {
           _log('node not found in network\n$e');
         }
-
+        // if found, try first to send a ConfigNodeReset
         if (nodeToDelete != null) {
           final status = await meshManagerApi.deprovision(nodeToDelete);
           if (status.success == false) {
+            // manually delete node from network (WARNING: the device may still be in provisioned state)
             await meshManagerApi.meshNetwork!.deleteNode(cachedProvisionedMeshNodeUuid);
           }
         }
       }
+      // remove any data in native side
       await meshManagerApi.cleanProvisioningData();
+      // disconnect
       await bleMeshManager.refreshDeviceCache();
       await bleMeshManager.disconnect();
-      cancelProvisioningCallbackSubscription(bleMeshManager);
+      _cancelProvisioningCallbackSubscription(bleMeshManager);
       return true;
     } catch (e) {
       _log('ERROR - $e');
@@ -374,17 +418,13 @@ Future<bool> cancelProvisioning(
   }
 }
 
-Future<ConfigNodeResetStatus> deprovision(MeshManagerApi meshManagerApi, ProvisionedMeshNode meshNode) {
-  if (Platform.isIOS || Platform.isAndroid) {
-    return meshManagerApi.deprovision(meshNode);
-  } else {
-    throw UnsupportedError('Platform ${Platform.operatingSystem} is not supported');
-  }
-}
-
+/// {@template prov_ble_manager}
+/// A minimal implementation of [BleMeshManagerCallbacks]
+/// {@endtemplate}
 class BleMeshManagerProvisioningCallbacks extends BleMeshManagerCallbacks {
   final MeshManagerApi meshManagerApi;
 
+  /// {@macro prov_ble_manager}
   BleMeshManagerProvisioningCallbacks(this.meshManagerApi);
 
   @override
