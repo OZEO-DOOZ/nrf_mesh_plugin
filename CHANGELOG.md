@@ -1,6 +1,10 @@
 ## 0.10.0
 
-- first open source release
+First open source release ! :rocket:
+
+- add missing documentation (except `events/data/` folder)
+- remove unused API and dependency
+- refresh `example/`, `ios/` and `android/` folders to be up to date with the latest Flutter version (2.10.3)
 
 ## 0.9.1
 
