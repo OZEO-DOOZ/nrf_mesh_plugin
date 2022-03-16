@@ -7,19 +7,33 @@ import 'package:nordic_nrf_mesh/src/ble/ble_scanner.dart';
 import 'package:nordic_nrf_mesh/src/contants.dart';
 import 'package:nordic_nrf_mesh/src/utils/provisioning.dart' as utils_provisioning;
 
+/// {@template nordic_nrf_mesh}
+/// The entry point for the plugin.
+/// It exposes some important methods such as Bluetooth scanning and mesh (de)provisioning.
+///
+/// To leverage all Bluetooth capabilities, one shall instantiate [BleMeshManager].
+///
+/// To use the Nordic APIs, one should use the [MeshManagerApi] available via the [meshManagerApi] getter of the [NordicNrfMesh] instance.
+/// {@endtemplate}
+///
+/// {@macro mesh_manager_api}
 class NordicNrfMesh {
   final _methodChannel = const MethodChannel('$namespace/methods');
-  final BleScanner _bleScanner = BleScanner();
 
   Future<String> get platformVersion async {
     final version = await _methodChannel.invokeMethod('getPlatformVersion');
     return version;
   }
 
-  late final MeshManagerApi _meshManagerApi = MeshManagerApi();
-  MeshManagerApi get meshManagerApi => _meshManagerApi;
+  /// {@macro ble_scanner}
+  late final BleScanner _bleScanner = BleScanner();
 
-  /// Will try to provision the specified [BluetoothDevice].
+  /// {@macro mesh_manager_api}
+  MeshManagerApi get meshManagerApi => _meshManagerApi;
+  late final MeshManagerApi _meshManagerApi = MeshManagerApi();
+
+  /// {@template provisioning}
+  /// Will try to provision the specified [DiscoveredDevice].
   ///
   /// After the process or if any error occurs, the [BleManager] will be disconnected from device.
   ///
@@ -27,6 +41,7 @@ class NordicNrfMesh {
   ///
   /// Throws an [NrfMeshProvisioningException] if provisioning failed
   /// or an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Future<ProvisionedMeshNode> provisioning(
     final MeshManagerApi meshManagerApi,
     final BleMeshManager bleMeshManager,
@@ -37,23 +52,27 @@ class NordicNrfMesh {
       utils_provisioning.provisioning(meshManagerApi, bleMeshManager, _bleScanner, device, serviceDataUuid,
           events: events);
 
-  /// Will try to deprovision the specified [ProvisionedMeshNode] by sending a unicast [ConfigNodeReset] message.
+  /// {@template deprovision}
+  /// Will try to deprovision the specified [ProvisionedMeshNode] by sending [ConfigNodeReset] message via the unicast address.
   ///
   /// Returns a [ConfigNodeResetStatus] or null if timeout after 5sec.
   ///
   /// Throws a method channel error "NOT FOUND" if not found in the currently loaded mesh n/w
   /// or an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Future<ConfigNodeResetStatus> deprovision(
     final MeshManagerApi meshManagerApi,
     final ProvisionedMeshNode meshNode,
   ) =>
-      utils_provisioning.deprovision(meshManagerApi, meshNode);
+      meshManagerApi.deprovision(meshNode);
 
+  /// {@template cancel_provisioning}
   /// Will try to cancel the provisioning.
   ///
   /// Returns `true` if the call has been successful, `false` otherwise.
   ///
   /// Throws an [UnsupportedError] if the current OS is not supported.
+  /// {@endtemplate}
   Future<bool> cancelProvisioning(
     final MeshManagerApi meshManagerApi,
     final BleMeshManager bleMeshManager,

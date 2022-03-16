@@ -1,3 +1,7 @@
+## 0.10.0
+
+- first open source release
+
 ## 0.9.1
 
 - revert app's manifest changes

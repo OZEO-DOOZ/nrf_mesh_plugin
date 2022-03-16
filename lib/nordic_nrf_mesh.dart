@@ -1,3 +1,6 @@
+///A Flutter plugin to enable mesh network management and communication using Nordic's SDKs. It also provides the ability to open BLE connection with mesh nodes using some other flutter package.
+library nordic_nrf_mesh;
+
 export 'src/nrf_mesh.dart';
 export 'src/mesh_network.dart' show IMeshNetwork;
 export 'src/mesh_manager_api.dart';
