@@ -11,6 +11,7 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
     
     init(messenger: FlutterBinaryMessenger) {
         self.messenger = messenger
+        self.meshManagerApi = DoozMeshManagerApi(messenger: messenger)
         super.init()
     }
     
@@ -48,11 +49,6 @@ public class SwiftNordicNrfMeshPlugin: NSObject, FlutterPlugin {
             let systemVersion = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
             result(systemVersion)
             break
-        case .createMeshManagerApi:
-            self.meshManagerApi = DoozMeshManagerApi(messenger: messenger)
-            result(nil)
-            break
         }
-        
     }
 }

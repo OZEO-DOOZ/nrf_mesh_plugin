@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:meta/meta.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh/src/constants.dart';
 
-const mtuSizeMax = 517;
-const maxPacketSize = 20;
+// runtime constants
 final doozCustomServiceUuid =
     Platform.isAndroid ? Uuid.parse('00001400-0000-1000-8000-00805F9B34FB') : Uuid.parse('1400');
 final doozCustomCharacteristicUuid =
@@ -23,12 +23,16 @@ final meshProvisioningDataOut =
     Platform.isAndroid ? Uuid.parse('00002ADC-0000-1000-8000-00805F9B34FB') : Uuid.parse('2ADC');
 final clientCharacteristicConfigDescriptorUuid =
     Platform.isAndroid ? Uuid.parse('00002902-0000-1000-8000-00805f9b34fb') : Uuid.parse('2902');
-const Duration _kConnectionTimeout = Duration(seconds: 30);
 
+/// {@template ble_manager}
+/// An abstract class that should be extended to handle BLE device interactions.
+///
+/// It already implements most parts of the connection process and also triggers event on the given [BleManagerCallbacks].
+/// {@endtemplate}
 abstract class BleManager<E extends BleManagerCallbacks> {
   /// The current BLE device being managed if any
-  DiscoveredDevice? _device;
   DiscoveredDevice? get device => _device;
+  DiscoveredDevice? _device;
 
   /// A [bool] used to adapt the connection process
   bool isProvisioningCompleted = false;
@@ -46,34 +50,37 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   late final StreamSubscription<ConnectionStateUpdate> _globalStatusListener;
 
   /// A [Completer] used to handle the async behavior of [connect] method
-  late Completer<void> _connectCompleter;
-
   @protected
   Completer<void> get connectCompleter => _connectCompleter;
+  late Completer<void> _connectCompleter;
 
   /// The entry point for BLE library
-  final FlutterReactiveBle _bleInstance;
   FlutterReactiveBle get bleInstance => _bleInstance;
+  final FlutterReactiveBle _bleInstance;
 
+  /// {@macro ble_manager}
   BleManager(this._bleInstance) {
     _globalStatusListener = _bleInstance.connectedDeviceStream.listen(_onGlobalStateUpdate);
   }
 
+  /// Will clear used resources
   Future<void> dispose() async {
     await callbacks?.dispose();
     await _connectedDeviceStatusListener?.cancel();
     await _globalStatusListener.cancel();
   }
 
+  /// A method that should be overriden to define a validation on the BLE device advertised services
   @visibleForOverriding
   Future<DiscoveredService?> isRequiredServiceSupported(bool shouldCheckDoozCustomService);
 
   /// A method that should implement the GATT initialization.
   ///
-  /// In our case, it means requesting the highest possible MTU size and subcribing to notifications
+  /// It should for instance request the highest possible MTU size and subscribe to notifications
   @visibleForOverriding
   Future<void> initGatt();
 
+  /// Will disconnect from the current device if any
   Future<void> disconnect() async {
     if (_device == null) {
       _log('calling disconnect without connected device..');
@@ -98,6 +105,9 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   ///   - add event in [callbacks] sinks
   ///   - return any error on the stream or any given reason for [DeviceConnectionState.disconnected] events (usually a [GenericFailure])
   ///
+  /// _DooZ specific API :_
+  /// TODO remove before 1.0.0
+  ///
   /// The [whitelist] has been introduced along with [doozCustomCharacteristicUuid] and is intended to be used like so :
   ///   - the whitelist is populated with MAC addresses and [shouldCheckDoozCustomService] is true
   ///   - it will connect to the BLE device and check the MAC address that should be stored in the DooZ custom charac
@@ -106,7 +116,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
   /// (because this is a DooZ application specific flow, we made these parameters optional)
   Future<void> connect(
     final DiscoveredDevice discoveredDevice, {
-    Duration connectionTimeout = _kConnectionTimeout,
+    Duration connectionTimeout = kDefaultConnectionTimeout,
     List<String>? whitelist,
     bool shouldCheckDoozCustomService = false,
   }) async {
@@ -138,7 +148,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
           connectionTimeout: connectionTimeout,
         )
         .listen(
-            (ConnectionStateUpdate connectionStateUpdate) async {
+            (ConnectionStateUpdate connectionStateUpdate) {
               switch (connectionStateUpdate.connectionState) {
                 case DeviceConnectionState.connecting:
                   _device = discoveredDevice;
@@ -234,6 +244,7 @@ abstract class BleManager<E extends BleManagerCallbacks> {
 
   /// This method will read the [doozCustomCharacteristicUuid] if a device is connected and return the MAC address stored
   Future<String?> getMacId() async {
+    String? macId;
     try {
       final macIdChar = await bleInstance.readCharacteristic(QualifiedCharacteristic(
         characteristicId: doozCustomCharacteristicUuid,
@@ -241,12 +252,12 @@ abstract class BleManager<E extends BleManagerCallbacks> {
         deviceId: _device!.id,
       ));
       final macIdList = macIdChar.reversed.toList();
-      final macId = _toMacAddress(macIdList);
+      macId = _toMacAddress(macIdList);
       _log('got mac adr from custom service ! $macId');
-      return macId;
     } catch (e) {
       _log('caught error during reading dooz custom charac $e');
     }
+    return macId;
   }
 
   Future<void> _negotiateAndInitGatt(bool shouldCheckDoozCustomService) async {

@@ -76,7 +76,7 @@ class _PlatformVersion extends State<PlatformVersion> {
 
 class MeshManagerApiWidget extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
-  final ValueChanged<IMeshNetwork> onNewMeshNetwork;
+  final ValueChanged<IMeshNetwork?> onNewMeshNetwork;
 
   const MeshManagerApiWidget({Key? key, required this.nordicNrfMesh, required this.onNewMeshNetwork}) : super(key: key);
 
@@ -129,14 +129,14 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         ),
         TextButton(
           onPressed: () async {
-            final provisionerList = await _meshNetwork!.provisionerList;
+            final provisionerList = await _meshNetwork!.provisioners;
             debugPrint('# of provs : ${provisionerList.length}');
           },
           child: const Text('get provisioner list'),
         ),
         TextButton(
           onPressed: () async {
-            var provUUIDs = await _meshNetwork!.provisionerList;
+            var provUUIDs = await _meshNetwork!.provisioners;
             for (var value in provUUIDs) {
               debugPrint('$value');
             }
@@ -160,7 +160,7 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
                     setState(() {
                       _meshNetwork = null;
                     });
-                    widget.onNewMeshNetwork(_meshNetwork!);
+                    widget.onNewMeshNetwork(_meshNetwork);
                   } catch (err) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Caught error: $err')));
                   }
