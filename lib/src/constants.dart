@@ -1,3 +1,4 @@
+/// The namespace (used to identify flutter method and event channels)
 const namespace = 'fr.dooz.nordic_nrf_mesh';
 
 /// Used when an error occured during the provisioning process

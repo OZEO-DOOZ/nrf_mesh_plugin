@@ -11,6 +11,6 @@ export 'src/ble/ble_manager_callbacks.dart';
 export 'src/ble/ble_mesh_manager.dart';
 export 'src/ble/ble_mesh_manager_callbacks.dart';
 export 'src/utils/provisioning.dart' show ProvisioningEvent;
-export 'src/contants.dart' show ProvisioningFailureCode, BleManagerFailureCode;
+export 'src/constants.dart' show ProvisioningFailureCode, BleManagerFailureCode;
 export 'src/exceptions/exceptions.dart';
 export 'src/extensions/extensions.dart';

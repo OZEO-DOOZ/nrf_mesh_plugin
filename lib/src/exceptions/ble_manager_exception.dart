@@ -1,4 +1,4 @@
-import 'package:nordic_nrf_mesh/src/contants.dart';
+import 'package:nordic_nrf_mesh/src/constants.dart';
 
 /// An [Exception] that can be thrown during the lifecycle of a BLE connection
 class BleManagerException implements Exception {
