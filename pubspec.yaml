@@ -1,13 +1,13 @@
 name: nordic_nrf_mesh
 description: A Flutter plugin to enable mesh network management and communication using Nordic's SDKs. It also provides the ability to open BLE connection with mesh nodes using some other Flutter plugin.
-version: 0.10.0
+version: 0.10.1
 homepage: https://www.dooz-domotique.com/
 repository: https://github.com/OZEO-DOOZ/nrf_mesh_plugin
 issue_tracker: https://github.com/OZEO-DOOZ/nrf_mesh_plugin/issues
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.0.0 <3.0.0"
+  flutter: ">=2.0.0"
 
 dependencies:
   flutter:
@@ -21,6 +21,7 @@ dependencies:
   freezed_annotation: ^0.14.0
   # static analysis
   flutter_lints: ^1.0.4
+  meta: ^1.7.0
 
 dev_dependencies:
   flutter_test:
