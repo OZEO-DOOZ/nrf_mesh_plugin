@@ -1,3 +1,6 @@
+## 0.10.1
+
+- fix pubspec issue seen by `flutter pub publish --dry-run`
 ## 0.10.0
 
 First open source release ! :rocket:
