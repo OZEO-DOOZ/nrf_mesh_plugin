@@ -150,17 +150,9 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
         TextButton(
           onPressed: _meshNetwork != null
               ? () async {
-                  final provisionerList = await _meshNetwork!.provisioners;
-                  debugPrint('# of provs : ${provisionerList.length}');
-                }
-              : null,
-          child: const Text('get provisioner list'),
-        ),
-        TextButton(
-          onPressed: _meshNetwork != null
-              ? () async {
-                  var provUUIDs = await _meshNetwork!.provisioners;
-                  for (var value in provUUIDs) {
+                  var provs = await _meshNetwork!.provisioners;
+                  debugPrint('# of provs : ${provs.length}');
+                  for (var value in provs) {
                     debugPrint('$value');
                   }
                 }
