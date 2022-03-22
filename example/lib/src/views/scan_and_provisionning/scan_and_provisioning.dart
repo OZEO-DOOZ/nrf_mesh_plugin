@@ -57,17 +57,17 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       _devices.clear();
     });
 
-    _scanSubscription = flutterReactiveBle.scanForDevices(
-      withServices: [
-        meshProvisioningUuid,
-      ],
-    ).listen((device) async {
-      _serviceData[device.id] =
-          Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[meshProvisioningUuid]!.toList()));
-      if (_devices.every((d) => d.id != device.id)) {
-        setState(() {
-          _devices.add(device);
-        });
+    _scanSubscription = widget.nordicNrfMesh.scanForUnprovisionedNodes().listen((device) async {
+      if (device.serviceUuids.contains(meshProvisioningUuid)) {
+        _serviceData[device.id] =
+            Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[meshProvisioningUuid]!.toList()));
+        if (_devices.every((d) => d.id != device.id)) {
+          setState(() {
+            _devices.add(device);
+          });
+        }
+      } else {
+        debugPrint('device not advertising mesh provisioning service: $device');
       }
     });
     setState(() {

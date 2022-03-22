@@ -93,12 +93,12 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     setState(() {
       _devices.clear();
     });
-    _scanSubscription = flutterReactiveBle.scanForDevices(
-      withServices: [meshProxyUuid],
-    ).listen((device) async {
-      setState(() {
-        _devices.add(device);
-      });
+    _scanSubscription = widget.nordicNrfMesh.scanForProxy().listen((device) async {
+      if (_devices.every((d) => d.id != device.id)) {
+        setState(() {
+          _devices.add(device);
+        });
+      }
     });
     setState(() {
       isScanning = true;
