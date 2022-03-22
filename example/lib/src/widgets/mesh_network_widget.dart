@@ -25,16 +25,23 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
   }
 
   @override
+  void didUpdateWidget(covariant MeshNetworkWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    widget.meshNetwork.nodes.then((value) => setState(() => _nodes = value));
+    widget.meshNetwork.groups.then((value) => setState(() => _groups = value));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
         if (_nodes.isNotEmpty) ...[
-          const Text('Nodes: '),
+          Text('Nodes (${_nodes.length}): '),
           ..._nodes.map((e) => Node(e, widget.meshNetwork, 'node-${_nodes.indexOf(e)}')),
         ],
         if (_groups.isNotEmpty) ...[
-          const Text('Groups: '),
+          Text('Groups (${_groups.length}): '),
           ..._groups.map((e) => Group(e, widget.meshNetwork)),
         ]
       ],

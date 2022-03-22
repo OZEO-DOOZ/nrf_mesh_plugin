@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -16,6 +17,23 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   IMeshNetwork? _meshNetwork;
+  late final StreamSubscription<IMeshNetwork?> onNetworkUpdateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    onNetworkUpdateSubscription = widget.nordicNrfMesh.meshManagerApi.onNetworkUpdated.listen((event) {
+      setState(() {
+        _meshNetwork = event;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    onNetworkUpdateSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,28 +137,34 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
           child: const Text('Load MeshNetwork'),
         ),
         TextButton(
-          onPressed: () async {
-            //13 provisioners are maximum with the below given ranges and the default ttl is 5
-            //above that, will throw error
-            final result = await _meshNetwork!.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
-            debugPrint('provisioner added : $result');
-          },
+          onPressed: _meshNetwork != null
+              ? () async {
+                  //13 provisioners are maximum with the below given ranges and the default ttl is 5
+                  //above that, will throw error
+                  final result = await _meshNetwork!.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
+                  debugPrint('provisioner added : $result');
+                }
+              : null,
           child: const Text('add provisioner'),
         ),
         TextButton(
-          onPressed: () async {
-            final provisionerList = await _meshNetwork!.provisioners;
-            debugPrint('# of provs : ${provisionerList.length}');
-          },
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final provisionerList = await _meshNetwork!.provisioners;
+                  debugPrint('# of provs : ${provisionerList.length}');
+                }
+              : null,
           child: const Text('get provisioner list'),
         ),
         TextButton(
-          onPressed: () async {
-            var provUUIDs = await _meshNetwork!.provisioners;
-            for (var value in provUUIDs) {
-              debugPrint('$value');
-            }
-          },
+          onPressed: _meshNetwork != null
+              ? () async {
+                  var provUUIDs = await _meshNetwork!.provisioners;
+                  for (var value in provUUIDs) {
+                    debugPrint('$value');
+                  }
+                }
+              : null,
           child: const Text('get provisioner list'),
         ),
         TextButton(
