@@ -12,6 +12,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>(debugLabel: 'main_scaffold');
   final nordicNrfMesh = NordicNrfMesh();
 
   int _bottomNavigationBarIndex = 0;
@@ -38,30 +40,38 @@ class _MyAppState extends State<MyApp> {
     }
 
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(),
-        body: body,
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _bottomNavigationBarIndex,
-          onTap: (newBottomNavigationBarIndex) {
-            setState(() {
-              _bottomNavigationBarIndex = newBottomNavigationBarIndex;
-            });
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bluetooth_searching),
-              label: 'Provisioning',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.videogame_asset),
-              label: 'Control',
-            ),
-          ],
+      home: ScaffoldMessenger(
+        key: _scaffoldKey,
+        child: Scaffold(
+          appBar: AppBar(),
+          body: body,
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _bottomNavigationBarIndex,
+            onTap: (newBottomNavigationBarIndex) {
+              if (nordicNrfMesh.meshManagerApi.meshNetwork != null) {
+                setState(() {
+                  _bottomNavigationBarIndex = newBottomNavigationBarIndex;
+                });
+              } else {
+                _scaffoldKey.currentState!.clearSnackBars();
+                _scaffoldKey.currentState!.showSnackBar(const SnackBar(content: Text('Please load a mesh network')));
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bluetooth_searching),
+                label: 'Provisioning',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.videogame_asset),
+                label: 'Control',
+              ),
+            ],
+          ),
         ),
       ),
     );
