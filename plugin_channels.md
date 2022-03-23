@@ -41,7 +41,7 @@ Format :
 ```
 { 
 	eventName: onNetworkLoaded
-	id: $network.id
+	id: $network.meshUuid
 }
 ```
 
@@ -111,7 +111,7 @@ Format :
 ```
 { 
 	eventName: onNetworkImported
-	id: $network.id
+	id: $network.meshUuid
 }
 ```
 
@@ -641,10 +641,10 @@ Errors on arguments:
 ### ✅ getId
 
 ```
-await meshManagerApi.meshNetwork.id;
+await meshManagerApi.meshNetwork.meshUUID;
 ```
 
-Returns meshNetwork.id as String or null ❌
+Returns meshNetwork.meshUUID as String or null ❌
 
 No errors thrown
 
