@@ -4,6 +4,10 @@ import 'package:nordic_nrf_mesh_example/src/views/control_module/provisioned_dev
 import 'package:nordic_nrf_mesh_example/src/views/home/home.dart';
 import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/scan_and_provisioning.dart';
 
+const int homeTab = 0;
+const int provisioningTab = 1;
+const int controlTab = 2;
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -16,27 +20,27 @@ class _MyAppState extends State<MyApp> {
       GlobalKey<ScaffoldMessengerState>(debugLabel: 'main_scaffold');
   final nordicNrfMesh = NordicNrfMesh();
 
-  int _bottomNavigationBarIndex = 0;
+  int _bottomNavigationBarIndex = homeTab;
 
   @override
   Widget build(BuildContext context) {
     Widget body = const SizedBox.shrink();
 
-    if (_bottomNavigationBarIndex == 0) {
+    if (_bottomNavigationBarIndex == homeTab) {
       //  home
-      body = Home(
-        nordicNrfMesh: nordicNrfMesh,
-      );
-    } else if (_bottomNavigationBarIndex == 1) {
+      body = Home(nordicNrfMesh: nordicNrfMesh);
+    } else if (_bottomNavigationBarIndex == provisioningTab) {
       //  scanning & provisionning
       body = ScanningAndProvisioning(
-        nordicNrfMesh: nordicNrfMesh,
-      );
-    } else if (_bottomNavigationBarIndex == 2) {
+          nordicNrfMesh: nordicNrfMesh,
+          onGoToControl: () {
+            setState(() {
+              _bottomNavigationBarIndex = controlTab;
+            });
+          });
+    } else if (_bottomNavigationBarIndex == controlTab) {
       //  List provisioned devices and then can control/setup them
-      body = ProvisionedDevices(
-        nordicNrfMesh: nordicNrfMesh,
-      );
+      body = ProvisionedDevices(nordicNrfMesh: nordicNrfMesh);
     }
 
     return MaterialApp(

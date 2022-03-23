@@ -9,8 +9,13 @@ import 'package:pedantic/pedantic.dart';
 
 class ScanningAndProvisioning extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
+  final VoidCallback onGoToControl;
 
-  const ScanningAndProvisioning({Key? key, required this.nordicNrfMesh}) : super(key: key);
+  const ScanningAndProvisioning({
+    Key? key,
+    required this.nordicNrfMesh,
+    required this.onGoToControl,
+  }) : super(key: key);
 
   @override
   _ScanningAndProvisioningState createState() => _ScanningAndProvisioningState();
@@ -38,50 +43,33 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     _scanSubscription?.cancel();
   }
 
-  Future<void> _init() async {
-    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
-
-    await _meshManagerApi.loadMeshNetwork();
-
-    setState(() {
-      loading = false;
-    });
-  }
-
   Future<void> _scanUnprovisionned() async {
     _serviceData.clear();
     setState(() {
       _devices.clear();
     });
-
     _scanSubscription = widget.nordicNrfMesh.scanForUnprovisionedNodes().listen((device) async {
-      if (device.serviceUuids.contains(meshProvisioningUuid)) {
-        _serviceData[device.id] =
+      if (_devices.every((d) => d.id != device.id)) {
+        final deviceUuid =
             Uuid.parse(_meshManagerApi.getDeviceUuid(device.serviceData[meshProvisioningUuid]!.toList()));
-        if (_devices.every((d) => d.id != device.id)) {
-          setState(() {
-            _devices.add(device);
-          });
-        }
-      } else {
-        debugPrint('device not advertising mesh provisioning service: $device');
+        debugPrint('deviceUuid: $deviceUuid');
+        _serviceData[device.id] = deviceUuid;
+        _devices.add(device);
+        setState(() {});
       }
     });
     setState(() {
       isScanning = true;
     });
-
-    return Future.delayed(const Duration(seconds: 20)).then((_) => _stopScan());
+    return Future.delayed(const Duration(seconds: 10)).then((_) => _stopScan());
   }
 
   Future<void> _stopScan() async {
-    if (!mounted) {
-      return;
-    }
     await _scanSubscription?.cancel();
-    setState(() {
-      isScanning = false;
-    });
+    isScanning = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> provisionDevice(DiscoveredDevice device) async {
@@ -119,21 +107,21 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
           )
           .timeout(const Duration(minutes: 1));
 
-      unawaited(provisionedMeshNodeF.then((node) async {
+      unawaited(provisionedMeshNodeF.then((node) {
         Navigator.of(context).pop();
-        scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Provisionning succeed')));
+        scaffoldMessenger
+            .showSnackBar(const SnackBar(content: Text('Provisionning succeed, redirecting to control tab...')));
+        Future.delayed(const Duration(milliseconds: 500), widget.onGoToControl);
       }).catchError((_) {
         Navigator.of(context).pop();
         scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Provisionning failed')));
+        _scanUnprovisionned();
       }));
       await showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (_) => ProvisioningDialog(
-          provisioningEvent: provisioningEvent,
-        ),
+        builder: (_) => ProvisioningDialog(provisioningEvent: provisioningEvent),
       );
-      unawaited(_scanUnprovisionned());
     } catch (e) {
       debugPrint('$e');
       scaffoldMessenger.showSnackBar(SnackBar(content: Text('Caught error: $e')));
