@@ -17,13 +17,10 @@ class ScanningAndProvisioning extends StatefulWidget {
 }
 
 class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
-  final flutterReactiveBle = FlutterReactiveBle();
-
-  bool loading = true;
-  bool isScanning = true;
-  bool isProvisioning = false;
-  StreamSubscription? _scanSubscription;
   late MeshManagerApi _meshManagerApi;
+  bool isScanning = true;
+  StreamSubscription? _scanSubscription;
+  bool isProvisioning = false;
 
   final _serviceData = <String, Uuid>{};
   final _devices = <DiscoveredDevice>{};
@@ -31,7 +28,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   @override
   void initState() {
     super.initState();
-    _init();
+    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
     _scanUnprovisionned();
   }
 
@@ -147,11 +144,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
     return RefreshIndicator(
       onRefresh: () {
         if (isScanning) {

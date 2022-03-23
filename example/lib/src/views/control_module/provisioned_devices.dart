@@ -17,20 +17,15 @@ class ProvisionedDevices extends StatefulWidget {
 }
 
 class _ProvisionedDevicesState extends State<ProvisionedDevices> {
-  final flutterReactiveBle = FlutterReactiveBle();
-  final _devices = <DiscoveredDevice>{};
-
   late MeshManagerApi _meshManagerApi;
-  bool loading = true;
+  final _devices = <DiscoveredDevice>{};
   bool isScanning = false;
   StreamSubscription<DiscoveredDevice>? _scanSubscription;
-//  final _serviceData = <String, Guid>{};
 
   @override
   void initState() {
     super.initState();
-
-    _init();
+    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
     _scanProvisionned();
   }
 
@@ -77,16 +72,6 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
           ),
       ],
     );
-  }
-
-  Future<void> _init() async {
-    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
-
-    await _meshManagerApi.loadMeshNetwork();
-
-    setState(() {
-      loading = false;
-    });
   }
 
   Future<void> _scanProvisionned() async {
