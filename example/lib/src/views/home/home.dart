@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
 
@@ -57,10 +58,12 @@ class _HomeState extends State<Home> {
         children: [
           PlatformVersion(nordicNrfMesh: widget.nordicNrfMesh),
           const Divider(),
-          MeshManagerApiWidget(nordicNrfMesh: widget.nordicNrfMesh),
+          MeshNetworkDatabaseWidget(nordicNrfMesh: widget.nordicNrfMesh),
+          const Divider(),
+          MeshNetworkManagerWidget(nordicNrfMesh: widget.nordicNrfMesh),
           const Divider(),
           if (_meshNetwork != null)
-            MeshNetworkWidget(meshNetwork: _meshNetwork!)
+            MeshNetworkDataWidget(meshNetwork: _meshNetwork!)
           else
             const Text('No meshNetwork loaded'),
         ],
@@ -98,10 +101,17 @@ class _PlatformVersion extends State<PlatformVersion> {
   }
 }
 
-class MeshManagerApiWidget extends StatelessWidget {
+/// A [Widget] to interact with network database.
+///
+/// User may either :
+///   - import a mesh network using the given JSON scheme
+///   - export a mesh network to get the associated JSON String
+///   - load a mesh network from the local database
+///   - reset a mesh network
+class MeshNetworkDatabaseWidget extends StatelessWidget {
   final NordicNrfMesh nordicNrfMesh;
 
-  const MeshManagerApiWidget({Key? key, required this.nordicNrfMesh}) : super(key: key);
+  const MeshNetworkDatabaseWidget({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -120,12 +130,44 @@ class MeshManagerApiWidget extends StatelessWidget {
             await _meshManagerApi.importMeshNetworkJson(json);
             debugPrint('done !');
           },
-          child: const Text('import MeshNetwork Json'),
+          child: const Text('Import MeshNetwork (JSON)'),
         ),
         TextButton(
           onPressed: _meshManagerApi.loadMeshNetwork,
           child: const Text('Load MeshNetwork'),
         ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
+                  debugPrint(meshNetworkJson);
+                }
+              : null,
+          child: const Text('Export MeshNetwork'),
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null ? _meshManagerApi.resetMeshNetwork : null,
+          child: const Text('Reset MeshNetwork'),
+        ),
+      ],
+    );
+  }
+}
+
+/// A [Widget] to alter network's data without the need of an open connection.
+/// _(Manage provisioners, groups, etc.)_
+class MeshNetworkManagerWidget extends StatelessWidget {
+  final NordicNrfMesh nordicNrfMesh;
+
+  const MeshNetworkManagerWidget({Key? key, required this.nordicNrfMesh}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    MeshManagerApi? _meshManagerApi = nordicNrfMesh.meshManagerApi;
+    IMeshNetwork? _meshNetwork = _meshManagerApi.meshNetwork;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         TextButton(
           onPressed: _meshNetwork != null
               ? () async {
@@ -152,15 +194,56 @@ class MeshManagerApiWidget extends StatelessWidget {
         TextButton(
           onPressed: _meshNetwork != null
               ? () async {
-                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
-                  debugPrint(meshNetworkJson);
+                  final groupName = await showDialog<String>(
+                      context: context,
+                      builder: (c) {
+                        String? _groupName;
+                        return Dialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          ),
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          elevation: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: const InputDecoration(labelText: 'Group name'),
+                                    onChanged: (text) => _groupName = text,
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(c, _groupName),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  if (groupName != null && groupName.isNotEmpty) {
+                    try {
+                      await _meshManagerApi.meshNetwork!.addGroupWithName(groupName);
+                      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+                    } on PlatformException catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                    } catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  } else {
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No name given, aborting')));
+                  }
                 }
               : null,
-          child: const Text('Export MeshNetwork'),
-        ),
-        TextButton(
-          onPressed: _meshNetwork != null ? _meshManagerApi.resetMeshNetwork : null,
-          child: const Text('Reset MeshNetwork'),
+          child: const Text('Create group with name'),
         )
       ],
     );
