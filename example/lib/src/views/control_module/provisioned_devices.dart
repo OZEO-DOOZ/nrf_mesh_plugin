@@ -5,7 +5,6 @@ import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/module.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
-import 'package:pedantic/pedantic.dart';
 
 class ProvisionedDevices extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -21,6 +20,8 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
   final _devices = <DiscoveredDevice>{};
   bool isScanning = false;
   StreamSubscription<DiscoveredDevice>? _scanSubscription;
+
+  DiscoveredDevice? _device;
 
   @override
   void initState() {
@@ -40,34 +41,36 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     return Column(
       children: [
         if (isScanning) const LinearProgressIndicator(),
-        if (!isScanning && _devices.isEmpty)
-          const Expanded(
-            child: Center(
-              child: Text('No module found'),
+        if (_device == null) ...[
+          if (!isScanning && _devices.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text('No module found'),
+              ),
             ),
-          ),
-        if (_devices.isNotEmpty)
+          if (_devices.isNotEmpty)
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(8),
+                children: [
+                  for (var i = 0; i < _devices.length; i++)
+                    Device(
+                      key: ValueKey('device-$i'),
+                      device: _devices.elementAt(i),
+                      onTap: () {
+                        setState(() {
+                          _device = _devices.elementAt(i);
+                        });
+                      },
+                    ),
+                ],
+              ),
+            ),
+        ] else
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(8),
-              children: [
-                for (var i = 0; i < _devices.length; i++)
-                  Device(
-                    key: ValueKey('device-$i'),
-                    device: _devices.elementAt(i),
-                    onTap: () async {
-                      await _stopScan();
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return Module(device: _devices.elementAt(i), meshManagerApi: _meshManagerApi);
-                          },
-                        ),
-                      );
-                      unawaited(_scanProvisionned());
-                    },
-                  ),
-              ],
+            child: Module(
+              device: _device!,
+              meshManagerApi: _meshManagerApi,
             ),
           ),
       ],
@@ -88,17 +91,14 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
     setState(() {
       isScanning = true;
     });
-
-    return Future.delayed(const Duration(seconds: 20)).then((_) => _stopScan());
+    return Future.delayed(const Duration(seconds: 10)).then((_) => _stopScan());
   }
 
   Future<void> _stopScan() async {
-    if (!mounted) {
-      return;
-    }
     await _scanSubscription?.cancel();
-    setState(() {
-      isScanning = false;
-    });
+    isScanning = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

@@ -48,7 +48,7 @@ class _ModuleState extends State<Module> {
 
   @override
   Widget build(BuildContext context) {
-    Widget body = Center(
+    Widget layout = Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: const [
@@ -58,7 +58,7 @@ class _ModuleState extends State<Module> {
       ),
     );
     if (!isLoading) {
-      body = ListView(
+      layout = ListView(
         children: <Widget>[
           for (var i = 0; i < nodes.length; i++)
             GestureDetector(
@@ -97,12 +97,7 @@ class _ModuleState extends State<Module> {
         ],
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nodes list'),
-      ),
-      body: body,
-    );
+    return layout;
   }
 
   Future<void> _init() async {
