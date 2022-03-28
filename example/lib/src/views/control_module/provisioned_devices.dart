@@ -69,9 +69,12 @@ class _ProvisionedDevicesState extends State<ProvisionedDevices> {
         ] else
           Expanded(
             child: Module(
-              device: _device!,
-              meshManagerApi: _meshManagerApi,
-            ),
+                device: _device!,
+                meshManagerApi: _meshManagerApi,
+                onDisconnect: () {
+                  _device = null;
+                  _scanProvisionned();
+                }),
           ),
       ],
     );

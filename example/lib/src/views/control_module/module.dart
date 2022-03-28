@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/views/control_module/commands/send_config_model_publication_add.dart';
 
 import 'commands/send_deprovisioning.dart';
 import 'commands/send_generic_on_off.dart';
@@ -13,8 +14,14 @@ import 'node.dart';
 class Module extends StatefulWidget {
   final DiscoveredDevice device;
   final MeshManagerApi meshManagerApi;
+  final VoidCallback onDisconnect;
 
-  const Module({Key? key, required this.device, required this.meshManagerApi}) : super(key: key);
+  const Module({
+    Key? key,
+    required this.device,
+    required this.meshManagerApi,
+    required this.onDisconnect,
+  }) : super(key: key);
 
   @override
   _ModuleState createState() => _ModuleState();
@@ -29,17 +36,13 @@ class _ModuleState extends State<Module> {
   @override
   void initState() {
     super.initState();
-
-    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
-
     _init();
   }
 
   @override
-  void dispose() async {
+  void dispose() {
+    _deinit();
     super.dispose();
-    await bleMeshManager.disconnect();
-    await bleMeshManager.callbacks!.dispose();
   }
 
   @override
@@ -56,6 +59,13 @@ class _ModuleState extends State<Module> {
     if (!isLoading) {
       layout = ListView(
         children: <Widget>[
+          TextButton(
+            onPressed: () {
+              _deinit();
+              widget.onDisconnect();
+            },
+            child: const Text('Disconnect from network'),
+          ),
           for (var i = 0; i < nodes.length; i++)
             GestureDetector(
               onTap: () {
@@ -85,6 +95,7 @@ class _ModuleState extends State<Module> {
           SendGenericLevel(meshManagerApi: widget.meshManagerApi),
           SendGenericOnOff(meshManagerApi: widget.meshManagerApi),
           SendConfigModelSubscriptionAdd(widget.meshManagerApi),
+          SendConfigModelPublicationAdd(widget.meshManagerApi),
           SendDeprovisioning(meshManagerApi: widget.meshManagerApi),
         ],
       );
@@ -93,9 +104,11 @@ class _ModuleState extends State<Module> {
   }
 
   Future<void> _init() async {
+    bleMeshManager.callbacks = DoozProvisionedBleMeshManagerCallbacks(widget.meshManagerApi, bleMeshManager);
     await bleMeshManager.connect(widget.device);
+    // get nodes (ignore first node which is the default provisioner)
     nodes = (await widget.meshManagerApi.meshNetwork!.nodes).skip(1).toList();
-
+    // will bind app keys (needed to be able to configure node)
     for (final node in nodes) {
       final elements = await node.elements;
       for (final element in elements) {
@@ -119,6 +132,11 @@ class _ModuleState extends State<Module> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  void _deinit() async {
+    await bleMeshManager.disconnect();
+    await bleMeshManager.callbacks!.dispose();
   }
 }
 
