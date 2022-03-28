@@ -59,10 +59,16 @@ class _HomeState extends State<Home> {
       body: ListView(
         children: [
           PlatformVersion(nordicNrfMesh: widget.nordicNrfMesh),
-          const Divider(),
-          MeshNetworkDatabaseWidget(nordicNrfMesh: widget.nordicNrfMesh),
-          const Divider(),
-          MeshNetworkManagerWidget(nordicNrfMesh: widget.nordicNrfMesh),
+          ExpansionTile(
+            title: const Text('Mesh network database'),
+            expandedAlignment: Alignment.topLeft,
+            children: [MeshNetworkDatabaseWidget(nordicNrfMesh: widget.nordicNrfMesh)],
+          ),
+          ExpansionTile(
+            title: const Text('Mesh network manager'),
+            expandedAlignment: Alignment.topLeft,
+            children: [MeshNetworkManagerWidget(nordicNrfMesh: widget.nordicNrfMesh)],
+          ),
           const Divider(),
           if (_meshNetwork != null)
             MeshNetworkDataWidget(meshNetwork: _meshNetwork!)
