@@ -7,15 +7,28 @@ import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/scan_an
 const int homeTab = 0;
 const int provisioningTab = 1;
 const int controlTab = 2;
+// used for app's theme
+const Map<int, Color> primarySwatch = {
+  50: Color.fromRGBO(0, 164, 153, .1),
+  100: Color.fromRGBO(0, 164, 153, .2),
+  200: Color.fromRGBO(0, 164, 153, .3),
+  300: Color.fromRGBO(0, 164, 153, .4),
+  400: Color.fromRGBO(0, 164, 153, .5),
+  500: Color.fromRGBO(0, 164, 153, .6),
+  600: Color.fromRGBO(0, 164, 153, .7),
+  700: Color.fromRGBO(0, 164, 153, .8),
+  800: Color.fromRGBO(0, 164, 153, .9),
+  900: Color.fromRGBO(0, 164, 153, 1),
+};
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class NordicNrfMeshExampleApp extends StatefulWidget {
+  const NordicNrfMeshExampleApp({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _NordicNrfMeshExampleAppState createState() => _NordicNrfMeshExampleAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _NordicNrfMeshExampleAppState extends State<NordicNrfMeshExampleApp> {
   late final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>(debugLabel: 'main_scaffold');
   final nordicNrfMesh = NordicNrfMesh();
@@ -44,6 +57,13 @@ class _MyAppState extends State<MyApp> {
     }
 
     return MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: const MaterialColor(0xFF00A499, primarySwatch),
+        primaryColor: const Color.fromRGBO(0, 164, 153, 1),
+        primaryColorDark: const Color.fromRGBO(0, 114, 105, 1),
+        scaffoldBackgroundColor: Colors.white,
+      ),
       home: ScaffoldMessenger(
         key: _scaffoldKey,
         child: Scaffold(

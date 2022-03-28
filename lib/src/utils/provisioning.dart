@@ -211,7 +211,7 @@ Future<ProvisionedMeshNode> _provisioning(
     await bleMeshManager.sendPdu(event);
   });
   if (Platform.isAndroid) {
-    // on Android need to call Nordic library to handle sent data parsing
+    // on Android need to call Nordic Semiconductor's library to handle sent data parsing
     _onDataSentSubscription = bleMeshManager.callbacks!.onDataSent.listen((event) async {
       await meshManagerApi.handleWriteCallbacks(event.mtu, event.pdu);
     });

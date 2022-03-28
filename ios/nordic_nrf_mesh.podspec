@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'nordic_nrf_mesh'
   s.version          = '0.11.0'
-  s.summary          = 'A Flutter plugin to enable mesh network management and communication using Nordic SDKs.'
+  s.summary          = 'A Flutter plugin to enable mesh network management and communication using Nordic Semiconductor SDKs.'
   s.description      = <<-DESC
-A Flutter plugin to enable mesh network management and communication using Nordic SDKs.
+A Flutter plugin to enable mesh network management and communication using Nordic Semiconductor SDKs.
                        DESC
   s.homepage         = 'http://dooz-domotique.com'
   s.license          = { :file => '../LICENSE' }

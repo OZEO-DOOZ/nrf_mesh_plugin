@@ -18,6 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late IMeshNetwork? _meshNetwork;
+  late MeshManagerApi _meshManagerApi;
   late final StreamSubscription<IMeshNetwork?> onNetworkUpdateSubscription;
   late final StreamSubscription<IMeshNetwork?> onNetworkImportSubscription;
   late final StreamSubscription<IMeshNetwork?> onNetworkLoadingSubscription;
@@ -25,18 +26,19 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _meshNetwork = widget.nordicNrfMesh.meshManagerApi.meshNetwork;
-    onNetworkUpdateSubscription = widget.nordicNrfMesh.meshManagerApi.onNetworkUpdated.listen((event) {
+    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
+    _meshNetwork = _meshManagerApi.meshNetwork;
+    onNetworkUpdateSubscription = _meshManagerApi.onNetworkUpdated.listen((event) {
       setState(() {
         _meshNetwork = event;
       });
     });
-    onNetworkImportSubscription = widget.nordicNrfMesh.meshManagerApi.onNetworkImported.listen((event) {
+    onNetworkImportSubscription = _meshManagerApi.onNetworkImported.listen((event) {
       setState(() {
         _meshNetwork = event;
       });
     });
-    onNetworkLoadingSubscription = widget.nordicNrfMesh.meshManagerApi.onNetworkLoaded.listen((event) {
+    onNetworkLoadingSubscription = _meshManagerApi.onNetworkLoaded.listen((event) {
       setState(() {
         _meshNetwork = event;
       });

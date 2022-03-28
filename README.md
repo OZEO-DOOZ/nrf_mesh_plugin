@@ -1,5 +1,5 @@
 # nordic_nrf_mesh
-A Flutter plugin to enable mesh network management and communication using Nordic's SDKs.
+A Flutter plugin to enable mesh network management and communication using Nordic Semiconductor's SDKs.
 ## Features
 This plugin supports both iOS and Android and has the following features :
 - Create, load and manage a mesh network model
