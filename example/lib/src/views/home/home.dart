@@ -246,7 +246,118 @@ class MeshNetworkManagerWidget extends StatelessWidget {
                 }
               : null,
           child: const Text('Create group with name'),
-        )
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final groupAdr = await showDialog<String>(
+                      context: context,
+                      builder: (c) {
+                        String? _groupAdr;
+                        return Dialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          ),
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          elevation: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: const InputDecoration(labelText: 'Group address'),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (text) => _groupAdr = text,
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(c, _groupAdr),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  if (groupAdr != null && groupAdr.isNotEmpty) {
+                    try {
+                      await _meshManagerApi.meshNetwork!.removeGroup(int.parse(groupAdr));
+                      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+                    } on PlatformException catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                    } catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  } else {
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No address given, aborting')));
+                  }
+                }
+              : null,
+          child: const Text('Delete group'),
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final groupAdr = await showDialog<String>(
+                      context: context,
+                      builder: (c) {
+                        String? _groupAdr;
+                        return Dialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          ),
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          elevation: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: const InputDecoration(labelText: 'Group address'),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (text) => _groupAdr = text,
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(c, _groupAdr),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  if (groupAdr != null && groupAdr.isNotEmpty) {
+                    try {
+                      final subs = await _meshManagerApi.meshNetwork!.elementsForGroup(int.parse(groupAdr));
+                      debugPrint('$subs');
+                      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+                    } on PlatformException catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                    } catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  } else {
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No address given, aborting')));
+                  }
+                }
+              : null,
+          child: const Text('Get group elements'),
+        ),
       ],
     );
   }
