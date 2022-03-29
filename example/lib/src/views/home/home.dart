@@ -18,7 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late IMeshNetwork? _meshNetwork;
-  late MeshManagerApi _meshManagerApi;
+  late final MeshManagerApi _meshManagerApi;
   late final StreamSubscription<IMeshNetwork?> onNetworkUpdateSubscription;
   late final StreamSubscription<IMeshNetwork?> onNetworkImportSubscription;
   late final StreamSubscription<IMeshNetwork?> onNetworkLoadingSubscription;
