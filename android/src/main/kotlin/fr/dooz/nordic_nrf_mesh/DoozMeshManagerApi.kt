@@ -60,7 +60,7 @@ class DoozMeshManagerApi(context: Context, binaryMessenger: BinaryMessenger) : S
     }
 
     private fun deleteMeshNetworkFromDb(meshNetworkId: String) {
-        if (mMeshManagerApi.meshNetwork?.id == meshNetworkId) {
+        if (mMeshManagerApi.meshNetwork?.meshUUID == meshNetworkId) {
             val meshNetwork: MeshNetwork = doozMeshNetwork!!.meshNetwork
             mMeshManagerApi.deleteMeshNetworkFromDb(meshNetwork)
         }

@@ -13,7 +13,7 @@ import 'package:nordic_nrf_mesh/src/utils/provisioning.dart' as utils_provisioni
 ///
 /// To leverage all Bluetooth capabilities, one shall instantiate [BleMeshManager].
 ///
-/// To use the Nordic APIs, one should use the [MeshManagerApi] available via the [meshManagerApi] getter of the [NordicNrfMesh] instance.
+/// To use the Nordic Semiconductor's APIs, one should use the [MeshManagerApi] available via the [meshManagerApi] getter of the [NordicNrfMesh] instance.
 /// {@endtemplate}
 ///
 /// {@macro mesh_manager_api}

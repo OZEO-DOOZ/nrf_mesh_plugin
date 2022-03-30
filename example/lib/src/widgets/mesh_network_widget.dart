@@ -4,16 +4,16 @@ import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'group.dart';
 import 'node.dart';
 
-class MeshNetworkWidget extends StatefulWidget {
+class MeshNetworkDataWidget extends StatefulWidget {
   final IMeshNetwork meshNetwork;
 
-  const MeshNetworkWidget({Key? key, required this.meshNetwork}) : super(key: key);
+  const MeshNetworkDataWidget({Key? key, required this.meshNetwork}) : super(key: key);
 
   @override
-  _MeshNetworkWidgetState createState() => _MeshNetworkWidgetState();
+  _MeshNetworkDataWidgetState createState() => _MeshNetworkDataWidgetState();
 }
 
-class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
+class _MeshNetworkDataWidgetState extends State<MeshNetworkDataWidget> {
   List<ProvisionedMeshNode> _nodes = [];
   List<GroupData> _groups = [];
 
@@ -25,16 +25,24 @@ class _MeshNetworkWidgetState extends State<MeshNetworkWidget> {
   }
 
   @override
+  void didUpdateWidget(covariant MeshNetworkDataWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // nodes, provisioners and groups may have changed
+    widget.meshNetwork.nodes.then((value) => setState(() => _nodes = value));
+    widget.meshNetwork.groups.then((value) => setState(() => _groups = value));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         Text('MeshNetwork ID: ${widget.meshNetwork.id}'),
         if (_nodes.isNotEmpty) ...[
-          const Text('Nodes: '),
+          Text('Nodes (${_nodes.length}): '),
           ..._nodes.map((e) => Node(e, widget.meshNetwork, 'node-${_nodes.indexOf(e)}')),
         ],
         if (_groups.isNotEmpty) ...[
-          const Text('Groups: '),
+          Text('Groups (${_groups.length}): '),
           ..._groups.map((e) => Group(e, widget.meshNetwork)),
         ]
       ],

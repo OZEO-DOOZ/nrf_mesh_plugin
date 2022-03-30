@@ -103,7 +103,7 @@ abstract class IMeshNetwork {
 /// The implementation of [IMeshNetwork] used at runtime.
 /// {@endtemplate}
 class MeshNetwork implements IMeshNetwork {
-  /// The [MethodChannel] used to interact with Nordic API
+  /// The [MethodChannel] used to interact with Nordic Semiconductor's API
   final MethodChannel _methodChannel;
 
   /// The unique id of the currently loaded [MeshNetwork]
