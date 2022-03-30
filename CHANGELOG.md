@@ -1,6 +1,13 @@
+## 0.11.0
+
+- Use of Nordic Semiconductor's Android SDK v3.1.8**
+- Updated example app
+- Updated readme
+
 ## 0.10.1
 
 - fix pubspec issue seen by `flutter pub publish --dry-run`
+
 ## 0.10.0
 
 First open source release ! :rocket:
