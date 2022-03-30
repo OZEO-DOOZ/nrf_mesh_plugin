@@ -360,7 +360,7 @@ class MeshManagerApi {
       ]);
 
   /// Loads the mesh network from the local database.
-  Future<IMeshNetwork> loadMeshNetwork() async {
+  Future<MeshNetwork> loadMeshNetwork() async {
     final future = _onNetworkLoadedStreamController.stream.first;
     await _methodChannel.invokeMethod('loadMeshNetwork');
     return future;

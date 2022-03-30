@@ -19,7 +19,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         if (meshNetwork == null) {
             return
         }
-        if (doozMeshNetwork == null || doozMeshNetwork?.meshNetwork?.id != meshNetwork.id) {
+        if (doozMeshNetwork == null || doozMeshNetwork?.meshNetwork?.meshUUID != meshNetwork.meshUUID) {
             doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
         } else {
             doozMeshNetwork?.meshNetwork = meshNetwork
@@ -27,7 +27,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         Handler(Looper.getMainLooper()).post {
             eventSink?.success(mapOf(
                     "eventName" to "onNetworkImported",
-                    "id" to meshNetwork.id
+                    "id" to meshNetwork.meshUUID
             ))
         }
     }
@@ -72,7 +72,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         if (meshNetwork == null) {
             return
         }
-        if (doozMeshNetwork == null || doozMeshNetwork?.meshNetwork?.id != meshNetwork.id) {
+        if (doozMeshNetwork == null || doozMeshNetwork?.meshNetwork?.meshUUID != meshNetwork.meshUUID) {
             doozMeshNetwork = DoozMeshNetwork(binaryMessenger, meshNetwork)
         } else {
             doozMeshNetwork!!.meshNetwork = meshNetwork
@@ -80,7 +80,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         Handler(Looper.getMainLooper()).post {
             eventSink?.success(mapOf(
                     "eventName" to "onNetworkLoaded",
-                    "id" to meshNetwork.id
+                    "id" to meshNetwork.meshUUID
             ))
         }
     }
@@ -94,7 +94,7 @@ class DoozMeshManagerCallbacks(private val binaryMessenger: BinaryMessenger, var
         Handler(Looper.getMainLooper()).post {
             eventSink?.success(mapOf(
                     "eventName" to "onNetworkUpdated",
-                    "id" to meshNetwork.id
+                    "id" to meshNetwork.meshUUID
             ))
         }
     }

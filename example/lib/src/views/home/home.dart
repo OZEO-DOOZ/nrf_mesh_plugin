@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
 
@@ -15,28 +17,61 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  IMeshNetwork? _meshNetwork;
+  late IMeshNetwork? _meshNetwork;
+  late final MeshManagerApi _meshManagerApi;
+  late final StreamSubscription<IMeshNetwork?> onNetworkUpdateSubscription;
+  late final StreamSubscription<IMeshNetwork?> onNetworkImportSubscription;
+  late final StreamSubscription<IMeshNetwork?> onNetworkLoadingSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
+    _meshNetwork = _meshManagerApi.meshNetwork;
+    onNetworkUpdateSubscription = _meshManagerApi.onNetworkUpdated.listen((event) {
+      setState(() {
+        _meshNetwork = event;
+      });
+    });
+    onNetworkImportSubscription = _meshManagerApi.onNetworkImported.listen((event) {
+      setState(() {
+        _meshNetwork = event;
+      });
+    });
+    onNetworkLoadingSubscription = _meshManagerApi.onNetworkLoaded.listen((event) {
+      setState(() {
+        _meshNetwork = event;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    onNetworkUpdateSubscription.cancel();
+    onNetworkLoadingSubscription.cancel();
+    onNetworkImportSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView(
         children: [
-          PlatformVersion(
-            nordicNrfMesh: widget.nordicNrfMesh,
+          PlatformVersion(nordicNrfMesh: widget.nordicNrfMesh),
+          ExpansionTile(
+            title: const Text('Mesh network database'),
+            expandedAlignment: Alignment.topLeft,
+            children: [MeshNetworkDatabaseWidget(nordicNrfMesh: widget.nordicNrfMesh)],
           ),
-          const Divider(),
-          MeshManagerApiWidget(
-            nordicNrfMesh: widget.nordicNrfMesh,
-            onNewMeshNetwork: (meshNetwork) {
-              setState(() {
-                _meshNetwork = meshNetwork;
-              });
-            },
+          ExpansionTile(
+            title: const Text('Mesh network manager'),
+            expandedAlignment: Alignment.topLeft,
+            children: [MeshNetworkManagerWidget(nordicNrfMesh: widget.nordicNrfMesh)],
           ),
           const Divider(),
           if (_meshNetwork != null)
-            MeshNetworkWidget(meshNetwork: _meshNetwork!)
+            MeshNetworkDataWidget(meshNetwork: _meshNetwork!)
           else
             const Text('No meshNetwork loaded'),
         ],
@@ -74,28 +109,22 @@ class _PlatformVersion extends State<PlatformVersion> {
   }
 }
 
-class MeshManagerApiWidget extends StatefulWidget {
+/// A [Widget] to interact with network database.
+///
+/// User may either :
+///   - import a mesh network using the given JSON scheme
+///   - export a mesh network to get the associated JSON String
+///   - load a mesh network from the local database
+///   - reset a mesh network
+class MeshNetworkDatabaseWidget extends StatelessWidget {
   final NordicNrfMesh nordicNrfMesh;
-  final ValueChanged<IMeshNetwork?> onNewMeshNetwork;
 
-  const MeshManagerApiWidget({Key? key, required this.nordicNrfMesh, required this.onNewMeshNetwork}) : super(key: key);
-
-  @override
-  _MeshManagerApiWidgetState createState() => _MeshManagerApiWidgetState();
-}
-
-class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
-  MeshManagerApi? _meshManagerApi;
-  IMeshNetwork? _meshNetwork;
-
-  @override
-  void initState() {
-    super.initState();
-    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
-  }
+  const MeshNetworkDatabaseWidget({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    MeshManagerApi? _meshManagerApi = nordicNrfMesh.meshManagerApi;
+    IMeshNetwork? _meshNetwork = _meshManagerApi.meshNetwork;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -104,70 +133,237 @@ class _MeshManagerApiWidgetState extends State<MeshManagerApiWidget> {
             final filePath = await FilePicker.platform.pickFiles(type: FileType.any);
             if (filePath == null) return;
             final file = File(filePath.paths.first!);
+            debugPrint('loading and importing json file...');
             final json = await file.readAsString();
-            _meshNetwork = await _meshManagerApi!.importMeshNetworkJson(json);
-            widget.onNewMeshNetwork(_meshNetwork!);
+            await _meshManagerApi.importMeshNetworkJson(json);
+            debugPrint('done !');
           },
-          child: const Text('import MeshNetwork Json'),
+          child: const Text('Import MeshNetwork (JSON)'),
         ),
         TextButton(
-          onPressed: () async {
-            _meshNetwork = await _meshManagerApi!.loadMeshNetwork();
-
-            widget.onNewMeshNetwork(_meshNetwork!);
-          },
+          onPressed: _meshManagerApi.loadMeshNetwork,
           child: const Text('Load MeshNetwork'),
-        ),
-        TextButton(
-          onPressed: () async {
-            //13 provisioners are maximum with the below given ranges and the default ttl is 5
-            //above that, will throw error
-            final result = await _meshNetwork!.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
-            debugPrint('provisioner added : $result');
-          },
-          child: const Text('add provisioner'),
-        ),
-        TextButton(
-          onPressed: () async {
-            final provisionerList = await _meshNetwork!.provisioners;
-            debugPrint('# of provs : ${provisionerList.length}');
-          },
-          child: const Text('get provisioner list'),
-        ),
-        TextButton(
-          onPressed: () async {
-            var provUUIDs = await _meshNetwork!.provisioners;
-            for (var value in provUUIDs) {
-              debugPrint('$value');
-            }
-          },
-          child: const Text('get provisioner list'),
         ),
         TextButton(
           onPressed: _meshNetwork != null
               ? () async {
-                  final meshNetworkJson = await _meshManagerApi!.exportMeshNetwork();
+                  final meshNetworkJson = await _meshManagerApi.exportMeshNetwork();
                   debugPrint(meshNetworkJson);
                 }
               : null,
           child: const Text('Export MeshNetwork'),
         ),
         TextButton(
+          onPressed: _meshNetwork != null ? _meshManagerApi.resetMeshNetwork : null,
+          child: const Text('Reset MeshNetwork'),
+        ),
+      ],
+    );
+  }
+}
+
+/// A [Widget] to alter network's data without the need of an open connection.
+/// _(Manage provisioners, groups, etc.)_
+class MeshNetworkManagerWidget extends StatelessWidget {
+  final NordicNrfMesh nordicNrfMesh;
+
+  const MeshNetworkManagerWidget({Key? key, required this.nordicNrfMesh}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    MeshManagerApi? _meshManagerApi = nordicNrfMesh.meshManagerApi;
+    IMeshNetwork? _meshNetwork = _meshManagerApi.meshNetwork;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextButton(
           onPressed: _meshNetwork != null
               ? () async {
-                  try {
-                    await _meshManagerApi!.resetMeshNetwork();
-                    setState(() {
-                      _meshNetwork = null;
-                    });
-                    widget.onNewMeshNetwork(_meshNetwork);
-                  } catch (err) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Caught error: $err')));
+                  //13 provisioners are maximum with the below given ranges and the default ttl is 5
+                  //above that, will throw error
+                  final result = await _meshNetwork.addProvisioner(0x0888, 0x02F6, 0x0888, 5);
+                  debugPrint('provisioner added : $result');
+                }
+              : null,
+          child: const Text('add provisioner'),
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  var provs = await _meshNetwork.provisioners;
+                  debugPrint('# of provs : ${provs.length}');
+                  for (var value in provs) {
+                    debugPrint('$value');
                   }
                 }
               : null,
-          child: const Text('Reset MeshNetwork'),
-        )
+          child: const Text('get provisioner list'),
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final groupName = await showDialog<String>(
+                      context: context,
+                      builder: (c) {
+                        String? _groupName;
+                        return Dialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          ),
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          elevation: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: const InputDecoration(labelText: 'Group name'),
+                                    onChanged: (text) => _groupName = text,
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(c, _groupName),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  if (groupName != null && groupName.isNotEmpty) {
+                    try {
+                      await _meshManagerApi.meshNetwork!.addGroupWithName(groupName);
+                      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+                    } on PlatformException catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                    } catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  } else {
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No name given, aborting')));
+                  }
+                }
+              : null,
+          child: const Text('Create group with name'),
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final groupAdr = await showDialog<String>(
+                      context: context,
+                      builder: (c) {
+                        String? _groupAdr;
+                        return Dialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          ),
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          elevation: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: const InputDecoration(labelText: 'Group address'),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (text) => _groupAdr = text,
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(c, _groupAdr),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  if (groupAdr != null && groupAdr.isNotEmpty) {
+                    try {
+                      await _meshManagerApi.meshNetwork!.removeGroup(int.parse(groupAdr));
+                      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+                    } on PlatformException catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                    } catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  } else {
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No address given, aborting')));
+                  }
+                }
+              : null,
+          child: const Text('Delete group'),
+        ),
+        TextButton(
+          onPressed: _meshNetwork != null
+              ? () async {
+                  final groupAdr = await showDialog<String>(
+                      context: context,
+                      builder: (c) {
+                        String? _groupAdr;
+                        return Dialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          ),
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          elevation: 0.0,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: const InputDecoration(labelText: 'Group address'),
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (text) => _groupAdr = text,
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(c, _groupAdr),
+                                    child: const Text('OK'),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  if (groupAdr != null && groupAdr.isNotEmpty) {
+                    try {
+                      final subs = await _meshManagerApi.meshNetwork!.elementsForGroup(int.parse(groupAdr));
+                      debugPrint('$subs');
+                      scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+                    } on PlatformException catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+                    } catch (e) {
+                      scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
+                  } else {
+                    scaffoldMessenger.showSnackBar(const SnackBar(content: Text('No address given, aborting')));
+                  }
+                }
+              : null,
+          child: const Text('Get group elements'),
+        ),
       ],
     );
   }

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 
-class SendConfigModelSubscriptionAdd extends StatefulWidget {
+class SendConfigModelPublicationAdd extends StatefulWidget {
   final MeshManagerApi meshManagerApi;
 
-  const SendConfigModelSubscriptionAdd(this.meshManagerApi, {Key? key}) : super(key: key);
+  const SendConfigModelPublicationAdd(this.meshManagerApi, {Key? key}) : super(key: key);
 
   @override
-  _SendConfigModelSubscriptionAddState createState() => _SendConfigModelSubscriptionAddState();
+  _SendConfigModelPublicationAddState createState() => _SendConfigModelPublicationAddState();
 }
 
-class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscriptionAdd> {
+class _SendConfigModelPublicationAddState extends State<SendConfigModelPublicationAdd> {
   late int selectedElementAddress;
   late int selectedModelId;
   late int selectedSubscriptionAddress;
@@ -21,7 +21,7 @@ class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscrip
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: const Text('Send a config model Subscription add'),
+      title: const Text('Send a config model Publication add'),
       children: <Widget>[
         TextField(
           decoration: const InputDecoration(hintText: 'Element Address'),
@@ -36,7 +36,7 @@ class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscrip
           },
         ),
         TextField(
-          decoration: const InputDecoration(hintText: 'subscription address'),
+          decoration: const InputDecoration(hintText: 'publication address'),
           onChanged: (text) {
             selectedSubscriptionAddress = int.parse(text);
           },
@@ -46,7 +46,7 @@ class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscrip
             final scaffoldMessenger = ScaffoldMessenger.of(context);
             try {
               await widget.meshManagerApi
-                  .sendConfigModelSubscriptionAdd(selectedElementAddress, selectedSubscriptionAddress, selectedModelId)
+                  .sendConfigModelPublicationSet(selectedElementAddress, selectedSubscriptionAddress, selectedModelId)
                   .timeout(const Duration(seconds: 40));
               scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
             } on TimeoutException catch (_) {

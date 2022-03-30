@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.dooz.nordic_nrf_mesh_example">
    <application
-        android:label="nordic_nrf_mesh_example"
+        android:label="NordicNrfMeshExample"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

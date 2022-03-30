@@ -19,8 +19,8 @@ import java.util.*
 
 class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetwork: MeshNetwork) : EventChannel.StreamHandler, MethodChannel.MethodCallHandler {
     private var eventSink: EventChannel.EventSink? = null
-    private var eventChannel: EventChannel = EventChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.id}/events")
-    private var methodChannel: MethodChannel = MethodChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.id}/methods")
+    private var eventChannel: EventChannel = EventChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.meshUUID}/events")
+    private var methodChannel: MethodChannel = MethodChannel(binaryMessenger, "$namespace/mesh_network/${meshNetwork.meshUUID}/methods")
     private val tag: String = DoozMeshNetwork::class.java.simpleName
 
     init {
@@ -29,7 +29,7 @@ class DoozMeshNetwork(private val binaryMessenger: BinaryMessenger, var meshNetw
     }
 
     private fun getId(): String? {
-        return meshNetwork.id
+        return meshNetwork.meshUUID
     }
 
     private fun getMeshNetworkName(): String {
