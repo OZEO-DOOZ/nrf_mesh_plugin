@@ -34,18 +34,18 @@ meshManagerApi.loadMeshNetwork();
 
 This method returns nothing
 
-##### Listen to `onNetworkLoaded` for getting asynchrone result
+##### Listen to `onNetworkLoaded` for getting asynchronous result
 
 Format :
 
 ```
 { 
 	eventName: onNetworkLoaded
-	id: $network.meshUuid
+	id: $network.meshUUID
 }
 ```
 
-##### Listen to `onNetworkLoadFailed` for getting asynchrone failure
+##### Listen to `onNetworkLoadFailed` for getting asynchronous failure
 
 
 Format :
@@ -104,18 +104,18 @@ This method returns nothing
 }
 ```
 
-##### Listen to `onNetworkImported ` for getting asynchrone result
+##### Listen to `onNetworkImported ` for getting asynchronous result
 
 Format :
 
 ```
 { 
 	eventName: onNetworkImported
-	id: $network.meshUuid
+	id: $network.meshUUID
 }
 ```
 
-##### Listen to `onNetworkImportFailed` for getting asynchrone failure
+##### Listen to `onNetworkImportFailed` for getting asynchronous failure
 
 
 Format :
@@ -160,7 +160,7 @@ This method returns nothing
 
 🚧🚧🚧 Delete callbacks not implemented 🚧🚧🚧
 
-<!--##### Listen to `onNetworkImportFailed` for getting asynchrone failure
+<!--##### Listen to `onNetworkImportFailed` for getting asynchronous failure
 
 
 Format :
@@ -301,9 +301,9 @@ This method returns nothing, no errors are thrown
 This method starts the provisioning of the device.
 'identifyNode' must be called prior to this to receive the device capabilities
 
-##### Listen to `onProvisioningCompleted` for getting asynchrone result
+##### Listen to `onProvisioningCompleted` for getting asynchronous result
 
-##### Listen to `onProvisioningFailed` for getting asynchrone result
+##### Listen to `onProvisioningFailed` for getting asynchronous result
 
 	CFErrors on calculateSharedSecret() if needed, not implemented for now
 	
@@ -334,7 +334,7 @@ This method starts the provisioning of the device.
 	    case keyGenerationFailed(_ error: OSStatus)
 
 
-##### Listen to `onProvisioningStateChanged` for getting asynchrone result
+##### Listen to `onProvisioningStateChanged` for getting asynchronous result
 
 🚧🚧🚧 Uniformiser ou retirer si inutile 🚧🚧🚧
 
@@ -400,7 +400,7 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onConfigCompositionDataStatus` for getting asynchrone result
+##### Listen to `onConfigCompositionDataStatus` for getting asynchronous result
 
 Format :
 
@@ -432,7 +432,7 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onConfigAppKeyStatus` for getting asynchrone result
+##### Listen to `onConfigAppKeyStatus` for getting asynchronous result
 
 Format :
 
@@ -466,7 +466,7 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onConfigModelAppStatus` for getting asynchrone result
+##### Listen to `onConfigModelAppStatus` for getting asynchronous result
 
 Format :
 
@@ -497,7 +497,7 @@ This method returns nothing
     
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onGenericLevelStatus` for getting asynchrone result
+##### Listen to `onGenericLevelStatus` for getting asynchronous result
 
 Format :
 
@@ -532,7 +532,7 @@ This method returns nothing
 
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onGenericOnOffStatus` for getting asynchrone result
+##### Listen to `onGenericOnOffStatus` for getting asynchronous result
 
 Format :
 
@@ -564,7 +564,7 @@ This method returns nothing
     
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onConfigModelSubscriptionStatus` for getting asynchrone result
+##### Listen to `onConfigModelSubscriptionStatus` for getting asynchronous result
 
 Format :
 
@@ -596,7 +596,7 @@ This method returns nothing
     
 [Listen to `onMeshPduCreated` to get the message to send via FlutterBlue](#onMeshPduCreated)
 
-##### Listen to `onConfigModelSubscriptionStatus` for getting asynchrone result
+##### Listen to `onConfigModelSubscriptionStatus` for getting asynchronous result
 
 Format :
 
