@@ -101,7 +101,16 @@ For convenience, we ship this plugin with an implementation specific to mesh nod
 final bleMeshManager = BleMeshManager();
 bleMeshManager.callbacks = MyBleCallbacks(meshManager); // must be set
 ```
-The `MyBleCallbacks` in the snippet above must extends `BleMeshManagerCallbacks`.
+_(The `MyBleCallbacks` in the snippet above must extends `BleMeshManagerCallbacks`.)_
+
+After that, you will have to scan for devices, and then call the `connect` method like so :
+```dart
+DiscoveredDevice device;
+// scan for device in range
+[...]
+// connect if found
+bleMeshManager.connect(device);
+```
 ### Custom BLE features :
 If your use case is not implemented, you should prioritize opening an [Issue] for a feature request. However you can still get access to other features of the [flutter_reactive_ble] plugin by getting its singleton instance using the following snippet :
 ```dart
