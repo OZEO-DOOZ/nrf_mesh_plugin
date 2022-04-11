@@ -14,11 +14,11 @@ dependencies:
     sdk: flutter
   # BLE handling
   flutter_reactive_ble: ^4.0.1
-  rxdart: ^0.27.1
+  rxdart: ^0.27.3
   retry: ^3.1.0
   # Models
-  json_annotation: ^4.1.0
-  freezed_annotation: ^0.15.0
+  json_annotation: ^4.4.0
+  freezed_annotation: ^1.1.0
   # static analysis
   flutter_lints: ^1.0.4
   meta: ^1.7.0
@@ -26,9 +26,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.1.0
-  json_serializable: ^4.1.0
-  freezed: ^0.14.0
+  build_runner: ^2.1.8
+  json_serializable: ^6.1.5
+  freezed: ^1.1.1
 
 flutter:
   plugin:
