@@ -181,7 +181,7 @@ packages:
       name: freezed_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.2"
+    version: "1.1.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -242,7 +242,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.1"
+    version: "4.4.0"
   lints:
     dependency: transitive
     description:
@@ -389,7 +389,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.27.1"
+    version: "0.27.3"
   shelf:
     dependency: transitive
     description:

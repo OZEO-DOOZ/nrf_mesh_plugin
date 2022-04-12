@@ -39,13 +39,15 @@ Getting the network via the result of these two methods is the easy way. However
 ```dart
 class MyPluginWrapper{
   late IMeshNetwork? _meshNetwork;
+  late final NordicNrfMesh _nordicNrfMesh;
   late final MeshManagerApi _meshManagerApi;
   late final StreamSubscription<IMeshNetwork?> onNetworkUpdateSubscription;
   late final StreamSubscription<IMeshNetwork?> onNetworkImportSubscription;
   late final StreamSubscription<IMeshNetwork?> onNetworkLoadingSubscription;
 
   void init() {
-    _meshManagerApi = widget.nordicNrfMesh.meshManagerApi;
+    _nordicNrfMesh = NordicNrfMesh();
+    _meshManagerApi = _nordicNrfMesh.meshManagerApi;
     _meshNetwork = _meshManagerApi.meshNetwork;
     onNetworkUpdateSubscription = _meshManagerApi.onNetworkUpdated.listen((event) {
       _meshNetwork = event;

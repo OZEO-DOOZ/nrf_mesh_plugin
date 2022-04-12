@@ -1,6 +1,12 @@
+## 0.12.0
+
+- Use of Nordic Semiconductor's Android SDK v3.1.9
+- Upgraded Gradle version and dependencies
+- Upgraded Dart dependencies
+
 ## 0.11.0
 
-- Use of Nordic Semiconductor's Android SDK v3.1.8**
+- Use of Nordic Semiconductor's Android SDK v3.1.8
 - Updated example app
 - Updated readme
 
