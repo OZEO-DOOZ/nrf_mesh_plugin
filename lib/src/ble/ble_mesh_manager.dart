@@ -15,7 +15,7 @@ import 'package:retry/retry.dart';
 /// It implements the methods to init GATT layer, subscribe to notifications and send PDUs for **BLE Mesh** nodes.
 /// {@endtemplate}
 class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
-  static late final BleMeshManager _instance = BleMeshManager._(FlutterReactiveBle());
+  static final BleMeshManager _instance = BleMeshManager._(FlutterReactiveBle());
 
   /// The list of [DiscoveredService] that were discovered during the last connection process
   late List<DiscoveredService> _discoveredServices;
@@ -26,7 +26,7 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
   /// The subscription for data when the connected node is a free mesh node (ie. waiting to be provisioned in a network)
   StreamSubscription<List<int>>? _meshProvisioningDataOutSubscription;
 
-  BleMeshManager._(FlutterReactiveBle _bleInstance) : super(_bleInstance);
+  BleMeshManager._(FlutterReactiveBle bleInstance) : super(bleInstance);
 
   /// {@macro ble_mesh_manager}
   factory BleMeshManager() => _instance as BleMeshManager<T>;
@@ -148,16 +148,16 @@ class BleMeshManager<T extends BleMeshManagerCallbacks> extends BleManager<T> {
           callbacks!.onDataReceivedController.add(BleMeshManagerCallbacksDataReceived(device!, mtuSize, data));
         } else {
           if (!connectCompleter.isCompleted) {
-            const _msg = 'no callback ready to receive data event';
-            _log(_msg);
-            connectCompleter.completeError(const BleManagerException(BleManagerFailureCode.callbacks, _msg));
+            const msg = 'no callback ready to receive data event';
+            _log(msg);
+            connectCompleter.completeError(const BleManagerException(BleManagerFailureCode.callbacks, msg));
           }
         }
       }, onError: (e, s) {
-        const _msg = 'error in device data stream';
-        _log('$_msg : $e\n$s');
+        const msg = 'error in device data stream';
+        _log('$msg : $e\n$s');
         if (!(callbacks?.onErrorController.isClosed == true) && callbacks!.onErrorController.hasListener) {
-          callbacks!.onErrorController.add(BleManagerCallbacksError(device, _msg, e));
+          callbacks!.onErrorController.add(BleManagerCallbacksError(device, msg, e));
         }
         if (!connectCompleter.isCompleted) {
           // will notify for error as the connection could not be properly established

@@ -25,7 +25,7 @@ class NordicNrfMeshExampleApp extends StatefulWidget {
   const NordicNrfMeshExampleApp({Key? key}) : super(key: key);
 
   @override
-  _NordicNrfMeshExampleAppState createState() => _NordicNrfMeshExampleAppState();
+  State<NordicNrfMeshExampleApp> createState() => _NordicNrfMeshExampleAppState();
 }
 
 class _NordicNrfMeshExampleAppState extends State<NordicNrfMeshExampleApp> {

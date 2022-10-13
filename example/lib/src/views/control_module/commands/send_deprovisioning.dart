@@ -10,7 +10,7 @@ class SendDeprovisioning extends StatefulWidget {
   const SendDeprovisioning({Key? key, required this.meshManagerApi}) : super(key: key);
 
   @override
-  _SendDeprovisioningState createState() => _SendDeprovisioningState();
+  State<SendDeprovisioning> createState() => _SendDeprovisioningState();
 }
 
 class _SendDeprovisioningState extends State<SendDeprovisioning> {

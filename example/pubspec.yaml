@@ -5,19 +5,18 @@ version: 1.2.0
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  file_picker: ^3.0.4
+  file_picker: ^5.2.1
+  flutter_reactive_ble: ^5.0.2
 
   nordic_nrf_mesh:
     path: ../
-
-  cupertino_icons: ^1.0.3
 
 dev_dependencies:
   flutter_test:

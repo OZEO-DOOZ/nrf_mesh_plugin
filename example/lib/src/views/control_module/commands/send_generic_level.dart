@@ -10,7 +10,7 @@ class SendGenericLevel extends StatefulWidget {
   const SendGenericLevel({Key? key, required this.meshManagerApi}) : super(key: key);
 
   @override
-  _SendGenericLevelState createState() => _SendGenericLevelState();
+  State<SendGenericLevel> createState() => _SendGenericLevelState();
 }
 
 class _SendGenericLevelState extends State<SendGenericLevel> {

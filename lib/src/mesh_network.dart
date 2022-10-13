@@ -114,8 +114,8 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<List<GroupData>> get groups async {
-    final _groups = await _methodChannel.invokeMethod<List>('groups');
-    return _groups!.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
+    final groups = await _methodChannel.invokeMethod<List>('groups');
+    return groups!.cast<Map>().map((e) => GroupData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
   @override
@@ -124,8 +124,8 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<List<ElementData>> elementsForGroup(int groupAddress) async {
-    final _elements = await _methodChannel.invokeMethod<List>('getElementsForGroup', {'groupAddress': groupAddress});
-    return _elements!.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
+    final elements = await _methodChannel.invokeMethod<List>('getElementsForGroup', {'groupAddress': groupAddress});
+    return elements!.cast<Map>().map((e) => ElementData.fromJson(e.cast<String, dynamic>())).toList();
   }
 
   @override
@@ -136,8 +136,8 @@ class MeshNetwork implements IMeshNetwork {
 
   @override
   Future<List<ProvisionedMeshNode>> get nodes async {
-    final _nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
-    return _nodes!.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
+    final nodes = await _methodChannel.invokeMethod<List<dynamic>>('nodes');
+    return nodes!.map((e) => ProvisionedMeshNode(e['uuid'])).toList();
   }
 
   @override
@@ -275,9 +275,9 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<ProvisionedMeshNode?> getNode(int address) async {
     if (Platform.isIOS || Platform.isAndroid) {
-      final _node = await _methodChannel.invokeMethod<String>('getNode', {'address': address});
-      if (_node != null) {
-        return ProvisionedMeshNode(_node);
+      final node = await _methodChannel.invokeMethod<String>('getNode', {'address': address});
+      if (node != null) {
+        return ProvisionedMeshNode(node);
       } else {
         debugPrint('node not found');
         return null;
@@ -290,9 +290,9 @@ class MeshNetwork implements IMeshNetwork {
   @override
   Future<ProvisionedMeshNode?> getNodeUsingUUID(String uuid) async {
     if (Platform.isIOS || Platform.isAndroid) {
-      final _node = await _methodChannel.invokeMethod<String>('getNodeUsingUUID', {'uuid': uuid});
-      if (_node != null) {
-        return ProvisionedMeshNode(_node);
+      final node = await _methodChannel.invokeMethod<String>('getNodeUsingUUID', {'uuid': uuid});
+      if (node != null) {
+        return ProvisionedMeshNode(node);
       } else {
         debugPrint('node not found');
         return null;

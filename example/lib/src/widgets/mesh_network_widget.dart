@@ -10,7 +10,7 @@ class MeshNetworkDataWidget extends StatefulWidget {
   const MeshNetworkDataWidget({Key? key, required this.meshNetwork}) : super(key: key);
 
   @override
-  _MeshNetworkDataWidgetState createState() => _MeshNetworkDataWidgetState();
+  State<MeshNetworkDataWidget> createState() => _MeshNetworkDataWidgetState();
 }
 
 class _MeshNetworkDataWidgetState extends State<MeshNetworkDataWidget> {

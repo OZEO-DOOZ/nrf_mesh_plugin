@@ -6,29 +6,29 @@ repository: https://github.com/OZEO-DOOZ/nrf_mesh_plugin
 issue_tracker: https://github.com/OZEO-DOOZ/nrf_mesh_plugin/issues
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.0.0"
+  sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   # BLE handling
-  flutter_reactive_ble: ^4.0.1
-  rxdart: ^0.27.3
+  flutter_reactive_ble: ^5.0.2
+  rxdart: ^0.27.5
   retry: ^3.1.0
   # Models
-  json_annotation: ^4.4.0
-  freezed_annotation: ^1.1.0
+  json_annotation: ^4.7.0
+  freezed_annotation: ^2.1.0
   # static analysis
-  flutter_lints: ^1.0.4
-  meta: ^1.7.0
+  flutter_lints: ^2.0.1
+  meta: ^1.8.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.1.8
-  json_serializable: ^6.1.5
-  freezed: ^1.1.1
+  build_runner: ^2.3.0
+  json_serializable: ^6.5.1
+  freezed: ^2.1.1
 
 flutter:
   plugin:

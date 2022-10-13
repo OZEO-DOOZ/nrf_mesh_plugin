@@ -12,7 +12,7 @@ class ProvisionedDevices extends StatefulWidget {
   const ProvisionedDevices({Key? key, required this.nordicNrfMesh}) : super(key: key);
 
   @override
-  _ProvisionedDevicesState createState() => _ProvisionedDevicesState();
+  State<ProvisionedDevices> createState() => _ProvisionedDevicesState();
 }
 
 class _ProvisionedDevicesState extends State<ProvisionedDevices> {

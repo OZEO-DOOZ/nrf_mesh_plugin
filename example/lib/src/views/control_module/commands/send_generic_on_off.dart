@@ -10,7 +10,7 @@ class SendGenericOnOff extends StatefulWidget {
   const SendGenericOnOff({Key? key, required this.meshManagerApi}) : super(key: key);
 
   @override
-  _SendGenericOnOffState createState() => _SendGenericOnOffState();
+  State<SendGenericOnOff> createState() => _SendGenericOnOffState();
 }
 
 class _SendGenericOnOffState extends State<SendGenericOnOff> {

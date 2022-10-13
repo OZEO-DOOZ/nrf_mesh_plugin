@@ -23,7 +23,7 @@ class BleScannerError {
 /// This singleton is used to wrap the Bluetooth scanning features of [FlutterReactiveBle].
 /// {@endtemplate}
 class BleScanner {
-  static late final BleScanner _instance = BleScanner._();
+  static final BleScanner _instance = BleScanner._();
 
   BleScanner._();
 

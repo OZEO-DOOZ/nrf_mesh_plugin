@@ -1,13 +1,13 @@
 PODS:
   - CryptoSwift (1.4.0)
-  - DKImagePickerController/Core (4.3.2):
+  - DKImagePickerController/Core (4.3.4):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
-  - DKImagePickerController/ImageDataManager (4.3.2)
-  - DKImagePickerController/PhotoGallery (4.3.2):
+  - DKImagePickerController/ImageDataManager (4.3.4)
+  - DKImagePickerController/PhotoGallery (4.3.4):
     - DKImagePickerController/Core
     - DKPhotoGallery
-  - DKImagePickerController/Resource (4.3.2)
+  - DKImagePickerController/Resource (4.3.4)
   - DKPhotoGallery (0.0.17):
     - DKPhotoGallery/Core (= 0.0.17)
     - DKPhotoGallery/Model (= 0.0.17)
@@ -35,21 +35,21 @@ PODS:
     - DKImagePickerController/PhotoGallery
     - Flutter
   - Flutter (1.0.0)
-  - nordic_nrf_mesh (0.0.1):
+  - nordic_nrf_mesh (0.12.0):
     - Flutter
     - nRFMeshProvision
-  - nRFMeshProvision (3.1.4):
+  - nRFMeshProvision (3.1.5):
     - CryptoSwift (= 1.4.0)
-  - Protobuf (3.19.1)
+  - Protobuf (3.21.7)
   - reactive_ble_mobile (0.0.1):
     - Flutter
     - Protobuf (~> 3.5)
     - SwiftProtobuf (~> 1.0)
-  - SDWebImage (5.12.1):
-    - SDWebImage/Core (= 5.12.1)
-  - SDWebImage/Core (5.12.1)
-  - SwiftProtobuf (1.18.0)
-  - SwiftyGif (5.4.0)
+  - SDWebImage (5.13.4):
+    - SDWebImage/Core (= 5.13.4)
+  - SDWebImage/Core (5.13.4)
+  - SwiftProtobuf (1.20.2)
+  - SwiftyGif (5.4.3)
 
 DEPENDENCIES:
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
@@ -82,18 +82,18 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CryptoSwift: 7cc902df1784de3b389a387756c7d710f197730c
-  DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
+  DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
-  file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  nordic_nrf_mesh: 5b37621fef90bc1b077bc9b34d3241b3622a0605
-  nRFMeshProvision: 4b3e185fd13b077c997aadca6f54806f5c577cd7
-  Protobuf: 3724efa50cb2846d7ccebc8691c574e85fd74471
+  file_picker: 817ab1d8cd2da9d2da412a417162deee3500fc95
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  nordic_nrf_mesh: 2a4fcb52a893697cc848d67299c77d12ed5df955
+  nRFMeshProvision: 8d93e5827501f166f1511c89a5540a610844ccf2
+  Protobuf: f4128517d7a42302e106cc3afe614ee3a7513e94
   reactive_ble_mobile: 9ce6723d37ccf701dbffd202d487f23f5de03b4c
-  SDWebImage: 4dc3e42d9ec0c1028b960a33ac6b637bb432207b
-  SwiftProtobuf: c3c12645230d9b09c72267e0de89468c5543bd86
-  SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
+  SDWebImage: e5cc87bf736e60f49592f307bdf9e157189298a3
+  SwiftProtobuf: 9f458aaa7844a2fc0b910053e66578bc4e2da9c1
+  SwiftyGif: 6c3eafd0ce693cad58bb63d2b2fb9bacb8552780
 
 PODFILE CHECKSUM: 72e7578d6c04ade70fdc134ccf7d38a693d97cd0
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

@@ -11,7 +11,7 @@ class Node extends StatefulWidget {
   const Node({Key? key, required this.node, required this.meshManagerApi, required this.name}) : super(key: key);
 
   @override
-  _NodeState createState() => _NodeState();
+  State<Node> createState() => _NodeState();
 }
 
 class _NodeState extends State<Node> {
