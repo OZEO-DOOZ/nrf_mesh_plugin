@@ -6,29 +6,27 @@ part of 'config_composition_data_status.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ConfigCompositionDataStatusData _$_$_ConfigCompositionDataStatusDataFromJson(Map json) {
-  return _$_ConfigCompositionDataStatusData(
-    json['source'] as int,
-    ConfigCompositionDataStatusMeshMessage.fromJson(Map<String, dynamic>.from(json['meshMessage'] as Map)),
-  );
-}
+_$_ConfigCompositionDataStatusData _$$_ConfigCompositionDataStatusDataFromJson(Map json) =>
+    _$_ConfigCompositionDataStatusData(
+      json['source'] as int,
+      ConfigCompositionDataStatusMeshMessage.fromJson(Map<String, dynamic>.from(json['meshMessage'] as Map)),
+    );
 
-Map<String, dynamic> _$_$_ConfigCompositionDataStatusDataToJson(_$_ConfigCompositionDataStatusData instance) =>
+Map<String, dynamic> _$$_ConfigCompositionDataStatusDataToJson(_$_ConfigCompositionDataStatusData instance) =>
     <String, dynamic>{
       'source': instance.source,
       'meshMessage': instance.meshMessage,
     };
 
-_$_ConfigCompositionDataStatusMeshMessage _$_$_ConfigCompositionDataStatusMeshMessageFromJson(
-    Map<String, dynamic> json) {
-  return _$_ConfigCompositionDataStatusMeshMessage(
-    json['source'] as int,
-    json['aszmic'] as int?,
-    json['destination'] as int,
-  );
-}
+_$_ConfigCompositionDataStatusMeshMessage _$$_ConfigCompositionDataStatusMeshMessageFromJson(
+        Map<String, dynamic> json) =>
+    _$_ConfigCompositionDataStatusMeshMessage(
+      json['source'] as int,
+      json['aszmic'] as int?,
+      json['destination'] as int,
+    );
 
-Map<String, dynamic> _$_$_ConfigCompositionDataStatusMeshMessageToJson(
+Map<String, dynamic> _$$_ConfigCompositionDataStatusMeshMessageToJson(
         _$_ConfigCompositionDataStatusMeshMessage instance) =>
     <String, dynamic>{
       'source': instance.source,
