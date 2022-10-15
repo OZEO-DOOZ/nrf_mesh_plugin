@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/app.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
 
 class ScanningAndProvisioning extends StatefulWidget {
@@ -47,6 +48,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     setState(() {
       _devices.clear();
     });
+    await checkAndAskPermissions();
     _scanSubscription = widget.nordicNrfMesh.scanForUnprovisionedNodes().listen((device) async {
       if (_devices.every((d) => d.id != device.id)) {
         final deviceUuid =
@@ -60,7 +62,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     setState(() {
       isScanning = true;
     });
-    return Future.delayed(const Duration(seconds: 10)).then((_) => _stopScan());
+    return Future.delayed(const Duration(seconds: 10), _stopScan);
   }
 
   Future<void> _stopScan() async {

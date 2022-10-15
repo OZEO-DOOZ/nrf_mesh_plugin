@@ -1,8 +1,10 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/provisioned_devices.dart';
 import 'package:nordic_nrf_mesh_example/src/views/home/home.dart';
 import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/scan_and_provisioning.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 const int homeTab = 0;
 const int provisioningTab = 1;
@@ -31,7 +33,7 @@ class NordicNrfMeshExampleApp extends StatefulWidget {
 class _NordicNrfMeshExampleAppState extends State<NordicNrfMeshExampleApp> {
   late final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>(debugLabel: 'main_scaffold');
-  final nordicNrfMesh = NordicNrfMesh();
+  late final NordicNrfMesh nordicNrfMesh = NordicNrfMesh();
 
   int _bottomNavigationBarIndex = homeTab;
 
@@ -99,5 +101,39 @@ class _NordicNrfMeshExampleAppState extends State<NordicNrfMeshExampleApp> {
         ),
       ),
     );
+  }
+}
+
+void log(Object? msg) => debugPrint('[$NordicNrfMeshExampleApp - ${DateTime.now().toIso8601String()}] $msg');
+
+Future<void> checkAndAskPermissions() async {
+  final androidInfo = await DeviceInfoPlugin().androidInfo;
+  if (androidInfo.version.sdkInt! < 31) {
+    // location
+    final inUseGranted = await Permission.locationWhenInUse.isGranted;
+    if (!inUseGranted) {
+      log('location permission is needed');
+      await Permission.locationWhenInUse.request();
+      await Permission.locationAlways.request();
+    }
+    // bluetooth
+    final bluetoothPermission = await Permission.bluetooth.status;
+    if (bluetoothPermission == PermissionStatus.granted) {
+      log('all good permissions');
+    } else {
+      log('BLE permission is needed');
+      await Permission.bluetooth.request();
+    }
+  } else {
+    // bluetooth for Android 12 and up
+    final bluetoothScan = await Permission.bluetoothScan.status;
+    final bluetoothConnect = await Permission.bluetoothConnect.status;
+    if (bluetoothScan == PermissionStatus.granted && bluetoothConnect == PermissionStatus.granted) {
+      log('all good permissions');
+    } else {
+      log('some BLE permissions are needed');
+      await Permission.bluetoothScan.request();
+      await Permission.bluetoothConnect.request();
+    }
   }
 }
