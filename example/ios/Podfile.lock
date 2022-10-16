@@ -37,7 +37,7 @@ PODS:
     - DKImagePickerController/PhotoGallery
     - Flutter
   - Flutter (1.0.0)
-  - nordic_nrf_mesh (0.12.0):
+  - nordic_nrf_mesh (0.13.0):
     - Flutter
     - nRFMeshProvision
   - nRFMeshProvision (3.2.0):
@@ -97,7 +97,7 @@ SPEC CHECKSUMS:
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: 817ab1d8cd2da9d2da412a417162deee3500fc95
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  nordic_nrf_mesh: 0ed87b33d27a92c29895da12823a6199e9227d03
+  nordic_nrf_mesh: 469eac5b312f1e29c2da8f0c7c85c8d576f823bd
   nRFMeshProvision: 0f0a0b9e83e4a77bb4df1b7dfdb3838f526875d0
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   Protobuf: f4128517d7a42302e106cc3afe614ee3a7513e94

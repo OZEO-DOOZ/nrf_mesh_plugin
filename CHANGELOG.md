@@ -1,3 +1,11 @@
+## 0.13.0
+- Use of Nordic Semiconductor's Android SDK v3.2.4
+- Use of Nordic Semiconductor's iOS SDK v3.2.0 (iOS 12.0 required as a result)
+- Upgraded Gradle version and dependencies
+- Upgraded Dart dependencies
+- Now need Flutter 3.0 to use plugin
+- Updated example app to request needed permissions
+- Updated README.md to explain how to install plugin
 ## 0.12.0
 
 - Use of Nordic Semiconductor's Android SDK v3.2.1
