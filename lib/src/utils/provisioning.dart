@@ -138,14 +138,14 @@ Future<ProvisionedMeshNode> _provisioning(
         isHandlingConnectErrors = false;
         provisionedMeshNode = ProvisionedMeshNode(event.meshNode!.uuid);
       } catch (e) {
-        const _msg = 'Error in connection during provisioning process';
-        _log('$_msg $e');
-        completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.reconnection, _msg));
+        const msg = 'Error in connection during provisioning process';
+        _log('$msg $e');
+        completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.reconnection, msg));
       }
     } catch (e) {
-      const _msg = 'unexpected error during provisioning completed listener';
-      _log('$_msg $e');
-      completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.provisioningCompleted, _msg));
+      const msg = 'unexpected error during provisioning completed listener';
+      _log('$msg $e');
+      completer.completeError(NrfMeshProvisioningException(ProvisioningFailureCode.provisioningCompleted, msg));
     }
   });
   // If provisioning failed, stop process and notify caller by throwing an error

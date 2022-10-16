@@ -9,7 +9,7 @@ class Node extends StatefulWidget {
   const Node(this.node, this.meshNetwork, this.testKey, {Key? key}) : super(key: key);
 
   @override
-  _NodeState createState() => _NodeState();
+  State<Node> createState() => _NodeState();
 }
 
 class _NodeState extends State<Node> {

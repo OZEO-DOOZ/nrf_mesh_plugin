@@ -1,8 +1,11 @@
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/views/control_module/provisioned_devices.dart';
 import 'package:nordic_nrf_mesh_example/src/views/home/home.dart';
 import 'package:nordic_nrf_mesh_example/src/views/scan_and_provisionning/scan_and_provisioning.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 const int homeTab = 0;
 const int provisioningTab = 1;
@@ -25,13 +28,13 @@ class NordicNrfMeshExampleApp extends StatefulWidget {
   const NordicNrfMeshExampleApp({Key? key}) : super(key: key);
 
   @override
-  _NordicNrfMeshExampleAppState createState() => _NordicNrfMeshExampleAppState();
+  State<NordicNrfMeshExampleApp> createState() => _NordicNrfMeshExampleAppState();
 }
 
 class _NordicNrfMeshExampleAppState extends State<NordicNrfMeshExampleApp> {
   late final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
       GlobalKey<ScaffoldMessengerState>(debugLabel: 'main_scaffold');
-  final nordicNrfMesh = NordicNrfMesh();
+  late final NordicNrfMesh nordicNrfMesh = NordicNrfMesh();
 
   int _bottomNavigationBarIndex = homeTab;
 
@@ -99,5 +102,27 @@ class _NordicNrfMeshExampleAppState extends State<NordicNrfMeshExampleApp> {
         ),
       ),
     );
+  }
+}
+
+void log(Object? msg) => debugPrint('[$NordicNrfMeshExampleApp - ${DateTime.now().toIso8601String()}] $msg');
+
+Future<void> checkAndAskPermissions() async {
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    if (androidInfo.version.sdkInt! < 31) {
+      // location
+      await Permission.locationWhenInUse.request();
+      await Permission.locationAlways.request();
+      // bluetooth
+      await Permission.bluetooth.request();
+    } else {
+      // bluetooth for Android 12 and up
+      await Permission.bluetoothScan.request();
+      await Permission.bluetoothConnect.request();
+    }
+  } else {
+    // bluetooth for iOS 13 and up
+    await Permission.bluetooth.request();
   }
 }

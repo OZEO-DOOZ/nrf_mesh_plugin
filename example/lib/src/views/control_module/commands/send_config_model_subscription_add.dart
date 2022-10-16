@@ -10,7 +10,7 @@ class SendConfigModelSubscriptionAdd extends StatefulWidget {
   const SendConfigModelSubscriptionAdd(this.meshManagerApi, {Key? key}) : super(key: key);
 
   @override
-  _SendConfigModelSubscriptionAddState createState() => _SendConfigModelSubscriptionAddState();
+  State<SendConfigModelSubscriptionAdd> createState() => _SendConfigModelSubscriptionAddState();
 }
 
 class _SendConfigModelSubscriptionAddState extends State<SendConfigModelSubscriptionAdd> {

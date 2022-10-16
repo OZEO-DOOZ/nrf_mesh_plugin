@@ -24,7 +24,7 @@ class Module extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ModuleState createState() => _ModuleState();
+  State<Module> createState() => _ModuleState();
 }
 
 class _ModuleState extends State<Module> {

@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
+import 'package:nordic_nrf_mesh_example/src/app.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/device.dart';
-import 'package:pedantic/pedantic.dart';
 
 class ScanningAndProvisioning extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -18,7 +18,7 @@ class ScanningAndProvisioning extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ScanningAndProvisioningState createState() => _ScanningAndProvisioningState();
+  State<ScanningAndProvisioning> createState() => _ScanningAndProvisioningState();
 }
 
 class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
@@ -48,6 +48,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     setState(() {
       _devices.clear();
     });
+    await checkAndAskPermissions();
     _scanSubscription = widget.nordicNrfMesh.scanForUnprovisionedNodes().listen((device) async {
       if (_devices.every((d) => d.id != device.id)) {
         final deviceUuid =
@@ -61,7 +62,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
     setState(() {
       isScanning = true;
     });
-    return Future.delayed(const Duration(seconds: 10)).then((_) => _stopScan());
+    return Future.delayed(const Duration(seconds: 10), _stopScan);
   }
 
   Future<void> _stopScan() async {
@@ -73,6 +74,7 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
   }
 
   Future<void> provisionDevice(DiscoveredDevice device) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     if (isScanning) {
       await _stopScan();
     }
@@ -80,8 +82,6 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
       return;
     }
     isProvisioning = true;
-
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
 
     try {
       // Android is sending the mac Adress of the device, but Apple generates

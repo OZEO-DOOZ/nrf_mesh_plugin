@@ -8,7 +8,7 @@ class Group extends StatefulWidget {
   const Group(this.groupData, this.meshNetwork, {Key? key}) : super(key: key);
 
   @override
-  _GroupState createState() => _GroupState();
+  State<Group> createState() => _GroupState();
 }
 
 class _GroupState extends State<Group> {

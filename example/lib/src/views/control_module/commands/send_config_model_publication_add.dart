@@ -10,7 +10,7 @@ class SendConfigModelPublicationAdd extends StatefulWidget {
   const SendConfigModelPublicationAdd(this.meshManagerApi, {Key? key}) : super(key: key);
 
   @override
-  _SendConfigModelPublicationAddState createState() => _SendConfigModelPublicationAddState();
+  State<SendConfigModelPublicationAdd> createState() => _SendConfigModelPublicationAddState();
 }
 
 class _SendConfigModelPublicationAddState extends State<SendConfigModelPublicationAdd> {

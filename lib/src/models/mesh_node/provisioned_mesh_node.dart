@@ -76,7 +76,7 @@ class ProvisionedMeshNode {
 
   /// Will return the list of elements of this node as stored in the local database
   Future<List<ElementData>> get elements async {
-    final _elements = await _methodChannel.invokeMethod<List>('elements');
-    return _elements!.map((e) => ElementData.fromJson(e)).toList();
+    final elements = await _methodChannel.invokeMethod<List>('elements');
+    return elements!.map((e) => ElementData.fromJson(e)).toList();
   }
 }
