@@ -79,7 +79,7 @@ private extension DoozProvisionedDevice {
                             EventSinkKeys.meshNode.elements.model.key.rawValue : index,
                             EventSinkKeys.meshNode.elements.model.modelId.rawValue : model.modelIdentifier,
                             EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
-                                return sub.address
+                                return sub.address.address
                             },
                             EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.boundApplicationKeys.map{ key in
                                 return key.index
@@ -90,9 +90,8 @@ private extension DoozProvisionedDevice {
                     })
                 ]
             }
-            
             result(elements)
-            
+            break
         case .elementAt:
             //node.element(withAddress: <#T##Address#>)
             break
