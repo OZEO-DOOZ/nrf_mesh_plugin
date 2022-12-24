@@ -72,6 +72,7 @@ private extension DoozProvisionedDevice {
             let elements = node.elements.map { element in
                 return [
                     EventSinkKeys.meshNode.elements.key.rawValue: element.index,
+                    EventSinkKeys.meshNode.elements.name.rawValue: element.name ?? "unnamed element",
                     EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
                     EventSinkKeys.meshNode.elements.locationDescriptor.rawValue : element.location.rawValue,
                     EventSinkKeys.meshNode.elements.models.rawValue : element.models.enumerated().map({ (index,model) in
