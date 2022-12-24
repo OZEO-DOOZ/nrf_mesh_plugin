@@ -58,20 +58,17 @@ private extension DoozProvisionedDevice {
             }
         
             break
-            
         case .unicastAddress:
-            result(node.unicastAddress)
-            
+            result(node.primaryUnicastAddress)
+            break
         case .nodeName(let data):
-                
             node.name = data.name
             result(nil)
-            
+            break
         case .name:
             result(node.name)
-            
+            break
         case .elements:
-            
             let elements = node.elements.map { element in
                 return [
                     EventSinkKeys.meshNode.elements.key.rawValue: element.index,
