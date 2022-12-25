@@ -12,10 +12,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  file_picker: ^5.2.1
+  file_picker: ^5.2.4
   flutter_reactive_ble: ^5.0.2
-  permission_handler: ^10.1.0
-  device_info_plus: ^6.0.0
+  permission_handler: ^10.2.0
+  device_info_plus: ^8.0.0
 
   nordic_nrf_mesh:
     path: ../

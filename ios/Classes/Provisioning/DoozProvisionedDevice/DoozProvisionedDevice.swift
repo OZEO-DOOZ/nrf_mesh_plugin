@@ -58,23 +58,21 @@ private extension DoozProvisionedDevice {
             }
         
             break
-            
         case .unicastAddress:
-            result(node.unicastAddress)
-            
+            result(node.primaryUnicastAddress)
+            break
         case .nodeName(let data):
-                
             node.name = data.name
             result(nil)
-            
+            break
         case .name:
             result(node.name)
-            
+            break
         case .elements:
-            
             let elements = node.elements.map { element in
                 return [
                     EventSinkKeys.meshNode.elements.key.rawValue: element.index,
+                    EventSinkKeys.meshNode.elements.name.rawValue: element.name ?? "unnamed element",
                     EventSinkKeys.meshNode.elements.address.rawValue : element.unicastAddress,
                     EventSinkKeys.meshNode.elements.locationDescriptor.rawValue : element.location.rawValue,
                     EventSinkKeys.meshNode.elements.models.rawValue : element.models.enumerated().map({ (index,model) in
@@ -82,7 +80,7 @@ private extension DoozProvisionedDevice {
                             EventSinkKeys.meshNode.elements.model.key.rawValue : index,
                             EventSinkKeys.meshNode.elements.model.modelId.rawValue : model.modelIdentifier,
                             EventSinkKeys.meshNode.elements.model.subscribedAddresses.rawValue : model.subscriptions.map{ sub in
-                                return sub.address
+                                return sub.address.address
                             },
                             EventSinkKeys.meshNode.elements.model.boundAppKey.rawValue : model.boundApplicationKeys.map{ key in
                                 return key.index
@@ -93,9 +91,8 @@ private extension DoozProvisionedDevice {
                     })
                 ]
             }
-            
             result(elements)
-            
+            break
         case .elementAt:
             //node.element(withAddress: <#T##Address#>)
             break
