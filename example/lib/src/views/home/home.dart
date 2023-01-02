@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -43,6 +45,8 @@ class _HomeState extends State<Home> {
         _meshNetwork = event;
       });
     });
+
+    //
   }
 
   @override
@@ -149,6 +153,16 @@ class MeshNetworkDatabaseWidget extends StatelessWidget {
               ? () async {
                   final meshNetworkJson = await meshManagerApi.exportMeshNetwork();
                   debugPrint(meshNetworkJson);
+                  Uint8List data = Uint8List.fromList(meshNetworkJson!.codeUnits);
+                  MimeType type = MimeType.OTHER;
+                  String path = await FileSaver.instance.saveAs("nRF_MeshNetwork", data, "json", type);
+                  debugPrint(path);
+                  debugPrint("Downloading");
+                  try {
+                    debugPrint("Download Completed.");
+                  } catch (e) {
+                    debugPrint("Download Failed.\n\n$e");
+                  }
                 }
               : null,
           child: const Text('Export MeshNetwork'),

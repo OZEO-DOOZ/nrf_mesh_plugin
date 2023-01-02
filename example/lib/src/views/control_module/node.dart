@@ -17,6 +17,7 @@ class Node extends StatefulWidget {
 class _NodeState extends State<Node> {
   bool isLoading = true;
   late int nodeAddress;
+  late String? nodeName;
   late List<ElementData> elements;
 
   @override
@@ -28,6 +29,7 @@ class _NodeState extends State<Node> {
   void _init() async {
     nodeAddress = await widget.node.unicastAddress;
     elements = await widget.node.elements;
+    nodeName = await widget.node.name;
     setState(() {
       isLoading = false;
     });
@@ -47,7 +49,7 @@ class _NodeState extends State<Node> {
     if (!isLoading) {
       body = ListView(
         children: [
-          Text('Node $nodeAddress'),
+          Text(nodeName ?? 'Node $nodeAddress'),
           Text(widget.node.uuid),
           ...[
             const Text('Elements :'),

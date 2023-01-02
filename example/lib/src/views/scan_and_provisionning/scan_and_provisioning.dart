@@ -91,8 +91,10 @@ class _ScanningAndProvisioningState extends State<ScanningAndProvisioning> {
 
       if (Platform.isAndroid) {
         deviceUUID = _serviceData[device.id].toString();
+        debugPrint('start provisioning on android with device id: $deviceUUID');
       } else if (Platform.isIOS) {
         deviceUUID = device.id.toString();
+        debugPrint('start provisioning on iOS with device id: $deviceUUID');
       } else {
         throw UnimplementedError('device uuid on platform : ${Platform.operatingSystem}');
       }
