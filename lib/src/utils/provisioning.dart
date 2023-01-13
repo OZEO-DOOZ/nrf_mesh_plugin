@@ -262,7 +262,6 @@ Future<ProvisionedMeshNode> _provisioning(
     await bleMeshManager.refreshDeviceCache();
     await bleMeshManager.disconnect();
     _cancelProvisioningCallbackSubscription(bleMeshManager);
-    provisionedMeshNode.nodeName = deviceToProvision.name;
     _log('provisioning success !');
     return provisionedMeshNode;
   } catch (e) {

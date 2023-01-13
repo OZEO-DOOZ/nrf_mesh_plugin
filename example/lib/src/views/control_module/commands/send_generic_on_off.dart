@@ -15,6 +15,8 @@ class SendGenericOnOff extends StatefulWidget {
 
 class _SendGenericOnOffState extends State<SendGenericOnOff> {
   int? selectedElementAddress;
+  double selectedTransitionTime = 0.0;
+  double selectedDelay = 0.0;
 
   bool onOff = false;
 
@@ -33,6 +35,74 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
             });
           },
         ),
+        Row(
+          children: [
+            Text('Transition time: ${selectedTransitionTime.round()}'),
+            Slider(
+              value: selectedTransitionTime.roundToDouble(),
+              onChanged: (value) {
+                setState(() {
+                  selectedTransitionTime = value;
+                });
+              },
+              max: 300,
+              min: 0,
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Text('Delay(5ms steps): ${selectedDelay.round()}'),
+            Slider(
+              value: selectedDelay,
+              onChanged: (value) {
+                setState(() {
+                  selectedDelay = value;
+                });
+              },
+              max: 1275,
+              min: 0,
+            ),
+          ],
+        ),
+        Switch(
+          // This bool value toggles the switch.
+          value: onOff,
+          activeColor: Colors.red,
+          onChanged: (bool value) async {
+            // This is called when the user toggles the switch.
+            setState(() {
+              onOff = value;
+            });
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
+            debugPrint('send level $selectedDelay $selectedTransitionTime $onOff to $selectedElementAddress');
+            final provisionerUuid = await widget.meshManagerApi.meshNetwork!.selectedProvisionerUuid();
+            final nodes = await widget.meshManagerApi.meshNetwork!.nodes;
+            try {
+              final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid);
+              final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
+              await widget.meshManagerApi
+                  .sendGenericOnOffSet(
+                    selectedElementAddress!,
+                    onOff,
+                    sequenceNumber,
+                    delay: selectedDelay.round(),
+                    transitionStep: selectedTransitionTime.round(),
+                  )
+                  .timeout(const Duration(seconds: 40));
+              scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
+            } on TimeoutException catch (_) {
+              scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Board didn\'t respond')));
+            } on StateError catch (_) {
+              scaffoldMessenger
+                  .showSnackBar(SnackBar(content: Text('No provisioner found with this uuid : $provisionerUuid')));
+            } on PlatformException catch (e) {
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text('${e.message}')));
+            } catch (e) {
+              scaffoldMessenger.showSnackBar(SnackBar(content: Text(e.toString())));
+            }
+          },
+        ),
         Checkbox(
           key: const ValueKey('module-send-generic-on-off-value'),
           value: onOff,
@@ -46,14 +116,20 @@ class _SendGenericOnOffState extends State<SendGenericOnOff> {
           onPressed: selectedElementAddress != null
               ? () async {
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  debugPrint('send level $onOff to $selectedElementAddress');
+                  debugPrint('send level $selectedDelay $selectedTransitionTime $onOff to $selectedElementAddress');
                   final provisionerUuid = await widget.meshManagerApi.meshNetwork!.selectedProvisionerUuid();
                   final nodes = await widget.meshManagerApi.meshNetwork!.nodes;
                   try {
                     final provisionedNode = nodes.firstWhere((element) => element.uuid == provisionerUuid);
                     final sequenceNumber = await widget.meshManagerApi.getSequenceNumber(provisionedNode);
                     await widget.meshManagerApi
-                        .sendGenericOnOffSet(selectedElementAddress!, onOff, sequenceNumber)
+                        .sendGenericOnOffSet(
+                          selectedElementAddress!,
+                          onOff,
+                          sequenceNumber,
+                          delay: selectedDelay.round(),
+                          transitionStep: selectedTransitionTime.round(),
+                        )
                         .timeout(const Duration(seconds: 40));
                     scaffoldMessenger.showSnackBar(const SnackBar(content: Text('OK')));
                   } on TimeoutException catch (_) {

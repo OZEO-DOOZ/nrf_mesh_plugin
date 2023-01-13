@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
@@ -56,6 +56,8 @@ class _HomeState extends State<Home> {
     onNetworkImportSubscription.cancel();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
