@@ -8,12 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:nordic_nrf_mesh/nordic_nrf_mesh.dart';
 import 'package:nordic_nrf_mesh_example/src/widgets/mesh_network_widget.dart';
 
-
 class Home extends StatefulWidget {
   final NordicNrfMesh nordicNrfMesh;
-
   const Home({Key? key, required this.nordicNrfMesh}) : super(key: key);
-
   @override
   State<Home> createState() => _HomeState();
 }
@@ -45,8 +42,6 @@ class _HomeState extends State<Home> {
         _meshNetwork = event;
       });
     });
-
-    //
   }
 
   @override
@@ -56,8 +51,6 @@ class _HomeState extends State<Home> {
     onNetworkImportSubscription.cancel();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -155,13 +148,13 @@ class MeshNetworkDatabaseWidget extends StatelessWidget {
               ? () async {
                   final meshNetworkJson = await meshManagerApi.exportMeshNetwork();
                   debugPrint(meshNetworkJson);
-                  Uint8List data = Uint8List.fromList(meshNetworkJson!.codeUnits);
-                  MimeType type = MimeType.OTHER;
-                  String path = await FileSaver.instance.saveAs("nRF_MeshNetwork", data, "json", type);
-                  debugPrint(path);
                   debugPrint("Downloading");
                   try {
+                    Uint8List data = Uint8List.fromList(meshNetworkJson!.codeUnits);
+                    MimeType type = MimeType.OTHER;
+                    String path = await FileSaver.instance.saveAs("nRF_MeshNetwork", data, "json", type);
                     debugPrint("Download Completed.");
+                    debugPrint(path);
                   } catch (e) {
                     debugPrint("Download Failed.\n\n$e");
                   }

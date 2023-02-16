@@ -49,7 +49,7 @@ class _NodeState extends State<Node> {
     if (!isLoading) {
       body = ListView(
         children: [
-          Text(nodeName ?? 'Node $nodeAddress'),
+         Text('${nodeName ?? 'Node'} $nodeAddress' ),
           Text(widget.node.uuid),
           ...[
             const Text('Elements :'),
