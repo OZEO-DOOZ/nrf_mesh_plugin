@@ -36,12 +36,17 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
+  - file_saver (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - nordic_nrf_mesh (0.13.0):
     - Flutter
     - nRFMeshProvision
   - nRFMeshProvision (3.2.0):
     - CryptoSwift (= 1.5.1)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - permission_handler_apple (9.0.4):
     - Flutter
   - Protobuf (3.21.11)
@@ -58,9 +63,11 @@ PODS:
 DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
+  - file_saver (from `.symlinks/plugins/file_saver/ios`)
   - Flutter (from `Flutter`)
   - nordic_nrf_mesh (from `.symlinks/plugins/nordic_nrf_mesh/ios`)
   - nRFMeshProvision (from `.symlinks/plugins/nordic_nrf_mesh/IOS-nRF-Mesh-Library`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - reactive_ble_mobile (from `.symlinks/plugins/reactive_ble_mobile/ios`)
 
