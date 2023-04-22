@@ -33,6 +33,12 @@ object.plugins.android.each { androidPlugin ->
   if(androidPlugin.name == 'nordic_nrf_mesh'){
     println 'should include forked Nordic\'s ADK v3'
     def meshLibPath = androidPlugin.path.replace('android', '') + 'Android-nRF-Mesh-Library-1\\mesh\\'
+    if (System.properties['os.name'].toLowerCase().contains('windows')) {
+      println "detected running on Windows"
+    } else {
+      println "detected running on non Windows (linux or mac)"
+      meshLibPath = meshLibPath.replace('\\', '/')
+    }
     println 'meshLibPath = ' + meshLibPath
     include ':mesh'
     project(':mesh').projectDir = file(meshLibPath)
